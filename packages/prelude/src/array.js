@@ -163,7 +163,7 @@ export function findIndex(x, a) {
     return -1;
 }
 
-// findIndex :: * -> boolean
+// isArrayLike :: * -> boolean
 // Return true iff x is array-like
 export function isArrayLike(x) {
     return x != null && typeof x.length === 'number' && typeof x !== 'function';
