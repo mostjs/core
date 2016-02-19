@@ -1,15 +1,21 @@
 /** @license MIT License (c) copyright 2010-2016 original author or authors */
 
-export function cons(x, array) {
-    const l = array.length;
-    const a = new Array(l + 1);
-    a[0] = x;
+// Non-mutating array operations
+
+// cons :: a -> [a] -> [a]
+// a with x prepended
+export function cons(x, a) {
+    const l = a.length;
+    const b = new Array(l + 1);
+    b[0] = x;
     for (let i = 0; i < l; ++i) {
-        a[i + 1] = array[i];
+        b[i + 1] = a[i];
     }
-    return a;
+    return b;
 }
 
+// append :: a -> [a] -> [a]
+// a with x appended
 export function append(x, a) {
     const l = a.length;
     const b = new Array(l + 1);
@@ -21,85 +27,116 @@ export function append(x, a) {
     return b;
 }
 
-export function drop(n, array) {
-    let l = array.length;
+// drop :: Int -> [a] -> [a]
+// drop first n elements
+export function drop(n, a) {
+    if (n < 0) {
+        throw new TypeError('n must be >= 0');
+    }
+
+    const l = a.length;
+    if (n === 0 || l === 0) {
+        return a;
+    }
+
     if (n >= l) {
         return [];
     }
 
-    l -= n;
-    const a = new Array(l);
+    return unsafeDrop(n, a, l - n);
+}
+
+// unsafeDrop :: Int -> [a] -> Int -> [a]
+// Internal helper for drop
+function unsafeDrop(n, a, l) {
+    const b = new Array(l);
     for (let i = 0; i < l; ++i) {
-        a[i] = array[n + i];
+        b[i] = a[n + i];
     }
-    return a;
+    return b;
 }
 
-export function tail(array) {
-    return drop(1, array);
+// tail :: [a] -> [a]
+// drop head element
+export function tail(a) {
+    return drop(1, a);
 }
 
-export function copy(array) {
-    const l = array.length;
-    const a = new Array(l);
+// copy :: [a] -> [a]
+// duplicate a (shallow duplication)
+export function copy(a) {
+    const l = a.length;
+    const b = new Array(l);
     for (let i = 0; i < l; ++i) {
-        a[i] = array[i];
+        b[i] = a[i];
     }
-    return a;
+    return b;
 }
 
-export function map(f, array) {
-    const l = array.length;
-    const a = new Array(l);
+// map :: (a -> b) -> [a] -> [b]
+// transform each element with f
+export function map(f, a) {
+    const l = a.length;
+    const b = new Array(l);
     for (let i = 0; i < l; ++i) {
-        a[i] = f(array[i]);
+        b[i] = f(a[i]);
     }
-    return a;
+    return b;
 }
 
-export function reduce(f, z, array) {
+// reduce :: (a -> b -> a) -> a -> [b] -> a
+// accumulate via left-fold
+export function reduce(f, z, a) {
     let r = z;
-    for (let i = 0, l = array.length; i < l; ++i) {
-        r = f(r, array[i], i);
+    for (let i = 0, l = a.length; i < l; ++i) {
+        r = f(r, a[i], i);
     }
     return r;
 }
 
-export function replace(x, i, array) {
+// replace :: a -> Int -> [a]
+// replace element at index
+export function replace(x, i, a) {
     const l = array.length;
-    const a = new Array(l);
+    const b = new Array(l);
     for (let j = 0; j < l; ++j) {
-        a[j] = i === j ? x : array[j];
+        b[j] = i === j ? x : a[j];
     }
-    return a;
+    return b;
 }
 
-function remove(index, array) {
-    const l = array.length;
-    if (l === 0 || index >= array) { // exit early if index beyond end of array
-        return array;
+// remove :: Int -> [a] -> [a]
+// remove element at index
+function remove(i, a) {
+    const l = a.length;
+    if (l === 0 || i >= l) { // exit early if index beyond end of array
+        return a;
     }
 
     if (l === 1) { // exit early if index in bounds and length === 1
         return [];
     }
 
-    return unsafeRemove(index, array, l - 1);
+    return unsafeRemove(i, a, l - 1);
 }
 
-export function unsafeRemove(index, a, l) {
+// unsafeRemove :: Int -> [a] -> Int -> [a]
+// Internal helper to remove element at index
+function unsafeRemove(i, a, l) {
     const b = new Array(l);
-    let i;
-    for (i = 0; i < index; ++i) {
-        b[i] = a[i];
+    let j;
+    for (j = 0; j < i; ++j) {
+        b[j] = a[j];
     }
-    for (i = index; i < l; ++i) {
-        b[i] = a[i + 1];
+    for (j = index; j < l; ++j) {
+        b[j] = a[j + 1];
     }
 
     return b;
 }
 
+// removeAll :: (a -> boolean) -> [a] -> [a]
+// remove all elements matching a predicate
 export function removeAll(f, a) {
     const l = a.length;
     const b = new Array(l);
@@ -115,6 +152,8 @@ export function removeAll(f, a) {
     return b;
 }
 
+// findIndex :: a -> [a] -> Int
+// find index of x in a, from the left
 export function findIndex(x, a) {
     for (let i = 0, l = a.length; i < l; ++i) {
         if (x === a[i]) {
@@ -124,6 +163,8 @@ export function findIndex(x, a) {
     return -1;
 }
 
+// findIndex :: * -> boolean
+// Return true iff x is array-like
 export function isArrayLike(x) {
     return x != null && typeof x.length === 'number' && typeof x !== 'function';
 }
