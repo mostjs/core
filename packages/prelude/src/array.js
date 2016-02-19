@@ -107,7 +107,11 @@ export function replace(x, i, a) {
 
 // remove :: Int -> [a] -> [a]
 // remove element at index
-function remove(i, a) {
+export function remove(i, a) {
+    if (i < 0) {
+        throw new TypeError('i must be >= 0');
+    }
+
     const l = a.length;
     if (l === 0 || i >= l) { // exit early if index beyond end of array
         return a;
@@ -128,7 +132,7 @@ function unsafeRemove(i, a, l) {
     for (j = 0; j < i; ++j) {
         b[j] = a[j];
     }
-    for (j = index; j < l; ++j) {
+    for (j = i; j < l; ++j) {
         b[j] = a[j + 1];
     }
 
