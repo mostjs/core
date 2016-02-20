@@ -19,7 +19,7 @@
     "type": "git",
     "url": "git+https://github.com/mostjs/prelude.git"
   },
-  "author": "Your Name <you@wherever.com> (github.com/<you>)",
+  "author": "Brian Cavalier <brian@hovercraftstudios.com> (github.com/briancavalier)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/mostjs/prelude/issues"
