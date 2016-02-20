@@ -3,7 +3,9 @@
 import {describe, it} from 'mocha';
 import assert from 'assert';
 
-import { cons, append, drop, tail, copy, map, reduce } from '../src/array';
+import { cons, append, drop, tail, copy,
+  map, reduce, remove, removeAll, replace, findIndex,
+  isArrayLike } from '../src/array';
 
 const rint = n => (Math.floor(Math.random() * n));
 const same = (a, b) => a.length === b.length && _same(a, b, a.length-1);
@@ -49,7 +51,7 @@ describe('drop', () => {
     assert.strictEqual(drop(0, a), a);
   });
 
-  it('drop(n, a) where n < 0 should throw', () => {
+  it('drop(n, a) where n < 0 should throw TypeError', () => {
     assert.throws(() => drop(-1, []), TypeError);
   });
 
@@ -129,4 +131,101 @@ describe('reduce', () => {
     assert(a !== b);
     assertSame(a, b);
   });
+});
+
+describe('replace', () => {
+  it('replace(x, i, []) === []', () => {
+    assertSame(replace(1, rint(100), []), []);
+  });
+
+  it('replace(x, i, a) when i < 0 should throw TypeError', () => {
+    assert.throws(() => replace(1, -1, []), TypeError);
+  });
+
+  it('findIndex(x, replace(x, i, a)) === i', () => {
+    const x = {};
+    const a = [{},{},{},{},{}];
+    const i = rint(a.length);
+    assert.strictEqual(i, findIndex(x, replace(x, i, a)));
+  });
+});
+
+describe('remove', () => {
+  it('remove(i, []) === []', () => {
+    assertSame([], remove(rint(100), []));
+  });
+
+  it('remove(i, a) === a when i >= a.length', () => {
+    const a = [1,2,3];
+    assertSame(a, remove(a.length, a));
+  });
+
+  it('remove(i, a) when i < 0 should throw TypeError', () => {
+    assert.throws(() => remove(-1, []), TypeError);
+  });
+
+  it('remove(0, [x]) === []', () => {
+    assertSame([], remove(0, [{}]));
+  });
+
+  it('remove(i, a) === a.splice(i, 1)', () => {
+    const b = [0,1,2,3,4,5,6,7,8,9];
+    const a = b.slice();
+    const i = Math.floor(a.length/2);
+
+    b.splice(i, 1);
+    assertSame(b, remove(i, a));
+  });
+});
+
+describe('removeAll', () => {
+  it('removeAll(f, []) === []', () => {
+    assertSame([], removeAll(() => false, []))
+  });
+
+  it('removeAll(() => false, a) === a', () => {
+    const a = [1,2,3];
+    assertSame(a, removeAll(() => false, a))
+  });
+
+  it('findIndex(x, removeAll(y => y === x, a)) === -1', () => {
+    const a = [1,2,1,3,1,4,1,5,1];
+    assert.strictEqual(-1, findIndex(1, removeAll(x => x === 1, a)));
+  });
+});
+
+describe('findIndex', () => {
+  it('findIndex(x, []) === -1', () => {
+    assert.strictEqual(-1, findIndex(1, []));
+  });
+
+  it('findIndex(x, [x, x]) === 0', () => {
+    const x = {};
+    assert.strictEqual(0, findIndex(x, [x]));
+  });
+
+  it('findIndex(x, [x, x]) === 0', () => {
+    const x = {};
+    assert.strictEqual(0, findIndex(x, [x, x]));
+  });
+});
+
+describe('isArrayLike', () => {
+  it('should be true for array-like', () => {
+    assert(isArrayLike([]));
+    assert(isArrayLike({ length: 0 }));
+    assert(isArrayLike(''));
+  });
+
+  it('should be false for non-array-like', () => {
+    assert(!isArrayLike({}));
+    assert(!isArrayLike(null));
+    assert(!isArrayLike(undefined));
+    assert(!isArrayLike(1));
+    assert(!isArrayLike(true));
+    assert(!isArrayLike(new Date()));
+    assert(!isArrayLike(new RegExp('')));
+    assert(!isArrayLike(function(){}));
+    assert(!isArrayLike(() => {}));
+  })
 });

@@ -97,7 +97,11 @@ export function reduce(f, z, a) {
 // replace :: a -> Int -> [a]
 // replace element at index
 export function replace(x, i, a) {
-    const l = array.length;
+    if (i < 0) {
+        throw new TypeError('i must be >= 0');
+    }
+
+    const l = a.length;
     const b = new Array(l);
     for (let j = 0; j < l; ++j) {
         b[j] = i === j ? x : a[j];
@@ -144,7 +148,8 @@ function unsafeRemove(i, a, l) {
 export function removeAll(f, a) {
     const l = a.length;
     const b = new Array(l);
-    for (let x, i = 0, j = 0; i < l; ++i) {
+    let j = 0;
+    for (let x, i = 0; i < l; ++i) {
         x = a[i];
         if (!f(x)) {
             b[j] = x;
