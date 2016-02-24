@@ -18,16 +18,22 @@
     });
     /** @license MIT License (c) copyright 2010-2016 original author or authors */
 
-    function cons(x, array) {
-        var l = array.length;
-        var a = new Array(l + 1);
-        a[0] = x;
+    // Non-mutating array operations
+
+    // cons :: a -> [a] -> [a]
+    // a with x prepended
+    function cons(x, a) {
+        var l = a.length;
+        var b = new Array(l + 1);
+        b[0] = x;
         for (var i = 0; i < l; ++i) {
-            a[i + 1] = array[i];
+            b[i + 1] = a[i];
         }
-        return a;
+        return b;
     }
 
+    // append :: a -> [a] -> [a]
+    // a with x appended
     function append(x, a) {
         var l = a.length;
         var b = new Array(l + 1);
@@ -39,80 +45,135 @@
         return b;
     }
 
-    function drop(n, array) {
-        var l = array.length;
+    // drop :: Int -> [a] -> [a]
+    // drop first n elements
+    function drop(n, a) {
+        if (n < 0) {
+            throw new TypeError('n must be >= 0');
+        }
+
+        var l = a.length;
+        if (n === 0 || l === 0) {
+            return a;
+        }
+
         if (n >= l) {
             return [];
         }
 
-        l -= n;
-        var a = new Array(l);
+        return unsafeDrop(n, a, l - n);
+    }
+
+    // unsafeDrop :: Int -> [a] -> Int -> [a]
+    // Internal helper for drop
+    function unsafeDrop(n, a, l) {
+        var b = new Array(l);
         for (var i = 0; i < l; ++i) {
-            a[i] = array[n + i];
+            b[i] = a[n + i];
         }
-        return a;
+        return b;
     }
 
-    function tail(array) {
-        return drop(1, array);
+    // tail :: [a] -> [a]
+    // drop head element
+    function tail(a) {
+        return drop(1, a);
     }
 
-    function copy(array) {
-        var l = array.length;
-        var a = new Array(l);
+    // copy :: [a] -> [a]
+    // duplicate a (shallow duplication)
+    function copy(a) {
+        var l = a.length;
+        var b = new Array(l);
         for (var i = 0; i < l; ++i) {
-            a[i] = array[i];
+            b[i] = a[i];
         }
-        return a;
+        return b;
     }
 
-    function map(f, array) {
-        var l = array.length;
-        var a = new Array(l);
+    // map :: (a -> b) -> [a] -> [b]
+    // transform each element with f
+    function map(f, a) {
+        var l = a.length;
+        var b = new Array(l);
         for (var i = 0; i < l; ++i) {
-            a[i] = f(array[i]);
+            b[i] = f(a[i]);
         }
-        return a;
+        return b;
     }
 
-    function reduce(f, z, array) {
+    // reduce :: (a -> b -> a) -> a -> [b] -> a
+    // accumulate via left-fold
+    function reduce(f, z, a) {
         var r = z;
-        for (var i = 0, l = array.length; i < l; ++i) {
-            r = f(r, array[i], i);
+        for (var i = 0, l = a.length; i < l; ++i) {
+            r = f(r, a[i], i);
         }
         return r;
     }
 
-    function replace(x, i, array) {
-        var l = array.length;
-        var a = new Array(l);
-        for (var _j = 0; _j < l; ++_j) {
-            a[_j] = i === _j ? x : array[_j];
+    // replace :: a -> Int -> [a]
+    // replace element at index
+    function replace(x, i, a) {
+        if (i < 0) {
+            throw new TypeError('i must be >= 0');
         }
-        return a;
+
+        var l = a.length;
+        var b = new Array(l);
+        for (var j = 0; j < l; ++j) {
+            b[j] = i === j ? x : a[j];
+        }
+        return b;
     }
 
-    function unsafeRemove(index, a, l) {
-        var b = new Array(l);
-        var i = undefined;
-        for (i = 0; i < index; ++i) {
-            b[i] = a[i];
+    // remove :: Int -> [a] -> [a]
+    // remove element at index
+    function remove(i, a) {
+        if (i < 0) {
+            throw new TypeError('i must be >= 0');
         }
-        for (i = index; i < l; ++i) {
-            b[i] = a[i + 1];
+
+        var l = a.length;
+        if (l === 0 || i >= l) {
+            // exit early if index beyond end of array
+            return a;
+        }
+
+        if (l === 1) {
+            // exit early if index in bounds and length === 1
+            return [];
+        }
+
+        return unsafeRemove(i, a, l - 1);
+    }
+
+    // unsafeRemove :: Int -> [a] -> Int -> [a]
+    // Internal helper to remove element at index
+    function unsafeRemove(i, a, l) {
+        var b = new Array(l);
+        var j = undefined;
+        for (j = 0; j < i; ++j) {
+            b[j] = a[j];
+        }
+        for (j = i; j < l; ++j) {
+            b[j] = a[j + 1];
         }
 
         return b;
     }
 
+    // removeAll :: (a -> boolean) -> [a] -> [a]
+    // remove all elements matching a predicate
     function removeAll(f, a) {
         var l = a.length;
         var b = new Array(l);
-        for (var x, i = 0, _j2 = 0; i < l; ++i) {
+        var j = 0;
+        for (var x, i = 0; i < l; ++i) {
             x = a[i];
             if (!f(x)) {
-                b[_j2] = x;
-                ++_j2;
+                b[j] = x;
+                ++j;
             }
         }
 
@@ -120,6 +181,8 @@
         return b;
     }
 
+    // findIndex :: a -> [a] -> Int
+    // find index of x in a, from the left
     function findIndex(x, a) {
         for (var i = 0, l = a.length; i < l; ++i) {
             if (x === a[i]) {
@@ -129,6 +192,8 @@
         return -1;
     }
 
+    // isArrayLike :: * -> boolean
+    // Return true iff x is array-like
     function isArrayLike(x) {
         return x != null && typeof x.length === 'number' && typeof x !== 'function';
     }
@@ -160,7 +225,7 @@
     exports.map = map;
     exports.reduce = reduce;
     exports.replace = replace;
-    exports.unsafeRemove = unsafeRemove;
+    exports.remove = remove;
     exports.removeAll = removeAll;
     exports.findIndex = findIndex;
     exports.isArrayLike = isArrayLike;
