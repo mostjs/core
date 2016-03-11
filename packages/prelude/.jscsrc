@@ -1,8 +1,0 @@
-{
-  "preset": "crockford",
-  "esnext": true,
-  "disallowDanglingUnderscores": null,
-  "requireMultipleVarDecl": null,
-  "requireSemicolons": true,
-  "requireSpacesInAnonymousFunctionExpression": false
-}
