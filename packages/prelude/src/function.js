@@ -23,7 +23,7 @@ export function curry2 (f) {
 
 // curry3 :: (a -> b -> c -> d) -> a -> b -> c -> d
 export function curry3 (f) {
-  function curried (a, b, c) {
+  function curried (a, b, c) { // eslint-disable-line
     switch (arguments.length) {
       case 0: return curried
       case 1: return curry2((b, c) => f(a, b, c))

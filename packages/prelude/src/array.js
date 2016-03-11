@@ -29,7 +29,7 @@ export function append (x, a) {
 
 // drop :: Int -> [a] -> [a]
 // drop first n elements
-export function drop (n, a) {
+export function drop (n, a) { //eslint-disable-line
   if (n < 0) {
     throw new TypeError('n must be >= 0')
   }
@@ -96,7 +96,7 @@ export function reduce (f, z, a) {
 
 // replace :: a -> Int -> [a]
 // replace element at index
-export function replace (x, i, a) {
+export function replace (x, i, a) { // eslint-disable-line
   if (i < 0) {
     throw new TypeError('i must be >= 0')
   }
@@ -111,7 +111,7 @@ export function replace (x, i, a) {
 
 // remove :: Int -> [a] -> [a]
 // remove element at index
-export function remove (i, a) {
+export function remove (i, a) { // eslint-disable-line
   if (i < 0) {
     throw new TypeError('i must be >= 0')
   }
