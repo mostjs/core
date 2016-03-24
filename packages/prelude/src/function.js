@@ -9,7 +9,7 @@ export const compose = (f, g) => x => f(g(x))
 // apply :: (a -> b) -> a -> b
 export const apply = (f, x) => f(x)
 
-// curry2 :: (a -> b -> c) -> a -> b -> c
+// curry2 :: ((a, b) -> c) -> (a -> b -> c)
 export function curry2 (f) {
   function curried (a, b) {
     switch (arguments.length) {
@@ -21,7 +21,7 @@ export function curry2 (f) {
   return curried
 }
 
-// curry3 :: (a -> b -> c -> d) -> a -> b -> c -> d
+// curry3 :: ((a, b, c) -> d) -> (a -> b -> c -> d)
 export function curry3 (f) {
   function curried (a, b, c) { // eslint-disable-line complexity
     switch (arguments.length) {
