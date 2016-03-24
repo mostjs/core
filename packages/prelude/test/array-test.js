@@ -28,10 +28,12 @@ describe('cons', () => {
 })
 
 describe('append', () => {
-  it('should increase length by 1', () => {
+  it('should add 1 to the length', () => {
     const a = []
-    assert(append(1, a).length === a.length + 1)
-    assert(append(2, append(1, a)).length === a.length + 2)
+    const b = append(1, a)
+    const c = append(2, b)
+    assert(b.length === a.length + 1)
+    assert(c.length === b.length + 1)
   })
 
   it('should append value', () => {
