@@ -53,6 +53,19 @@ describe('curry2', () => {
     assert.strictEqual(typeof curriedFn(1, 2).length, 'undefined')
     assert.strictEqual(curriedFn(1, 2), 3)
   })
+
+  it('should be invariant', () => {
+    const f = (x, y) => x + y
+    const a = 1
+    const b = 2
+
+    const bool =
+      curry2(f)(a)(b) === 3 &&
+      curry2(f)(a, b) === 3 &&
+      f(a, b) === 3
+
+    assert.strictEqual(bool, true)
+  })
 })
 
 describe('curry3', () => {
@@ -76,10 +89,26 @@ describe('curry3', () => {
     assert.strictEqual(addOneTwo(3), 6)
   })
 
-  it('should execut function when given 3 args', () => {
+  it('should execute function when given 3 args', () => {
     const fn = (a, b, c) => a + b + c
     const curriedFn = curry3(fn)
     assert.strictEqual(typeof curriedFn(1, 2, 3).length, 'undefined')
     assert.strictEqual(curriedFn(1, 2, 3), 6)
+  })
+
+  it('should be invariant', () => {
+    const f = (x, y, z) => x + y + z
+    const a = 1
+    const b = 2
+    const c = 3
+
+    const bool =
+      curry3(f)(a)(b)(c) === 6 &&
+      curry3(f)(a, b)(c) === 6 &&
+      curry3(f)(a)(b, c) === 6 &&
+      curry3(f)(a, b, c) === 6 &&
+      f(a, b, c) === 6
+
+    assert.strictEqual(bool, true)
   })
 })
