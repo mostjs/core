@@ -81,7 +81,7 @@ describe('curry3', () => {
     assert.strictEqual(curriedFn(1).length, 2)
   })
 
-  it('should return function of lenght 1 when given 2 args', () => {
+  it('should return function of length 1 when given 2 args', () => {
     const fn = (a, b, c) => a + b + c
     const curriedFn = curry3(fn)
     const addOneTwo = curriedFn(1, 2)
