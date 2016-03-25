@@ -59,12 +59,10 @@ describe('curry2', () => {
     const a = 1
     const b = 2
 
-    const bool =
-      curry2(f)(a)(b) === 3 &&
-      curry2(f)(a, b) === 3 &&
-      f(a, b) === 3
+    const expected = f(a, b)
 
-    assert.strictEqual(bool, true)
+    assert.strictEqual(expected, curry2(f)(a)(b))
+    assert.strictEqual(expected, curry2(f)(a, b))
   })
 })
 
@@ -102,13 +100,11 @@ describe('curry3', () => {
     const b = 2
     const c = 3
 
-    const bool =
-      curry3(f)(a)(b)(c) === 6 &&
-      curry3(f)(a, b)(c) === 6 &&
-      curry3(f)(a)(b, c) === 6 &&
-      curry3(f)(a, b, c) === 6 &&
-      f(a, b, c) === 6
+    const expected = f(a, b, c)
 
-    assert.strictEqual(bool, true)
+    assert.strictEqual(expected, curry3(f)(a)(b)(c))
+    assert.strictEqual(expected, curry3(f)(a, b)(c))
+    assert.strictEqual(expected, curry3(f)(a)(b, c))
+    assert.strictEqual(expected, curry3(f)(a, b, c))
   })
 })
