@@ -39,11 +39,7 @@
     "isparta": "^4.0.0",
     "jsinspect": "^0.7.2",
     "mocha": "^2.4.5",
-    "most": "^0.18.0",
     "rollup": "^0.25.3",
     "uglify-js": "^2.6.1"
-  },
-  "peerDependencies": {
-    "most": "^0.18.0"
   }
 }
