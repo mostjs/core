@@ -27,11 +27,11 @@
   "homepage": "https://github.com/mostjs/prelude#readme",
   "devDependencies": {
     "@most/eslint-config-most": "^1.0.2",
-    "assert": "^1.3.0",
     "babel-cli": "^6.5.0",
     "babel-core": "^6.5.0",
     "babel-plugin-transform-es2015-modules-umd": "^6.5.0",
     "babel-preset-es2015": "^6.5.0",
+    "babel-preset-power-assert": "^1.0.0",
     "eslint": "^2.3.0",
     "eslint-config-standard": "^5.1.0",
     "eslint-plugin-promise": "^1.1.0",
@@ -39,6 +39,7 @@
     "isparta": "^4.0.0",
     "jsinspect": "^0.7.2",
     "mocha": "^2.4.5",
+    "power-assert": "^1.4.1",
     "rollup": "^0.25.3",
     "uglify-js": "^2.6.1"
   }
