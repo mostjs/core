@@ -1,6 +1,6 @@
 {
   "name": "@most/prelude",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "prelude",
   "main": "dist/prelude.js",
   "typings": "type-definitions/prelude.d.ts",

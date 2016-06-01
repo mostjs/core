@@ -155,7 +155,7 @@
   // Internal helper to remove element at index
   function unsafeRemove(i, a, l) {
     var b = new Array(l);
-    var j = undefined;
+    var j = void 0;
     for (j = 0; j < i; ++j) {
       b[j] = a[j];
     }
