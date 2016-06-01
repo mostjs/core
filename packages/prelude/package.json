@@ -3,8 +3,10 @@
   "version": "1.2.0",
   "description": "prelude",
   "main": "dist/prelude.js",
+  "typings": "type-definitions/prelude.d.ts",
   "files": [
-    "dist/prelude.js"
+    "dist/prelude.js",
+    "type-definitions/prelude.d.ts"
   ],
   "scripts": {
     "build-dist": "mkdir -p dist && rollup src/index.js | babel --presets es2015 --plugins transform-es2015-modules-umd --module-id '@most/prelude' -o dist/prelude.js",
