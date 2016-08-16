@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
   (factory((global.mostPrelude = global.mostPrelude || {})));
-}(this, function (exports) { 'use strict';
+}(this, (function (exports) { 'use strict';
 
   /** @license MIT License (c) copyright 2010-2016 original author or authors */
 
@@ -240,5 +240,5 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
 //# sourceMappingURL=prelude.js.map
