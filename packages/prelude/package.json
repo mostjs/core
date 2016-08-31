@@ -1,6 +1,6 @@
 {
   "name": "@most/prelude",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "prelude",
   "main": "dist/prelude.js",
   "jsnext:main": "src/index.js",
