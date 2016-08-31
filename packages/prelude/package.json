@@ -7,7 +7,7 @@
   "typings": "type-definitions/prelude.d.ts",
   "files": [
     "src/*",
-    "dist/prelude.js",
+    "dist/*",
     "type-definitions/prelude.d.ts"
   ],
   "scripts": {
