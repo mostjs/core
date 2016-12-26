@@ -3,7 +3,7 @@ import nodeResolve from 'rollup-plugin-node-resolve'
 
 export default {
   entry: 'src/index.js',
-  dest: 'dist/most.js',
+  dest: 'dist/mostCore.js',
   format: 'umd',
   moduleName: 'most',
   sourceMap: true,

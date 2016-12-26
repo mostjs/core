@@ -1,26 +1,23 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
+import { spec, referee } from 'buster'
+const { describe, it } = spec
+const { assert } = referee
 
-var periodic = require('../../src/source/periodic').periodic
-var take = require('../../src/combinator/slice').take
+import { periodic } from '../../src/source/periodic'
+import { take } from '../../src/combinator/slice'
 
-var te = require('../helper/testEnv')
+import te from '../helper/testEnv'
 
-var sentinel = { value: 'sentinel' }
-
-function hasTimeAndValue (event, i) {
-  return event.time === i && event.value === sentinel
-}
+const hasTimeAndValue = ({ time, value }, i) =>
+  time === i && value === undefined
 
 describe('periodic', function () {
   it('should emit value at tick periods', function () {
-    var n = 10
-    var s = take(n, periodic(1, sentinel))
+    const n = 10
+    const s = take(n, periodic(1))
 
     return te.collectEvents(s, te.ticks(n)).then(function (events) {
-      expect(events.length).toBe(n)
-      expect(events.every(hasTimeAndValue)).toBeTrue()
+      assert.same(n, events.length)
+      assert(events.every(hasTimeAndValue))
     })
   })
 })

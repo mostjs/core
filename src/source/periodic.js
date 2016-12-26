@@ -6,20 +6,20 @@ import Stream from '../Stream'
 import PropagateTask from '../scheduler/PropagateTask'
 
 /**
- * Create a stream that emits the current time periodically
+ * Create a stream of events that occur at a regular period
  * @param {Number} period periodicity of events in millis
- * @param {*} value value to emit each period
- * @returns {Stream} new stream that emits the current time every period
+ * @returns {Stream} new stream of periodic events, the event value is undefined
  */
-export function periodic (period, value) {
-  return new Stream(new Periodic(period, value))
+export function periodic (period) {
+  return new Stream(new Periodic(period))
 }
 
-function Periodic (period, value) {
-  this.period = period
-  this.value = value
-}
+class Periodic {
+  constructor (period) {
+    this.period = period
+  }
 
-Periodic.prototype.run = function (sink, scheduler) {
-  return scheduler.periodic(this.period, PropagateTask.event(this.value, sink))
+  run (sink, scheduler) {
+    return scheduler.periodic(this.period, PropagateTask.event(undefined, sink))
+  }
 }

@@ -6,18 +6,11 @@ import Stream from '../Stream'
 import { fromArray } from './fromArray'
 import { isIterable } from '../iterable'
 import { fromIterable } from './fromIterable'
-import getObservable from '../observable/getObservable'
-import { fromObservable } from '../observable/fromObservable'
 import { isArrayLike } from '@most/prelude'
 
-export function from (a) { // eslint-disable-line complexity
+function coerce (a) { // eslint-disable-line complexity
   if (a instanceof Stream) {
     return a
-  }
-
-  var observable = getObservable(a)
-  if (observable != null) {
-    return fromObservable(observable)
   }
 
   if (Array.isArray(a) || isArrayLike(a)) {
@@ -30,3 +23,5 @@ export function from (a) { // eslint-disable-line complexity
 
   throw new TypeError('from(x) must be observable, iterable, or array-like: ' + a)
 }
+
+export { coerce as from }

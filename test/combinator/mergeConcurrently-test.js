@@ -5,6 +5,7 @@ const { fail, assert } = referee
 import { mergeMapConcurrently, mergeConcurrently } from '../../src/combinator/mergeConcurrently'
 import { periodic } from '../../src/source/periodic'
 import { take } from '../../src/combinator/slice'
+import { constant } from '../../src/combinator/transform'
 import { drain } from '../../src/combinator/observe'
 import { of as just } from '../../src/source/core'
 import { fromArray } from '../../src/source/fromArray'
@@ -12,9 +13,11 @@ import te from '../helper/testEnv'
 
 const sentinel = { value: 'sentinel' }
 
+const periodicConstant = (ms, x) => constant(x, periodic(ms))
+
 describe('mergeConcurrently', () => {
   it('should be identity for 1 stream', () => {
-    const s = mergeConcurrently(1, just(periodic(1, sentinel)))
+    const s = mergeConcurrently(1, just(periodicConstant(1, sentinel)))
     const n = 3
 
     return te.collectEvents(take(n, s), te.ticks(n))
@@ -28,7 +31,7 @@ describe('mergeConcurrently', () => {
   })
 
   it('should merge all when number of streams <= concurrency', () => {
-    const streams = [periodic(1, 1), periodic(1, 2), periodic(1, 3)]
+    const streams = [periodicConstant(1, 1), periodicConstant(1, 2), periodicConstant(1, 3)]
     const s = mergeConcurrently(streams.length, fromArray(streams))
     const n = 3
 
@@ -52,7 +55,7 @@ describe('mergeConcurrently', () => {
     const n = 3
     const m = 2
 
-    const streams = [take(n, periodic(1, 1)), take(n, periodic(1, 2)), take(n, periodic(1, 3))]
+    const streams = [take(n, periodicConstant(1, 1)), take(n, periodicConstant(1, 2)), take(n, periodicConstant(1, 3))]
     const s = mergeConcurrently(m, fromArray(streams))
 
     return te.collectEvents(take(n * streams.length, s), te.ticks(m * n))
