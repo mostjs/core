@@ -15,7 +15,7 @@
   "scripts": {
     "unit-test": "buster-test",
     "test": "eslint src test && npm run unit-test",
-    "build": "rimraf lib dist && buba src -o lib && rollup -c && uglifyjs dist/most.js -c \"warnings=false\" -m -o dist/most.min.js",
+    "build": "rimraf lib dist && buba src -o lib && rollup -c && uglifyjs dist/mostCore.js -c \"warnings=false\" -m -o dist/mostCore.min.js",
     "preversion": "npm run build"
   },
   "repository": {
