@@ -7,15 +7,13 @@
   "module": "src/index.js",
   "jsnext:main": "src/index.js",
   "files": [
-    "src",
-    "lib",
     "type-definitions",
     "dist"
   ],
   "scripts": {
     "unit-test": "buster-test",
     "test": "eslint src test && npm run unit-test",
-    "build": "rimraf lib dist && buba src -o lib && rollup -c && uglifyjs dist/mostCore.js -c \"warnings=false\" -m -o dist/mostCore.min.js",
+    "build": "rimraf lib dist && rollup -c && uglifyjs dist/mostCore.js -c \"warnings=false\" -m -o dist/mostCore.min.js",
     "preversion": "npm run build"
   },
   "repository": {
