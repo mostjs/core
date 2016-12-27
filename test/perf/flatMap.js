@@ -35,7 +35,7 @@ function buildArray(base, n) {
   return a;
 }
 
-const suite = Benchmark.Suite('flatMap ' + mn[0] + ' x ' + mn[1] + ' streams');
+const suite = Benchmark.Suite('chain(flatMap) ' + mn[0] + ' x ' + mn[1] + ' streams');
 const options = {
   defer: true,
   onError: function(e) {

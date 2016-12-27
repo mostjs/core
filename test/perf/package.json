@@ -5,17 +5,18 @@
   "author": "brian@hovercraftstudios.com",
   "license": "MIT",
   "scripts": {
+    "chain": "node ./chain.js",
     "concatMap": "node ./concatMap.js",
     "filter-map-reduce": "node ./filter-map-reduce",
-    "flatMap": "node ./flatMap.js",
     "merge": "node ./merge.js",
     "merge-nested": "node ./merge-nested.js",
     "sample": "node ./sample.js",
     "scan": "node ./scan.js",
     "slice": "node ./slice.js",
     "skipRepeats": "node ./skipRepeats.js",
+    "switch": "node ./switch.js",
     "zip": "node ./zip.js",
-    "start": "npm run filter-map-reduce && npm run flatMap && npm run concatMap && npm run merge && npm run merge-nested && npm run zip && npm run scan && npm run slice && npm run skipRepeats"
+    "start": "npm run filter-map-reduce && npm run chain && npm run concatMap && npm run merge && npm run merge-nested && npm run zip && npm run scan && npm run slice && npm run skipRepeats && npm run switch"
   },
   "dependencies": {
     "@reactivex/rxjs": "^5.0.1",
