@@ -1,38 +1,38 @@
 require('buba/register')
-var Benchmark = require('benchmark');
-var most = require('../../src/index');
-var rx = require('rx');
-var rxjs = require('@reactivex/rxjs')
-var kefir = require('kefir');
-var bacon = require('baconjs');
-var highland = require('highland');
-var xs = require('xstream').default;
+const Benchmark = require('benchmark');
+const {from, skip, take, reduce} = require('../../src/index');
+const rx = require('rx');
+const rxjs = require('@reactivex/rxjs')
+const kefir = require('kefir');
+const bacon = require('baconjs');
+const highland = require('highland');
+const xs = require('xstream').default;
 
-var runners = require('./runners');
-var kefirFromArray = runners.kefirFromArray;
+const runners = require('./runners');
+const kefirFromArray = runners.kefirFromArray;
 
 // Create a stream from an Array of n integers
 // filter out odds, map remaining evens by adding 1, then reduce by summing
-var n = runners.getIntArg(1000000);
-var a = new Array(n);
-for(var i = 0; i< a.length; ++i) {
+const n = runners.getIntArg(1000000);
+const a = new Array(n);
+for(let i = 0; i< a.length; ++i) {
   a[i] = i;
 }
 
-var suite = Benchmark.Suite('skip(n/4) -> take(n/2) ' + n + ' integers');
-var options = {
+const suite = Benchmark.Suite('skip(n/4) -> take(n/2) ' + n + ' integers');
+const options = {
   defer: true,
   onError: function(e) {
     e.currentTarget.failure = e.error;
   }
 };
 
-var s = n * 0.25;
-var t = n * 0.5;
+const s = n * 0.25;
+const t = n * 0.5;
 
 suite
   .add('most', function(deferred) {
-    runners.runMost(deferred, most.from(a).skip(s).take(t).reduce(sum, 0));
+    runners.runMost(deferred, reduce(sum, 0, take(t, skip(s, from(a)))));
   }, options)
   .add('rx 4', function(deferred) {
     runners.runRx(deferred, rx.Observable.fromArray(a).skip(s).take(t).reduce(sum, 0));

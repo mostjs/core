@@ -1,28 +1,28 @@
 require('buba/register')
-var Benchmark = require('benchmark');
-var most = require('../../src/index');
-var rx = require('rx');
-var rxjs = require('@reactivex/rxjs');
-var kefir = require('kefir');
-var bacon = require('baconjs');
-var highland = require('highland');
+const Benchmark = require('benchmark');
+const {from, zip, reduce} = require('../../src/index');
+const rx = require('rx');
+const rxjs = require('@reactivex/rxjs');
+const kefir = require('kefir');
+const bacon = require('baconjs');
+const highland = require('highland');
 
-var runners = require('./runners');
-var kefirFromArray = runners.kefirFromArray;
+const runners = require('./runners');
+const kefirFromArray = runners.kefirFromArray;
 
 // Create 2 streams, each with n items, zip them by summing the
 // corresponding index pairs, then reduce the resulting stream by summing
-var n = runners.getIntArg(100000);
-var a = new Array(n);
-var b = new Array(n);
+const n = runners.getIntArg(100000);
+const a = new Array(n);
+const b = new Array(n);
 
-for(var i = 0; i<n; ++i) {
+for(let i = 0; i<n; ++i) {
   a[i] = i;
   b[i] = i;
 }
 
-var suite = Benchmark.Suite('zip 2 x ' + n + ' integers');
-var options = {
+const suite = Benchmark.Suite('zip 2 x ' + n + ' integers');
+const options = {
   defer: true,
   onError: function(e) {
     e.currentTarget.failure = e.error;
@@ -31,7 +31,7 @@ var options = {
 
 suite
   .add('most', function(deferred) {
-    runners.runMost(deferred, most.from(a).zip(add, most.from(b)).reduce(add, 0));
+    runners.runMost(deferred, reduce(add, 0, zip(add, from(b), from(a))));
   }, options)
   .add('rx 4', function(deferred) {
     runners.runRx(deferred, rx.Observable.fromArray(a).zip(rx.Observable.fromArray(b), add).reduce(add, 0));
