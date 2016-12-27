@@ -7,6 +7,7 @@ var observe = require('../../src/combinator/observe').observe
 var reduce = require('../../src/combinator/accumulate').reduce
 var streamOf = require('../../src/source/core').of
 var fromArray = require('../../src/source/fromArray').fromArray
+var recoverWith = require('../../src/combinator/errors').recoverWith
 
 var sentinel = { value: 'sentinel' }
 
@@ -62,10 +63,9 @@ describe('fromPromise', function () {
   })
 
   it('should be recoverable if promise rejects', function () {
-    var s = promises.fromPromise(Promise.reject())
-      .recoverWith(function () {
-        return promises.fromPromise(Promise.resolve(sentinel))
-      })
+    var s = recoverWith(function () {
+      return promises.fromPromise(Promise.resolve(sentinel))
+    }, promises.fromPromise(Promise.reject()))
 
     return observe(function (x) {
       expect(x).toBe(sentinel)

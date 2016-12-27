@@ -4,6 +4,7 @@ var expect = require('buster').expect
 
 var timestamp = require('../../src/combinator/timestamp').timestamp
 var periodic = require('../../src/source/periodic').periodic
+var constant = require('../../src/combinator/transform').constant
 var take = require('../../src/combinator/slice').take
 
 var te = require('../helper/testEnv')
@@ -13,7 +14,7 @@ var sentinel = 'sentinel'
 describe('timestamp', function () {
   it('should emit time-value pairs', function () {
     var n = 10
-    var s = take(n, timestamp(periodic(1, sentinel)))
+    var s = take(n, timestamp(constant(sentinel, periodic(1))))
 
     return te.collectEvents(s, te.ticks(n)).then(function (events) {
       events.forEach(function ({ value: { time, value } }, i) {

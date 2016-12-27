@@ -14,6 +14,7 @@ var never = core.never
 
 var te = require('./helper/testEnv')
 var FakeDisposeSource = require('./helper/FakeDisposeSource')
+var endWith = require('./helper/endWith').endWith
 
 var sentinel = { value: 'sentinel' }
 
@@ -149,7 +150,7 @@ describe('skipUntil', function () {
   })
 
   it('should preserve end value', function () {
-    var stream = take(3, periodic(1, sentinel))
+    var stream = endWith(sentinel, take(3, periodic(1)))
     var start = delay(3, streamOf())
 
     var s = timeslice.skipUntil(start, stream)
