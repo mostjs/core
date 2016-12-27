@@ -1,41 +1,41 @@
 require('buba/register')
-var Benchmark = require('benchmark');
-var most = require('../../src/index');
-var rx = require('rx');
-var rxjs = require('@reactivex/rxjs')
-var kefir = require('kefir');
-var bacon = require('baconjs');
-var highland = require('highland');
-var xs = require('xstream').default;
+const Benchmark = require('benchmark');
+const {from, mergeArray, reduce, map} = require('../../src/index');
+const rx = require('rx');
+const rxjs = require('@reactivex/rxjs')
+const kefir = require('kefir');
+const bacon = require('baconjs');
+const highland = require('highland');
+const xs = require('xstream').default;
 
-var runners = require('./runners');
-var kefirFromArray = runners.kefirFromArray;
+const runners = require('./runners');
+const kefirFromArray = runners.kefirFromArray;
 
 // Merging n streams, each containing m items.
 // Results in a single stream that merges in n x m items
 // In Array parlance: Take an Array containing n Arrays, each of length m,
 // and flatten it to an Array of length n x m.
-var mn = runners.getIntArg2(100000, 10);
-var a = build(mn[0], mn[1]);
+const mn = runners.getIntArg2(100000, 10);
+const a = build(mn[0], mn[1]);
 
 function build(m, n) {
-  var a = new Array(n);
-  for(var i = 0; i< a.length; ++i) {
+  const a = new Array(n);
+  for(let i = 0; i< a.length; ++i) {
     a[i] = buildArray(i*1000, m);
   }
   return a;
 }
 
 function buildArray(base, n) {
-  var a = new Array(n);
-  for(var i = 0; i< a.length; ++i) {
+  const a = new Array(n);
+  for(let i = 0; i< a.length; ++i) {
     a[i] = base + i;
   }
   return a;
 }
 
-var suite = Benchmark.Suite('merge ' + mn[0] + ' x ' + mn[1] + ' streams');
-var options = {
+const suite = Benchmark.Suite('merge ' + mn[0] + ' x ' + mn[1] + ' streams');
+const options = {
   defer: true,
   onError: function(e) {
     e.currentTarget.failure = e.error;
@@ -44,35 +44,35 @@ var options = {
 
 suite
   .add('most', function(deferred) {
-    var streams = a.map(most.from);
-    runners.runMost(deferred, most.mergeArray(streams).reduce(sum, 0));
+    const streams = map(from, a);
+    runners.runMost(deferred, reduce(sum, 0, mergeArray(streams)));
   }, options)
   .add('rx 4', function(deferred) {
-    var streams = a.map(rx.Observable.fromArray);
+    const streams = a.map(rx.Observable.fromArray);
     runners.runRx(deferred, rx.Observable.merge.apply(void 0, streams).reduce(sum, 0));
   }, options)
   .add('rx 5', function(deferred) {
-    var streams = a.map(function(x) {return rxjs.Observable.from(x)});
+    const streams = a.map(function(x) {return rxjs.Observable.from(x)});
     runners.runRx5(deferred,
       rxjs.Observable.merge.apply(rxjs.Observable, streams).reduce(sum, 0))
   }, options)
   .add('xstream', function(deferred) {
-    var streams = a.map(xs.fromArray);
+    const streams = a.map(xs.fromArray);
     runners.runXstream(deferred, xs.merge.apply(xs, streams).fold(sum, 0).last())
   }, options)
   .add('kefir', function(deferred) {
-    var streams = a.map(kefirFromArray);
+    const streams = a.map(kefirFromArray);
     runners.runKefir(deferred, kefir.merge(streams).scan(sum, 0).last());
   }, options)
   .add('bacon', function(deferred) {
-    var streams = a.map(bacon.fromArray);
+    const streams = a.map(bacon.fromArray);
     runners.runBacon(deferred, bacon.mergeAll(streams).reduce(0, sum));
   }, options)
   // .add('highland', function(deferred) {
   // Commented out because it never finishes on Node >= 6.9.1 on my machine
   //   // HELP WANTED: Is there a better way to do this in highland?
   //   // The two approaches below perform similarly
-  //   var streams = a.map(highland);
+  //   const streams = a.map(highland);
   //   runners.runHighland(deferred, highland(streams).merge().reduce(0, sum));
   //   //runners.runHighland(deferred, highland(streams).flatMap(identity).reduce(0, sum));
   // }, options);
