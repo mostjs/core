@@ -173,4 +173,17 @@ xstream              18.89 op/s ±  1.82%   (47 samples)
 kefir                10.99 op/s ±  2.19%   (53 samples)
 bacon                 0.73 op/s ±  1.89%    (8 samples)
 -------------------------------------------------------
+
+> most-perf@0.10.0 switch /Users/brian/Projects/cujojs/@most/core/test/perf
+> node ./switch.js
+
+switch 10000 x 1000 streams
+-------------------------------------------------------
+most               1799.37 op/s ±  6.12%   (79 samples)
+rx 5                  1.71 op/s ±  7.66%   (13 samples)
+rx 4                107.66 op/s ±  1.09%   (79 samples)
+xstream               1.32 op/s ±  5.23%   (11 samples)
+kefir                 1.04 op/s ±  7.82%    (9 samples)
+bacon                 0.03 op/s ±  6.27%    (5 samples)
+-------------------------------------------------------
 ```
