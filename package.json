@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Monadic streams",
   "typings": "type-definitions/most.d.ts",
-  "main": "lib/index.js",
-  "module": "src/index.js",
-  "jsnext:main": "src/index.js",
+  "main": "dist/mostCore.js",
+  "module": "dist/mostCore.es.js",
+  "jsnext:main": "dist/mostCore.es.js",
   "files": [
     "type-definitions",
     "dist"
