@@ -2,7 +2,7 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { of as streamOf } from '../source/core'
+import { just } from '../source/core'
 import { continueWith } from './continueWith'
 
 /**
@@ -10,9 +10,7 @@ import { continueWith } from './continueWith'
  * @param {Stream} stream
  * @returns {Stream} new stream with x prepended
  */
-export function cons (x, stream) {
-  return concat(streamOf(x), stream)
-}
+export const startWith = (x, stream) => concat(just(x), stream)
 
 /**
 * @param {Stream} left
@@ -20,8 +18,4 @@ export function cons (x, stream) {
 * @returns {Stream} new stream containing all events in left followed by all
 *  events in right.  This *timeshifts* right to the end of left.
 */
-export function concat (left, right) {
-  return continueWith(function () {
-    return right
-  }, left)
-}
+export const concat = (left, right) => continueWith(() => right, left)

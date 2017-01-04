@@ -4,7 +4,7 @@ const { fail, assert } = referee
 
 import { continueWith } from '../../src/combinator/continueWith'
 import { drain } from '../../src/combinator/observe'
-import { of as just } from '../../src/source/core'
+import { just as just } from '../../src/source/core'
 
 describe('continueWith', () => {
   it('when f throws, should propagate error', () => {

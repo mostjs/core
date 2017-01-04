@@ -11,16 +11,16 @@ import PropagateTask from '../scheduler/PropagateTask'
  * @param {*} x
  * @returns {Stream}
  */
-export function of (x) {
-  return new Stream(new Just(x))
-}
+export const just = x => new Stream(new Just(x))
 
-function Just (x) {
-  this.value = x
-}
+class Just {
+  constructor (x) {
+    this.value = x
+  }
 
-Just.prototype.run = function (sink, scheduler) {
-  return scheduler.asap(new PropagateTask(runJust, this.value, sink))
+  run (sink, scheduler) {
+    return scheduler.asap(new PropagateTask(runJust, this.value, sink))
+  }
 }
 
 function runJust (t, x, sink) {
@@ -32,37 +32,31 @@ function runJust (t, x, sink) {
  * Stream containing no events and ends immediately
  * @returns {Stream}
  */
-export function empty () {
-  return EMPTY
+export const empty = () => EMPTY
+
+class EmptySource {
+  run (sink, scheduler) {
+    const task = PropagateTask.end(void 0, sink)
+    scheduler.asap(task)
+
+    return dispose.create(disposeEmpty, task)
+  }
 }
 
-function EmptySource () {}
+const disposeEmpty = task => task.dispose()
 
-EmptySource.prototype.run = function (sink, scheduler) {
-  var task = PropagateTask.end(void 0, sink)
-  scheduler.asap(task)
-
-  return dispose.create(disposeEmpty, task)
-}
-
-function disposeEmpty (task) {
-  return task.dispose()
-}
-
-var EMPTY = new Stream(new EmptySource())
+const EMPTY = new Stream(new EmptySource())
 
 /**
  * Stream containing no events and never ends
  * @returns {Stream}
  */
-export function never () {
-  return NEVER
+export const never = () => NEVER
+
+class NeverSource {
+  run () {
+    return dispose.empty()
+  }
 }
 
-function NeverSource () {}
-
-NeverSource.prototype.run = function () {
-  return dispose.empty()
-}
-
-var NEVER = new Stream(new NeverSource())
+const NEVER = new Stream(new NeverSource())

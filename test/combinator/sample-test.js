@@ -14,7 +14,7 @@ var core = require('../../src/source/core')
 var te = require('../helper/testEnv')
 
 var empty = core.empty
-var streamOf = core.of
+var streamOf = core.just
 
 var sentinel = { value: 'sentinel' }
 

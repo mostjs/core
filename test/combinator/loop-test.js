@@ -9,7 +9,7 @@ var drain = require('../../src/combinator/observe').drain
 var fromArray = require('../../src/source/fromArray').fromArray
 var throwError = require('../../src/combinator/errors').throwError
 var core = require('../../src/source/core')
-var streamOf = core.of
+var streamOf = core.just
 
 var FakeDisposeSource = require('../helper/FakeDisposeSource')
 

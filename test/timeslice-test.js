@@ -9,7 +9,7 @@ var core = require('../src/source/core')
 var delay = require('../src/combinator/delay').delay
 var Stream = require('../src/Stream').default
 
-var streamOf = core.of
+var streamOf = core.just
 var never = core.never
 
 var te = require('./helper/testEnv')

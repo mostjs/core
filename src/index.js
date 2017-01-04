@@ -3,15 +3,13 @@ import { curry2, curry3 } from '@most/prelude'
 
 export { default as Stream } from './Stream'
 
-export { of as just, empty, never } from './source/core'
-export { from } from './source/from'
+export { just, empty, never } from './source/core'
+
 export { periodic } from './source/periodic'
 
-// -----------------------------------------------------------------------
-// Adapting other sources
+export { fromArray } from './source/fromArray'
 
-import { fromEvent as _fromEvent } from './source/fromEvent'
-export const fromEvent = curry2(_fromEvent)
+export { fromIterable } from './source/fromIterable'
 
 // -----------------------------------------------------------------------
 // Observing
@@ -45,7 +43,7 @@ export const iterate = curry2(_iterate)
 
 export { generate } from './source/generate'
 
-import { concat as _concat, cons as _startWith } from './combinator/build'
+import { concat as _concat, startWith as _startWith } from './combinator/build'
 export const concat = curry2(_concat)
 export const startWith = curry2(_startWith)
 

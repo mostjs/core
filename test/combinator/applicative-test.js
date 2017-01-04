@@ -3,7 +3,7 @@ require('buster').spec.expose()
 var assertSame = require('../helper/stream-helper').assertSame
 
 var applicative = require('../../src/combinator/applicative')
-var streamOf = require('../../src/source/core').of
+var streamOf = require('../../src/source/core').just
 
 var ap = applicative.ap
 

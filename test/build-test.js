@@ -9,7 +9,7 @@ var reduce = require('../src/combinator/accumulate').reduce
 var fromArray = require('../src/source/fromArray').fromArray
 var core = require('../src/source/core')
 
-var streamOf = core.of
+var streamOf = core.just
 var empty = core.empty
 
 var te = require('./helper/testEnv')
@@ -19,7 +19,7 @@ var sentinel = { value: 'sentinel' }
 describe('build', function () {
   describe('startWith', function () {
     it('should return a stream containing item as head', function () {
-      var s = build.cons(sentinel, empty())
+      var s = build.startWith(sentinel, empty())
       return observe(function (x) {
         expect(x).toBe(sentinel)
       }, s)

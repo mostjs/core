@@ -6,7 +6,7 @@ var merge = require('../../src/combinator/merge')
 var delay = require('../../src/combinator/delay').delay
 var reduce = require('../../src/combinator/accumulate').reduce
 var fromArray = require('../../src/source/fromArray').fromArray
-var streamOf = require('../../src/source/core').of
+var streamOf = require('../../src/source/core').just
 
 var te = require('../helper/testEnv')
 

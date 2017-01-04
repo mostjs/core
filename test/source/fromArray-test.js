@@ -1,18 +1,25 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
+import { spec, referee } from 'buster'
+const { describe, it } = spec
+const { assert } = referee
 
-var fromArray = require('../../src/source/fromArray').fromArray
-var reduce = require('../../src/combinator/accumulate').reduce
+import { fromArray } from '../../src/source/fromArray'
 
-describe('from', function () {
+import { ticks, collectEvents } from '../helper/testEnv'
+
+describe('fromArray', function () {
   it('should contain array items', function () {
-    var input = [1, 2, 3]
-    return reduce(function (a, x) {
-      a.push(x)
-      return a
-    }, [], fromArray(input)).then(function (result) {
-      expect(result).toEqual(input)
-    })
+    const a = [1, 2, 3]
+
+    return collectEvents(fromArray(a), ticks(1))
+      .then(events =>
+        assert.equals(a, events.map(({ value }) => value)))
+  })
+
+  it('should support array-like items', function () {
+    const arrayLike = { length: 3, 0: 1, 1: 2, 2: 3 }
+
+    return collectEvents(fromArray(arrayLike), ticks(1))
+      .then(events =>
+        assert.equals([1, 2, 3], events.map(({ value }) => value)))
   })
 })

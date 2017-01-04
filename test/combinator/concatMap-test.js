@@ -14,7 +14,7 @@ var Stream = require('../../src/Stream').default
 var te = require('../helper/testEnv')
 var FakeDisposeSource = require('../helper/FakeDisposeSource')
 
-var streamOf = core.of
+var streamOf = core.just
 var never = core.never
 
 var sentinel = { value: 'sentinel' }

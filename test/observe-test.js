@@ -5,7 +5,7 @@ var expect = require('buster').expect
 var observe = require('../src/combinator/observe')
 var iterate = require('../src/source/iterate').iterate
 var take = require('../src/combinator/slice').take
-var streamOf = require('../src/source/core').of
+var streamOf = require('../src/source/core').just
 
 var sentinel = { value: 'sentinel' }
 
