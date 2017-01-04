@@ -19,7 +19,7 @@ const sentinel = { value: 'sentinel' }
 
 describe('chain', function () {
   it('should satisfy associativity', function () {
-    // m.flatMap(f).flatMap(g) ~= m.flatMap(function(x) { return f(x).flatMap(g); })
+    // m.chain(f).chain(g) ~= m.chain(function(x) { return f(x).chain(g); })
     function f (x) { return just(x + 'f') }
     function g (x) { return just(x + 'g') }
 

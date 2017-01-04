@@ -19,8 +19,6 @@ export function recoverWith (f, stream) {
   return new Stream(new RecoverWith(f, stream.source))
 }
 
-export var flatMapError = recoverWith
-
 /**
  * Create a stream containing only an error
  * @param {*} e error value, preferably an Error or Error subtype
