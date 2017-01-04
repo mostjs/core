@@ -4,7 +4,14 @@
 
 import Stream from '../Stream'
 import fatal from '../fatalError'
-import { of as just } from '../source/core'
+import { just } from '../source/core'
+import { compose } from '@most/prelude'
+
+/**
+ * Turn a Stream<Promise<T>> into Stream<T> by awaiting each promise.
+ * Event order is preserved. The stream will fail if any promise rejects.
+ */
+export const awaitPromises = stream => new Stream(new Await(stream.source))
 
 /**
  * Create a stream containing only the promise's fulfillment
@@ -13,75 +20,51 @@ import { of as just } from '../source/core'
  * @return {Stream<T>} stream containing promise's fulfillment value.
  *  If the promise rejects, the stream will error
  */
-export function fromPromise (p) {
-  return awaitPromises(just(p))
-}
+export const fromPromise = compose(awaitPromises, just)
 
-/**
- * Turn a Stream<Promise<T>> into Stream<T> by awaiting each promise.
- * Event order is preserved.
- * @param {Stream<Promise<T>>} stream
- * @return {Stream<T>} stream of fulfillment values.  The stream will
- * error if any promise rejects.
- */
-export function awaitPromises (stream) {
-  return new Stream(new Await(stream.source))
-}
-
-function Await (source) {
-  this.source = source
-}
-
-Await.prototype.run = function (sink, scheduler) {
-  return this.source.run(new AwaitSink(sink, scheduler), scheduler)
-}
-
-function AwaitSink (sink, scheduler) {
-  this.sink = sink
-  this.scheduler = scheduler
-  this.queue = Promise.resolve()
-  var self = this
-
-	// Pre-create closures, to avoid creating them per event
-  this._eventBound = function (x) {
-    self.sink.event(self.scheduler.now(), x)
+class Await {
+  constructor (source) {
+    this.source = source
   }
 
-  this._endBound = function (x) {
-    self.sink.end(self.scheduler.now(), x)
-  }
-
-  this._errorBound = function (e) {
-    self.sink.error(self.scheduler.now(), e)
+  run (sink, scheduler) {
+    return this.source.run(new AwaitSink(sink, scheduler), scheduler)
   }
 }
 
-AwaitSink.prototype.event = function (t, promise) {
-  var self = this
-  this.queue = this.queue.then(function () {
-    return self._event(promise)
-  }).catch(this._errorBound)
-}
+class AwaitSink {
+  constructor (sink, scheduler) {
+    this.sink = sink
+    this.scheduler = scheduler
+    this.queue = Promise.resolve()
 
-AwaitSink.prototype.end = function (t, x) {
-  var self = this
-  this.queue = this.queue.then(function () {
-    return self._end(x)
-  }).catch(this._errorBound)
-}
+    // Pre-create closures, to avoid creating them per event
+    this._eventBound = x => this.sink.event(this.scheduler.now(), x)
+    this._endBound = x => this.sink.end(this.scheduler.now(), x)
+    this._errorBound = e => this.sink.error(this.scheduler.now(), e)
+  }
 
-AwaitSink.prototype.error = function (t, e) {
-  var self = this
-  // Don't resolve error values, propagate directly
-  this.queue = this.queue.then(function () {
-    return self._errorBound(e)
-  }).catch(fatal)
-}
+  event (t, promise) {
+    this.queue = this.queue.then(() => this._event(promise))
+      .catch(this._errorBound)
+  }
 
-AwaitSink.prototype._event = function (promise) {
-  return promise.then(this._eventBound)
-}
+  end (t, x) {
+    this.queue = this.queue.then(() => this._end(x))
+      .catch(this._errorBound)
+  }
 
-AwaitSink.prototype._end = function (x) {
-  return Promise.resolve(x).then(this._endBound)
+  error (t, e) {
+    // Don't resolve error values, propagate directly
+    this.queue = this.queue.then(() => this._errorBound(e))
+      .catch(fatal)
+  }
+
+  _event (promise) {
+    return promise.then(this._eventBound)
+  }
+
+  _end (x) {
+    return Promise.resolve(x).then(this._endBound)
+  }
 }

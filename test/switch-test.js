@@ -8,7 +8,7 @@ import { take } from '../src/combinator/slice'
 import { constant, map, tap } from '../src/combinator/transform'
 import { periodic } from '../src/source/periodic'
 import { fromArray } from '../src/source/fromArray'
-import { empty, of as just } from '../src/source/core'
+import { empty, just as just } from '../src/source/core'
 
 import te from './helper/testEnv'
 

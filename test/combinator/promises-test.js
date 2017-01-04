@@ -5,7 +5,7 @@ var expect = require('buster').expect
 var promises = require('../../src/combinator/promises')
 var observe = require('../../src/combinator/observe').observe
 var reduce = require('../../src/combinator/accumulate').reduce
-var streamOf = require('../../src/source/core').of
+var streamOf = require('../../src/source/core').just
 var fromArray = require('../../src/source/fromArray').fromArray
 var recoverWith = require('../../src/combinator/errors').recoverWith
 

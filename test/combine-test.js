@@ -7,7 +7,7 @@ var map = require('../src/combinator/transform').map
 var take = require('../src/combinator/slice').take
 var delay = require('../src/combinator/delay').delay
 var periodic = require('../src/source/periodic').periodic
-var streamOf = require('../src/source/core').of
+var streamOf = require('../src/source/core').just
 
 var te = require('./helper/testEnv')
 

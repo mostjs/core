@@ -3,7 +3,7 @@ require('buster').spec.expose()
 var expect = require('buster').expect
 
 var delay = require('../src/combinator/delay').delay
-var streamOf = require('../src/source/core').of
+var streamOf = require('../src/source/core').just
 
 var te = require('./helper/testEnv')
 

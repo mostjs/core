@@ -11,7 +11,7 @@ describe('of', function () {
   it('should contain one item', function () {
     return observe(function (x) {
       expect(x).toBe(sentinel)
-    }, core.of(sentinel))
+    }, core.just(sentinel))
   })
 })
 

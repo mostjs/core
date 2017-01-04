@@ -7,7 +7,7 @@ import { periodic } from '../../src/source/periodic'
 import { take } from '../../src/combinator/slice'
 import { constant } from '../../src/combinator/transform'
 import { drain } from '../../src/combinator/observe'
-import { of as just } from '../../src/source/core'
+import { just as just } from '../../src/source/core'
 import { fromArray } from '../../src/source/fromArray'
 import te from '../helper/testEnv'
 

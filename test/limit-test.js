@@ -12,7 +12,7 @@ var core = require('../src/source/core')
 var Map = require('../src/fusion/Map').default
 
 var empty = core.empty
-var streamOf = core.of
+var streamOf = core.just
 
 var map = transform.map
 

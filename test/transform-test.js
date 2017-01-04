@@ -5,7 +5,7 @@ var assertSame = require('./helper/stream-helper').assertSame
 
 var transform = require('../src/combinator/transform')
 var observe = require('../src/combinator/observe').observe
-var streamOf = require('../src/source/core').of
+var streamOf = require('../src/source/core').just
 
 var map = transform.map
 var tap = transform.tap

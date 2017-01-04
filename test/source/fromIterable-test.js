@@ -1,19 +1,18 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
+import { spec, referee } from 'buster'
+const { describe, it } = spec
+const { assert } = referee
 
-var fromIterable = require('../../src/source/fromIterable').fromIterable
-var reduce = require('../../src/combinator/accumulate').reduce
-var ArrayIterable = require('../helper/ArrayIterable')
+import { fromIterable } from '../../src/source/fromIterable'
+
+import ArrayIterable from '../helper/ArrayIterable'
+import { ticks, collectEvents } from '../helper/testEnv'
 
 describe('fromIterable', function () {
   it('should contain iterable items', function () {
-    var input = [1, 2, 3]
-    return reduce(function (a, x) {
-      a.push(x)
-      return a
-    }, [], fromIterable(new ArrayIterable(input))).then(function (result) {
-      expect(result).toEqual(input)
-    })
+    const a = [1, 2, 3]
+
+    return collectEvents(fromIterable(new ArrayIterable(a)), ticks(1))
+      .then(events =>
+        assert.equals(a, events.map(({ value }) => value)))
   })
 })

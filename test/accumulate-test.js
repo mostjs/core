@@ -8,7 +8,7 @@ import { throwError } from '../src/combinator/errors'
 import { observe, drain } from '../src/combinator/observe'
 
 import { fromArray } from '../src/source/fromArray'
-import { empty, of as just } from '../src/source/core'
+import { empty, just as just } from '../src/source/core'
 
 import FakeDisposeSource from './helper/FakeDisposeSource'
 
