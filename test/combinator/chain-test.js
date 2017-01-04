@@ -7,7 +7,7 @@ import { delay } from '../../src/combinator/delay'
 import { concat } from '../../src/combinator/build'
 import { take } from '../../src/combinator/slice'
 import { drain } from '../../src/combinator/observe'
-import { of as just, never } from '../../src/source/core'
+import { just, never } from '../../src/source/core'
 import { fromArray } from '../../src/source/fromArray'
 import Stream from '../../src/Stream'
 
