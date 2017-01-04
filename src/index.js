@@ -61,7 +61,7 @@ export const ap = curry2(_ap)
 // -----------------------------------------------------------------------
 // FlatMapping
 
-import { flatMap as _chain, join } from './combinator/flatMap'
+import { chain as _chain, join } from './combinator/chain'
 export const chain = curry2(_chain)
 export { join }
 
