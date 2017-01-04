@@ -5,7 +5,7 @@
 import Stream from '../Stream'
 import Pipe from '../sink/Pipe'
 import * as dispose from '../disposable/dispose'
-import { join } from '../combinator/flatMap'
+import { join } from './chain'
 
 export function takeUntil (signal, stream) {
   return new Stream(new Until(signal.source, stream.source))

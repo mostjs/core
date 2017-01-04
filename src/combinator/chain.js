@@ -11,9 +11,7 @@ import { mergeConcurrently, mergeMapConcurrently } from './mergeConcurrently'
  * @param {Stream} stream
  * @returns {Stream} new stream containing all events from each stream returned by f
  */
-export function flatMap (f, stream) {
-  return mergeMapConcurrently(f, Infinity, stream)
-}
+export const chain = (f, stream) => mergeMapConcurrently(f, Infinity, stream)
 
 /**
  * Monadic join. Flatten a Stream<Stream<X>> to Stream<X> by merging inner
@@ -21,6 +19,4 @@ export function flatMap (f, stream) {
  * @param {Stream<Stream<X>>} stream stream of streams
  * @returns {Stream<X>} new stream containing all events of all inner streams
  */
-export function join (stream) {
-  return mergeConcurrently(Infinity, stream)
-}
+export const join = stream => mergeConcurrently(Infinity, stream)
