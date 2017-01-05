@@ -8,7 +8,7 @@ var reduce = require('../../src/combinator/accumulate').reduce
 var fromArray = require('../../src/source/fromArray').fromArray
 var streamOf = require('../../src/source/core').just
 
-var te = require('../helper/testEnv')
+import { ticks, collectEvents } from '../helper/testEnv'
 
 describe('merge', function () {
   it('should include items from all inputs', function () {
@@ -47,7 +47,7 @@ function testMerge (merge) {
   var sb = fromArray(b)
 
   var s = merge(delay(2, sa), delay(1, sb))
-  return te.collectEvents(s, te.ticks(2))
+  return collectEvents(s, ticks(2))
     .then(function (events) {
       var result = events.map(function (event) {
         return event.value

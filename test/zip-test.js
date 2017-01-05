@@ -7,7 +7,7 @@ var zip = require('../src/combinator/zip').zip
 var delay = require('../src/combinator/delay').delay
 var fromArray = require('../src/source/fromArray').fromArray
 
-var te = require('./helper/testEnv')
+import { ticks, collectEvents } from './helper/testEnv'
 
 describe('zip', function () {
   it('should invoke f for each tuple', function () {
@@ -15,7 +15,7 @@ describe('zip', function () {
     var b = [4, 5, 6]
     var s = zip(Array, delay(1, fromArray(a)), delay(0, fromArray(b)))
 
-    return te.collectEvents(s, te.ticks(1))
+    return collectEvents(s, ticks(1))
       .then(function (events) {
         expect(events).toEqual([
           { time: 1, value: [1, 4] },
@@ -31,7 +31,7 @@ describe('zip', function () {
     var a = take(2, s)
     var b = take(3, s)
 
-    return te.collectEvents(zip(Array, a, b), te.ticks(2))
+    return collectEvents(zip(Array, a, b), ticks(2))
       .then(function (events) {
         expect(events.length).toBe(2)
       })

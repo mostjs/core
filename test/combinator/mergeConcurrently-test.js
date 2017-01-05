@@ -9,7 +9,7 @@ import { constant } from '../../src/combinator/transform'
 import { drain } from '../../src/combinator/observe'
 import { just as just } from '../../src/source/core'
 import { fromArray } from '../../src/source/fromArray'
-import te from '../helper/testEnv'
+import { ticks, collectEvents } from '../helper/testEnv'
 
 const sentinel = { value: 'sentinel' }
 
@@ -20,7 +20,7 @@ describe('mergeConcurrently', () => {
     const s = mergeConcurrently(1, just(periodicConstant(1, sentinel)))
     const n = 3
 
-    return te.collectEvents(take(n, s), te.ticks(n))
+    return collectEvents(take(n, s), ticks(n))
       .then(events => {
         assert.equals(events, [
           { time: 0, value: sentinel },
@@ -35,7 +35,7 @@ describe('mergeConcurrently', () => {
     const s = mergeConcurrently(streams.length, fromArray(streams))
     const n = 3
 
-    return te.collectEvents(take(n * streams.length, s), te.ticks(n))
+    return collectEvents(take(n * streams.length, s), ticks(n))
       .then(events => {
         assert.equals(events, [
           { time: 0, value: 1 },
@@ -58,7 +58,7 @@ describe('mergeConcurrently', () => {
     const streams = [take(n, periodicConstant(1, 1)), take(n, periodicConstant(1, 2)), take(n, periodicConstant(1, 3))]
     const s = mergeConcurrently(m, fromArray(streams))
 
-    return te.collectEvents(take(n * streams.length, s), te.ticks(m * n))
+    return collectEvents(take(n * streams.length, s), ticks(m * n))
       .then(events => {
         assert.equals(events, [
           { time: 0, value: 1 },

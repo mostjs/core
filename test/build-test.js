@@ -12,7 +12,7 @@ var core = require('../src/source/core')
 var streamOf = core.just
 var empty = core.empty
 
-var te = require('./helper/testEnv')
+import { ticks, collectEvents } from './helper/testEnv'
 
 var sentinel = { value: 'sentinel' }
 
@@ -32,7 +32,7 @@ describe('build', function () {
       var s1 = delay(dt, fromArray([1, 2]))
       var s2 = fromArray([3, 4])
 
-      return te.collectEvents(build.concat(s1, s2), te.ticks(dt + 2))
+      return collectEvents(build.concat(s1, s2), ticks(dt + 2))
         .then(function (events) {
           var values = events.map(function (event) {
             return event.value

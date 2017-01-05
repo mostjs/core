@@ -2,100 +2,60 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-var Stream = require('../../src/Stream').default
-var PropagateTask = require('../../src/scheduler/PropagateTask').default
-var Scheduler = require('../../src/scheduler/Scheduler').default
-var Timeline = require('../../src/scheduler/Timeline').default
-var VirtualTimer = require('./VirtualTimer')
-var runSource = require('../../src/runSource')
-var tap = require('../../src/combinator/transform').tap
-var dispose = require('../../src/disposable/dispose')
-var empty = require('../../src/source/core').empty
+import Stream from '../../src/Stream'
+import PropagateTask from '../../src/scheduler/PropagateTask'
+import Scheduler from '../../src/scheduler/Scheduler'
+import Timeline from '../../src/scheduler/Timeline'
+import VirtualTimer from './VirtualTimer'
+import { withScheduler } from '../../src/activate'
+import { tap } from '../../src/combinator/transform'
+import { create as createDispose, empty as emptyDispose } from '../../src/disposable/dispose'
 
-exports.newEnv = newEnv
-exports.ticks = ticks
-exports.collectEvents = collectEvents
-exports.drain = drain
-exports.atTimes = atTimes
-exports.makeEvents = makeEvents
-
-function TestEnvironment (timer, scheduler) {
-  this.timer = timer
-  this.scheduler = scheduler
+export function newEnv () {
+  const timer = new VirtualTimer()
+  return { tick: n => timer.tick(n), scheduler: new Scheduler(timer, new Timeline()) }
 }
 
-TestEnvironment.prototype.tick = function (dt) {
-  this.timer.tick(dt)
-  return this
+export function ticks (dt) {
+  const { tick, scheduler } = newEnv()
+  tick(dt)
+  return scheduler
 }
 
-function newEnv () {
-  var timer = new VirtualTimer()
-  return new TestEnvironment(timer, new Scheduler(timer, new Timeline()))
+export function collectEvents (stream, scheduler) {
+  const into = []
+  const s = tap(x => into.push({ time: scheduler.now(), value: x }), stream)
+  return withScheduler(s.source, scheduler).then(() => into)
 }
 
-function ticks (dt) {
-  return newEnv().tick(dt)
-}
+export const makeEvents = (dt, n) =>
+  atTimes(Array.from(Array(n), (_, i) => ({ time: (i * dt), value: i })))
 
-function collectEvents (stream, env) {
-  var into = []
-  var scheduler = env.scheduler
-  var s = tap(function (x) {
-    into.push({ time: scheduler.now(), value: x })
-  }, stream)
+export const atTimes = array => new Stream(new AtTimes(array))
 
-  return runSource.withScheduler(s.source, scheduler)
-  .then(function () {
-    return into
-  })
-}
-
-function drain (stream, env) {
-  return runSource.withScheduler(stream.source, env.scheduler)
-}
-
-function makeEvents (dt, n) {
-  var events = new Array(n)
-  for (var i = 0; i < n; ++i) {
-    events[i] = { time: (i * dt), value: i }
+class AtTimes {
+  constructor (array) {
+    this.events = array
   }
-  return atTimes(events)
+
+  run (sink, scheduler) {
+    return this.events.length === 0
+      ? emptyDispose()
+      : runEvents(this.events, sink, scheduler)
+  }
 }
 
-function atTimes (array) {
-  return array.length === 0 ? empty()
-    : new Stream(new AtTimes(array))
+const runEvents = (events, sink, scheduler) => {
+  const s = events.reduce(appendEvent(sink, scheduler), { tasks: [], time: 0 })
+  const end = scheduler.delay(s.time, PropagateTask.end(void 0, sink))
+  return createDispose(cancelAll, s.tasks.concat(end))
 }
 
-function AtTimes (array) {
-  this.events = array
+const appendEvent = (sink, scheduler) => (s, event) => {
+  const task = scheduler.delay(event.time, PropagateTask.event(event.value, sink))
+  return { tasks: s.tasks.concat(task), time: Math.max(s.time, event.time) }
 }
 
-AtTimes.prototype.run = function (sink, scheduler) {
-  var s = this.events.reduce(function (s, event) {
-    return appendEvent(sink, scheduler, s, event)
-  }, { tasks: [], time: 0 })
+const cancelAll = tasks => Promise.all(tasks.map(cancelOne))
 
-  var end = scheduler.delay(s.time, PropagateTask.end(void 0, sink))
-
-  return dispose.create(cancelAll, s.tasks.concat(end))
-}
-
-function appendEvent (sink, scheduler, s, event) {
-  var t = Math.max(s.time, event.time)
-  var task = scheduleEvent(sink, scheduler, t, event.value)
-  return { tasks: s.tasks.concat(task), time: t }
-}
-
-function scheduleEvent (sink, scheduler, t, x) {
-  return scheduler.delay(t, PropagateTask.event(x, sink))
-}
-
-function cancelAll (tasks) {
-  return Promise.all(tasks.map(cancelOne))
-}
-
-function cancelOne (task) {
-  return task.dispose()
-}
+const cancelOne = task => task.dispose()

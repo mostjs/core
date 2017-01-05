@@ -11,7 +11,7 @@ var core = require('../../src/source/core')
 var fromArray = require('../../src/source/fromArray').fromArray
 var Stream = require('../../src/Stream').default
 
-var te = require('../helper/testEnv')
+import { ticks, atTimes, collectEvents } from '../helper/testEnv'
 var FakeDisposeSource = require('../helper/FakeDisposeSource')
 
 var streamOf = core.just
@@ -41,9 +41,9 @@ describe('concatMap', function () {
     var s1 = [{ time: 2, value: 2 }, { time: 3, value: 3 }]
     var s2 = [{ time: 1, value: 1 }]
     var s3 = [{ time: 0, value: 0 }]
-    var s = concatMap.concatMap(te.atTimes, fromArray([s1, s2, s3]))
+    var s = concatMap.concatMap(atTimes, fromArray([s1, s2, s3]))
 
-    return te.collectEvents(s, te.ticks(5))
+    return collectEvents(s, ticks(5))
       .then(function (events) {
         expect(events).toEqual([
           { time: 2, value: 2 },
@@ -55,14 +55,14 @@ describe('concatMap', function () {
   })
 
   it('should map lazily', function () {
-    var s1 = te.atTimes([{ time: 0, value: 0 }, { time: 1, value: 1 }])
+    var s1 = atTimes([{ time: 0, value: 0 }, { time: 1, value: 1 }])
 
-    var env = te.ticks(4)
+    var scheduler = ticks(4)
     var s = concatMap.concatMap(function (x) {
-      return te.atTimes([{ time: 2, value: env.scheduler.now() }])
+      return atTimes([{ time: 2, value: scheduler.now() }])
     }, s1)
 
-    return te.collectEvents(s, env)
+    return collectEvents(s, scheduler)
       .then(function (events) {
         expect(events).toEqual([
           { time: 2, value: 0 },

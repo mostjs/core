@@ -12,7 +12,7 @@ import { fromArray } from '../../src/source/fromArray'
 import Stream from '../../src/Stream'
 
 import { assertSame } from '../helper/stream-helper'
-import * as te from './../helper/testEnv'
+import { ticks, collectEvents } from '../helper/testEnv'
 import FakeDisposeSource from './../helper/FakeDisposeSource'
 
 const sentinel = { value: 'sentinel' }
@@ -34,7 +34,7 @@ describe('chain', function () {
   it('should preserve time order', function () {
     const s = chain(x => delay(x, just(x)), fromArray([2, 1]))
 
-    return te.collectEvents(s, te.ticks(3))
+    return collectEvents(s, ticks(3))
       .then(events => {
         assert.same(2, events.length)
 
@@ -55,7 +55,7 @@ describe('join', function () {
 
     const s = join(streamsToMerge)
 
-    return te.collectEvents(s, te.ticks(2))
+    return collectEvents(s, ticks(2))
       .then(events => {
         const result = events.map(({ value }) => value)
         // Include all items

@@ -2,7 +2,7 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { withDefaultScheduler as run } from '../runSource'
+import { withDefaultScheduler as run } from '../activate'
 import { tap } from './transform'
 
 /**
