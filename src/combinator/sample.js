@@ -1,107 +1,62 @@
 /** @license MIT License (c) copyright 2010-2016 original author or authors */
-/** @author Brian Cavalier */
-/** @author John Hann */
 
 import Stream from '../Stream'
 import Pipe from '../sink/Pipe'
+import { combineArray } from './combine'
 import * as dispose from '../disposable/dispose'
-import * as base from '@most/prelude'
-import invoke from '../invoke'
+import { curry3 } from '@most/prelude'
 
-/**
- * When an event arrives on sampler, emit the result of calling f with the latest
- * values of all streams being sampled
- * @param {function(...values):*} f function to apply to each set of sampled values
- * @param {Stream} sampler streams will be sampled whenever an event arrives
- *  on sampler
- * @returns {Stream} stream of sampled and transformed values
- */
-export function sample (f, sampler /*, ...streams */) {
-  return sampleArray(f, sampler, base.drop(2, arguments))
-}
+export const sample = curry3((f, sampler, stream) =>
+  new Stream(new SampleSource(f, sampler, stream)))
 
-/**
- * When an event arrives on sampler, emit the latest event value from stream.
- * @param {Stream} sampler stream of events at whose arrival time
- *  stream's latest value will be propagated
- * @param {Stream} stream stream of values
- * @returns {Stream} sampled stream of values
- */
-export function sampleWith (sampler, stream) {
-  return new Stream(new Sampler(base.id, sampler.source, [stream.source]))
-}
+const arrayId = (...values) => values
 
-export function sampleArray (f, sampler, streams) {
-  return new Stream(new Sampler(f, sampler.source, base.map(getSource, streams)))
-}
+export const sampleArray = curry3((f, sampler, arrayOfStreams) =>
+  sample(f, sampler, combineArray(arrayId, arrayOfStreams)))
 
-function getSource (stream) {
-  return stream.source
-}
-
-function Sampler (f, sampler, sources) {
-  this.f = f
-  this.sampler = sampler
-  this.sources = sources
-}
-
-Sampler.prototype.run = function (sink, scheduler) {
-  var l = this.sources.length
-  var disposables = new Array(l + 1)
-  var sinks = new Array(l)
-
-  var sampleSink = new SampleSink(this.f, sinks, sink)
-
-  for (var hold, i = 0; i < l; ++i) {
-    hold = sinks[i] = new Hold(sampleSink)
-    disposables[i] = this.sources[i].run(hold, scheduler)
+export class SampleSource {
+  constructor (f, sampler, stream) {
+    this.source = stream.source
+    this.sampler = sampler.source
+    this.f = f
   }
 
-  disposables[i] = this.sampler.run(sampleSink, scheduler)
+  run (sink, scheduler) {
+    const sampleSink = new SampleSink(this.f, this.source, sink)
+    const sourceDisposable = this.source.run(sampleSink.hold, scheduler)
+    const samplerDisposable = this.sampler.run(sampleSink, scheduler)
 
-  return dispose.all(disposables)
-}
-
-function Hold (sink) {
-  this.sink = sink
-  this.hasValue = false
-}
-
-Hold.prototype.event = function (t, x) {
-  this.value = x
-  this.hasValue = true
-  this.sink._notify(this)
-}
-
-Hold.prototype.end = function () {}
-Hold.prototype.error = Pipe.prototype.error
-
-function SampleSink (f, sinks, sink) {
-  this.f = f
-  this.sinks = sinks
-  this.sink = sink
-  this.active = false
-}
-
-SampleSink.prototype._notify = function () {
-  if (!this.active) {
-    this.active = this.sinks.every(hasValue)
+    return dispose.all([samplerDisposable, sourceDisposable])
   }
 }
 
-SampleSink.prototype.event = function (t) {
-  if (this.active) {
-    this.sink.event(t, invoke(this.f, base.map(getValue, this.sinks)))
+export class SampleSink extends Pipe {
+  constructor (f, source, sink) {
+    super(sink)
+    this.sink = sink
+    this.source = source
+    this.f = f
+    this.hold = new SampleHold(this)
+  }
+
+  event (t, x) {
+    if (this.hold.hasValue) {
+      const f = this.f
+      this.sink.event(t, f(x, this.hold.value))
+    }
   }
 }
 
-SampleSink.prototype.end = Pipe.prototype.end
-SampleSink.prototype.error = Pipe.prototype.error
+export class SampleHold extends Pipe {
+  constructor (sink) {
+    super(sink)
+    this.hasValue = false
+  }
 
-function hasValue (hold) {
-  return hold.hasValue
-}
+  event (t, x) {
+    this.value = x
+    this.hasValue = true
+  }
 
-function getValue (hold) {
-  return hold.value
+  end () {}
 }
