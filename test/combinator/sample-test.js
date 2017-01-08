@@ -58,8 +58,4 @@ describe('sample', () => {
         assert.same(error, e))
     })
   })
-
-  describe('sampleArray', () => {
-    it('TODO: should have tests', () => {})
-  })
 })

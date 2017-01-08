@@ -2,17 +2,10 @@
 
 import Stream from '../Stream'
 import Pipe from '../sink/Pipe'
-import { combineArray } from './combine'
 import * as dispose from '../disposable/dispose'
-import { curry3 } from '@most/prelude'
 
-export const sample = curry3((f, sampler, stream) =>
-  new Stream(new SampleSource(f, sampler, stream)))
-
-const arrayId = (...values) => values
-
-export const sampleArray = curry3((f, sampler, arrayOfStreams) =>
-  sample(f, sampler, combineArray(arrayId, arrayOfStreams)))
+export const sample = (f, sampler, stream) =>
+  new Stream(new SampleSource(f, sampler, stream))
 
 export class SampleSource {
   constructor (f, sampler, stream) {
