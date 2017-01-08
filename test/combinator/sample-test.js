@@ -1,126 +1,64 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
+/** @license MIT License (c) copyright 2016 original author or authors */
 
-var sample = require('../../src/combinator/sample')
-var sampleWith = require('../../src/combinator/sample').sampleWith
-var periodic = require('../../src/source/periodic').periodic
-var take = require('../../src/combinator/slice').take
-var map = require('../../src/combinator/transform').map
-var reduce = require('../../src/combinator/accumulate').reduce
-var observe = require('../../src/combinator/observe').observe
-var core = require('../../src/source/core')
+import { spec, referee } from 'buster'
+const { describe, it } = spec
+const { assert } = referee
 
-var te = require('../helper/testEnv')
+import { throwError } from '../../src/combinator/errors'
+import { just, never } from '../../src/source/core'
+import { sample } from '../../src/combinator/sample'
 
-var empty = core.empty
-var streamOf = core.just
+import { makeEvents, ticks, collectEvents } from '../helper/testEnv'
 
-var sentinel = { value: 'sentinel' }
+const rint = n => Math.ceil(n * Math.random())
 
-describe('sample', function () {
-  it('should be empty if sampler is empty', function () {
-    var spy = this.spy()
-    var s = sample.sample(spy, empty(), streamOf(sentinel), streamOf(123))
+describe('sample', () => {
+  it('should pass in the sampler value', () => {
+    const samplerValue = Math.random()
+    const justValue = Math.random()
 
-    var observer = this.spy()
-    return observe(observer, s)
-      .then(function () {
-        expect(spy).not.toHaveBeenCalled()
-        expect(observer).not.toHaveBeenCalled()
-      })
+    const f = (a, b) => [a, b]
+    const s = sample(f, just(samplerValue), just(justValue))
+
+    return collectEvents(s, ticks(1)).then(events => {
+      assert.same(1, events.length)
+      assert.equals({ time: 0, value: [samplerValue, justValue] }, events[0])
+    })
   })
 
-  it('should sample latest value', function () {
-    var s1 = te.makeEvents(3, 10)
-    var s2 = te.makeEvents(1, 30)
+  it('should produce no events before first stream event', () => {
+    const n = rint(10)
+    const s = sample(Array, makeEvents(1, n), never())
 
-    var s3 = te.makeEvents(3, 10)
-
-    var s = sample.sample(Array, s3, s1, s2)
-    return te.collectEvents(take(5, s), te.ticks(15))
-      .then(function (events) {
-        expect(events).toEqual([
-          { time: 0, value: [0, 0] },
-          { time: 3, value: [1, 3] },
-          { time: 6, value: [2, 6] },
-          { time: 9, value: [3, 9] },
-          { time: 12, value: [4, 12] }
-        ])
-      })
+    return collectEvents(s, ticks(n))
+      .then(events => assert.same(0, events.length))
   })
 
-  it('should repeat last value after source ends', function () {
-    var s = sample.sample(Array, periodic(1), streamOf(sentinel), streamOf(123))
+  it('should end when sampler ends', () => {
+    const n = rint(10)
+    const s = sample(Array, makeEvents(1, n), makeEvents(5, n * 2))
 
-    return observe(function (x) {
-      expect(x).toEqual([sentinel, 123])
-    }, take(3, s))
-  })
-})
-
-describe('sampleWith', function () {
-  it('should be empty if sampler is empty', function () {
-    var s = sample.sampleWith(empty(), streamOf(sentinel))
-
-    return reduce(function (x) {
-      return x + 1
-    }, 0, s)
-      .then(function (x) {
-        expect(x).toBe(0)
-      })
+    return collectEvents(s, ticks(n))
+      .then(events => assert.same(n, events.length))
   })
 
-  it('should sample latest value', function () {
-    var n = 5
-    var i = 0
-    var s = sampleWith(take(n, periodic(2)), map(function () {
-      return i++
-    }, periodic(1)))
+  it('should repeat last value after source ends', () => {
+    const n = 1 + rint(10)
+    const x = Math.random()
+    const s = sample(Array, makeEvents(1, n), just(x))
 
-    return te.collectEvents(s, te.ticks(n * 21))
-      .then(function (events) {
-        expect(events).toEqual([
-          { time: 0, value: 0 },
-          { time: 2, value: 1 },
-          { time: 4, value: 3 },
-          { time: 6, value: 5 },
-          { time: 8, value: 7 }
-        ])
-      })
+    return collectEvents(s, ticks(n)).then(events => {
+      assert.same(n, events.length)
+      events.forEach((event, i) =>
+        assert.equals({ time: i, value: [i, x] }, event))
+    })
   })
 
-  it('should sample latest value', function () {
-    var n = 6
-    var i = 0
-    var s = sampleWith(take(n, periodic(1)), map(function () {
-      return i++
-    }, periodic(2)))
+  it('should error if stream errors', () => {
+    const error = new Error('fail')
+    const s = sample(Array, makeEvents(1, 1), throwError(error))
 
-    return te.collectEvents(s, te.ticks(n))
-      .then(function (events) {
-        expect(events).toEqual([
-          { time: 0, value: 0 },
-          { time: 1, value: 0 },
-          { time: 2, value: 1 },
-          { time: 3, value: 1 },
-          { time: 4, value: 2 },
-          { time: 5, value: 2 }
-        ])
-      })
-  })
-
-  it('should repeat last value after source ends', function () {
-    var n = 3
-    var s = sample.sampleWith(take(n, periodic(1)), streamOf(sentinel))
-
-    return te.collectEvents(s, te.ticks(n))
-      .then(function (events) {
-        expect(events).toEqual([
-          { time: 0, value: sentinel },
-          { time: 1, value: sentinel },
-          { time: 2, value: sentinel }
-        ])
-      })
+    return collectEvents(s, ticks(1))
+      .catch(e => assert.same(error, e))
   })
 })

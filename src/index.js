@@ -95,11 +95,9 @@ export const combineArray = curry2(_combineArray)
 // -----------------------------------------------------------------------
 // Sampling
 
-import { sample, sampleArray as _sampleArray, sampleWith as _sampleWith } from './combinator/sample'
+import { sample as _sample } from './combinator/sample'
 
-export { sample }
-export const sampleWith = curry2(_sampleWith)
-export const sampleArray = curry3(_sampleArray)
+export const sample = curry3(_sample)
 
 // -----------------------------------------------------------------------
 // Zipping
