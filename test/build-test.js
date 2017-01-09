@@ -1,66 +1,59 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
+import { spec, referee } from 'buster'
+const { describe, it } = spec
+const { assert } = referee
 
-var build = require('../src/combinator/build')
-var observe = require('../src/combinator/observe').observe
-var delay = require('../src/combinator/delay').delay
-var reduce = require('../src/combinator/accumulate').reduce
-var fromArray = require('../src/source/fromArray').fromArray
-var core = require('../src/source/core')
-
-var streamOf = core.just
-var empty = core.empty
+import { startWith, concat } from '../src/combinator/build'
+import { just, empty } from '../src/source/core'
+import { fromArray } from '../src/source/fromArray'
+import { delay } from '../src/combinator/delay'
 
 import { ticks, collectEvents } from './helper/testEnv'
 
-var sentinel = { value: 'sentinel' }
+const sentinel = { value: 'sentinel' }
+
+const assertSingleEvent = value => events => {
+  assert.same(1, events.length)
+  assert.equals({ time: 0, value }, events[0])
+}
 
 describe('build', function () {
   describe('startWith', function () {
     it('should return a stream containing item as head', function () {
-      var s = build.startWith(sentinel, empty())
-      return observe(function (x) {
-        expect(x).toBe(sentinel)
-      }, s)
+      const s = startWith(sentinel, empty())
+
+      return collectEvents(s, ticks(1))
+        .then(assertSingleEvent(sentinel))
     })
   })
 
   describe('concat', function () {
     it('should return a stream containing items from both streams in correct order', function () {
-      var dt = 1
-      var s1 = delay(dt, fromArray([1, 2]))
-      var s2 = fromArray([3, 4])
+      const dt = 1
+      const s1 = delay(dt, fromArray([1, 2]))
+      const s2 = fromArray([3, 4])
 
-      return collectEvents(build.concat(s1, s2), ticks(dt + 2))
-        .then(function (events) {
-          var values = events.map(function (event) {
-            return event.value
-          })
-          expect(values).toEqual([1, 2, 3, 4])
-        })
+      return collectEvents(concat(s1, s2), ticks(dt + 1))
+        .then(events =>
+          assert.equals([
+            { time: 1, value: 1 },
+            { time: 1, value: 2 },
+            { time: 1, value: 3 },
+            { time: 1, value: 4 }],
+            events))
     })
 
     it('should satisfy left identity', function () {
-      var s = build.concat(streamOf(sentinel), empty())
+      const s = concat(just(sentinel), empty())
 
-      return reduce(function (count, x) {
-        expect(x).toBe(sentinel)
-        return count + 1
-      }, 0, s).then(function (count) {
-        expect(count).toBe(1)
-      })
+      return collectEvents(s, ticks(1))
+        .then(assertSingleEvent(sentinel))
     })
 
     it('should satisfy right identity', function () {
-      var s = build.concat(empty(), streamOf(sentinel))
+      const s = concat(empty(), just(sentinel))
 
-      return reduce(function (count, x) {
-        expect(x).toBe(sentinel)
-        return count + 1
-      }, 0, s).then(function (count) {
-        expect(count).toBe(1)
-      })
+      return collectEvents(s, ticks(1))
+        .then(assertSingleEvent(sentinel))
     })
   })
 })

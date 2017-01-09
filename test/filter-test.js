@@ -1,53 +1,56 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
+import { spec, referee } from 'buster'
+const { describe, it } = spec
+const { assert } = referee
 
-var filter = require('../src/combinator/filter')
-var reduce = require('../src/combinator/accumulate').reduce
-var observe = require('../src/combinator/observe').observe
-var fromArray = require('../src/source/fromArray').fromArray
+import { filter, skipRepeats, skipRepeatsWith } from '../src/combinator/filter'
+import { fromArray } from '../src/source/fromArray'
 
-var sentinel = { value: 'sentinel' }
-var other = { value: 'other' }
+import { ticks, collectEvents } from './helper/testEnv'
+
+const sentinel = { value: 'sentinel' }
+const other = { value: 'other' }
 
 describe('filter', function () {
   it('should return a stream containing only allowed items', function () {
-    var s = fromArray([sentinel, other, sentinel, other])
+    let a = [sentinel, other, sentinel, other]
+    let p = x => x === sentinel
+    const s = filter(p, fromArray(a))
 
-    return observe(function (x) {
-      expect(x).toBe(sentinel)
-    }, filter.filter(function (x) {
-      return x === sentinel
-    }, s))
+    return collectEvents(s, ticks(1))
+      .then(events => {
+        const expected = a.filter(p).map(value => ({ time: 0, value }))
+        assert.equals(expected, events)
+      })
   })
 })
 
 describe('skipRepeats', function () {
   it('should return a stream with repeated events removed', function () {
-    var stream = filter.skipRepeats(fromArray([1, 2, 2, 3, 4, 4]))
-    return reduce(function (a, x) {
-      a.push(x)
-      return a
-    }, [], stream)
-      .then(function (a) {
-        expect(a).toEqual([1, 2, 3, 4])
-      })
+    const s = skipRepeats(fromArray([1, 2, 2, 3, 4, 4]))
+
+    return collectEvents(s, ticks(1))
+      .then(events =>
+        assert.equals([
+          { time: 0, value: 1 },
+          { time: 0, value: 2 },
+          { time: 0, value: 3 },
+          { time: 0, value: 4 }],
+          events))
   })
 })
 
 describe('skipRepeatsWith', function () {
   it('should use provided comparator to remove repeated events', function () {
-    function eq (a, b) {
-      return a.toLowerCase() === b.toLowerCase()
-    }
+    const eq = (a, b) => a.toLowerCase() === b.toLowerCase()
+    const s = skipRepeatsWith(eq, fromArray(['a', 'b', 'B', 'c', 'D', 'd']))
 
-    var stream = filter.skipRepeatsWith(eq, fromArray(['a', 'b', 'B', 'c', 'D', 'd']))
-    return reduce(function (a, x) {
-      a.push(x)
-      return a
-    }, [], stream)
-      .then(function (a) {
-        expect(a).toEqual(['a', 'b', 'c', 'D'])
-      })
+    return collectEvents(s, ticks(1))
+      .then(events =>
+        assert.equals([
+          { time: 0, value: 'a' },
+          { time: 0, value: 'b' },
+          { time: 0, value: 'c' },
+          { time: 0, value: 'D' }],
+          events))
   })
 })
