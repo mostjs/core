@@ -12,7 +12,7 @@ var Stream = require('../src/Stream').default
 var streamOf = core.just
 var never = core.never
 
-import { activate } from '../src/activate'
+import { runEffects } from '../src/runEffects'
 import { ticks, collectEvents } from './helper/testEnv'
 var FakeDisposeSource = require('./helper/FakeDisposeSource')
 var endWith = require('./helper/endWith').endWith
@@ -117,7 +117,7 @@ describe('takeUntil', function () {
     var end = delay(3, streamOf(sentinel))
 
     var s = timeslice.takeUntil(end, stream)
-    return activate(s, ticks(5))
+    return runEffects(s, ticks(5))
       .then(function (x) {
         expect(x).toBe(sentinel)
       })
@@ -155,7 +155,7 @@ describe('skipUntil', function () {
     var start = delay(3, streamOf())
 
     var s = timeslice.skipUntil(start, stream)
-    return activate(s, ticks(3))
+    return runEffects(s, ticks(3))
       .then(function (x) {
         expect(x).toBe(sentinel)
       })
@@ -167,7 +167,7 @@ describe('skipUntil', function () {
     var end = delay(1, streamOf(sentinel))
 
     var s = timeslice.skipUntil(start, timeslice.takeUntil(end, stream))
-    return activate(s, ticks(3))
+    return runEffects(s, ticks(3))
       .then(function (x) {
         expect(x).toBe(sentinel)
       })

@@ -5,8 +5,9 @@
 import * as dispose from './disposable/dispose'
 import defaultScheduler from './scheduler/defaultScheduler'
 
-export const activate = ({ source }, scheduler) => withScheduler(source, scheduler)
+export const runEffects = ({ source }, scheduler) => withScheduler(source, scheduler)
 
+// TODO: Remove defaultScheduler
 export const withDefaultScheduler = source =>
   withScheduler(source, defaultScheduler)
 
@@ -16,12 +17,12 @@ export const withScheduler = (source, scheduler) =>
 
 function runSource (source, scheduler, resolve, reject) {
   const disposable = dispose.settable()
-  const observer = new ActivateSink(resolve, reject, disposable)
+  const observer = new RunEffectsSink(resolve, reject, disposable)
 
   disposable.setDisposable(source.run(observer, scheduler))
 }
 
-class ActivateSink {
+class RunEffectsSink {
   constructor (end, error, disposable) {
     this._end = end
     this._error = error

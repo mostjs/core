@@ -2,7 +2,7 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { withDefaultScheduler as run } from '../activate'
+import { withDefaultScheduler as run } from '../runEffects'
 import { tap } from './transform'
 
 /**

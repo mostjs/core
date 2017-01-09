@@ -4,7 +4,7 @@
 
 import Stream from '../Stream'
 import Pipe from '../sink/Pipe'
-import { withDefaultScheduler as runSource } from '../activate'
+import { withDefaultScheduler as runSource } from '../runEffects'
 import * as dispose from '../disposable/dispose'
 import PropagateTask from '../scheduler/PropagateTask'
 

@@ -14,9 +14,9 @@ export { fromIterable } from './source/fromIterable'
 // -----------------------------------------------------------------------
 // Observing
 
-import { activate as _activate } from './activate'
+import { runEffects as _runEffects } from './runEffects'
 
-export const activate = curry2(_activate)
+export const runEffects = curry2(_runEffects)
 
 import { observe as _observe, drain } from './combinator/observe'
 

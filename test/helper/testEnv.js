@@ -7,7 +7,7 @@ import PropagateTask from '../../src/scheduler/PropagateTask'
 import Scheduler from '../../src/scheduler/Scheduler'
 import Timeline from '../../src/scheduler/Timeline'
 import VirtualTimer from './VirtualTimer'
-import { withScheduler } from '../../src/activate'
+import { withScheduler } from '../../src/runEffects'
 import { tap } from '../../src/combinator/transform'
 import { create as createDispose, empty as emptyDispose } from '../../src/disposable/dispose'
 
