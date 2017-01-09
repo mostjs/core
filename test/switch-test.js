@@ -2,15 +2,15 @@ import { spec, referee } from 'buster'
 const { describe, it } = spec
 const { assert, refute } = referee
 
-import { switch as switchLatest } from '../src/combinator/switch'
+import { switchLatest } from '../src/combinator/switch'
 import { observe } from '../src/combinator/observe'
 import { take } from '../src/combinator/slice'
 import { constant, map, tap } from '../src/combinator/transform'
 import { periodic } from '../src/source/periodic'
 import { fromArray } from '../src/source/fromArray'
-import { empty, just as just } from '../src/source/core'
+import { empty, just } from '../src/source/core'
 
-import te from './helper/testEnv'
+import { ticks, collectEvents } from './helper/testEnv'
 
 describe('switch', () => {
   describe('when input is empty', () => {
@@ -33,7 +33,7 @@ describe('switch', () => {
       : empty()
 
     const s = switchLatest(map(toInner, fromArray([0, 1])))
-    return te.collectEvents(s, te.ticks(10))
+    return collectEvents(s, ticks(10))
       .then(evs => {
         assert.equals(evs, events)
       })
@@ -44,7 +44,7 @@ describe('switch', () => {
       const expected = [1, 2, 3]
       const s = just(fromArray(expected))
 
-      return te.collectEvents(switchLatest(s), te.ticks(1))
+      return collectEvents(switchLatest(s), ticks(1))
         .then(events => {
           assert.equals(events, [
             { time: 0, value: 1 },
@@ -64,7 +64,7 @@ describe('switch', () => {
           fromArray(expected)
         ])
 
-        return te.collectEvents(switchLatest(s), te.ticks(1))
+        return collectEvents(switchLatest(s), ticks(1))
           .then(events => {
             assert.equals(events, [
               { time: 0, value: 1 },
@@ -79,7 +79,7 @@ describe('switch', () => {
       let i = 0
       const s = map(() => constant(++i, periodic(1)), periodic(3))
 
-      return te.collectEvents(take(10, switchLatest(s)), te.ticks(250))
+      return collectEvents(take(10, switchLatest(s)), ticks(250))
         .then(events => {
           assert.equals(events, [
             { time: 0, value: 1 },
