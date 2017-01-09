@@ -1,6 +1,6 @@
 require('buba/register')
 const Benchmark = require('benchmark');
-const {from, map, switchLatest, reduce} = require('../../src/index');
+const {fromArray, map, switchLatest, reduce} = require('../../src/index');
 const rx = require('rx');
 const rxjs = require('@reactivex/rxjs')
 const kefir = require('kefir');
@@ -46,7 +46,7 @@ const options = {
 
 suite
   .add('most', function(deferred) {
-    runners.runMost(deferred, reduce(sum, 0, switchLatest(map(from, from(a)))));
+    runners.runMost(deferred, reduce(sum, 0, switchLatest(map(fromArray, fromArray(a)))));
   }, options)
   .add('rx 5', function(deferred) {
     runners.runRx5(deferred,
