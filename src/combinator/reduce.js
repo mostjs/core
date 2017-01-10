@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import { withScheduler } from '../runEffects'
+import { runSourceEffects } from '../runEffects'
 import defaultScheduler from '../scheduler/defaultScheduler'
 
 /**
@@ -16,7 +16,7 @@ import defaultScheduler from '../scheduler/defaultScheduler'
 * @returns {Promise} promise for the file result of the reduce
 */
 export const reduce = (f, initial, stream) =>
-  withScheduler(new Reduce(f, initial, stream.source), defaultScheduler)
+  runSourceEffects(new Reduce(f, initial, stream.source), defaultScheduler)
 
 class Reduce {
   constructor (f, z, source) {
