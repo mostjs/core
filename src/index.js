@@ -172,8 +172,17 @@ import { recoverWith as _recoverWith, throwError } from './combinator/errors'
 export const recoverWith = curry2(_recoverWith)
 export { throwError }
 
-// export the instance of the defaultScheduler for third-party libraries
-export { default as defaultScheduler } from './scheduler/defaultScheduler'
+// -----------------------------------------------------------------------
+// Scheduler components
+
+// export the Scheduler components for third-party libraries
+import Scheduler from './scheduler/Scheduler'
+import Timeline from './scheduler/Timeline'
+import ClockTimer from './scheduler/ClockTimer'
+
+export const createDefaultScheduler = () => new Scheduler(new ClockTimer(), new Timeline())
+
+export { Scheduler, Timeline, ClockTimer }
 
 // export an implementation of Task used internally for third-party libraries
 export { default as PropagateTask } from './scheduler/PropagateTask'

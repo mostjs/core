@@ -4,63 +4,65 @@
 
 import * as base from '@most/prelude'
 
-export default function Timeline () {
-  this.tasks = []
-}
+export default class Timeline {
+  constructor () {
+    this.tasks = []
+  }
 
-Timeline.prototype.nextArrival = function () {
-  return this.isEmpty() ? Infinity : this.tasks[0].time
-}
+  nextArrival () {
+    return this.isEmpty() ? Infinity : this.tasks[0].time
+  }
 
-Timeline.prototype.isEmpty = function () {
-  return this.tasks.length === 0
-}
+  isEmpty () {
+    return this.tasks.length === 0
+  }
 
-Timeline.prototype.add = function (st) {
-  insertByTime(st, this.tasks)
-}
+  add (st) {
+    insertByTime(st, this.tasks)
+  }
 
-Timeline.prototype.remove = function (st) {
-  var i = binarySearch(st.time, this.tasks)
+  remove (st) {
+    const i = binarySearch(st.time, this.tasks)
 
-  if (i >= 0 && i < this.tasks.length) {
-    var at = base.findIndex(st, this.tasks[i].events)
-    if (at >= 0) {
-      this.tasks[i].events.splice(at, 1)
-      return true
+    if (i >= 0 && i < this.tasks.length) {
+      const at = base.findIndex(st, this.tasks[i].events)
+      if (at >= 0) {
+        this.tasks[i].events.splice(at, 1)
+        return true
+      }
+    }
+
+    return false
+  }
+
+  removeAll (f) {
+    for (let i = 0; i < this.tasks.length; ++i) {
+      removeAllFrom(f, this.tasks[i])
     }
   }
 
-  return false
-}
+  runTasks (t, runTask) {
+    const tasks = this.tasks
+    const l = tasks.length
+    let i = 0
 
-Timeline.prototype.removeAll = function (f) {
-  for (var i = 0, l = this.tasks.length; i < l; ++i) {
-    removeAllFrom(f, this.tasks[i])
-  }
-}
+    while (i < l && tasks[i].time <= t) {
+      ++i
+    }
 
-Timeline.prototype.runTasks = function (t, runTask) {
-  var tasks = this.tasks
-  var l = tasks.length
-  var i = 0
+    this.tasks = tasks.slice(i)
 
-  while (i < l && tasks[i].time <= t) {
-    ++i
-  }
-
-  this.tasks = tasks.slice(i)
-
-  // Run all ready tasks
-  for (var j = 0; j < i; ++j) {
-    this.tasks = runTasks(runTask, tasks[j], this.tasks)
+    // Run all ready tasks
+    for (let j = 0; j < i; ++j) {
+      this.tasks = runTasks(runTask, tasks[j], this.tasks)
+    }
   }
 }
 
 function runTasks (runTask, timeslot, tasks) { // eslint-disable-line complexity
-  var events = timeslot.events
-  for (var i = 0; i < events.length; ++i) {
-    var task = events[i]
+  const events = timeslot.events
+  for (let i = 0; i < events.length; ++i) {
+    const task = events[i]
 
     if (task.active) {
       runTask(task)
@@ -78,14 +80,14 @@ function runTasks (runTask, timeslot, tasks) { // eslint-disable-line complexity
 }
 
 function insertByTime (task, timeslots) { // eslint-disable-line complexity
-  var l = timeslots.length
+  const l = timeslots.length
 
   if (l === 0) {
     timeslots.push(newTimeslot(task.time, [task]))
     return
   }
 
-  var i = binarySearch(task.time, timeslots)
+  const i = binarySearch(task.time, timeslots)
 
   if (i >= l) {
     timeslots.push(newTimeslot(task.time, [task]))
@@ -101,9 +103,9 @@ function removeAllFrom (f, timeslot) {
 }
 
 function binarySearch (t, sortedArray) { // eslint-disable-line complexity
-  var lo = 0
-  var hi = sortedArray.length
-  var mid, y
+  let lo = 0
+  let hi = sortedArray.length
+  let mid, y
 
   while (lo < hi) {
     mid = Math.floor((lo + hi) / 2)
@@ -120,6 +122,4 @@ function binarySearch (t, sortedArray) { // eslint-disable-line complexity
   return hi
 }
 
-function newTimeslot (t, events) {
-  return { time: t, events: events }
-}
+const newTimeslot = (t, events) => ({ time: t, events: events })
