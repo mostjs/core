@@ -1,13 +1,9 @@
 /** @license MIT License (c) copyright 2010-2016 original author or authors */
-/** @author Brian Cavalier */
-/** @author John Hann */
+
 import Disposable from './Disposable'
 import SettableDisposable from './SettableDisposable'
 import { isPromise } from '../Promise'
-import * as base from '@most/prelude'
-
-var map = base.map
-var identity = base.id
+import { map, id } from '@most/prelude'
 
 /**
  * Call disposable.dispose.  If it returns a promise, catch promise
@@ -18,11 +14,9 @@ var identity = base.id
  * @return {*} result of disposable.dispose
  */
 export function tryDispose (t, disposable, sink) {
-  var result = disposeSafely(disposable)
+  const result = disposeSafely(disposable)
   return isPromise(result)
-    ? result.catch(function (e) {
-      sink.error(t, e)
-    })
+    ? result.catch(e => sink.error(t, e))
     : result
 }
 
@@ -33,31 +27,27 @@ export function tryDispose (t, disposable, sink) {
  * @param {*?} data any data to be passed to disposer function
  * @return {Disposable}
  */
-export function create (dispose, data) {
-  return once(new Disposable(dispose, data))
-}
+export const create = (dispose, data) =>
+  once(new Disposable(dispose, data))
 
 /**
  * Create a noop disposable. Can be used to satisfy a Disposable
  * requirement when no actual resource needs to be disposed.
  * @return {Disposable|exports|module.exports}
  */
-export function empty () {
-  return new Disposable(identity, void 0)
-}
+export const empty = () =>
+  new Disposable(id, undefined)
 
 /**
  * Create a disposable that will dispose all input disposables in parallel.
  * @param {Array<Disposable>} disposables
  * @return {Disposable}
  */
-export function all (disposables) {
-  return create(disposeAll, disposables)
-}
+export const all = disposables =>
+  create(disposeAll, disposables)
 
-function disposeAll (disposables) {
-  return Promise.all(map(disposeSafely, disposables))
-}
+const disposeAll = disposables =>
+  Promise.all(map(disposeSafely, disposables))
 
 function disposeSafely (disposable) {
   try {
@@ -72,26 +62,22 @@ function disposeSafely (disposable) {
  * @param {Promise<Disposable>} disposablePromise
  * @return {Disposable}
  */
-export function promised (disposablePromise) {
-  return create(disposePromise, disposablePromise)
-}
+export const promised = disposablePromise =>
+  create(disposePromise, disposablePromise)
 
-function disposePromise (disposablePromise) {
-  return disposablePromise.then(disposeOne)
-}
+const disposePromise = disposablePromise =>
+  disposablePromise.then(disposeOne)
 
-function disposeOne (disposable) {
-  return disposable.dispose()
-}
+const disposeOne = disposable =>
+  disposable.dispose()
 
 /**
  * Create a disposable proxy that allows its underlying disposable to
  * be set later.
  * @return {SettableDisposable}
  */
-export function settable () {
-  return new SettableDisposable()
-}
+export const settable = () =>
+  new SettableDisposable()
 
 /**
  * Wrap an existing disposable (which may not already have been once()d)
@@ -99,20 +85,23 @@ export function settable () {
  * @param {{ dispose: function() }} disposable
  * @return {Disposable} wrapped disposable
  */
-export function once (disposable) {
-  return new Disposable(disposeMemoized, memoized(disposable))
-}
+export const once = disposable =>
+  new Disposable(disposeOne, new MemoizedDisposable(disposable))
 
-function disposeMemoized (memoized) {
-  if (!memoized.disposed) {
-    memoized.disposed = true
-    memoized.value = disposeSafely(memoized.disposable)
-    memoized.disposable = void 0
+class MemoizedDisposable {
+  constructor (disposable) {
+    this.disposed = false
+    this.value = undefined
+    this.disposable = disposable
   }
 
-  return memoized.value
-}
+  dispose () {
+    if (!this.disposed) {
+      this.disposed = true
+      this.value = disposeSafely(this.disposable)
+      this.disposable = undefined
+    }
 
-function memoized (disposable) {
-  return { disposed: false, disposable: disposable, value: void 0 }
+    return this.value
+  }
 }
