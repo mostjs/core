@@ -9,7 +9,7 @@ var delay = require('../src/combinator/delay').delay
 var periodic = require('../src/source/periodic').periodic
 var streamOf = require('../src/source/core').just
 
-var te = require('./helper/testEnv')
+import { ticks, collectEvents } from './helper/testEnv'
 
 var sentinel = { value: 'sentinel' }
 
@@ -20,7 +20,7 @@ describe('combine', function () {
 
     var sc = combine.combine(Array, s1, delay(1, s2))
 
-    return te.collectEvents(sc, te.ticks(2)).then(function (events) {
+    return collectEvents(sc, ticks(2)).then(function (events) {
       expect(events.length).toBe(1)
       expect(events[0].value).toEqual([1, sentinel])
     })
@@ -39,7 +39,7 @@ describe('combine', function () {
 
     var sc = combine.combine(Array, take(a1.length, s1), take(a2.length, s2))
 
-    return te.collectEvents(sc, te.ticks(a1.length + a2.length))
+    return collectEvents(sc, ticks(a1.length + a2.length))
       .then(function (events) {
         expect(events).toEqual([
           { time: 1, value: [ 0, 'a' ] },
@@ -61,7 +61,7 @@ describe('combineArray', function () {
 
     var sc = combine.combineArray(Array, [s1, delay(1, s2)])
 
-    return te.collectEvents(sc, te.ticks(2)).then(function (events) {
+    return collectEvents(sc, ticks(2)).then(function (events) {
       expect(events.length).toBe(1)
       expect(events[0].value).toEqual([1, sentinel])
     })
@@ -80,7 +80,7 @@ describe('combineArray', function () {
 
     var sc = combine.combineArray(Array, [take(a1.length, s1), take(a2.length, s2)])
 
-    return te.collectEvents(sc, te.ticks(a1.length + a2.length))
+    return collectEvents(sc, ticks(a1.length + a2.length))
       .then(function (events) {
         expect(events).toEqual([
           { time: 1, value: [ 0, 'a' ] },

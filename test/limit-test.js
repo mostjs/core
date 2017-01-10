@@ -16,7 +16,7 @@ var streamOf = core.just
 
 var map = transform.map
 
-var te = require('./helper/testEnv')
+import { ticks, atTimes, collectEvents } from './helper/testEnv'
 var assertSame = require('./helper/stream-helper').assertSame
 
 var sentinel = { value: 'sentinel' }
@@ -30,7 +30,7 @@ describe('debounce', function () {
 
       var debounced = limit.debounce(1, s)
 
-      return te.collectEvents(debounced, te.ticks(n * period))
+      return collectEvents(debounced, ticks(n * period))
         .then(function (events) {
           expect(events.length).toBe(5)
         })
@@ -41,7 +41,7 @@ describe('debounce', function () {
     it('should be empty when source is empty', function () {
       var s = limit.debounce(1, empty())
 
-      return te.collectEvents(s, te.ticks(1))
+      return collectEvents(s, ticks(1))
         .then(function (events) {
           expect(events.length).toBe(0)
         })
@@ -50,7 +50,7 @@ describe('debounce', function () {
     it('should be identity when source is singleton', function () {
       var s = limit.debounce(1, streamOf(sentinel))
 
-      return te.collectEvents(s, te.ticks(2))
+      return collectEvents(s, ticks(2))
         .then(function (events) {
           expect(events.length).toBe(1)
           expect(events[0].time).toBe(0)
@@ -69,7 +69,7 @@ describe('debounce', function () {
 
       var debounced = limit.debounce(n, s)
 
-      return te.collectEvents(debounced, te.ticks(n))
+      return collectEvents(debounced, ticks(n))
         .then(function (events) {
           expect(events).toEqual([{ time: 9, value: expected }])
         })
@@ -77,7 +77,7 @@ describe('debounce', function () {
   })
 
   it('should allow events that occur less frequently than debounce period', function () {
-    var s = te.atTimes([
+    var s = atTimes([
       { time: 0, value: 0 },
       { time: 1, value: 0 },
       { time: 2, value: 1 },
@@ -87,7 +87,7 @@ describe('debounce', function () {
       { time: 7, value: 2 }
     ])
 
-    return te.collectEvents(limit.debounce(2, s), te.ticks(8))
+    return collectEvents(limit.debounce(2, s), ticks(8))
       .then(function (events) {
         expect(events).toEqual([
           { time: 4, value: 1 },
@@ -100,8 +100,8 @@ describe('debounce', function () {
 describe('throttle', function () {
   describe('fusion', function () {
     it('should use max', function () {
-      var s1 = limit.throttle(2, limit.throttle(1, te.atTimes([])))
-      var s2 = limit.throttle(1, limit.throttle(2, te.atTimes([])))
+      var s1 = limit.throttle(2, limit.throttle(1, atTimes([])))
+      var s2 = limit.throttle(1, limit.throttle(2, atTimes([])))
       expect(s1.source.period).toBe(s2.source.period)
       expect(s1.source.period).toBe(2)
     })
@@ -119,7 +119,7 @@ describe('throttle', function () {
   })
 
   it('should exclude items that are too frequent', function () {
-    var s = te.atTimes([
+    var s = atTimes([
       { time: 0, value: 0 },
       { time: 1, value: 1 },
       { time: 2, value: 2 },
@@ -128,7 +128,7 @@ describe('throttle', function () {
     ])
     var throttled = limit.throttle(2, s)
 
-    return te.collectEvents(throttled, te.ticks(5))
+    return collectEvents(throttled, ticks(5))
       .then(function (events) {
         expect(events).toEqual([
           { time: 0, value: 0 },
@@ -160,7 +160,7 @@ describe('throttle', function () {
 
     var zipped = zip(Array, s1, s2)
 
-    return te.collectEvents(zipped, te.ticks(a.length))
+    return collectEvents(zipped, ticks(a.length))
       .then(function (pairs) {
         pairs.forEach(function (pair) {
           expect(pair[0]).toEqual(pair[1])

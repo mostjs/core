@@ -3,17 +3,15 @@ const { describe, it } = spec
 const { assert } = referee
 
 import Stream from '../src/Stream'
-import { scan, reduce } from '../src/combinator/accumulate'
-import { throwError } from '../src/combinator/errors'
+import { scan } from '../src/combinator/accumulate'
 import { observe, drain } from '../src/combinator/observe'
 
 import { fromArray } from '../src/source/fromArray'
-import { empty, just as just } from '../src/source/core'
+import { just } from '../src/source/core'
 
 import FakeDisposeSource from './helper/FakeDisposeSource'
 
 const sentinel = { value: 'sentinel' }
-const other = { value: 'other' }
 
 function endWith (endValue, { source }) {
   return new Stream({
@@ -63,26 +61,5 @@ describe('scan', function () {
     const s = scan(function (z, x) { return x }, 0, stream)
 
     return drain(s).then(() => assert(dispose.calledOnce))
-  })
-})
-
-describe('reduce', function () {
-  describe('when stream is empty', function () {
-    it('should reduce to initial', function () {
-      return reduce(() => { throw new Error() }, sentinel, empty())
-        .then(result => assert.same(result, sentinel))
-    })
-  })
-
-  describe('when stream errors', function () {
-    it('should reject', function () {
-      return reduce(x => x, other, throwError(sentinel))
-        .catch(e => assert.same(e, sentinel))
-    })
-  })
-
-  it('should reduce values', function () {
-    return reduce((s, x) => s + x, 'a', fromArray(['b', 'c', 'd']))
-      .then(result => assert.same(result, 'abcd'))
   })
 })

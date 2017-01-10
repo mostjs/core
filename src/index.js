@@ -14,10 +14,9 @@ export { fromIterable } from './source/fromIterable'
 // -----------------------------------------------------------------------
 // Observing
 
-import { observe as _observe, drain } from './combinator/observe'
+import { runEffects as _runEffects } from './runEffects'
 
-export { drain }
-export const observe = curry2(_observe)
+export const runEffects = curry2(_runEffects)
 
 // -------------------------------------------------------
 
@@ -27,10 +26,9 @@ export const loop = curry3(_loop)
 
 // -------------------------------------------------------
 
-import { scan as _scan, reduce as _reduce } from './combinator/accumulate'
+import { scan as _scan } from './combinator/accumulate'
 
 export const scan = curry3(_scan)
-export const reduce = curry3(_reduce)
 
 // -----------------------------------------------------------------------
 // Building and extending
@@ -174,8 +172,17 @@ import { recoverWith as _recoverWith, throwError } from './combinator/errors'
 export const recoverWith = curry2(_recoverWith)
 export { throwError }
 
-// export the instance of the defaultScheduler for third-party libraries
-export { default as defaultScheduler } from './scheduler/defaultScheduler'
+// -----------------------------------------------------------------------
+// Scheduler components
+
+// export the Scheduler components for third-party libraries
+import Scheduler from './scheduler/Scheduler'
+import Timeline from './scheduler/Timeline'
+import ClockTimer from './scheduler/ClockTimer'
+
+export const createDefaultScheduler = () => new Scheduler(new ClockTimer(), new Timeline())
+
+export { Scheduler, Timeline, ClockTimer }
 
 // export an implementation of Task used internally for third-party libraries
 export { default as PropagateTask } from './scheduler/PropagateTask'

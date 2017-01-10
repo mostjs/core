@@ -5,7 +5,7 @@ const { assert } = referee
 import { periodic } from '../../src/source/periodic'
 import { take } from '../../src/combinator/slice'
 
-import te from '../helper/testEnv'
+import { ticks, collectEvents } from '../helper/testEnv'
 
 const hasTimeAndValue = ({ time, value }, i) =>
   time === i && value === undefined
@@ -15,7 +15,7 @@ describe('periodic', function () {
     const n = 10
     const s = take(n, periodic(1))
 
-    return te.collectEvents(s, te.ticks(n)).then(function (events) {
+    return collectEvents(s, ticks(n)).then(function (events) {
       assert.same(n, events.length)
       assert(events.every(hasTimeAndValue))
     })

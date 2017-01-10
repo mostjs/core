@@ -12,7 +12,8 @@ var Stream = require('../src/Stream').default
 var streamOf = core.just
 var never = core.never
 
-var te = require('./helper/testEnv')
+import { runEffects } from '../src/runEffects'
+import { ticks, collectEvents } from './helper/testEnv'
 var FakeDisposeSource = require('./helper/FakeDisposeSource')
 var endWith = require('./helper/endWith').endWith
 
@@ -24,7 +25,7 @@ describe('during', function () {
     var timespan = delay(1, streamOf(delay(5, streamOf())))
 
     var s = timeslice.during(timespan, stream)
-    return te.collectEvents(s, te.ticks(7))
+    return collectEvents(s, ticks(7))
       .then(function (events) {
         var len = events.length
         expect(len).toBe(5)
@@ -39,7 +40,7 @@ describe('during', function () {
     var timespan = delay(1, streamOf(delay(5, streamOf())))
 
     var s = timeslice.during(timespan, stream)
-    return te.collectEvents(s, te.ticks(6))
+    return collectEvents(s, ticks(6))
       .then(function () {
         expect(dispose).toHaveBeenCalledOnce()
       })
@@ -53,7 +54,7 @@ describe('during', function () {
     var dt = new Stream(FakeDisposeSource.from(dispose, timespan))
 
     var s = timeslice.during(dt, stream)
-    return te.collectEvents(s, te.ticks(6))
+    return collectEvents(s, ticks(6))
       .then(function (events) {
         expect(events.length).toBe(5)
         expect(dispose).toHaveBeenCalledOnce()
@@ -67,7 +68,7 @@ describe('takeUntil', function () {
     var signal = delay(3, streamOf())
 
     var s = timeslice.takeUntil(signal, stream)
-    return te.collectEvents(s, te.ticks(5))
+    return collectEvents(s, ticks(5))
       .then(function (events) {
         expect(events.length).toBe(3)
       })
@@ -79,7 +80,7 @@ describe('takeUntil', function () {
     var signal = delay(3, streamOf())
 
     var s = timeslice.takeUntil(signal, stream)
-    return te.collectEvents(s, te.ticks(5))
+    return collectEvents(s, ticks(5))
       .then(function () {
         expect(dispose).toHaveBeenCalledOnce()
       })
@@ -91,7 +92,7 @@ describe('takeUntil', function () {
     var signal = streamOf()
 
     var s = timeslice.takeUntil(signal, stream)
-    return te.collectEvents(s, te.ticks(1))
+    return collectEvents(s, ticks(1))
       .then(function (events) {
         expect(events.length).toBe(0)
         expect(dispose).toHaveBeenCalledOnce()
@@ -104,7 +105,7 @@ describe('takeUntil', function () {
     var signal = new Stream(FakeDisposeSource.from(dispose, delay(3, streamOf())))
 
     var s = timeslice.takeUntil(signal, stream)
-    return te.collectEvents(s, te.ticks(5))
+    return collectEvents(s, ticks(5))
       .then(function (events) {
         expect(events.length).toBe(3)
         expect(dispose).toHaveBeenCalledOnce()
@@ -116,7 +117,7 @@ describe('takeUntil', function () {
     var end = delay(3, streamOf(sentinel))
 
     var s = timeslice.takeUntil(end, stream)
-    return te.drain(s, te.ticks(5))
+    return runEffects(s, ticks(5))
       .then(function (x) {
         expect(x).toBe(sentinel)
       })
@@ -130,7 +131,7 @@ describe('skipUntil', function () {
     var signal = delay(3, streamOf())
 
     var s = timeslice.skipUntil(signal, stream)
-    return te.collectEvents(s, te.ticks(n))
+    return collectEvents(s, ticks(n))
       .then(function (events) {
         expect(events.length).toBe(7)
       })
@@ -142,7 +143,7 @@ describe('skipUntil', function () {
     var signal = new Stream(FakeDisposeSource.from(dispose, delay(3, streamOf())))
 
     var s = timeslice.skipUntil(signal, stream)
-    return te.collectEvents(s, te.ticks(10))
+    return collectEvents(s, ticks(10))
       .then(function (events) {
         expect(events.length).toBe(7)
         expect(dispose).toHaveBeenCalledOnce()
@@ -154,7 +155,7 @@ describe('skipUntil', function () {
     var start = delay(3, streamOf())
 
     var s = timeslice.skipUntil(start, stream)
-    return te.drain(s, te.ticks(3))
+    return runEffects(s, ticks(3))
       .then(function (x) {
         expect(x).toBe(sentinel)
       })
@@ -166,7 +167,7 @@ describe('skipUntil', function () {
     var end = delay(1, streamOf(sentinel))
 
     var s = timeslice.skipUntil(start, timeslice.takeUntil(end, stream))
-    return te.drain(s, te.ticks(3))
+    return runEffects(s, ticks(3))
       .then(function (x) {
         expect(x).toBe(sentinel)
       })
