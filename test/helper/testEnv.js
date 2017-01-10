@@ -28,8 +28,16 @@ export function collectEvents (stream, scheduler) {
   return withScheduler(s.source, scheduler).then(() => into)
 }
 
+export const collectEventsFor = (nticks, stream) =>
+  collectEvents(stream, ticks(nticks))
+
+export const makeEventsFromArray = (dt, a) =>
+  atTimes(a.map((value, i) => ({ time: i * dt, value })))
+
 export const makeEvents = (dt, n) =>
-  atTimes(Array.from(Array(n), (_, i) => ({ time: (i * dt), value: i })))
+  makeEventsFromArray(dt, Array.from(Array(n), (_, i) => i))
+
+export const atTime = (time, value) => atTimes([{ time, value }])
 
 export const atTimes = array => new Stream(new AtTimes(array))
 

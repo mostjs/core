@@ -1,56 +1,52 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
+import { spec, referee } from 'buster'
+const { describe, it } = spec
+const { assert } = referee
 
-var Stream = require('../../src/Stream').default
-var loop = require('../../src/combinator/loop').loop
-var reduce = require('../../src/combinator/accumulate').reduce
-var drain = require('../../src/combinator/observe').drain
-var fromArray = require('../../src/source/fromArray').fromArray
-var throwError = require('../../src/combinator/errors').throwError
-var core = require('../../src/source/core')
-var streamOf = core.just
+import Stream from '../../src/Stream'
+import { loop } from '../../src/combinator/loop'
+import { throwError } from '../../src/combinator/errors'
+import { just } from '../../src/source/core'
 
-var FakeDisposeSource = require('../helper/FakeDisposeSource')
+import FakeDisposeSource from '../helper/FakeDisposeSource'
 
-var sentinel = { value: 'sentinel' }
-var other = { value: 'other' }
+import { makeEventsFromArray, collectEventsFor } from '../helper/testEnv'
 
-function toPair (z, x) {
-  return { value: x, seed: z }
-}
+const sentinel = { value: 'sentinel' }
+const other = { value: 'other' }
+
+const toPair = (z, x) => ({ value: x, seed: z })
 
 describe('loop', function () {
   it('should call stepper with seed, value', function () {
-    var a = ['a', 'b', 'c', 'd']
+    const a = ['a', 'b', 'c', 'd']
 
-    var s = loop(function (z, x) {
-      return { value: x + z, seed: z + 1 }
-    }, 0, fromArray(a))
+    const s = loop((z, x) => toPair(z + 1, x + z), 0, makeEventsFromArray(1, a))
 
-    return reduce(function (r, x) {
-      return r.concat(x)
-    }, [], s).then(function (result) {
-      expect(result).toEqual(['a0', 'b1', 'c2', 'd3'])
-    })
+    return collectEventsFor(a.length, s)
+      .then(events => {
+        assert.same(a.length, events.length)
+        assert.equals([
+          { time: 0, value: 'a0' },
+          { time: 1, value: 'b1' },
+          { time: 2, value: 'c2' },
+          { time: 3, value: 'd3' }
+        ], events)
+      })
   })
 
   it('should propagate errors', function () {
-    var s = loop(toPair, other, throwError(sentinel))
+    const error = new Error()
+    const s = loop(toPair, other, throwError(error))
 
-    return drain(s).catch(function (e) {
-      expect(e).toBe(sentinel)
-    })
+    return collectEventsFor(1, s).catch(e => assert.same(error, e))
   })
 
   it('should dispose', function () {
-    var dispose = this.spy()
+    const dispose = this.spy()
 
-    var stream = new Stream(new FakeDisposeSource(dispose, streamOf(sentinel).source))
-    var s = loop(toPair, 0, stream)
+    const stream = new Stream(new FakeDisposeSource(dispose, just(sentinel).source))
+    const s = loop(toPair, 0, stream)
 
-    return drain(s).then(function () {
-      expect(dispose).toHaveBeenCalledOnce()
-    })
+    return collectEventsFor(1, s).then(() => assert(dispose.calledOnce))
   })
 })

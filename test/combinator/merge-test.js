@@ -1,71 +1,52 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
+import { spec, referee } from 'buster'
+const { describe, it } = spec
+const { assert } = referee
 
-var merge = require('../../src/combinator/merge')
-var delay = require('../../src/combinator/delay').delay
-var reduce = require('../../src/combinator/accumulate').reduce
-var fromArray = require('../../src/source/fromArray').fromArray
-var streamOf = require('../../src/source/core').just
+import { just } from '../../src/source/core'
+import { delay } from '../../src/combinator/delay'
+import { merge, mergeArray } from '../../src/combinator/merge'
 
-import { ticks, collectEvents } from '../helper/testEnv'
+import { makeEventsFromArray, collectEventsFor } from '../helper/testEnv'
 
 describe('merge', function () {
   it('should include items from all inputs', function () {
-    return testMerge(merge.merge)
+    return testMerge(merge)
   })
 
   it('should be associative', function () {
-    var s1 = streamOf(1)
-    var s2 = streamOf(2)
-    var s3 = streamOf(3)
+    const s1 = just(1)
+    const s2 = just(2)
+    const s3 = just(3)
 
-    var p1 = toArray(merge.merge(merge.merge(s1, s2), s3))
-    var p2 = toArray(merge.merge(s1, merge.merge(s2, s3)))
+    const m1 = merge(merge(s1, s2), s3)
+    const m2 = merge(s1, merge(s2, s3))
 
-    return Promise.all([p1, p2]).then(function (a) {
-      var p1 = a[0].sort()
-      var p2 = a[1].sort()
-
-      expect(p1).toEqual(p2)
-    })
+    return collectEventsFor(1, m1)
+      .then(events1 => collectEventsFor(1, m2)
+        .then(events2 => assert.equals(events1, events2)))
   })
 })
 
 describe('mergeArray', function () {
   it('should include items from all inputs', function () {
-    return testMerge(function (s1, s2) {
-      return merge.mergeArray([s1, s2])
-    })
+    return testMerge((s1, s2) => mergeArray([s1, s2]))
   })
 })
 
 function testMerge (merge) {
-  var a = [1, 2, 3]
-  var b = [4, 5, 6]
-  var sa = fromArray(a)
-  var sb = fromArray(b)
+  const a = [1, 2, 3]
+  const b = [4, 5, 6]
+  const count = a.length + b.length
+  const sa = makeEventsFromArray(0, a)
+  const sb = makeEventsFromArray(0, b)
 
-  var s = merge(delay(2, sa), delay(1, sb))
-  return collectEvents(s, ticks(2))
-    .then(function (events) {
-      var result = events.map(function (event) {
-        return event.value
-      })
-      // Include all items
-      expect(result.slice().sort()).toEqual(a.concat(b).sort())
+  const s = merge(delay(2, sa), delay(1, sb))
 
-      // Relative order of items in each stream must be preserved
-      expect(result.indexOf(1) < result.indexOf(2)).toBeTrue()
-      expect(result.indexOf(2) < result.indexOf(3)).toBeTrue()
-
-      expect(result.indexOf(4) < result.indexOf(5)).toBeTrue()
-      expect(result.indexOf(5) < result.indexOf(6)).toBeTrue()
+  return collectEventsFor(count, s)
+    .then(events => {
+      assert.same(count, events.length)
+      const expected = b.map(value => ({ time: 1, value })).concat(a.map(value => ({ time: 2, value })))
+      assert.equals(expected, events)
     })
 }
 
-function toArray (s) {
-  return reduce(function (result, x) {
-    return result.concat(x)
-  }, [], s)
-}

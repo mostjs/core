@@ -1,74 +1,83 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
+import { spec, referee } from 'buster'
+const { describe, it, beforeEach, afterEach } = spec
+const { assert } = referee
 
-var promises = require('../../src/combinator/promises')
-var observe = require('../../src/combinator/observe').observe
-var reduce = require('../../src/combinator/accumulate').reduce
-var streamOf = require('../../src/source/core').just
-var fromArray = require('../../src/source/fromArray').fromArray
-var recoverWith = require('../../src/combinator/errors').recoverWith
+import { awaitPromises, fromPromise } from '../../src/combinator/promises'
+import { recoverWith } from '../../src/combinator/errors'
 
-var sentinel = { value: 'sentinel' }
+import { atTime, makeEventsFromArray, collectEventsFor } from '../helper/testEnv'
 
-describe('await', function () {
-  it('should await promises', function () {
-    var s = promises.awaitPromises(streamOf(Promise.resolve(sentinel)))
+const sentinel = { value: 'sentinel' }
+const other = { value: 'other' }
 
-    return observe(function (x) {
-      expect(x).toBe(sentinel)
-    }, s)
-  })
+const rejected = e => {
+  const p = Promise.reject(e)
+  // Squelch node's unhandled rejection reporting
+  // It reports them as unhandled and then immediately as handled
+  // This could hide valid errors, although it's unlikely as long
+  // as every test here returns a promise.
+  p.catch(() => {})
+  return p
+}
 
-  it('should preserve event order', function () {
-    var slow = new Promise(function (resolve) {
-      setTimeout(resolve, 10, 1)
+describe('promises', () => {
+  describe('awaitPromises', function () {
+    it('should await promises', function () {
+      const s = awaitPromises(atTime(0, Promise.resolve(sentinel)))
+
+      return collectEventsFor(10, s)
+        .then(events => {
+          assert.same(1, events.length)
+          // How to assert something meaningful about the time
+          // which is out of our control?
+          assert.equals(sentinel, events[0].value)
+        })
     })
-    var fast = Promise.resolve(sentinel)
 
-    // delayed promise followed by already fulfilled promise
-    var s = promises.awaitPromises(fromArray([slow, fast]))
+    it('should preserve event order', function () {
+      const slow = new Promise(resolve => setTimeout(resolve, 10, other))
+      const fast = Promise.resolve(sentinel)
 
-    return reduce(function (a, x) {
-      return a.concat(x)
-    }, [], s).then(function (a) {
-      expect(a).toEqual([1, sentinel])
-    })
-  })
+      // delayed promise followed by already fulfilled promise
+      const s = awaitPromises(makeEventsFromArray(0, [slow, fast]))
 
-  it('should propagate error if promise rejects', function () {
-    var s = promises.awaitPromises(fromArray([Promise.resolve(), Promise.reject(sentinel), Promise.resolve()]))
-    var spy = this.spy()
-    return observe(spy, s).catch(function (e) {
-      expect(e).toBe(sentinel)
-      expect(spy).toHaveBeenCalledOnce()
-    })
-  })
-})
-
-describe('fromPromise', function () {
-  it('should contain only promise\'s fulfillment value', function () {
-    return observe(function (x) {
-      expect(x).toBe(sentinel)
-    }, promises.fromPromise(Promise.resolve(sentinel)))
-  })
-
-  it('should propagate error if promise rejects', function () {
-    var spy = this.spy()
-    return observe(spy, promises.fromPromise(Promise.reject(sentinel)))
-      .catch(function (e) {
-        expect(e).toBe(sentinel)
-        expect(spy).not.toHaveBeenCalled()
+      return collectEventsFor(10, s).then(events => {
+        assert.same(other, events[0].value)
+        assert.same(sentinel, events[1].value)
       })
+    })
+
+    it('should propagate error if promise rejects', function () {
+      const error = new Error()
+      const s = awaitPromises(makeEventsFromArray(1, [Promise.resolve(), rejected(error), Promise.resolve()]))
+      return collectEventsFor(1, s)
+        .catch(e => assert.same(e, error))
+    })
   })
 
-  it('should be recoverable if promise rejects', function () {
-    var s = recoverWith(function () {
-      return promises.fromPromise(Promise.resolve(sentinel))
-    }, promises.fromPromise(Promise.reject()))
+  describe('fromPromise', function () {
+    it('should contain only promise\'s fulfillment value', function () {
+      const s = fromPromise(Promise.resolve(sentinel))
+      return collectEventsFor(10, s).then(events => {
+        assert.same(1, events.length)
+        assert.equals(sentinel, events[0].value)
+      })
+    })
 
-    return observe(function (x) {
-      expect(x).toBe(sentinel)
-    }, s)
+    it('should propagate error if promise rejects', function () {
+      const error = new Error()
+      const s = fromPromise(rejected(error))
+
+      return collectEventsFor(1, s)
+        .catch(e => assert.same(error, e))
+    })
+
+    it('should be recoverable if promise rejects', function () {
+      const s = recoverWith(() => atTime(1, sentinel), fromPromise(rejected(new Error())))
+
+      return collectEventsFor(1, s)
+        .then(events =>
+          assert.equals([{ time: 1, value: sentinel }], events))
+    })
   })
 })
