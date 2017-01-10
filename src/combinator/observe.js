@@ -2,7 +2,8 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { withDefaultScheduler as run } from '../runEffects'
+import { runEffects } from '../runEffects'
+import defaultScheduler from '../scheduler/defaultScheduler'
 import { tap } from './transform'
 
 /**
@@ -24,5 +25,5 @@ export function observe (f, stream) {
  *  an error, or rejects if the stream ends with an error.
  */
 export function drain (stream) {
-  return run(stream.source)
+  return runEffects(stream, defaultScheduler)
 }

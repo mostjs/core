@@ -3,7 +3,7 @@ require('buster').spec.expose()
 var expect = require('buster').expect
 
 var generate = require('../../src/source/generate').generate
-var reduce = require('../../src/combinator/accumulate').reduce
+var reduce = require('../../src/combinator/reduce').reduce
 var iterable = require('../../src/iterable')
 var ArrayIterable = require('../helper/ArrayIterable')
 var delayPromise = require('../helper/delayPromise')

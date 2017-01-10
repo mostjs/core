@@ -1,6 +1,6 @@
 var expect = require('buster').expect
 
-var reduce = require('../../src/combinator/accumulate').reduce
+var reduce = require('../../src/combinator/reduce').reduce
 
 exports.assertSame = assertSame
 exports.expectArray = expectArray

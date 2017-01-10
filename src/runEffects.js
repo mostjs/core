@@ -3,13 +3,8 @@
 /** @author John Hann */
 
 import * as dispose from './disposable/dispose'
-import defaultScheduler from './scheduler/defaultScheduler'
 
 export const runEffects = ({ source }, scheduler) => withScheduler(source, scheduler)
-
-// TODO: Remove defaultScheduler
-export const withDefaultScheduler = source =>
-  withScheduler(source, defaultScheduler)
 
 export const withScheduler = (source, scheduler) =>
   new Promise((resolve, reject) =>
