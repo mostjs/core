@@ -26,7 +26,7 @@ export const loop = curry3(_loop)
 
 // -------------------------------------------------------
 
-import { scan as _scan } from './combinator/accumulate'
+import { scan as _scan } from './combinator/scan'
 
 export const scan = curry3(_scan)
 

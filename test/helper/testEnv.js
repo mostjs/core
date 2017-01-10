@@ -7,7 +7,7 @@ import PropagateTask from '../../src/scheduler/PropagateTask'
 import Scheduler from '../../src/scheduler/Scheduler'
 import Timeline from '../../src/scheduler/Timeline'
 import VirtualTimer from './VirtualTimer'
-import { withScheduler } from '../../src/runEffects'
+import { runEffects } from '../../src/runEffects'
 import { tap } from '../../src/combinator/transform'
 import { create as createDispose, empty as emptyDispose } from '../../src/disposable/dispose'
 
@@ -25,7 +25,7 @@ export function ticks (dt) {
 export function collectEvents (stream, scheduler) {
   const into = []
   const s = tap(x => into.push({ time: scheduler.now(), value: x }), stream)
-  return withScheduler(s.source, scheduler).then(() => into)
+  return runEffects(s, scheduler).then(() => into)
 }
 
 export const collectEventsFor = (nticks, stream) =>

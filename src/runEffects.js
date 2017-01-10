@@ -2,21 +2,16 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import * as dispose from './disposable/dispose'
-import defaultScheduler from './scheduler/defaultScheduler'
+import { settable } from './disposable/dispose'
 
-export const runEffects = ({ source }, scheduler) => withScheduler(source, scheduler)
+export const runEffects = ({ source }, scheduler) => runSourceEffects(source, scheduler)
 
-// TODO: Remove defaultScheduler
-export const withDefaultScheduler = source =>
-  withScheduler(source, defaultScheduler)
-
-export const withScheduler = (source, scheduler) =>
+export const runSourceEffects = (source, scheduler) =>
   new Promise((resolve, reject) =>
     runSource(source, scheduler, resolve, reject))
 
 function runSource (source, scheduler, resolve, reject) {
-  const disposable = dispose.settable()
+  const disposable = settable()
   const observer = new RunEffectsSink(resolve, reject, disposable)
 
   disposable.setDisposable(source.run(observer, scheduler))
