@@ -1,6 +1,6 @@
 require('buba/register')
 const Benchmark = require('benchmark');
-const {from, reduce, merge: _merge} = require('../../src/index');
+const {fromArray, reduce, merge: _merge} = require('../../src/index');
 const rx = require('rx');
 const rxjs = require('@reactivex/rxjs')
 const kefir = require('kefir');
@@ -64,19 +64,19 @@ const options = {
 
 suite
   .add('most (depth 2)', function(deferred) {
-    const s = mergeMost(2, from);
+    const s = mergeMost(2, fromArray);
     runners.runMost(deferred, reduce(sum, 0, s));
   }, options)
   .add('most (depth 5)', function(deferred) {
-    const s = mergeMost(5, from);
+    const s = mergeMost(5, fromArray);
     runners.runMost(deferred, reduce(sum, 0, s));
   }, options)
   .add('most (depth 10)', function(deferred) {
-    const s = mergeMost(10, from);
+    const s = mergeMost(10, fromArray);
     runners.runMost(deferred, reduce(sum, 0, s));
   }, options)
   .add('most (depth 100)', function(deferred) {
-    const s = mergeMost(100, from);
+    const s = mergeMost(100, fromArray);
     runners.runMost(deferred, reduce(sum, 0, s));
   }, options)
   // .add('most (depth 1000)', function(deferred) {
