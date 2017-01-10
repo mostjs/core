@@ -1,5 +1,5 @@
 import { spec, referee } from 'buster'
-const { describe, it, beforeEach, afterEach } = spec
+const { describe, it } = spec
 const { assert } = referee
 
 import { awaitPromises, fromPromise } from '../../src/combinator/promises'

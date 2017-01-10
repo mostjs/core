@@ -18,11 +18,6 @@ import { runEffects as _runEffects } from './runEffects'
 
 export const runEffects = curry2(_runEffects)
 
-import { observe as _observe, drain } from './combinator/observe'
-
-export { drain }
-export const observe = curry2(_observe)
-
 // -------------------------------------------------------
 
 import { loop as _loop } from './combinator/loop'
