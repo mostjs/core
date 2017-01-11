@@ -38,6 +38,7 @@ class Asap {
     this.active = false
   }
 }
+
 function runAsap (f) {
   const task = new Asap(f)
   defer(task)
