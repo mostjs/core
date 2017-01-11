@@ -2,6 +2,8 @@
 
 import Disposable from './Disposable'
 import SettableDisposable from './SettableDisposable'
+import MemoizedDisposable from './MemoizedDisposable'
+import { disposeSafely } from './disposeSafely'
 import { isPromise } from '../Promise'
 import { map, id } from '@most/prelude'
 
@@ -49,14 +51,6 @@ export const all = disposables =>
 const disposeAll = disposables =>
   Promise.all(map(disposeSafely, disposables))
 
-function disposeSafely (disposable) {
-  try {
-    return disposable.dispose()
-  } catch (e) {
-    return Promise.reject(e)
-  }
-}
-
 /**
  * Create a disposable from a promise for another disposable
  * @param {Promise<Disposable>} disposablePromise
@@ -86,22 +80,5 @@ export const settable = () =>
  * @return {Disposable} wrapped disposable
  */
 export const once = disposable =>
-  new Disposable(disposeOne, new MemoizedDisposable(disposable))
+  new MemoizedDisposable(disposable)
 
-class MemoizedDisposable {
-  constructor (disposable) {
-    this.disposed = false
-    this.value = undefined
-    this.disposable = disposable
-  }
-
-  dispose () {
-    if (!this.disposed) {
-      this.disposed = true
-      this.value = disposeSafely(this.disposable)
-      this.disposable = undefined
-    }
-
-    return this.value
-  }
-}
