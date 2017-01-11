@@ -147,11 +147,6 @@ import { delay as _delay } from './combinator/delay'
 export const delay = curry2(_delay)
 
 // -----------------------------------------------------------------------
-// Getting event timestamp
-
-export { timestamp } from './combinator/timestamp'
-
-// -----------------------------------------------------------------------
 // Rate limiting
 
 import { throttle as _throttle, debounce as _debounce } from './combinator/limit'
