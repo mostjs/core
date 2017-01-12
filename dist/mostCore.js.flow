@@ -1,0 +1,209 @@
+/* @flow */
+// # Most.js
+
+// ## Types
+
+// ### Semantic Time Types
+
+// An instant in time.  This can be wall-clock time
+// or a virtual time, depending on the particular Scheduler
+// in use
+export type Time = number
+
+// Delay time offset
+export type Delay = number
+
+// Span of time between time instants
+export type Period = number
+
+// Opaque handle vended by some platform-specific functions,
+// like setTimeout.
+export type Handle = any
+
+// Interface of a resource that can be disposed
+export type Disposable = {
+  dispose: () => ?Promise<any>
+}
+
+// A Timer can scheduler a function to run after
+// a particular delay
+export type Timer = {
+  setTimer: (f: () => any, delay: Delay) => Handle,
+  clearTimer: (c: Handle) => any
+}
+
+// Run a ScheduledTask
+export type TaskRunner = (st: ScheduledTask) => any
+
+// A Timeline is a set of ScheduledTasks to be executed at
+// particular times
+export type Timeline = {
+  add: (st: ScheduledTask) => void,
+  remove: (st: ScheduledTask) => boolean,
+  removeAll: (p: (st: ScheduledTask) => boolean) => void,
+  isEmpty: () => boolean,
+  nextArrival: () => Time,
+  runTasks: (t: Time, r: TaskRunner) => void
+}
+
+export type Scheduler = {
+  now: () => Time,
+  asap: (task:Task) => ScheduledTask,
+  delay: (delay:Delay, task:Task) => ScheduledTask,
+  periodic: (period:Period, task:Task) => ScheduledTask,
+  schedule: (delay:Delay, period:Period, task:Task) => ScheduledTask,
+  cancel: (task:ScheduledTask) => void
+}
+
+export type Task = Disposable & {
+  run: (t:Time) => void,
+  error: (t:Time, e:Error) => void,
+}
+
+export type ScheduledTask = Task
+
+export type Sink<A> = {
+  event: (t: Time, a: A) => void,
+  end: (t: Time, a: any) => void,
+  error: (t: Time, e: Error) => void,
+}
+
+export type Source<A> = {
+  run: (sink: Sink<A>, scheduler: Scheduler) => Disposable
+}
+
+export type Stream<A> = {
+  source: Source<A>
+}
+
+export type SeedValue <S, A> = {
+  seed: S,
+  value: A
+}
+
+declare export function runEffects <A> (s: Stream<A>, scheduler: Scheduler): Promise<any>
+
+declare export function empty (): Stream<any>
+declare export function never (): Stream<any>
+declare export function just <A> (a: A): Stream<A>
+declare export function fromArray <A> (a: Array<A>): Stream<A>
+declare export function fromIterable <A> (a: Iterable<A>): Stream<A>
+
+declare export function startWith <A> (a: A, s: Stream<A>): Stream<A>
+declare export function startWith <A> (a: A): (s: Stream<A>) => Stream<A>
+declare export function concat <A> (s1: Stream<A>, s2: Stream<A>): Stream<A>
+declare export function concat <A> (s1: Stream<A>): (s2: Stream<A>) => Stream<A>
+
+declare export function periodic (period: Period): Stream<void>
+
+declare export function iterate <S, A> (f: (A) => A|Promise<A>, seed: A): Stream<A>
+declare export function iterate <S, A> (f: (A) => A|Promise<A>): (seed: A) => Stream<A>
+
+declare export function unfold <S, A> (f: (S) => SeedValue<S, Promise<A>>, seed: S): Stream<A>
+declare export function unfold <S, A> (f: (S) => SeedValue<S, Promise<A>>): (seed: S) => Stream<A>
+
+declare export function map <A, B> (f: (A) => B, s: Stream<A>): Stream<B>
+declare export function map <A, B> (f: (A) => B): (s: Stream<A>) => Stream<B>
+
+declare export function constant <A, B> (a: A, s: Stream<B>): Stream<A>
+declare export function constant <A, B> (a: A): (s: Stream<B>) => Stream<A>
+
+declare export function tap <A> (f: (A) => any, s: Stream<A>): Stream<A>
+declare export function tap <A> (f: (A) => any): (s: Stream<A>) => Stream<A>
+
+declare export function scan <A, B> (f: (B, A) => B, b: B, s: Stream<A>): Stream<B>
+declare export function scan <A, B> (f: (B, A) => B): (b: B, s: Stream<A>) => Stream<B>
+declare export function scan <A, B> (f: (B, A) => B, b: B): (s: Stream<A>) => Stream<B>
+declare export function scan <A, B> (f: (B, A) => B): (b: B) => (s: Stream<A>) => Stream<B>
+
+declare export function loop <A, B, S> (f: (S, A) => SeedValue<S, B>, seed: S, s: Stream<A>): Stream<B>
+declare export function loop <A, B, S> (f: (S, A) => SeedValue<S, B>): (seed: S, s: Stream<A>) => Stream<B>
+declare export function loop <A, B, S> (f: (S, A) => SeedValue<S, B>, seed: S): (s: Stream<A>) => Stream<B>
+declare export function loop <A, B, S> (f: (S, A) => SeedValue<S, B>): (seed: S) => (s: Stream<A>) => Stream<B>
+
+declare export function ap <A, B> (fs: Stream<(A) => B>, s: Stream<A>): Stream<B>
+declare export function ap <A, B> (fs: Stream<(A) => B>): (s: Stream<A>) => Stream<B>
+
+declare export function chain <A, B> (f: (A) => Stream<B>, s: Stream<A>): Stream<B>
+declare export function chain <A, B> (f: (A) => Stream<B>): (s: Stream<A>) => Stream<B>
+
+declare export function join <A> (s: Stream<Stream<A>>): Stream<A>
+
+declare export function concatMap <A, B> (f: (A) => Stream<B>, s: Stream<A>): Stream<B>
+declare export function concatMap <A, B> (f: (A) => Stream<B>): (s: Stream<A>) => Stream<B>
+
+declare export function mergeConcurrently <A> (concurrency: number, s: Stream<Stream<A>>): Stream<A>
+declare export function mergeConcurrently <A> (concurrency: number): (s: Stream<Stream<A>>) => Stream<A>
+
+declare export function mergeMapConcurrently <A, B> (concurrency: number, f: (A) => Stream<B>, s: Stream<A>): Stream<B>
+declare export function mergeMapConcurrently <A, B> (concurrency: number): (f: (A) => Stream<B>, s: Stream<A>) => Stream<B>
+declare export function mergeMapConcurrently <A, B> (concurrency: number, f: (A) => Stream<B>): (s: Stream<A>) => Stream<B>
+declare export function mergeMapConcurrently <A, B> (concurrency: number): (f: (A) => Stream<B>) => (s: Stream<A>) => Stream<B>
+
+declare export function continueWith <A> (f: (any) => A, s: Stream<A>): Stream<A>
+declare export function continueWith <A> (f: (any) => A): (s: Stream<A>) => Stream<A>
+
+declare export function switchLatest <A> (s: Stream<Stream<A>>): Stream<A>
+
+declare export function merge <A> (...ss: Array<Stream<A>>): Stream<A>
+declare export function mergeArray <A> (ss: Array<Stream<A>>): Stream<A>
+
+// TODO: combine, zip, sample
+
+declare export function filter <A> (p: (A) => boolean, s: Stream<A>): Stream<A>
+declare export function filter <A> (p: (A) => boolean): (s: Stream<A>) => Stream<A>
+
+declare export function skipRepeats <A> (s: Stream<A>): Stream<A>
+
+declare export function skipRepeatsWith <A> (equals: (a1: A, a2: A) => boolean, s: Stream<A>): Stream<A>
+declare export function skipRepeatsWith <A> (equals: (a1: A, a2: A) => boolean): (s: Stream<A>) => Stream<A>
+
+
+declare export function take <A> (n: number, s: Stream<A>): Stream<A>
+declare export function take <A> (n: number): (s: Stream<A>) => Stream<A>
+
+declare export function skip <A> (n: number, s: Stream<A>): Stream<A>
+declare export function skip <A> (n: number): (s: Stream<A>) => Stream<A>
+
+declare export function slice <A> (start: number, end: number, s: Stream<A>): Stream<A>
+declare export function slice <A> (start: number): (end: number, s: Stream<A>) => Stream<A>
+declare export function slice <A> (start: number, end: number): (s: Stream<A>) => Stream<A>
+declare export function slice <A> (start: number): (end: number) => (s: Stream<A>) => Stream<A>
+
+declare export function takeWhile <A> (p: (A) => boolean, s: Stream<A>): Stream<A>
+declare export function takeWhile <A> (p: (A) => boolean): (s: Stream<A>) => Stream<A>
+
+declare export function skipWhile <A> (p: (A) => boolean, s: Stream<A>): Stream<A>
+declare export function skipWhile <A> (p: (A) => boolean): (s: Stream<A>) => Stream<A>
+
+declare export function until <A> (until: Stream<any>, s: Stream<A>): Stream<A>
+declare export function until <A> (until: Stream<any>): (s: Stream<A>) => Stream<A>
+
+declare export function since <A> (since: Stream<any>, s: Stream<A>): Stream<A>
+declare export function since <A> (since: Stream<any>): (s: Stream<A>) => Stream<A>
+
+declare export function during <A> (since: Stream<Stream<any>>, s: Stream<A>): Stream<A>
+
+declare export function delay <A> (delay: Delay, s: Stream<A>): Stream<A>
+declare export function delay <A> (delay: Delay): (s: Stream<A>) => Stream<A>
+
+declare export function throttle <A> (period: Period, s: Stream<A>): Stream<A>
+declare export function throttle <A> (period: Period): (s: Stream<A>) => Stream<A>
+
+declare export function debounce <A> (period: Period, s: Stream<A>): Stream<A>
+declare export function debounce <A> (period: Period): (s: Stream<A>) => Stream<A>
+
+declare export function fromPromise <A> (pa: Promise<A>): Stream<A>
+declare export function awaitPromises <A> (spa: Stream<Promise<A>>): Stream<A>
+
+declare export function recoverWith <A, E:Error> (f: (E) => Stream<A>, s: Stream<A>): Stream<A>
+declare export function recoverWith <A, E:Error> (f: (E) => Stream<A>): (s: Stream<A>) => Stream<A>
+
+declare export function throwError <E:Error> (e: Error): Stream<any>
+
+declare export function newDefaultScheduler (): Scheduler
+declare export function newTimeline (): Timeline
+declare export function newClockTimer (): Timer
+
+declare export function newScheduler (timer: Timer, timeline: Timeline): Scheduler
+declare export function newScheduler (timer: Timer): (timeline: Timeline) => Scheduler
