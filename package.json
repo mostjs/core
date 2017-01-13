@@ -36,7 +36,7 @@
   "license": "MIT",
   "devDependencies": {
     "@most/eslint-config-most": "^1.0.3",
-    "buba": "^4.0.1",
+    "buba": "^4.0.2",
     "buster": "^0.7.18",
     "eslint": "^3.12.1",
     "rimraf": "^2.5.4",
