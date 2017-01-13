@@ -1,7 +1,7 @@
 {
   "name": "@most/core",
-  "version": "1.0.0",
-  "description": "Monadic streams",
+  "version": "0.1.0",
+  "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
   "typings": "type-definitions/most.d.ts",
   "main": "dist/mostCore.js",
   "module": "dist/mostCore.es.js",
@@ -23,19 +23,14 @@
   "keywords": [
     "reactive",
     "reactive programming",
-    "reactive streams",
-    "stream",
-    "streams",
+    "events",
     "event stream",
     "promise",
     "promises",
-    "promises-aplus",
     "monad",
     "monadic",
     "functional",
-    "async",
-    "cujojs",
-    "cujo"
+    "async"
   ],
   "author": "brian@hovercraftstudios.com",
   "license": "MIT",
