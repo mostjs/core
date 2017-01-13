@@ -2905,9 +2905,28 @@ Timeline.prototype.runTasks = function runTasks (t, runTask) {
 
   // Run all ready tasks
   for (var j = 0; j < i; ++j) {
-    this$1.tasks = runTasks(runTask, tasks[j], this$1.tasks);
+    this$1.tasks = runReadyTasks(runTask, tasks[j].events, this$1.tasks);
   }
 };
+
+function runReadyTasks (runTask, events, tasks) { // eslint-disable-line complexity
+  for (var i = 0; i < events.length; ++i) {
+    var task = events[i];
+
+    if (task.active) {
+      runTask(task);
+
+      // Reschedule periodic repeating tasks
+      // Check active again, since a task may have canceled itself
+      if (task.period >= 0 && task.active) {
+        task.time = task.time + task.period;
+        insertByTime(task, tasks);
+      }
+    }
+  }
+
+  return tasks
+}
 
 function insertByTime (task, timeslots) { // eslint-disable-line complexity
   var l = timeslots.length;

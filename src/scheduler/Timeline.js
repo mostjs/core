@@ -54,13 +54,12 @@ export default class Timeline {
 
     // Run all ready tasks
     for (let j = 0; j < i; ++j) {
-      this.tasks = runTasks(runTask, tasks[j], this.tasks)
+      this.tasks = runReadyTasks(runTask, tasks[j].events, this.tasks)
     }
   }
 }
 
-function runTasks (runTask, timeslot, tasks) { // eslint-disable-line complexity
-  const events = timeslot.events
+function runReadyTasks (runTask, events, tasks) { // eslint-disable-line complexity
   for (let i = 0; i < events.length; ++i) {
     const task = events[i]
 
