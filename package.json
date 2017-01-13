@@ -11,10 +11,12 @@
     "dist"
   ],
   "scripts": {
+    "commit": "northbrook commit",
     "unit-test": "buster-test",
-    "test": "eslint src test && npm run unit-test",
-    "build": "rimraf lib dist && rollup -c && uglifyjs dist/mostCore.js -c \"warnings=false\" -m -o dist/mostCore.min.js",
-    "prepublish": "npm run build"
+    "test": "northbrook eslint && npm run unit-test",
+    "build": "rimraf lib dist && nb rollup && uglifyjs dist/mostCore.js -c \"warnings=false\" -m -o dist/mostCore.min.js",
+    "prepublish": "npm run build",
+    "release": "northbrook release"
   },
   "repository": {
     "type": "git",
@@ -36,11 +38,12 @@
   "license": "MIT",
   "devDependencies": {
     "@most/eslint-config-most": "^1.0.3",
+    "@northbrook/eslint": "^2.0.1",
+    "@northbrook/rollup": "^1.0.1",
     "buba": "^4.0.2",
     "buster": "^0.7.18",
-    "eslint": "^3.12.1",
+    "northbrook": "^4.3.7",
     "rimraf": "^2.5.4",
-    "rollup": "^0.38.0",
     "rollup-plugin-buble": "^0.15.0",
     "rollup-plugin-node-resolve": "^2.0.0",
     "uglify-js": "^2.7.5"
