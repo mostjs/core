@@ -36,7 +36,7 @@ First, the HTML fragment for the inputs and a place to display the live result:
 Using `@most/core` to make it reactive:
 
 ```es6
-import { combine, newDefaultScheduler } from '@most/core'
+import { combine, runEffects, newDefaultScheduler } from '@most/core'
 import { input } from '@most/dom-event'
 
 const xInput = document.querySelector('input.x')
