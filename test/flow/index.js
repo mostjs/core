@@ -2,7 +2,7 @@
 
 // Flow type tests
 
-import { just, switchLatest, map, constant, runEffects, newDefaultScheduler } from '../../dist/mostCore'
+import { just, switchLatest, map, constant, runEffects, newDefaultScheduler } from '../../src/index'
 
 const f: (number) => number = a => a
 
