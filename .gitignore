@@ -3,5 +3,4 @@
 *.iml
 .DS_Store
 experiments/
-bower_components/
-lib/
+dist/

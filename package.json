@@ -14,7 +14,7 @@
     "unit-test": "buster-test",
     "test": "eslint src test && npm run unit-test",
     "build": "rimraf lib dist && rollup -c && uglifyjs dist/mostCore.js -c \"warnings=false\" -m -o dist/mostCore.min.js",
-    "preversion": "npm run build"
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
