@@ -27,3 +27,11 @@ export * from './combinator/switch';
 export * from './combinator/timeslice';
 export * from './combinator/transform';
 export * from './combinator/zip';
+
+export * from './source/core';
+export * from './source/fromArray';
+export * from './source/fromIterable';
+export * from './source/generate';
+export * from './source/iterate';
+export * from './source/periodic';
+export * from './source/unfold';
