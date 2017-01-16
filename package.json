@@ -14,7 +14,7 @@
     "commit": "northbrook commit",
     "unit-test": "buster-test",
     "test": "northbrook eslint && npm run unit-test",
-    "build": "rimraf lib dist && nb rollup && uglifyjs dist/mostCore.js -c \"warnings=false\" -m -o dist/mostCore.min.js",
+    "build": "rimraf lib dist && northbrook rollup && uglifyjs dist/mostCore.js -c \"warnings=false\" -m -o dist/mostCore.min.js",
     "prepublish": "npm run build",
     "release": "northbrook release"
   },
