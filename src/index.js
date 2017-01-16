@@ -30,6 +30,10 @@ import { scan as _scan } from './combinator/scan'
 
 export const scan = curry3(_scan)
 
+import { reduce as _reduce } from './combinator/reduce'
+
+export const reduce = curry3(_reduce)
+
 // -----------------------------------------------------------------------
 // Building and extending
 
