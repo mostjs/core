@@ -1,3 +1,10 @@
+# 0.2.1 (2017-01-17)
+---
+
+## Bug Fixes
+
+- fix(core): Fix newDefaultScheduler argument order (#29) [7a8ebf86](/commits/7a8ebf86fbc068dea8a6b8def44b673be3baf3aa)
+
 # 0.2.0 (2017-01-16)
 ---
 
