@@ -182,7 +182,7 @@ export const newClockTimer = () => new ClockTimer()
 
 export const newScheduler = curry2(_newScheduler)
 
-export const newDefaultScheduler = () => _newScheduler(newTimeline(), newClockTimer())
+export const newDefaultScheduler = () => _newScheduler(newClockTimer(), newTimeline())
 
 export { Scheduler, Timeline, ClockTimer }
 
