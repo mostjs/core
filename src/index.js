@@ -175,7 +175,14 @@ import Scheduler from './scheduler/Scheduler'
 import Timeline from './scheduler/Timeline'
 import ClockTimer from './scheduler/ClockTimer'
 
-export const createDefaultScheduler = () => new Scheduler(new ClockTimer(), new Timeline())
+const _newScheduler = (timer, timeline) => new Scheduler(timer, timeline)
+
+export const newTimeline = () => new Timeline()
+export const newClockTimer = () => new ClockTimer()
+
+export const newScheduler = curry2(_newScheduler)
+
+export const newDefaultScheduler = () => _newScheduler(newTimeline(), newClockTimer())
 
 export { Scheduler, Timeline, ClockTimer }
 

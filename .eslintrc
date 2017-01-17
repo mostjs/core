@@ -1,3 +1,4 @@
 {
- "extends": "@most/eslint-config-most"
+  "parser": "babel-eslint",
+  "extends": "@most/eslint-config-most"
 }
