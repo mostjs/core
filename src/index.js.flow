@@ -25,7 +25,7 @@ export type Disposable = {
   dispose: () => ?Promise<any>
 }
 
-// A Timer can scheduler a function to run after
+// A Timer can schedule a function to run after
 // a particular delay
 export type Timer = {
   setTimer: (f: () => any, delay: Delay) => Handle,
