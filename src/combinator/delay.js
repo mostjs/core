@@ -5,7 +5,7 @@
 import Stream from '../Stream'
 import Pipe from '../sink/Pipe'
 import * as dispose from '../disposable/dispose'
-import PropagateTask from '../scheduler/PropagateTask'
+import { propagateEvent, propagateEnd } from '../scheduler/PropagateTask'
 
 /**
  * @param {Number} delayTime milliseconds to delay each item
@@ -41,11 +41,11 @@ DelaySink.prototype.dispose = function () {
 }
 
 DelaySink.prototype.event = function (t, x) {
-  this.scheduler.delay(this.dt, PropagateTask.event(x, this.sink))
+  this.scheduler.delay(this.dt, propagateEvent(x, this.sink))
 }
 
 DelaySink.prototype.end = function (t, x) {
-  this.scheduler.delay(this.dt, PropagateTask.end(x, this.sink))
+  this.scheduler.delay(this.dt, propagateEnd(x, this.sink))
 }
 
 DelaySink.prototype.error = Pipe.prototype.error

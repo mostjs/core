@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Stream from '../../src/Stream'
-import PropagateTask from '../../src/scheduler/PropagateTask'
+import { propagateEvent, propagateEnd } from '../../src/scheduler/PropagateTask'
 import Scheduler from '../../src/scheduler/Scheduler'
 import Timeline from '../../src/scheduler/Timeline'
 import VirtualTimer from './VirtualTimer'
@@ -55,12 +55,12 @@ class AtTimes {
 
 const runEvents = (events, sink, scheduler) => {
   const s = events.reduce(appendEvent(sink, scheduler), { tasks: [], time: 0 })
-  const end = scheduler.delay(s.time, PropagateTask.end(void 0, sink))
+  const end = scheduler.delay(s.time, propagateEnd(undefined, sink))
   return createDispose(cancelAll, s.tasks.concat(end))
 }
 
 const appendEvent = (sink, scheduler) => (s, event) => {
-  const task = scheduler.delay(event.time, PropagateTask.event(event.value, sink))
+  const task = scheduler.delay(event.time, propagateEvent(event.value, sink))
   return { tasks: s.tasks.concat(task), time: Math.max(s.time, event.time) }
 }
 

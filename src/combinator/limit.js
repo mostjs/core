@@ -5,7 +5,7 @@
 import Stream from '../Stream'
 import Pipe from '../sink/Pipe'
 import * as dispose from '../disposable/dispose'
-import PropagateTask from '../scheduler/PropagateTask'
+import { propagateEvent } from '../scheduler/PropagateTask'
 import Map from '../fusion/Map'
 
 /**
@@ -92,7 +92,7 @@ function DebounceSink (dt, source, sink, scheduler) {
 DebounceSink.prototype.event = function (t, x) {
   this._clearTimer()
   this.value = x
-  this.timer = this.scheduler.delay(this.dt, PropagateTask.event(x, this.sink))
+  this.timer = this.scheduler.delay(this.dt, propagateEvent(x, this.sink))
 }
 
 DebounceSink.prototype.end = function (t, x) {
