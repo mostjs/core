@@ -1,44 +1,46 @@
-import { spec, expect } from 'buster'
-const { describe, it } = spec
+import { describe, it } from 'mocha'
+import assert from 'assert'
+
 import * as observe from '../src/combinator/observe'
 import { iterate } from '../src/source/iterate'
 import { take } from '../src/combinator/slice'
 import { just as streamOf } from '../src/source/core'
+import * as sinon from 'sinon'
 
-var sentinel = { value: 'sentinel' }
+const sentinel = { value: 'sentinel' }
 
 describe('observe', function () {
   it('should call callback and return a promise', function () {
-    var spy = this.spy()
+    const spy = sinon.spy()
 
     return observe.observe(spy, streamOf(sentinel))
       .then(function () {
-        expect(spy).toHaveBeenCalledWith(sentinel)
+        assert.ok(spy.calledWith(sentinel))
       })
   })
 
   it('should call callback with expected values until end', function () {
-    var n = 5
-    var s = take(n, iterate(function (x) {
+    const n = 5
+    const s = take(n, iterate(function (x) {
       return x + 1
     }, 0))
 
-    var y = 0
-    var spy = this.spy(function (x) {
-      expect(x).toBe(y++)
+    let y = 0
+    const spy = sinon.spy(function (x) {
+      assert.strictEqual(x, y++)
     })
 
     return observe.observe(spy, s)
       .then(function () {
-        expect(y).toBe(n)
+        assert.strictEqual(y, n)
       })
   })
 })
 
 describe('drain', function () {
   it('should drain all events', function () {
-    var n = 5
-    var s = take(n, iterate(function (x) {
+    let n = 5
+    const s = take(n, iterate(function (x) {
       n -= 1
       return x + 1
     }, 0))
@@ -47,7 +49,7 @@ describe('drain', function () {
 
     return observe.drain(s)
       .then(function () {
-        expect(n).toBe(0)
+        assert.strictEqual(n, 0)
       })
   })
 })
