@@ -27,6 +27,21 @@ export interface Scheduler {
   cancelAll(predicate: (task: ScheduledTask) => boolean): void;
 }
 
+export interface Timer {
+  now(): number;
+  setTimer(f: () => any, delayTime: number): number;
+  clearTimer(taskId: number): void;
+}
+
+export interface Timeline {
+  nextArrival(): number;
+  isEmpty(): boolean;
+  add(scheduledTask: ScheduledTask): void;
+  remove(scheduledTask: ScheduledTask): boolean;
+  removeAll(f: (scheduledTask: ScheduledTask) => boolean): void;
+  runTasks(time: number, runTask: (task: ScheduledTask) => any);
+}
+
 export interface Task {
   run(time: number): void;
   error(time: number, e: Error): void;
