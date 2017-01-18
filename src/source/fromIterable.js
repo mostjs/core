@@ -2,7 +2,7 @@
 
 import Stream from '../Stream'
 import { getIterator } from '../iterable'
-import { propagate } from '../scheduler/PropagateTask'
+import { propagateTask } from '../scheduler/PropagateTask'
 
 export const fromIterable = iterable =>
   new Stream(new IterableSource(iterable))
@@ -13,7 +13,7 @@ class IterableSource {
   }
 
   run (sink, scheduler) {
-    return scheduler.asap(propagate(runProducer, getIterator(this.iterable), sink))
+    return scheduler.asap(propagateTask(runProducer, getIterator(this.iterable), sink))
   }
 }
 

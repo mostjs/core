@@ -4,7 +4,7 @@
 
 import Stream from '../Stream'
 import * as dispose from '../disposable/dispose'
-import { propagate, propagateEnd } from '../scheduler/PropagateTask'
+import { propagateTask, propagateEndTask } from '../scheduler/PropagateTask'
 
 /**
  * Stream containing only x
@@ -19,7 +19,7 @@ class Just {
   }
 
   run (sink, scheduler) {
-    return scheduler.asap(propagate(runJust, this.value, sink))
+    return scheduler.asap(propagateTask(runJust, this.value, sink))
   }
 }
 
@@ -36,7 +36,7 @@ export const empty = () => EMPTY
 
 class EmptySource {
   run (sink, scheduler) {
-    const task = propagateEnd(undefined, sink)
+    const task = propagateEndTask(undefined, sink)
     scheduler.asap(task)
 
     return dispose.create(disposeEmpty, task)

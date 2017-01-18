@@ -4,13 +4,13 @@
 
 import fatal from '../fatalError'
 
-export const propagate = (run, value, sink) => new PropagateTask(run, value, sink)
+export const propagateTask = (run, value, sink) => new PropagateTask(run, value, sink)
 
-export const propagateEvent = (value, sink) => propagate(runEvent, value, sink)
+export const propagateEventTask = (value, sink) => propagateTask(runEvent, value, sink)
 
-export const propagateEnd = (value, sink) => propagate(runEnd, value, sink)
+export const propagateEndTask = (value, sink) => propagateTask(runEnd, value, sink)
 
-export const propagateError = (value, sink) => propagate(runError, value, sink)
+export const propagateErrorTask = (value, sink) => propagateTask(runError, value, sink)
 
 export class PropagateTask {
   constructor (run, value, sink) {

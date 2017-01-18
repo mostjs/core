@@ -6,7 +6,7 @@ import Stream from '../Stream'
 import SafeSink from '../sink/SafeSink'
 import * as dispose from '../disposable/dispose'
 import * as tryEvent from '../source/tryEvent'
-import { propagateError } from '../scheduler/PropagateTask'
+import { propagateErrorTask } from '../scheduler/PropagateTask'
 
 /**
  * If stream encounters an error, recover and continue with items from stream
@@ -32,7 +32,7 @@ class ErrorSource {
   }
 
   run (sink, scheduler) {
-    return scheduler.asap(propagateError(this.value, sink))
+    return scheduler.asap(propagateErrorTask(this.value, sink))
   }
 }
 

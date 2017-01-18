@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Stream from '../Stream'
-import { propagate } from '../scheduler/PropagateTask'
+import { propagateTask } from '../scheduler/PropagateTask'
 
 export const fromArray = a =>
   new Stream(new ArraySource(a))
@@ -14,7 +14,7 @@ class ArraySource {
   }
 
   run (sink, scheduler) {
-    return scheduler.asap(propagate(runProducer, this.array, sink))
+    return scheduler.asap(propagateTask(runProducer, this.array, sink))
   }
 }
 

@@ -48,16 +48,16 @@ export type Timeline = {
 
 export type Scheduler = {
   now: () => Time,
-  asap: (task:Task) => ScheduledTask,
-  delay: (delay:Delay, task:Task) => ScheduledTask,
-  periodic: (period:Period, task:Task) => ScheduledTask,
-  schedule: (delay:Delay, period:Period, task:Task) => ScheduledTask,
-  cancel: (task:ScheduledTask) => void
+  asap: (task: Task) => ScheduledTask,
+  delay: (delay: Delay, task: Task) => ScheduledTask,
+  periodic: (period: Period, task: Task) => ScheduledTask,
+  schedule: (delay: Delay, period: Period, task: Task) => ScheduledTask,
+  cancel: (task: ScheduledTask) => void
 }
 
 export type Task = Disposable & {
-  run: (t:Time) => void,
-  error: (t:Time, e:Error) => void,
+  run: (t: Time) => void,
+  error: (t: Time, e:Error) => void,
 }
 
 export type ScheduledTask = Task
@@ -250,3 +250,16 @@ declare export function newClockTimer (): Timer
 
 declare export function newScheduler (timer: Timer, timeline: Timeline): Scheduler
 declare export function newScheduler (timer: Timer): (timeline: Timeline) => Scheduler
+
+export type PropagateTask<A> = Task & {
+  value: A,
+  sink: Sink<A>,
+  active: boolean
+}
+
+export type PropagateTaskRun<A> = (time: Time, value: A, sink: Sink<A>, task: PropagateTask<A>) => any
+
+declare export function propagateTask<A> (run: PropagateTaskRun<A>, value: A, sink: Sink<A>): PropagateTask<A>
+declare export function propagateEventTask<A> (value: A, sink: Sink<A>): PropagateTask<A>
+declare export function propagateErrorTask<E: Error> (e: E, sink: Sink<any>): PropagateTask<any>
+declare export function propagateEndTask (value: any, sink: Sink<any>): PropagateTask<any>
