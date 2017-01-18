@@ -1,4 +1,4 @@
-module.exports = FakeEventTarget
+export default FakeEventTarget
 
 function FakeEventTarget () {
   this._handler = this._event = this._capture = void 0

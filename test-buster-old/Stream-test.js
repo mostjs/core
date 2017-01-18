@@ -1,8 +1,6 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
-
-var Stream = require('../src/Stream').default
+import { spec, expect } from 'buster'
+const { describe, it } = spec
+import { default as Stream } from '../src/Stream'
 
 var sentinel = { value: 'sentinel' }
 

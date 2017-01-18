@@ -1,8 +1,7 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
+import { spec, expect } from 'buster'
+const { describe, it } = spec
 
-var dispose = require('../../src/disposable/dispose')
+import * as dispose from '../../src/disposable/dispose'
 
 function noop () {}
 

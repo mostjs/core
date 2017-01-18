@@ -1,11 +1,9 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
-
-var observe = require('../src/combinator/observe')
-var iterate = require('../src/source/iterate').iterate
-var take = require('../src/combinator/slice').take
-var streamOf = require('../src/source/core').just
+import { spec, expect } from 'buster'
+const { describe, it } = spec
+import * as observe from '../src/combinator/observe'
+import { iterate } from '../src/source/iterate'
+import { take } from '../src/combinator/slice'
+import { just as streamOf } from '../src/source/core'
 
 var sentinel = { value: 'sentinel' }
 

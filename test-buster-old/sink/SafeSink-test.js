@@ -1,8 +1,6 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
-
-var SafeSink = require('../../src/sink/SafeSink').default
+import { spec, expect } from 'buster'
+const { describe, it } = spec
+import { default as SafeSink } from '../../src/sink/SafeSink'
 
 function testSink (event, end, error) {
   return {

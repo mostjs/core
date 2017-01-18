@@ -1,13 +1,10 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
-
-var slice = require('../src/combinator/slice')
-var map = require('../src/combinator/transform').map
-var Map = require('../src/fusion/Map').default
-var fromArray = require('../src/source/fromArray').fromArray
-
-var expectArray = require('./helper/stream-helper').expectArray
+import { spec, expect } from 'buster'
+const { describe, it } = spec
+import * as slice from '../src/combinator/slice'
+import { map } from '../src/combinator/transform'
+import { default as Map } from '../src/fusion/Map'
+import { fromArray } from '../src/source/fromArray'
+import { expectArray } from './helper/stream-helper'
 
 describe('slice', function () {
   describe('fusion', function () {

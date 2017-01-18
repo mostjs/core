@@ -1,11 +1,9 @@
-/* global describe, it */
-require('buster').spec.expose()
-var assertSame = require('../helper/stream-helper').assertSame
+import { spec } from 'buster'
+const { describe, it } = spec
 
-var applicative = require('../../src/combinator/applicative')
-var streamOf = require('../../src/source/core').just
-
-var ap = applicative.ap
+import { assertSame } from '../helper/stream-helper'
+import { ap } from '../../src/combinator/applicative'
+import { just as streamOf } from '../../src/source/core'
 
 var sentinel = { value: 'sentinel' }
 

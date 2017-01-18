@@ -1,7 +1,7 @@
-var makeIterable = require('../../src/iterable').makeIterable
-var Iteration = require('./Iteration')
+import { makeIterable } from '../../src/iterable'
+import Iteration from './Iteration'
 
-module.exports = ArrayIterable
+export default ArrayIterable
 
 function ArrayIterable (a) {
   this.array = a

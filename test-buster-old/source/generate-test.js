@@ -1,12 +1,10 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
-
-var generate = require('../../src/source/generate').generate
-var reduce = require('../../src/combinator/reduce').reduce
-var iterable = require('../../src/iterable')
-var ArrayIterable = require('../helper/ArrayIterable')
-var delayPromise = require('../helper/delayPromise')
+import { spec, expect } from 'buster'
+const { describe, it } = spec
+import { generate } from '../../src/source/generate'
+import { reduce } from '../../src/combinator/reduce'
+import * as iterable from '../../src/iterable'
+import ArrayIterable from '../helper/ArrayIterable'
+import delayPromise from '../helper/delayPromise'
 
 function makeAsyncIterator (ms, n) {
   var a = new Array(n)

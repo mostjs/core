@@ -4,7 +4,7 @@
 
 /*global setTimeout, clearTimeout*/
 
-module.exports = VirtualTimer
+export default VirtualTimer
 
 function VirtualTimer () {
   this._now = this._targetNow = 0

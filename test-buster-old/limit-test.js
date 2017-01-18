@@ -1,23 +1,16 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
-
-var limit = require('../src/combinator/limit')
-var periodic = require('../src/source/periodic').periodic
-var zip = require('../src/combinator/zip').zip
-var transform = require('../src/combinator/transform')
-var take = require('../src/combinator/slice').take
-var fromArray = require('../src/source/fromArray').fromArray
-var core = require('../src/source/core')
-var Map = require('../src/fusion/Map').default
-
-var empty = core.empty
-var streamOf = core.just
-
-var map = transform.map
+import { spec, expect } from 'buster'
+const { describe, it } = spec
+import * as limit from '../src/combinator/limit'
+import { periodic } from '../src/source/periodic'
+import { zip } from '../src/combinator/zip'
+import { map } from '../src/combinator/transform'
+import { take } from '../src/combinator/slice'
+import { fromArray } from '../src/source/fromArray'
+import { empty, just as streamOf } from '../src/source/core'
+import { default as Map } from '../src/fusion/Map'
 
 import { ticks, atTimes, collectEvents } from './helper/testEnv'
-var assertSame = require('./helper/stream-helper').assertSame
+import { assertSame } from './helper/stream-helper'
 
 var sentinel = { value: 'sentinel' }
 

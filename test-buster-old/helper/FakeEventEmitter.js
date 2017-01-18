@@ -1,4 +1,4 @@
-module.exports = FakeEventEmitter
+export default FakeEventEmitter
 
 function FakeEventEmitter () {
   this._handler = this._event = void 0

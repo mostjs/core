@@ -1,13 +1,11 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
-
-var combine = require('../src/combinator/combine')
-var map = require('../src/combinator/transform').map
-var take = require('../src/combinator/slice').take
-var delay = require('../src/combinator/delay').delay
-var periodic = require('../src/source/periodic').periodic
-var streamOf = require('../src/source/core').just
+import { spec, expect } from 'buster'
+const { describe, it } = spec
+import * as combine from '../src/combinator/combine'
+import { map } from '../src/combinator/transform'
+import { take } from '../src/combinator/slice'
+import { delay } from '../src/combinator/delay'
+import { periodic } from '../src/source/periodic'
+import { just as streamOf } from '../src/source/core'
 
 import { ticks, collectEvents } from './helper/testEnv'
 

@@ -1,4 +1,4 @@
-module.exports = Iteration
+export default Iteration
 
 function Iteration (done, value) {
   this.done = done

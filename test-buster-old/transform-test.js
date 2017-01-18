@@ -1,15 +1,9 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
-var assertSame = require('./helper/stream-helper').assertSame
-
-var transform = require('../src/combinator/transform')
-var observe = require('../src/combinator/observe').observe
-var streamOf = require('../src/source/core').just
-
-var map = transform.map
-var tap = transform.tap
-var constant = transform.constant
+import { spec, expect } from 'buster'
+const { describe, it } = spec
+import { assertSame } from './helper/stream-helper'
+import { map, tap, constant } from '../src/combinator/transform'
+import { observe } from '../src/combinator/observe'
+import { just as streamOf } from '../src/source/core'
 
 var sentinel = { value: 'sentinel' }
 var other = { value: 'other' }

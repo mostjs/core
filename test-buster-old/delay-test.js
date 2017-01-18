@@ -1,9 +1,7 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
-
-var delay = require('../src/combinator/delay').delay
-var streamOf = require('../src/source/core').just
+import { spec, expect } from 'buster'
+const { describe, it } = spec
+import { delay } from '../src/combinator/delay'
+import { just as streamOf } from '../src/source/core'
 
 import { ticks, collectEvents } from './helper/testEnv'
 

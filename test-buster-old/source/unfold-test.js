@@ -1,10 +1,8 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
-
-var unfold = require('../../src/source/unfold').unfold
-var take = require('../../src/combinator/slice').take
-var observe = require('../../src/combinator/observe').observe
+import { spec, expect } from 'buster'
+const { describe, it } = spec
+import { unfold } from '../../src/source/unfold'
+import { take } from '../../src/combinator/slice'
+import { observe } from '../../src/combinator/observe'
 
 var sentinel = { value: 'sentinel' }
 var other = { value: 'other' }

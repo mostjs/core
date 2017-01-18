@@ -1,21 +1,17 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
-var assertSame = require('../helper/stream-helper').assertSame
+import { spec, expect } from 'buster'
+const { describe, it } = spec
+import { assertSame } from '../helper/stream-helper'
 
-var concatMap = require('../../src/combinator/concatMap')
-var concat = require('../../src/combinator/build').concat
-var take = require('../../src/combinator/slice').take
-var drain = require('../../src/combinator/observe').drain
-var core = require('../../src/source/core')
-var fromArray = require('../../src/source/fromArray').fromArray
-var Stream = require('../../src/Stream').default
+import * as concatMap from '../../src/combinator/concatMap'
+import { concat } from '../../src/combinator/build'
+import { take } from '../../src/combinator/slice'
+import { drain } from '../../src/combinator/observe'
+import { just as streamOf, never } from '../../src/source/core'
+import { fromArray } from '../../src/source/fromArray'
+import { default as Stream } from '../../src/Stream'
 
 import { ticks, atTimes, collectEvents } from '../helper/testEnv'
-var FakeDisposeSource = require('../helper/FakeDisposeSource')
-
-var streamOf = core.just
-var never = core.never
+import FakeDisposeSource from '../helper/FakeDisposeSource'
 
 var sentinel = { value: 'sentinel' }
 

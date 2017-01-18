@@ -1,21 +1,16 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
-
-var timeslice = require('../src/combinator/timeslice')
-var take = require('../src/combinator/slice').take
-var periodic = require('../src/source/periodic').periodic
-var core = require('../src/source/core')
-var delay = require('../src/combinator/delay').delay
-var Stream = require('../src/Stream').default
-
-var streamOf = core.just
-var never = core.never
+import { spec, expect } from 'buster'
+const { describe, it } = spec
+import * as timeslice from '../src/combinator/timeslice'
+import { take } from '../src/combinator/slice'
+import { periodic } from '../src/source/periodic'
+import { just as streamOf, never } from '../src/source/core'
+import { delay } from '../src/combinator/delay'
+import { default as Stream } from '../src/Stream'
 
 import { runEffects } from '../src/runEffects'
 import { ticks, collectEvents } from './helper/testEnv'
-var FakeDisposeSource = require('./helper/FakeDisposeSource')
-var endWith = require('./helper/endWith').endWith
+import FakeDisposeSource from './helper/FakeDisposeSource'
+import { endWith } from './helper/endWith'
 
 var sentinel = { value: 'sentinel' }
 

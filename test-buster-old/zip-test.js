@@ -1,11 +1,9 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
-
-var take = require('../src/combinator/slice').take
-var zip = require('../src/combinator/zip').zip
-var delay = require('../src/combinator/delay').delay
-var fromArray = require('../src/source/fromArray').fromArray
+import { spec, expect } from 'buster'
+const { describe, it } = spec
+import { take } from '../src/combinator/slice'
+import { zip } from '../src/combinator/zip'
+import { delay } from '../src/combinator/delay'
+import { fromArray } from '../src/source/fromArray'
 
 import { ticks, collectEvents } from './helper/testEnv'
 

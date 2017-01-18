@@ -1,15 +1,11 @@
-var expect = require('buster').expect
+import { expect } from 'buster'
+import { reduce } from '../../src/combinator/reduce'
 
-var reduce = require('../../src/combinator/reduce').reduce
-
-exports.assertSame = assertSame
-exports.expectArray = expectArray
-
-function assertSame (s1, s2) {
+export function assertSame (s1, s2) {
   return Promise.all([toArray(s1), toArray(s2)]).then(arrayEquals)
 }
 
-function expectArray (array, s) {
+export function expectArray (array, s) {
   return toArray(s).then(function (result) {
     expect(result).toEqual(array)
   })

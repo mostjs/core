@@ -1,6 +1,6 @@
-var dispose = require('../../src/disposable/dispose')
+import * as dispose from '../../src/disposable/dispose'
 
-module.exports = FakeDisposeSource
+export default FakeDisposeSource
 
 FakeDisposeSource.from = function (disposer, stream) {
   return new FakeDisposeSource(disposer, stream.source)

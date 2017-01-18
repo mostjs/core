@@ -1,8 +1,7 @@
-/* global describe, it */
-require('buster').spec.expose()
-var expect = require('buster').expect
+import { spec, expect } from 'buster'
+const { describe, it } = spec
 
-var SettableDisposable = require('../../src/disposable/SettableDisposable').default
+import { default as SettableDisposable } from '../../src/disposable/SettableDisposable'
 
 describe('SettableDisposable', function () {
   it('should allow setDisposable before dispose', function () {
