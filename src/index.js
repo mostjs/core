@@ -187,4 +187,9 @@ export const newDefaultScheduler = () => _newScheduler(newClockTimer(), newTimel
 export { Scheduler, Timeline, ClockTimer }
 
 // export an implementation of Task used internally for third-party libraries
-export { default as PropagateTask } from './scheduler/PropagateTask'
+import { propagateTask as _propagateTask, propagateEventTask as _propagateEventTask, propagateErrorTask as _propagateErrorTask, propagateEndTask as _propagateEndTask } from './scheduler/PropagateTask'
+
+export const propagateTask = curry3(_propagateTask)
+export const propagateEventTask = curry2(_propagateEventTask)
+export const propagateErrorTask = curry2(_propagateErrorTask)
+export const propagateEndTask = curry2(_propagateEndTask)

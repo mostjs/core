@@ -3,26 +3,27 @@
 /** @author John Hann */
 
 import Stream from '../Stream'
-import PropagateTask from '../scheduler/PropagateTask'
+import { propagateTask } from '../scheduler/PropagateTask'
 
-export function fromArray (a) {
-  return new Stream(new ArraySource(a))
+export const fromArray = a =>
+  new Stream(new ArraySource(a))
+
+class ArraySource {
+  constructor (a) {
+    this.array = a
+  }
+
+  run (sink, scheduler) {
+    return scheduler.asap(propagateTask(runProducer, this.array, sink))
+  }
 }
 
-function ArraySource (a) {
-  this.array = a
-}
-
-ArraySource.prototype.run = function (sink, scheduler) {
-  return scheduler.asap(new PropagateTask(runProducer, this.array, sink))
-}
-
-function runProducer (t, array, sink) {
-  for (var i = 0, l = array.length; i < l && this.active; ++i) {
+function runProducer (t, array, sink, task) {
+  for (let i = 0, l = array.length; i < l && task.active; ++i) {
     sink.event(t, array[i])
   }
 
-  this.active && end(t)
+  task.active && end(t)
 
   function end (t) {
     sink.end(t)

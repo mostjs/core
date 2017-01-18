@@ -5,7 +5,7 @@
 import Stream from '../Stream'
 import Pipe from '../sink/Pipe'
 import * as dispose from '../disposable/dispose'
-import PropagateTask from '../scheduler/PropagateTask'
+import { propagateEventTask } from '../scheduler/PropagateTask'
 
 /**
  * Create a stream containing successive reduce results of applying f to
@@ -26,7 +26,7 @@ class Scan {
   }
 
   run (sink, scheduler) {
-    const d1 = scheduler.asap(PropagateTask.event(this.value, sink))
+    const d1 = scheduler.asap(propagateEventTask(this.value, sink))
     const d2 = this.source.run(new ScanSink(this.f, this.value, sink), scheduler)
     return dispose.all([d1, d2])
   }
