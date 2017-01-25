@@ -1,3 +1,10 @@
+# 0.3.0 (2017-01-25)
+---
+
+## Bug Fixes
+
+- fix(flow): Add missing generate() type (#32) [340cebfc](/commits/340cebfcdca612d40d64bf0375d8726726d131ce)
+
 # 0.2.1 (2017-01-17)
 ---
 
