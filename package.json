@@ -42,6 +42,7 @@
   "author": "brian@hovercraftstudios.com",
   "license": "MIT",
   "devDependencies": {
+    "@briancavalier/assert": "^3.2.0",
     "@most/eslint-config-most": "^1.0.3",
     "@northbrook/eslint": "^2.0.1",
     "@northbrook/mocha": "^3.1.0",
