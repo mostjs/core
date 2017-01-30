@@ -220,6 +220,20 @@
     return curried
   }
 
+  // curry4 :: ((a, b, c, d) -> e) -> (a -> b -> c -> d -> e)
+  function curry4 (f) {
+    function curried (a, b, c, d) { // eslint-disable-line complexity
+      switch (arguments.length) {
+        case 0: return curried
+        case 1: return curry3(function (b, c, d) { return f(a, b, c, d); })
+        case 2: return curry2(function (c, d) { return f(a, b, c, d); })
+        case 3: return function (d) { return f(a, b, c, d); }
+        default:return f(a, b, c, d)
+      }
+    }
+    return curried
+  }
+
   exports.cons = cons;
   exports.append = append;
   exports.drop = drop;
@@ -237,6 +251,7 @@
   exports.apply = apply;
   exports.curry2 = curry2;
   exports.curry3 = curry3;
+  exports.curry4 = curry4;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
