@@ -44,6 +44,16 @@ interface CurriedFunction3<A, B, C, D> {
   (a: A, b: B, c: C): D;
 }
 
+interface CurriedFunction4<A, B, C, D, E> {
+  (): CurriedFunction4<A, B, C, D, E>;
+  (a: A): CurriedFunction3<B, C, D, E>;
+  (a: A, b: B): CurriedFunction2<C, D, E>;
+  (a: A, b: B, c: C): (d: D) => E;
+  (a: A, b: B, c: C, d: D): E;
+}
+
 export function curry2<A, B, C>(f: (a: A, b: B) => C): CurriedFunction2<A, B, C>;
 
 export function curry3<A, B, C, D>(f: (a: A, b: B, c: C) => D): CurriedFunction3<A, B, C, D>;
+
+export function curry4<A, B, C, D, E>(f: (a: A, b: B, c: C, d: D) => E): CurriedFunction4<A, B, C, D, E>;

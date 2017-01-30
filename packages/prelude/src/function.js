@@ -33,3 +33,17 @@ export function curry3 (f) {
   }
   return curried
 }
+
+// curry4 :: ((a, b, c, d) -> e) -> (a -> b -> c -> d -> e)
+export function curry4 (f) {
+  function curried (a, b, c, d) { // eslint-disable-line complexity
+    switch (arguments.length) {
+      case 0: return curried
+      case 1: return curry3((b, c, d) => f(a, b, c, d))
+      case 2: return curry2((c, d) => f(a, b, c, d))
+      case 3: return d => f(a, b, c, d)
+      default:return f(a, b, c, d)
+    }
+  }
+  return curried
+}
