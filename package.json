@@ -3,7 +3,7 @@
   "private": true,
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
   "scripts": {
-    "commit": "northbrook commit",
+    "postinstall": "lerna bootstrap --hoist",
     "test": "lerna run test",
     "test:unit": "lerna run test:unit",
     "test:lint": "lerna run test:lint",
