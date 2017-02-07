@@ -47,7 +47,7 @@
     "@northbrook/rollup": "^1.0.1",
     "babel-eslint": "^7.1.1",
     "buba": "^4.0.2",
-    "buster": "^0.7.18",
+    "buster": "^0.8.0",
     "cpy-cli": "^1.0.1",
     "flow-bin": "^0.37.4",
     "lerna": "2.0.0-beta.36",
