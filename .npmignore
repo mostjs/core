@@ -1,4 +1,3 @@
-/test/
 .jshintrc
 .jshintignore
 .editorconfig
@@ -7,3 +6,4 @@
 experiments/
 examples/
 bower_components/
+node_modules/
