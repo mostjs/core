@@ -1,7 +1,7 @@
 require('buba/register')
 const Benchmark = require('benchmark');
-const {fromArray, mergeArray} = require('../../src/index');
-const {reduce} = require('../../src/combinator/reduce')
+const {fromArray, mergeArray} = require('.././index');
+const {reduce} = require('.././combinator/reduce')
 const rx = require('rx');
 const rxjs = require('@reactivex/rxjs')
 const kefir = require('kefir');
