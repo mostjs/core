@@ -37,7 +37,7 @@ describe('iterate', function () {
       { time: 0, value: 6 },
       { time: 0, value: 7 },
       { time: 0, value: 8 },
-      { time: 0, value: 9 },
+      { time: 0, value: 9 }
     ]
 
     const s = take(expected.length, iterate(x => x + 1, 0))

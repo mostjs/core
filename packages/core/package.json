@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "test": "npm run test:lint && npm run test:unit && npm run test:flow",
-    "test:unit": "buster-test -c test-buster-old/buster.js && mocha -r buba/register --reporter dot",
+    "test:unit": "buster-test -c test-buster-old/buster.js && mocha -r buba/register --reporter dot --recursive 'test/**/*-test.js'",
     "test:lint": "eslint src test",
     "test:flow": "flow check",
     "build": "npm run build:dist && npm run build:min && npm run build:flow",
