@@ -1,5 +1,5 @@
 import { describe, it } from 'mocha'
-import { eq, assert } from '@briancavalier/assert'
+import { eq, assert, is } from '@briancavalier/assert'
 
 import * as dispose from '../../src/disposable/dispose'
 
@@ -59,14 +59,14 @@ describe('tryDispose', function () {
 
     var result = dispose.tryDispose(0, spy, failSink)
 
-    eq(result, x)
+    eq(x, result)
   })
 
   it('should return disposable result promise', function () {
     var x = {}
     var spy = disposableSpy(returns, Promise.resolve(x))
 
-    return dispose.tryDispose(0, spy, failSink).then(eq(x))
+    return dispose.tryDispose(0, spy, failSink).then(is(x))
   })
 
   it('should propagate error if disposable throws', function () {
@@ -76,8 +76,8 @@ describe('tryDispose', function () {
     var sink = catchSink()
     var t = Math.random()
     return dispose.tryDispose(t, spy, sink).then(function () {
-      eq(sink.time, t)
-      eq(sink.value, x)
+      eq(t, sink.time)
+      eq(x, sink.value)
     })
   })
 
@@ -88,8 +88,8 @@ describe('tryDispose', function () {
     var sink = catchSink()
     var t = Math.random()
     return dispose.tryDispose(t, spy, sink).then(function () {
-      eq(sink.time, t)
-      eq(sink.value, x)
+      eq(t, sink.time)
+      eq(x, sink.value)
     })
   })
 })
@@ -175,7 +175,7 @@ describe('dispose.once', function () {
 
     var result = d.dispose()
 
-    eq(result, x)
+    eq(x, result)
     assert(calledOnce(spy))
   })
 
@@ -184,7 +184,7 @@ describe('dispose.once', function () {
     var spy = disposableSpy(returns, x)
     var d = dispose.once(spy)
 
-    eq(d.dispose(), d.dispose())
+    is(d.dispose(), d.dispose())
     assert(calledOnce(spy))
   })
 })
@@ -200,8 +200,10 @@ describe('dispose.create', function () {
 
     var result = d.dispose()
 
-    eq(result, x)
-    eq(y, x)
+    const isX = is(x)
+
+    isX(result)
+    isX(y)
   })
 
   it('should call dispose function at most once', function () {
@@ -213,13 +215,13 @@ describe('dispose.create', function () {
     d.dispose()
     d.dispose()
 
-    eq(x, 1)
+    eq(1, x)
   })
 })
 
 describe('dispose.empty', function () {
   it('should return undefined', function () {
-    eq(dispose.empty().dispose(), void 0)
+    eq(void 0, dispose.empty().dispose())
   })
 })
 
@@ -230,7 +232,7 @@ describe('dispose.promised', function () {
     var d = dispose.promised(Promise.resolve(spy))
 
     return d.dispose().then(function (y) {
-      eq(y, x)
+      eq(x, y)
       assert(calledOnce(spy))
     })
   })
@@ -243,7 +245,7 @@ describe('dispose.promised', function () {
     return d.dispose().then(function () {
       throw new Error('should not fulfill')
     }, function (e) {
-      eq(e, x)
+      eq(x, e)
       assert(calledOnce(spy))
     })
   })
@@ -256,7 +258,7 @@ describe('dispose.promised', function () {
     return d.dispose().then(function () {
       throw new Error('should not fulfill')
     }, function (e) {
-      eq(e, x)
+      eq(x, e)
       assert(calledOnce(spy))
     })
   })

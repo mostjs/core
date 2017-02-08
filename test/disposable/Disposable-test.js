@@ -13,7 +13,7 @@ describe('Disposable', function () {
 
     var d = new Disposable(spy, data)
 
-    eq(d.dispose(), data)
+    eq(data, d.dispose())
     assert(spy.calledWith(data))
   })
 })

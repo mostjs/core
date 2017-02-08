@@ -1,5 +1,5 @@
 import { describe, it } from 'mocha'
-import { eq } from '@briancavalier/assert'
+import { eq, is } from '@briancavalier/assert'
 
 import { default as SafeSink } from '../../src/sink/SafeSink'
 
@@ -34,8 +34,8 @@ describe('SafeSink', function () {
     var time = 123
     var expected = {}
     var sink = new SafeSink(testEvent(function (t, x) {
-      eq(t, time)
-      eq(x, expected)
+      eq(time, t)
+      eq(expected, x)
     }))
 
     sink.event(time, expected)
@@ -45,8 +45,8 @@ describe('SafeSink', function () {
     var time = 123
     var expected = {}
     var sink = new SafeSink(testEnd(function (t, x) {
-      eq(t, time)
-      eq(x, expected)
+      eq(time, t)
+      eq(expected, x)
     }))
 
     sink.end(time, expected)
@@ -56,8 +56,8 @@ describe('SafeSink', function () {
     var time = 123
     var expected = new Error()
     var sink = new SafeSink(testError(function (t, x) {
-      eq(t, time)
-      eq(x, expected)
+      eq(time, t)
+      eq(expected, x)
     }))
 
     sink.error(time, expected)
@@ -67,8 +67,8 @@ describe('SafeSink', function () {
     var time = 123
     var expected = {}
     var sink = new SafeSink(testEnd(function (t, x) {
-      eq(t, time)
-      eq(x, expected)
+      eq(time, t)
+      eq(expected, x)
     }))
 
     sink.end(time, expected)
@@ -80,8 +80,8 @@ describe('SafeSink', function () {
     var time = 123
     var expected = new Error()
     var sink = new SafeSink(testError(function (t, x) {
-      eq(t, time)
-      eq(x, expected)
+      eq(time, t)
+      eq(expected, x)
     }))
 
     sink.error(time, expected)
@@ -105,7 +105,7 @@ describe('SafeSink', function () {
 
     sink.disable()
     sink.error(1, new Error())
-    eq(errorCalled, 1)
+    eq(1, errorCalled)
   })
 
   it('should propagate error after end', function () {
@@ -116,7 +116,7 @@ describe('SafeSink', function () {
 
     sink.end(0, {})
     sink.error(1, new Error())
-    eq(errorCalled, 1)
+    eq(1, errorCalled)
   })
 
   it('should propagate error after error', function () {
@@ -127,13 +127,13 @@ describe('SafeSink', function () {
 
     sink.error(0, new Error())
     sink.error(1, new Error())
-    eq(errorCalled, 2)
+    eq(2, errorCalled)
   })
 
   it('disable should return original sink', function () {
     var original = testSink(fail, fail, fail)
     var sink = new SafeSink(original)
 
-    eq(sink.disable(), original)
+    is(original, sink.disable())
   })
 })

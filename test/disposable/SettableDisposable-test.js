@@ -1,5 +1,5 @@
 import { describe, it } from 'mocha'
-import { eq, throws } from '@briancavalier/assert'
+import { throws, is } from '@briancavalier/assert'
 
 import { default as SettableDisposable } from '../../src/disposable/SettableDisposable'
 
@@ -14,7 +14,7 @@ describe('SettableDisposable', function () {
 
     var x = d.dispose()
 
-    eq(x, data)
+    is(data, x)
   })
 
   it('should allow setDisposable after dispose', function () {
@@ -27,7 +27,7 @@ describe('SettableDisposable', function () {
       dispose: function () { return data }
     })
 
-    return p.then(eq(data))
+    return p.then(is(data))
   })
 
   it('should allow setDisposable at most once', function () {
