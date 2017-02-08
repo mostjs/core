@@ -39,7 +39,7 @@ export interface Timeline {
   add(scheduledTask: ScheduledTask): void;
   remove(scheduledTask: ScheduledTask): boolean;
   removeAll(f: (scheduledTask: ScheduledTask) => boolean): void;
-  runTasks(time: number, runTask: (task: ScheduledTask) => any);
+  runTasks(time: number, runTask: (task: ScheduledTask) => any): void;
 }
 
 export interface Task {
