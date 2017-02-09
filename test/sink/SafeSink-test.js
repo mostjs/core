@@ -1,5 +1,6 @@
-import { spec, expect } from 'buster'
-const { describe, it } = spec
+import { describe, it } from 'mocha'
+import { eq, is } from '@briancavalier/assert'
+
 import { default as SafeSink } from '../../src/sink/SafeSink'
 
 function testSink (event, end, error) {
@@ -33,8 +34,8 @@ describe('SafeSink', function () {
     var time = 123
     var expected = {}
     var sink = new SafeSink(testEvent(function (t, x) {
-      expect(t).toBe(time)
-      expect(x).toBe(expected)
+      eq(time, t)
+      eq(expected, x)
     }))
 
     sink.event(time, expected)
@@ -44,8 +45,8 @@ describe('SafeSink', function () {
     var time = 123
     var expected = {}
     var sink = new SafeSink(testEnd(function (t, x) {
-      expect(t).toBe(time)
-      expect(x).toBe(expected)
+      eq(time, t)
+      eq(expected, x)
     }))
 
     sink.end(time, expected)
@@ -55,8 +56,8 @@ describe('SafeSink', function () {
     var time = 123
     var expected = new Error()
     var sink = new SafeSink(testError(function (t, x) {
-      expect(t).toBe(time)
-      expect(x).toBe(expected)
+      eq(time, t)
+      eq(expected, x)
     }))
 
     sink.error(time, expected)
@@ -66,8 +67,8 @@ describe('SafeSink', function () {
     var time = 123
     var expected = {}
     var sink = new SafeSink(testEnd(function (t, x) {
-      expect(t).toBe(time)
-      expect(x).toBe(expected)
+      eq(time, t)
+      eq(expected, x)
     }))
 
     sink.end(time, expected)
@@ -79,8 +80,8 @@ describe('SafeSink', function () {
     var time = 123
     var expected = new Error()
     var sink = new SafeSink(testError(function (t, x) {
-      expect(t).toBe(time)
-      expect(x).toBe(expected)
+      eq(time, t)
+      eq(expected, x)
     }))
 
     sink.error(time, expected)
@@ -89,15 +90,11 @@ describe('SafeSink', function () {
   })
 
   it('should not propagate event or end after disabled', function () {
-    // Test will fail if any event, error, or end are
-    // propagated.  Buster requires at least one expectation
-    // per test, hence the expect(true) below
     var sink = new SafeSink(testSink(fail, fail, fail))
 
     sink.disable()
     sink.end(1, {})
     sink.event(2, {})
-    expect(true).toBe(true)
   })
 
   it('should propagate error after disable', function () {
@@ -108,7 +105,7 @@ describe('SafeSink', function () {
 
     sink.disable()
     sink.error(1, new Error())
-    expect(errorCalled).toBe(1)
+    eq(1, errorCalled)
   })
 
   it('should propagate error after end', function () {
@@ -119,7 +116,7 @@ describe('SafeSink', function () {
 
     sink.end(0, {})
     sink.error(1, new Error())
-    expect(errorCalled).toBe(1)
+    eq(1, errorCalled)
   })
 
   it('should propagate error after error', function () {
@@ -130,13 +127,13 @@ describe('SafeSink', function () {
 
     sink.error(0, new Error())
     sink.error(1, new Error())
-    expect(errorCalled).toBe(2)
+    eq(2, errorCalled)
   })
 
   it('disable should return original sink', function () {
     var original = testSink(fail, fail, fail)
     var sink = new SafeSink(original)
 
-    expect(sink.disable()).toBe(original)
+    is(original, sink.disable())
   })
 })
