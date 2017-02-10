@@ -6,9 +6,6 @@ import { take } from '../../src/combinator/slice'
 
 import { collectEventsFor } from '../../test-buster-old/helper/testEnv'
 
-const hasTimeAndValue = ({ time, value }, i) =>
-  time === i && value === undefined
-
 describe('periodic', function () {
   it('should emit value at tick periods', function () {
     const n = 5
@@ -19,7 +16,7 @@ describe('periodic', function () {
       { time: 1, value: undefined },
       { time: 2, value: undefined },
       { time: 3, value: undefined },
-      { time: 4, value: undefined },
+      { time: 4, value: undefined }
     ]))
   })
 })
