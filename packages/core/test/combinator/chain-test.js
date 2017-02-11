@@ -1,6 +1,6 @@
-import { spec, referee } from 'buster'
-const { describe, it } = spec
-const { assert } = referee
+import { describe, it } from 'mocha'
+import { assert, is, eq } from '@briancavalier/assert'
+import { spy } from 'sinon'
 
 import { chain, join } from '../../src/combinator/chain'
 import { delay } from '../../src/combinator/delay'
@@ -36,13 +36,13 @@ describe('chain', function () {
 
     return collectEvents(s, ticks(3))
       .then(events => {
-        assert.same(2, events.length)
+        is(2, events.length)
 
-        assert.same(1, events[0].time)
-        assert.same(1, events[0].value)
+        is(1, events[0].time)
+        is(1, events[0].value)
 
-        assert.same(2, events[1].time)
-        assert.same(2, events[1].value)
+        is(2, events[1].time)
+        is(2, events[1].value)
       })
   })
 })
@@ -59,7 +59,7 @@ describe('join', function () {
       .then(events => {
         const result = events.map(({ value }) => value)
         // Include all items
-        assert.equals(a.concat(b).sort(), result.sort())
+        eq(a.concat(b).sort(), result.sort())
 
         // Relative order of items in each stream must be preserved
         assert(result.indexOf(1) < result.indexOf(2))
@@ -70,7 +70,7 @@ describe('join', function () {
   })
 
   it('should dispose outer stream', function () {
-    const dispose = this.spy()
+    const dispose = spy()
     const inner = just(sentinel)
     const outer = just(inner)
 
@@ -80,7 +80,7 @@ describe('join', function () {
   })
 
   it('should dispose inner stream', function () {
-    const dispose = this.spy()
+    const dispose = spy()
     const inner = new Stream(new FakeDisposeSource(dispose, just(sentinel).source))
 
     const s = join(just(inner))
@@ -95,7 +95,7 @@ describe('join', function () {
 
   it('should dispose all inner streams', function () {
     const values = [1, 2, 3]
-    const spies = values.map(() => this.spy())
+    const spies = values.map(() => spy())
 
     const inners = values.map((x, i) => new Stream(new FakeDisposeSource(spies[i], just(x).source)))
 

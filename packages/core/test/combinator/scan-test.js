@@ -1,6 +1,6 @@
-import { spec, referee } from 'buster'
-const { describe, it } = spec
-const { assert } = referee
+import { describe, it } from 'mocha'
+import { assert, eq } from '@briancavalier/assert'
+import { spy } from 'sinon'
 
 import Stream from '../../src/Stream'
 import { scan } from '../../src/combinator/scan'
@@ -35,25 +35,24 @@ describe('scan', function () {
     const s = scan((s, x) => s + x, '', makeEventsFromArray(1, a))
 
     return collectEventsFor(a.length, s)
-      .then(events => assert.equals([
+      .then(eq([
         { time: 0, value: '' },
         { time: 0, value: 'a' },
         { time: 1, value: 'ab' },
         { time: 2, value: 'abc' },
         { time: 3, value: 'abcd' }
-      ], events))
+      ]))
   })
 
   it('should preserve end value', function () {
     const stream = endWith(sentinel, atTime(0, {}))
     const s = scan((a, x) => x, {}, stream)
 
-    return runEffects(s, ticks(1)).then(endValue =>
-      assert.same(endValue, sentinel))
+    return runEffects(s, ticks(1)).then(eq(sentinel))
   })
 
   it('should dispose', function () {
-    const dispose = this.spy()
+    const dispose = spy()
 
     const stream = new Stream(new FakeDisposeSource(dispose, atTime(0, sentinel).source))
     const s = scan((z, x) => x, 0, stream)

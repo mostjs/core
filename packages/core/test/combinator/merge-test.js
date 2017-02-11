@@ -1,6 +1,5 @@
-import { spec, referee } from 'buster'
-const { describe, it } = spec
-const { assert } = referee
+import { describe, it } from 'mocha'
+import { is, eq } from '@briancavalier/assert'
 
 import { just } from '../../src/source/core'
 import { delay } from '../../src/combinator/delay'
@@ -23,7 +22,7 @@ describe('merge', function () {
 
     return collectEventsFor(1, m1)
       .then(events1 => collectEventsFor(1, m2)
-        .then(events2 => assert.equals(events1, events2)))
+        .then(events2 => eq(events1, events2)))
   })
 })
 
@@ -44,9 +43,8 @@ function testMerge (merge) {
 
   return collectEventsFor(count, s)
     .then(events => {
-      assert.same(count, events.length)
+      is(count, events.length)
       const expected = b.map(value => ({ time: 1, value })).concat(a.map(value => ({ time: 2, value })))
-      assert.equals(expected, events)
+      eq(expected, events)
     })
 }
-

@@ -1,24 +1,23 @@
-import { spec } from 'buster'
-const { describe, it } = spec
+import { describe, it } from 'mocha'
 
 import { assertSame } from '../helper/stream-helper'
 import { ap } from '../../src/combinator/applicative'
 import { just as streamOf } from '../../src/source/core'
 
-var sentinel = { value: 'sentinel' }
+const sentinel = { value: 'sentinel' }
 
 describe('ap', function () {
   it('should satisfy identity', function () {
     // P.of(function(a) { return a; }).ap(v) ~= v
-    var v = streamOf(sentinel)
+    const v = streamOf(sentinel)
     return assertSame(ap(streamOf(function (x) { return x }), v), v)
   })
 
   it('should satisfy composition', function () {
     // P.of(function(f) { return function(g) { return function(x) { return f(g(x))}; }; }).ap(u).ap(v
-    var u = streamOf(function (x) { return 'u' + x })
-    var v = streamOf(function (x) { return 'v' + x })
-    var w = streamOf('w')
+    const u = streamOf(function (x) { return 'u' + x })
+    const v = streamOf(function (x) { return 'v' + x })
+    const w = streamOf('w')
 
     return assertSame(
       ap(ap(ap(streamOf(function (f) {
@@ -35,7 +34,7 @@ describe('ap', function () {
   it('should satisfy homomorphism', function () {
     // P.of(f).ap(P.of(x)) ~= P.of(f(x)) (homomorphism)
     function f (x) { return x + 'f' }
-    var x = 'x'
+    const x = 'x'
     return assertSame(ap(streamOf(f), streamOf(x)), streamOf(f(x)))
   })
 
@@ -43,8 +42,8 @@ describe('ap', function () {
     // u.ap(a.of(y)) ~= a.of(function(f) { return f(y); }).ap(u)
     function f (x) { return x + 'f' }
 
-    var u = streamOf(f)
-    var y = 'y'
+    const u = streamOf(f)
+    const y = 'y'
 
     return assertSame(
       ap(u, streamOf(y)),

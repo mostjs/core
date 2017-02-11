@@ -1,5 +1,7 @@
-import { spec, expect } from 'buster'
-const { describe, it } = spec
+import { describe, it } from 'mocha'
+import { assert, eq } from '@briancavalier/assert'
+import { spy } from 'sinon'
+
 import { assertSame } from '../helper/stream-helper'
 
 import * as concatMap from '../../src/combinator/concatMap'
@@ -13,7 +15,7 @@ import { default as Stream } from '../../src/Stream'
 import { ticks, atTimes, collectEvents } from '../helper/testEnv'
 import FakeDisposeSource from '../helper/FakeDisposeSource'
 
-var sentinel = { value: 'sentinel' }
+const sentinel = { value: 'sentinel' }
 
 function identity (x) {
   return x
@@ -25,7 +27,7 @@ describe('concatMap', function () {
     function f (x) { return streamOf(x + 'f') }
     function g (x) { return streamOf(x + 'g') }
 
-    var m = streamOf('m')
+    const m = streamOf('m')
 
     return assertSame(
       concatMap.concatMap(function (x) { return concatMap.concatMap(g, f(x)) }, m),
@@ -34,85 +36,79 @@ describe('concatMap', function () {
   })
 
   it('should concatenate', function () {
-    var s1 = [{ time: 2, value: 2 }, { time: 3, value: 3 }]
-    var s2 = [{ time: 1, value: 1 }]
-    var s3 = [{ time: 0, value: 0 }]
-    var s = concatMap.concatMap(atTimes, fromArray([s1, s2, s3]))
+    const s1 = [{ time: 2, value: 2 }, { time: 3, value: 3 }]
+    const s2 = [{ time: 1, value: 1 }]
+    const s3 = [{ time: 0, value: 0 }]
+    const s = concatMap.concatMap(atTimes, fromArray([s1, s2, s3]))
 
     return collectEvents(s, ticks(5))
-      .then(function (events) {
-        expect(events).toEqual([
+      .then(eq([
           { time: 2, value: 2 },
           { time: 3, value: 3 },
           { time: 4, value: 1 },
           { time: 4, value: 0 }
-        ])
-      })
+      ]))
   })
 
   it('should map lazily', function () {
-    var s1 = atTimes([{ time: 0, value: 0 }, { time: 1, value: 1 }])
+    const s1 = atTimes([{ time: 0, value: 0 }, { time: 1, value: 1 }])
 
-    var scheduler = ticks(4)
-    var s = concatMap.concatMap(function (x) {
+    const scheduler = ticks(4)
+    const s = concatMap.concatMap(function (x) {
       return atTimes([{ time: 2, value: scheduler.now() }])
     }, s1)
 
     return collectEvents(s, scheduler)
-      .then(function (events) {
-        expect(events).toEqual([
+      .then(eq([
           { time: 2, value: 0 },
           { time: 4, value: 2 }
-        ])
-      })
+      ]))
   })
 
   it('should dispose outer stream', function () {
-    var dispose = this.spy()
-    var inner = streamOf(sentinel)
-    var outer = streamOf(inner)
+    const dispose = spy()
+    const inner = streamOf(sentinel)
+    const outer = streamOf(inner)
 
-    var s = concatMap.concatMap(identity, new Stream(new FakeDisposeSource(dispose, outer.source)))
+    const s = concatMap.concatMap(identity, new Stream(new FakeDisposeSource(dispose, outer.source)))
 
     return drain(s).then(function () {
-      expect(dispose).toHaveBeenCalled()
+      assert(dispose.called)
     })
   })
 
   it('should dispose inner stream', function () {
-    var dispose = this.spy()
-    var inner = new Stream(new FakeDisposeSource(dispose, streamOf(sentinel).source))
+    const dispose = spy()
+    const inner = new Stream(new FakeDisposeSource(dispose, streamOf(sentinel).source))
 
-    var s = concatMap.concatMap(identity, streamOf(inner))
+    const s = concatMap.concatMap(identity, streamOf(inner))
 
     return drain(s).then(function () {
-      expect(dispose).toHaveBeenCalled()
+      assert(dispose.called)
     })
   })
 
   it('should dispose inner stream immediately', function () {
-    var s = streamOf(concat(streamOf(1), never()))
+    const s = streamOf(concat(streamOf(1), never()))
 
-    return drain(take(1, concatMap.concatMap(identity, s))).then(function () {
-      expect(true).toBe(true)
-    })
+    return drain(take(1, concatMap.concatMap(identity, s)))
   })
 
   it('should dispose all inner streams', function () {
-    var values = [1, 2, 3]
-    var spies = values.map(function () {
-      return this.spy()
-    }, this)
+    const values = [1, 2, 3]
+    const spies = values.map(function () {
+      return spy()
+    })
 
-    var inners = values.map(function (x, i) {
+    const inners = values.map(function (x, i) {
       return new Stream(new FakeDisposeSource(spies[i], streamOf(x).source))
     })
 
-    var s = concatMap.concatMap(identity, fromArray(inners))
+    const s = concatMap.concatMap(identity, fromArray(inners))
 
     return drain(s).then(function () {
       spies.forEach(function (spy) {
-        expect(spy).toHaveBeenCalledOnce()
+        assert(spy.calledOnce)
       })
     })
   })

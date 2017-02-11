@@ -1,6 +1,5 @@
-import { spec, referee } from 'buster'
-const { describe, it } = spec
-const { fail, assert } = referee
+import { describe, it } from 'mocha'
+import { rejects, eq } from '@briancavalier/assert'
 
 import { mergeMapConcurrently, mergeConcurrently } from '../../src/combinator/mergeConcurrently'
 import { periodic } from '../../src/source/periodic'
@@ -21,13 +20,11 @@ describe('mergeConcurrently', () => {
     const n = 3
 
     return collectEvents(take(n, s), ticks(n))
-      .then(events => {
-        assert.equals(events, [
+      .then(eq([
           { time: 0, value: sentinel },
           { time: 1, value: sentinel },
           { time: 2, value: sentinel }
-        ])
-      })
+      ]))
   })
 
   it('should merge all when number of streams <= concurrency', () => {
@@ -36,8 +33,7 @@ describe('mergeConcurrently', () => {
     const n = 3
 
     return collectEvents(take(n * streams.length, s), ticks(n))
-      .then(events => {
-        assert.equals(events, [
+      .then(eq([
           { time: 0, value: 1 },
           { time: 0, value: 2 },
           { time: 0, value: 3 },
@@ -47,8 +43,7 @@ describe('mergeConcurrently', () => {
           { time: 2, value: 1 },
           { time: 2, value: 2 },
           { time: 2, value: 3 }
-        ])
-      })
+      ]))
   })
 
   it('should merge up to concurrency', () => {
@@ -59,8 +54,7 @@ describe('mergeConcurrently', () => {
     const s = mergeConcurrently(m, fromArray(streams))
 
     return collectEvents(take(n * streams.length, s), ticks(m * n))
-      .then(events => {
-        assert.equals(events, [
+      .then(eq([
           { time: 0, value: 1 },
           { time: 0, value: 2 },
           { time: 1, value: 1 },
@@ -70,8 +64,7 @@ describe('mergeConcurrently', () => {
           { time: 2, value: 3 },
           { time: 3, value: 3 },
           { time: 4, value: 3 }
-        ])
-      })
+      ]))
   })
 })
 
@@ -79,6 +72,6 @@ describe('mergeMapConcurrently', () => {
   it('when mapping function throws, it should catch and propagate error', () => {
     const error = new Error()
     const s = mergeMapConcurrently(x => { throw error }, 1, just(0))
-    return drain(s).then(fail, e => assert.same(error, e))
+    return drain(s).then(rejects, eq(error))
   })
 })
