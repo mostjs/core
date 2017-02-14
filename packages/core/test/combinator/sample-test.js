@@ -1,8 +1,7 @@
 /** @license MIT License (c) copyright 2016 original author or authors */
 
-import { spec, referee } from 'buster'
-const { describe, it } = spec
-const { assert } = referee
+import { describe, it } from 'mocha'
+import { is, eq } from '@briancavalier/assert'
 
 import { throwError } from '../../src/combinator/errors'
 import { just, never } from '../../src/source/core'
@@ -21,8 +20,8 @@ describe('sample', () => {
     const s = sample(f, just(samplerValue), just(justValue))
 
     return collectEvents(s, ticks(1)).then(events => {
-      assert.same(1, events.length)
-      assert.equals({ time: 0, value: [samplerValue, justValue] }, events[0])
+      eq(1, events.length)
+      eq({ time: 0, value: [samplerValue, justValue] }, events[0])
     })
   })
 
@@ -31,7 +30,7 @@ describe('sample', () => {
     const s = sample(Array, makeEvents(1, n), never())
 
     return collectEvents(s, ticks(n))
-      .then(events => assert.same(0, events.length))
+      .then(events => eq(0, events.length))
   })
 
   it('should end when sampler ends', () => {
@@ -39,7 +38,7 @@ describe('sample', () => {
     const s = sample(Array, makeEvents(1, n), makeEvents(5, n * 2))
 
     return collectEvents(s, ticks(n))
-      .then(events => assert.same(n, events.length))
+      .then(events => eq(n, events.length))
   })
 
   it('should repeat last value after source ends', () => {
@@ -48,9 +47,9 @@ describe('sample', () => {
     const s = sample(Array, makeEvents(1, n), just(x))
 
     return collectEvents(s, ticks(n)).then(events => {
-      assert.same(n, events.length)
+      eq(n, events.length)
       events.forEach((event, i) =>
-        assert.equals({ time: i, value: [i, x] }, event))
+        eq({ time: i, value: [i, x] }, event))
     })
   })
 
@@ -59,6 +58,6 @@ describe('sample', () => {
     const s = sample(Array, makeEvents(1, 1), throwError(error))
 
     return collectEvents(s, ticks(1))
-      .catch(e => assert.same(error, e))
+      .catch(is(error))
   })
 })

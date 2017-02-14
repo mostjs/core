@@ -1,6 +1,6 @@
-import { spec, referee } from 'buster'
-const { describe, it } = spec
-const { assert } = referee
+import { describe, it } from 'mocha'
+import { is, eq, assert } from '@briancavalier/assert'
+import { spy } from 'sinon'
 
 import Stream from '../../src/Stream'
 import { loop } from '../../src/combinator/loop'
@@ -24,8 +24,8 @@ describe('loop', function () {
 
     return collectEventsFor(a.length, s)
       .then(events => {
-        assert.same(a.length, events.length)
-        assert.equals([
+        eq(a.length, events.length)
+        eq([
           { time: 0, value: 'a0' },
           { time: 1, value: 'b1' },
           { time: 2, value: 'c2' },
@@ -38,11 +38,11 @@ describe('loop', function () {
     const error = new Error()
     const s = loop(toPair, other, throwError(error))
 
-    return collectEventsFor(1, s).catch(e => assert.same(error, e))
+    return collectEventsFor(1, s).catch(is(error))
   })
 
   it('should dispose', function () {
-    const dispose = this.spy()
+    const dispose = spy()
 
     const stream = new Stream(new FakeDisposeSource(dispose, just(sentinel).source))
     const s = loop(toPair, 0, stream)

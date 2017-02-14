@@ -1,11 +1,10 @@
-import { spec, referee } from 'buster'
-const { describe, it } = spec
-const { fail, assert } = referee
+import { describe, it } from 'mocha'
+import { fail, is, eq } from '@briancavalier/assert'
 
 import { throwError, recoverWith } from '../../src/combinator/errors'
 import { map } from '../../src/combinator/transform'
 import { observe, drain } from '../../src/combinator/observe'
-import { just as just } from '../../src/source/core'
+import { just } from '../../src/source/core'
 
 const sentinel = { value: 'sentinel' }
 const other = { value: 'other' }
@@ -15,14 +14,14 @@ describe('throwError', () => {
     return observe(() => {
       throw other
     }, throwError(sentinel))
-      .catch(e => assert.same(e, sentinel))
+      .catch(eq(sentinel))
   })
 })
 
 describe('recoverWith', () => {
   it('when an error is thrown should continue with returned stream', () => {
     const s = recoverWith(() => just(sentinel), throwError(other))
-    return observe(x => assert.same(sentinel, x), s)
+    return observe(eq(sentinel), s)
   })
 
   it('should recover from errors before recoverWith', () => {
@@ -30,7 +29,7 @@ describe('recoverWith', () => {
       throw new Error()
     }, just(other))
 
-    return observe(x => assert.same(sentinel, x),
+    return observe(eq(sentinel),
       recoverWith(() => just(sentinel), s))
   })
 
@@ -41,7 +40,7 @@ describe('recoverWith', () => {
 
     return observe(() => {
       throw sentinel
-    }, s).catch(e => assert.same(sentinel, e))
+    }, s).catch(eq(sentinel))
   })
 
   it('should only recover first error if recovered stream also errors', () => {
@@ -49,12 +48,12 @@ describe('recoverWith', () => {
 
     return observe(() => {
       throw new Error()
-    }, s).catch(e => assert.same(sentinel, e))
+    }, s).catch(eq(sentinel))
   })
 
   it('when f throws, should propagate error', () => {
     const error = new Error()
     const s = recoverWith(x => { throw error }, throwError(new Error()))
-    return drain(s).then(fail, e => assert.same(error, e))
+    return drain(s).then(fail, is(error))
   })
 })

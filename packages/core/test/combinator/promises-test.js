@@ -1,6 +1,5 @@
-import { spec, referee } from 'buster'
-const { describe, it } = spec
-const { assert } = referee
+import { describe, it } from 'mocha'
+import { is, eq } from '@briancavalier/assert'
 
 import { awaitPromises, fromPromise } from '../../src/combinator/promises'
 import { recoverWith } from '../../src/combinator/errors'
@@ -27,10 +26,10 @@ describe('promises', () => {
 
       return collectEventsFor(10, s)
         .then(events => {
-          assert.same(1, events.length)
+          eq(1, events.length)
           // How to assert something meaningful about the time
           // which is out of our control?
-          assert.equals(sentinel, events[0].value)
+          eq(sentinel, events[0].value)
         })
     })
 
@@ -42,8 +41,8 @@ describe('promises', () => {
       const s = awaitPromises(makeEventsFromArray(0, [slow, fast]))
 
       return collectEventsFor(10, s).then(events => {
-        assert.same(other, events[0].value)
-        assert.same(sentinel, events[1].value)
+        eq(other, events[0].value)
+        eq(sentinel, events[1].value)
       })
     })
 
@@ -51,7 +50,7 @@ describe('promises', () => {
       const error = new Error()
       const s = awaitPromises(makeEventsFromArray(1, [Promise.resolve(), rejected(error), Promise.resolve()]))
       return collectEventsFor(1, s)
-        .catch(e => assert.same(e, error))
+        .catch(is(error))
     })
   })
 
@@ -59,8 +58,8 @@ describe('promises', () => {
     it('should contain only promise\'s fulfillment value', function () {
       const s = fromPromise(Promise.resolve(sentinel))
       return collectEventsFor(10, s).then(events => {
-        assert.same(1, events.length)
-        assert.equals(sentinel, events[0].value)
+        eq(1, events.length)
+        eq(sentinel, events[0].value)
       })
     })
 
@@ -69,15 +68,14 @@ describe('promises', () => {
       const s = fromPromise(rejected(error))
 
       return collectEventsFor(1, s)
-        .catch(e => assert.same(error, e))
+        .catch(is(error))
     })
 
     it('should be recoverable if promise rejects', function () {
       const s = recoverWith(() => atTime(1, sentinel), fromPromise(rejected(new Error())))
 
       return collectEventsFor(1, s)
-        .then(events =>
-          assert.equals([{ time: 1, value: sentinel }], events))
+        .then(eq([{ time: 1, value: sentinel }]))
     })
   })
 })
