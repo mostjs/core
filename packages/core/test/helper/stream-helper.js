@@ -6,9 +6,7 @@ export function assertSame (s1, s2) {
 }
 
 export function expectArray (array, s) {
-  return toArray(s).then(function (result) {
-    eq(result, array)
-  })
+  return toArray(s).then(eq(array))
 }
 
 function toArray (s) {

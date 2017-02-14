@@ -20,7 +20,7 @@ describe('sample', () => {
     const s = sample(f, just(samplerValue), just(justValue))
 
     return collectEvents(s, ticks(1)).then(events => {
-      is(1, events.length)
+      eq(1, events.length)
       eq({ time: 0, value: [samplerValue, justValue] }, events[0])
     })
   })
@@ -30,7 +30,7 @@ describe('sample', () => {
     const s = sample(Array, makeEvents(1, n), never())
 
     return collectEvents(s, ticks(n))
-      .then(events => is(0, events.length))
+      .then(events => eq(0, events.length))
   })
 
   it('should end when sampler ends', () => {
@@ -38,7 +38,7 @@ describe('sample', () => {
     const s = sample(Array, makeEvents(1, n), makeEvents(5, n * 2))
 
     return collectEvents(s, ticks(n))
-      .then(events => is(n, events.length))
+      .then(events => eq(n, events.length))
   })
 
   it('should repeat last value after source ends', () => {
@@ -47,7 +47,7 @@ describe('sample', () => {
     const s = sample(Array, makeEvents(1, n), just(x))
 
     return collectEvents(s, ticks(n)).then(events => {
-      is(n, events.length)
+      eq(n, events.length)
       events.forEach((event, i) =>
         eq({ time: i, value: [i, x] }, event))
     })
@@ -58,6 +58,6 @@ describe('sample', () => {
     const s = sample(Array, makeEvents(1, 1), throwError(error))
 
     return collectEvents(s, ticks(1))
-      .catch(eq(error))
+      .catch(is(error))
   })
 })

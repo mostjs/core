@@ -1,5 +1,5 @@
 import { describe, it } from 'mocha'
-import { is, eq } from '@briancavalier/assert'
+import { eq } from '@briancavalier/assert'
 
 import { just } from '../../src/source/core'
 import { delay } from '../../src/combinator/delay'
@@ -22,7 +22,7 @@ describe('merge', function () {
 
     return collectEventsFor(1, m1)
       .then(events1 => collectEventsFor(1, m2)
-        .then(events2 => eq(events1, events2)))
+        .then(eq(events1)))
   })
 })
 
@@ -43,7 +43,7 @@ function testMerge (merge) {
 
   return collectEventsFor(count, s)
     .then(events => {
-      is(count, events.length)
+      eq(count, events.length)
       const expected = b.map(value => ({ time: 1, value })).concat(a.map(value => ({ time: 2, value })))
       eq(expected, events)
     })

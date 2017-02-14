@@ -1,5 +1,5 @@
 import { describe, it } from 'mocha'
-import { assert, is, eq } from '@briancavalier/assert'
+import { assert, eq } from '@briancavalier/assert'
 import { spy } from 'sinon'
 
 import { chain, join } from '../../src/combinator/chain'
@@ -12,7 +12,7 @@ import { fromArray } from '../../src/source/fromArray'
 import Stream from '../../src/Stream'
 
 import { assertSame } from '../helper/stream-helper'
-import { ticks, collectEvents } from '../helper/testEnv'
+import { collectEventsFor } from '../helper/testEnv'
 import FakeDisposeSource from './../helper/FakeDisposeSource'
 
 const sentinel = { value: 'sentinel' }
@@ -20,30 +20,23 @@ const sentinel = { value: 'sentinel' }
 describe('chain', function () {
   it('should satisfy associativity', function () {
     // m.chain(f).chain(g) ~= m.chain(function(x) { return f(x).chain(g); })
-    function f (x) { return just(x + 'f') }
-    function g (x) { return just(x + 'g') }
+    const f = x => just(x + 'f')
+    const g = x => just(x + 'g')
 
     const m = just('m')
 
     return assertSame(
-      chain(function (x) { return chain(g, f(x)) }, m),
+      chain(x => chain(g, f(x)), m),
       chain(g, chain(f, m))
     )
   })
 
   it('should preserve time order', function () {
     const s = chain(x => delay(x, just(x)), fromArray([2, 1]))
+    const expected = [ { time: 1, value: 1 }, { time: 2, value: 2 } ]
 
-    return collectEvents(s, ticks(3))
-      .then(events => {
-        is(2, events.length)
-
-        is(1, events[0].time)
-        is(1, events[0].value)
-
-        is(2, events[1].time)
-        is(2, events[1].value)
-      })
+    return collectEventsFor(3, s)
+      .then(eq(expected))
   })
 })
 
@@ -55,7 +48,7 @@ describe('join', function () {
 
     const s = join(streamsToMerge)
 
-    return collectEvents(s, ticks(2))
+    return collectEventsFor(2, s)
       .then(events => {
         const result = events.map(({ value }) => value)
         // Include all items

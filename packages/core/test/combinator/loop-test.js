@@ -24,7 +24,7 @@ describe('loop', function () {
 
     return collectEventsFor(a.length, s)
       .then(events => {
-        is(a.length, events.length)
+        eq(a.length, events.length)
         eq([
           { time: 0, value: 'a0' },
           { time: 1, value: 'b1' },
@@ -38,7 +38,7 @@ describe('loop', function () {
     const error = new Error()
     const s = loop(toPair, other, throwError(error))
 
-    return collectEventsFor(1, s).catch(eq(error))
+    return collectEventsFor(1, s).catch(is(error))
   })
 
   it('should dispose', function () {

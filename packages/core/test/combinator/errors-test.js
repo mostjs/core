@@ -1,10 +1,10 @@
 import { describe, it } from 'mocha'
-import { rejects, eq } from '@briancavalier/assert'
+import { fail, is, eq } from '@briancavalier/assert'
 
 import { throwError, recoverWith } from '../../src/combinator/errors'
 import { map } from '../../src/combinator/transform'
 import { observe, drain } from '../../src/combinator/observe'
-import { just as just } from '../../src/source/core'
+import { just } from '../../src/source/core'
 
 const sentinel = { value: 'sentinel' }
 const other = { value: 'other' }
@@ -54,6 +54,6 @@ describe('recoverWith', () => {
   it('when f throws, should propagate error', () => {
     const error = new Error()
     const s = recoverWith(x => { throw error }, throwError(new Error()))
-    return drain(s).then(rejects, eq(error))
+    return drain(s).then(fail, is(error))
   })
 })

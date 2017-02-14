@@ -26,7 +26,7 @@ describe('promises', () => {
 
       return collectEventsFor(10, s)
         .then(events => {
-          is(1, events.length)
+          eq(1, events.length)
           // How to assert something meaningful about the time
           // which is out of our control?
           eq(sentinel, events[0].value)
@@ -50,7 +50,7 @@ describe('promises', () => {
       const error = new Error()
       const s = awaitPromises(makeEventsFromArray(1, [Promise.resolve(), rejected(error), Promise.resolve()]))
       return collectEventsFor(1, s)
-        .catch(eq(error))
+        .catch(is(error))
     })
   })
 
@@ -58,7 +58,7 @@ describe('promises', () => {
     it('should contain only promise\'s fulfillment value', function () {
       const s = fromPromise(Promise.resolve(sentinel))
       return collectEventsFor(10, s).then(events => {
-        is(1, events.length)
+        eq(1, events.length)
         eq(sentinel, events[0].value)
       })
     })
@@ -68,7 +68,7 @@ describe('promises', () => {
       const s = fromPromise(rejected(error))
 
       return collectEventsFor(1, s)
-        .catch(eq(error))
+        .catch(is(error))
     })
 
     it('should be recoverable if promise rejects', function () {

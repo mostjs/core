@@ -34,14 +34,16 @@ describe('scan', function () {
     let a = ['a', 'b', 'c', 'd']
     const s = scan((s, x) => s + x, '', makeEventsFromArray(1, a))
 
+    const expected = [
+       { time: 0, value: '' },
+       { time: 0, value: 'a' },
+       { time: 1, value: 'ab' },
+       { time: 2, value: 'abc' },
+       { time: 3, value: 'abcd' }
+    ]
+
     return collectEventsFor(a.length, s)
-      .then(eq([
-        { time: 0, value: '' },
-        { time: 0, value: 'a' },
-        { time: 1, value: 'ab' },
-        { time: 2, value: 'abc' },
-        { time: 3, value: 'abcd' }
-      ]))
+      .then(eq(expected))
   })
 
   it('should preserve end value', function () {
