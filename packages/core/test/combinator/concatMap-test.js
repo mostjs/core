@@ -8,7 +8,7 @@ import * as concatMap from '../../src/combinator/concatMap'
 import { concat } from '../../src/combinator/build'
 import { take } from '../../src/combinator/slice'
 import { drain } from '../../src/combinator/observe'
-import { just as streamOf, never } from '../../src/source/core'
+import { just, never } from '../../src/source/core'
 import { fromArray } from '../../src/source/fromArray'
 import { default as Stream } from '../../src/Stream'
 
@@ -22,10 +22,10 @@ const identity = x => x
 describe('concatMap', function () {
   it('should satisfy associativity', function () {
     // m.concatMap(f).concatMap(g) ~= m.concatMap(function(x) { return f(x).concatMap(g); })
-    const f = x => streamOf(x + 'f')
-    const g = x => streamOf(x + 'g')
+    const f = x => just(x + 'f')
+    const g = x => just(x + 'g')
 
-    const m = streamOf('m')
+    const m = just('m')
 
     return assertSame(
       concatMap.concatMap(x => concatMap.concatMap(g, f(x)), m),
@@ -67,8 +67,8 @@ describe('concatMap', function () {
 
   it('should dispose outer stream', function () {
     const dispose = spy()
-    const inner = streamOf(sentinel)
-    const outer = streamOf(inner)
+    const inner = just(sentinel)
+    const outer = just(inner)
 
     const s = concatMap.concatMap(identity, new Stream(new FakeDisposeSource(dispose, outer.source)))
 
@@ -77,15 +77,15 @@ describe('concatMap', function () {
 
   it('should dispose inner stream', function () {
     const dispose = spy()
-    const inner = new Stream(new FakeDisposeSource(dispose, streamOf(sentinel).source))
+    const inner = new Stream(new FakeDisposeSource(dispose, just(sentinel).source))
 
-    const s = concatMap.concatMap(identity, streamOf(inner))
+    const s = concatMap.concatMap(identity, just(inner))
 
     return drain(s).then(() => assert(dispose.called))
   })
 
   it('should dispose inner stream immediately', function () {
-    const s = streamOf(concat(streamOf(1), never()))
+    const s = just(concat(just(1), never()))
 
     return drain(take(1, concatMap.concatMap(identity, s)))
   })
@@ -94,9 +94,7 @@ describe('concatMap', function () {
     const values = [1, 2, 3]
     const spies = values.map(() => spy())
 
-    const inners = values.map((x, i) => {
-      return new Stream(new FakeDisposeSource(spies[i], streamOf(x).source))
-    })
+    const inners = values.map((x, i) => new Stream(new FakeDisposeSource(spies[i], just(x).source)))
 
     const s = concatMap.concatMap(identity, fromArray(inners))
 
