@@ -7,16 +7,16 @@ import Pipe from '../sink/Pipe'
 import * as dispose from '../disposable/dispose'
 import { join } from './chain'
 
-export function takeUntil (signal, stream) {
+export function until (signal, stream) {
   return new Stream(new Until(signal.source, stream.source))
 }
 
-export function skipUntil (signal, stream) {
+export function since (signal, stream) {
   return new Stream(new Since(signal.source, stream.source))
 }
 
 export function during (timeWindow, stream) {
-  return takeUntil(join(timeWindow), skipUntil(timeWindow, stream))
+  return until(join(timeWindow), since(timeWindow, stream))
 }
 
 function Until (maxSignal, source) {

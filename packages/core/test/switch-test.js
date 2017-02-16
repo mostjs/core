@@ -10,7 +10,7 @@ import { periodic } from '../src/source/periodic'
 import { fromArray } from '../src/source/fromArray'
 import { empty, just } from '../src/source/core'
 
-import { ticks, collectEvents } from './helper/testEnv'
+import { ticks, collectEvents } from '../test-buster-old/helper/testEnv'
 
 describe('switch', () => {
   describe('when input is empty', () => {
