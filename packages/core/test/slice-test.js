@@ -5,7 +5,7 @@ import { slice, take, skip, takeWhile, skipWhile } from '../src/combinator/slice
 import { map } from '../src/combinator/transform'
 import { default as Map } from '../src/fusion/Map'
 
-import { makeEventsFromArray, collectEventsFor, makeEvents } from '../test-buster-old/helper/testEnv'
+import { makeEventsFromArray, collectEventsFor, makeEvents } from './helper/testEnv'
 
 describe('slice', function () {
   describe('fusion', function () {

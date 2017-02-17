@@ -3,8 +3,8 @@ import { eq } from '@briancavalier/assert'
 
 import { fromIterable } from '../../src/source/fromIterable'
 
-import ArrayIterable from '../../test-buster-old/helper/ArrayIterable'
-import { collectEventsFor } from '../../test-buster-old/helper/testEnv'
+import ArrayIterable from '../helper/ArrayIterable'
+import { collectEventsFor } from '../helper/testEnv'
 
 describe('fromIterable', function () {
   it('should contain iterable items', function () {

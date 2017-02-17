@@ -3,7 +3,7 @@ import { eq } from '@briancavalier/assert'
 
 import { filter, skipRepeats, skipRepeatsWith } from '../src/combinator/filter'
 
-import { collectEventsFor, makeEventsFromArray } from '../test-buster-old/helper/testEnv'
+import { collectEventsFor, makeEventsFromArray } from './helper/testEnv'
 
 const sentinel = { value: 'sentinel' }
 const other = { value: 'other' }

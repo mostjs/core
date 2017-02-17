@@ -5,7 +5,7 @@ import { combine, combineArray } from '../src/combinator/combine'
 import { delay } from '../src/combinator/delay'
 import { just } from '../src/source/core'
 
-import { collectEventsFor, makeEvents, makeEventsFromArray } from '../test-buster-old/helper/testEnv'
+import { collectEventsFor, makeEvents, makeEventsFromArray } from './helper/testEnv'
 
 const sentinel = { value: 'sentinel' }
 

@@ -1,11 +1,11 @@
 import { describe, it } from 'mocha'
 import { eq } from '@briancavalier/assert'
 
-import { assertSame } from '../test-buster-old/helper/stream-helper'
+import { assertSame } from './helper/stream-helper'
 import { map, tap, constant } from '../src/combinator/transform'
 import { just } from '../src/source/core'
 
-import { collectEventsFor } from '../test-buster-old/helper/testEnv'
+import { collectEventsFor } from './helper/testEnv'
 
 describe('map', function () {
   it('should satisfy identity', function () {

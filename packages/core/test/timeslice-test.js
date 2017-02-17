@@ -9,9 +9,9 @@ import { delay } from '../src/combinator/delay'
 import { default as Stream } from '../src/Stream'
 
 import { runEffects } from '../src/runEffects'
-import { ticks, collectEvents, collectEventsFor, makeEvents } from '../test-buster-old/helper/testEnv'
-import FakeDisposeSource from '../test-buster-old/helper/FakeDisposeSource'
-import { endWith } from '../test-buster-old/helper/endWith'
+import { ticks, collectEvents, collectEventsFor, makeEvents } from './helper/testEnv'
+import FakeDisposeSource from './helper/FakeDisposeSource'
+import { endWith } from './helper/endWith'
 
 import { spy } from 'sinon'
 

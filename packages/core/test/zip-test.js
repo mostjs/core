@@ -3,7 +3,7 @@ import { eq } from '@briancavalier/assert'
 
 import { zip } from '../src/combinator/zip'
 
-import { makeEvents, collectEventsFor } from '../test-buster-old/helper/testEnv'
+import { makeEvents, collectEventsFor } from './helper/testEnv'
 
 describe('zip', function () {
   it('should invoke f for each tuple', function () {

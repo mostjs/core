@@ -3,7 +3,7 @@ import { eq } from '@briancavalier/assert'
 
 import { just, empty } from '../../src/source/core'
 
-import { collectEventsFor } from '../../test-buster-old/helper/testEnv'
+import { collectEventsFor } from '../helper/testEnv'
 
 describe('just', function () {
   it('should contain one item', function () {

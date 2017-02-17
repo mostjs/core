@@ -4,7 +4,7 @@ import { eq } from '@briancavalier/assert'
 import { delay } from '../src/combinator/delay'
 import { just } from '../src/source/core'
 
-import { collectEventsFor } from '../test-buster-old/helper/testEnv'
+import { collectEventsFor } from './helper/testEnv'
 
 describe('delay', function () {
   it('should delay events by delayTime', function () {

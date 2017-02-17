@@ -4,7 +4,7 @@ import { map } from '@most/prelude'
 
 import { fromArray } from '../../src/source/fromArray'
 
-import { collectEventsFor } from '../../test-buster-old/helper/testEnv'
+import { collectEventsFor } from '../helper/testEnv'
 
 describe('fromArray', function () {
   it('should contain array items', function () {

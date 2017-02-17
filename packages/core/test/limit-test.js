@@ -8,8 +8,8 @@ import { take } from '../src/combinator/slice'
 import { empty, just } from '../src/source/core'
 import { default as Map } from '../src/fusion/Map'
 
-import { atTimes, collectEventsFor, makeEventsFromArray, makeEvents } from '../test-buster-old/helper/testEnv'
-import { assertSame } from '../test-buster-old/helper/stream-helper'
+import { atTimes, collectEventsFor, makeEventsFromArray, makeEvents } from './helper/testEnv'
+import { assertSame } from './helper/stream-helper'
 
 const sentinel = { value: 'sentinel' }
 
