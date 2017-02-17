@@ -28,7 +28,7 @@ VirtualTimer.prototype.setTimer = function (f, dt) {
   this._task = f
   this._time = this._now + Math.max(0, dt)
   if (this._active) {
-    this._run(f)
+    this._run()
   }
   return this._key
 }
@@ -79,7 +79,7 @@ function stepTimer (vt) {
     return
   }
 
-  var task = vt._task
+  const task = vt._task
   vt._task = void 0
   vt._now = vt._time
   vt._time = Infinity
