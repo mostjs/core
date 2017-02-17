@@ -1,5 +1,5 @@
 node_modules/
-/.idea/
+.idea/
 *.iml
 .DS_Store
 experiments/
