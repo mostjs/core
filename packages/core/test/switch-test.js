@@ -1,24 +1,20 @@
-import { spec, referee } from 'buster'
-const { describe, it } = spec
-const { assert, refute } = referee
+import { describe, it } from 'mocha'
+import { eq, fail } from '@briancavalier/assert'
 
 import { switchLatest } from '../src/combinator/switch'
-import { observe } from '../src/combinator/observe'
 import { take } from '../src/combinator/slice'
 import { constant, map, tap } from '../src/combinator/transform'
 import { periodic } from '../src/source/periodic'
 import { fromArray } from '../src/source/fromArray'
 import { empty, just } from '../src/source/core'
-
-import { ticks, collectEvents } from './helper/testEnv'
+import { ticks, collectEventsFor } from './helper/testEnv'
+import { runEffects } from '../src/runEffects'
 
 describe('switch', () => {
   describe('when input is empty', () => {
     // need this.spy, can't use arrow function
     it('should return empty', function () {
-      const spy = this.spy()
-      return observe(spy, switchLatest(empty()))
-        .then(() => refute(spy.called))
+      return runEffects(tap(fail, switchLatest(empty())), ticks(1))
     })
   })
 
@@ -33,10 +29,8 @@ describe('switch', () => {
       : empty()
 
     const s = switchLatest(map(toInner, fromArray([0, 1])))
-    return collectEvents(s, ticks(10))
-      .then(evs => {
-        assert.equals(evs, events)
-      })
+    return collectEventsFor(10, s)
+      .then(eq(events))
   })
 
   describe('when input contains a single stream', () => {
@@ -44,14 +38,12 @@ describe('switch', () => {
       const expected = [1, 2, 3]
       const s = just(fromArray(expected))
 
-      return collectEvents(switchLatest(s), ticks(1))
-        .then(events => {
-          assert.equals(events, [
-            { time: 0, value: 1 },
-            { time: 0, value: 2 },
-            { time: 0, value: 3 }
-          ])
-        })
+      return collectEventsFor(1, switchLatest(s))
+        .then(eq([
+          { time: 0, value: 1 },
+          { time: 0, value: 2 },
+          { time: 0, value: 3 }
+        ]))
     })
   })
 
@@ -64,14 +56,12 @@ describe('switch', () => {
           fromArray(expected)
         ])
 
-        return collectEvents(switchLatest(s), ticks(1))
-          .then(events => {
-            assert.equals(events, [
-              { time: 0, value: 1 },
-              { time: 0, value: 2 },
-              { time: 0, value: 3 }
-            ])
-          })
+        return collectEventsFor(1, switchLatest(s))
+          .then(eq([
+            { time: 0, value: 1 },
+            { time: 0, value: 2 },
+            { time: 0, value: 3 }
+          ]))
       })
     })
 
@@ -79,21 +69,19 @@ describe('switch', () => {
       let i = 0
       const s = map(() => constant(++i, periodic(1)), periodic(3))
 
-      return collectEvents(take(10, switchLatest(s)), ticks(250))
-        .then(events => {
-          assert.equals(events, [
-            { time: 0, value: 1 },
-            { time: 1, value: 1 },
-            { time: 2, value: 1 },
-            { time: 3, value: 2 },
-            { time: 4, value: 2 },
-            { time: 5, value: 2 },
-            { time: 6, value: 3 },
-            { time: 7, value: 3 },
-            { time: 8, value: 3 },
-            { time: 9, value: 4 }
-          ])
-        })
+      return collectEventsFor(250, take(10, switchLatest(s)))
+        .then(eq([
+          { time: 0, value: 1 },
+          { time: 1, value: 1 },
+          { time: 2, value: 1 },
+          { time: 3, value: 2 },
+          { time: 4, value: 2 },
+          { time: 5, value: 2 },
+          { time: 6, value: 3 },
+          { time: 7, value: 3 },
+          { time: 8, value: 3 },
+          { time: 9, value: 4 }
+        ]))
     })
   })
 })
