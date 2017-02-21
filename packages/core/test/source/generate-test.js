@@ -4,8 +4,8 @@ import { eq } from '@briancavalier/assert'
 import { generate } from '../../src/source/generate'
 import { reduce } from '../../src/combinator/reduce'
 import { getIterator } from '../../src/iterable'
-import ArrayIterable from '../../test-buster-old/helper/ArrayIterable'
-import delayPromise from '../../test-buster-old/helper/delayPromise'
+import ArrayIterable from '../helper/ArrayIterable'
+import delayPromise from '../helper/delayPromise'
 
 function makeAsyncIterator (ms, n) {
   const a = new Array(n)

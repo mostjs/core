@@ -133,10 +133,10 @@ export const skipWhile = curry2(_skipWhile)
 // -----------------------------------------------------------------------
 // Time slicing
 
-import { takeUntil as _takeUntil, skipUntil as _skipUntil, during as _during } from './combinator/timeslice'
+import { until as _until, since as _since, during as _during } from './combinator/timeslice'
 
-export const until = curry2(_takeUntil)
-export const since = curry2(_skipUntil)
+export const until = curry2(_until)
+export const since = curry2(_since)
 export const during = curry2(_during)
 
 // -----------------------------------------------------------------------

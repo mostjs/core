@@ -5,7 +5,7 @@ import { iterate } from '../../src/source/iterate'
 import { take } from '../../src/combinator/slice'
 import { observe } from '../../src/combinator/observe'
 
-import { collectEventsFor } from '../../test-buster-old/helper/testEnv'
+import { collectEventsFor } from '../helper/testEnv'
 
 const sentinel = { value: 'sentinel' }
 const other = { value: 'other' }
