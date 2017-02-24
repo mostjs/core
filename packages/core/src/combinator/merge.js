@@ -2,15 +2,11 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
 import Pipe from '../sink/Pipe'
 import IndexSink from '../sink/IndexSink'
 import { empty } from '../source/core'
-import * as dispose from '../disposable/dispose'
-import * as base from '@most/prelude'
-
-var copy = base.copy
-var reduce = base.reduce
+import { all, tryDispose } from '../disposable/dispose'
+import { copy, reduce } from '@most/prelude'
 
 /**
  * @returns {Stream} stream containing events from all streams in the argument
@@ -27,12 +23,10 @@ export function merge (/* ...streams*/) {
  * in time order.  If two events are simultaneous they will be merged in
  * arbitrary order.
  */
-export function mergeArray (streams) {
-  var l = streams.length
-  return l === 0 ? empty()
-    : l === 1 ? streams[0]
-    : new Stream(mergeSources(streams))
-}
+export const mergeArray = streams =>
+  streams.length === 0 ? empty()
+    : streams.length === 1 ? streams[0]
+    : mergeStreams(streams)
 
 /**
  * This implements fusion/flattening for merge.  It will
@@ -43,51 +37,49 @@ export function mergeArray (streams) {
  * any nested Merge sources, in effect "flattening" nested
  * merge operations into a single merge.
  */
-function mergeSources (streams) {
-  return new Merge(reduce(appendSources, [], streams))
-}
+const mergeStreams = streams =>
+  new Merge(reduce(appendSources, [], streams))
 
-function appendSources (sources, stream) {
-  var source = stream.source
-  return source instanceof Merge
-    ? sources.concat(source.sources)
-    : sources.concat(source)
-}
+const appendSources = (sources, stream) =>
+  sources.concat(stream instanceof Merge ? stream.sources : stream)
 
-function Merge (sources) {
-  this.sources = sources
-}
-
-Merge.prototype.run = function (sink, scheduler) {
-  var l = this.sources.length
-  var disposables = new Array(l)
-  var sinks = new Array(l)
-
-  var mergeSink = new MergeSink(disposables, sinks, sink)
-
-  for (var indexSink, i = 0; i < l; ++i) {
-    indexSink = sinks[i] = new IndexSink(i, mergeSink)
-    disposables[i] = this.sources[i].run(indexSink, scheduler)
+class Merge {
+  constructor (sources) {
+    this.sources = sources
   }
 
-  return dispose.all(disposables)
-}
+  run (sink, scheduler) {
+    const l = this.sources.length
+    const disposables = new Array(l)
+    const sinks = new Array(l)
 
-function MergeSink (disposables, sinks, sink) {
-  this.sink = sink
-  this.disposables = disposables
-  this.activeCount = sinks.length
-}
+    const mergeSink = new MergeSink(disposables, sinks, sink)
 
-MergeSink.prototype.error = Pipe.prototype.error
+    for (let indexSink, i = 0; i < l; ++i) {
+      indexSink = sinks[i] = new IndexSink(i, mergeSink)
+      disposables[i] = this.sources[i].run(indexSink, scheduler)
+    }
 
-MergeSink.prototype.event = function (t, indexValue) {
-  this.sink.event(t, indexValue.value)
-}
-
-MergeSink.prototype.end = function (t, indexedValue) {
-  dispose.tryDispose(t, this.disposables[indexedValue.index], this.sink)
-  if (--this.activeCount === 0) {
-    this.sink.end(t, indexedValue.value)
+    return all(disposables)
   }
 }
+
+class MergeSink extends Pipe {
+  constructor (disposables, sinks, sink) {
+    super(sink)
+    this.disposables = disposables
+    this.activeCount = sinks.length
+  }
+
+  event (t, indexValue) {
+    this.sink.event(t, indexValue.value)
+  }
+
+  end (t, indexedValue) {
+    tryDispose(t, this.disposables[indexedValue.index], this.sink)
+    if (--this.activeCount === 0) {
+      this.sink.end(t, indexedValue.value)
+    }
+  }
+}
+

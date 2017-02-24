@@ -2,7 +2,6 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../../src/Stream'
 import { propagateEventTask, propagateEndTask } from '../../src/scheduler/PropagateTask'
 import Scheduler from '../../src/scheduler/Scheduler'
 import Timeline from '../../src/scheduler/Timeline'
@@ -39,7 +38,7 @@ export const makeEvents = (dt, n) =>
 
 export const atTime = (time, value) => atTimes([{ time, value }])
 
-export const atTimes = array => new Stream(new AtTimes(array))
+export const atTimes = array => new AtTimes(array)
 
 class AtTimes {
   constructor (array) {

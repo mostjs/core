@@ -2,7 +2,6 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
 import Pipe from '../sink/Pipe'
 import Filter from '../fusion/Filter'
 
@@ -12,18 +11,16 @@ import Filter from '../fusion/Filter'
  * @param {Stream} stream stream to filter
  * @returns {Stream} stream containing only items for which predicate returns truthy
  */
-export function filter (p, stream) {
-  return new Stream(Filter.create(p, stream.source))
-}
+export const filter = (p, stream) =>
+  Filter.create(p, stream)
 
 /**
  * Skip repeated events, using === to detect duplicates
  * @param {Stream} stream stream from which to omit repeated events
  * @returns {Stream} stream without repeated events
  */
-export function skipRepeats (stream) {
-  return skipRepeatsWith(same, stream)
-}
+export const skipRepeats = stream =>
+  skipRepeatsWith(same, stream)
 
 /**
  * Skip repeated events using the provided equals function to detect duplicates
@@ -31,37 +28,37 @@ export function skipRepeats (stream) {
  * @param {Stream} stream stream from which to omit repeated events
  * @returns {Stream} stream without repeated events
  */
-export function skipRepeatsWith (equals, stream) {
-  return new Stream(new SkipRepeats(equals, stream.source))
+export const skipRepeatsWith = (equals, stream) =>
+  new SkipRepeats(equals, stream)
+
+class SkipRepeats {
+  constructor (equals, source) {
+    this.equals = equals
+    this.source = source
+  }
+
+  run (sink, scheduler) {
+    return this.source.run(new SkipRepeatsSink(this.equals, sink), scheduler)
+  }
 }
 
-function SkipRepeats (equals, source) {
-  this.equals = equals
-  this.source = source
-}
+class SkipRepeatsSink extends Pipe {
+  constructor (equals, sink) {
+    super(sink)
+    this.equals = equals
+    this.value = void 0
+    this.init = true
+  }
 
-SkipRepeats.prototype.run = function (sink, scheduler) {
-  return this.source.run(new SkipRepeatsSink(this.equals, sink), scheduler)
-}
-
-function SkipRepeatsSink (equals, sink) {
-  this.equals = equals
-  this.sink = sink
-  this.value = void 0
-  this.init = true
-}
-
-SkipRepeatsSink.prototype.end = Pipe.prototype.end
-SkipRepeatsSink.prototype.error = Pipe.prototype.error
-
-SkipRepeatsSink.prototype.event = function (t, x) {
-  if (this.init) {
-    this.init = false
-    this.value = x
-    this.sink.event(t, x)
-  } else if (!this.equals(this.value, x)) {
-    this.value = x
-    this.sink.event(t, x)
+  event (t, x) {
+    if (this.init) {
+      this.init = false
+      this.value = x
+      this.sink.event(t, x)
+    } else if (!this.equals(this.value, x)) {
+      this.value = x
+      this.sink.event(t, x)
+    }
   }
 }
 

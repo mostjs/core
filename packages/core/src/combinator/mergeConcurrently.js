@@ -2,124 +2,127 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
-import * as dispose from '../disposable/dispose'
+import { once, tryDispose } from '../disposable/dispose'
 import LinkedList from '../LinkedList'
 import { id as identity } from '@most/prelude'
 
-export function mergeConcurrently (concurrency, stream) {
-  return mergeMapConcurrently(identity, concurrency, stream)
-}
+export const mergeConcurrently = (concurrency, stream) =>
+  mergeMapConcurrently(identity, concurrency, stream)
 
-export function mergeMapConcurrently (f, concurrency, stream) {
-  return new Stream(new MergeConcurrently(f, concurrency, stream.source))
-}
+export const mergeMapConcurrently = (f, concurrency, stream) =>
+  new MergeConcurrently(f, concurrency, stream)
 
-function MergeConcurrently (f, concurrency, source) {
-  this.f = f
-  this.concurrency = concurrency
-  this.source = source
-}
+class MergeConcurrently {
+  constructor (f, concurrency, source) {
+    this.f = f
+    this.concurrency = concurrency
+    this.source = source
+  }
 
-MergeConcurrently.prototype.run = function (sink, scheduler) {
-  return new Outer(this.f, this.concurrency, this.source, sink, scheduler)
-}
-
-function Outer (f, concurrency, source, sink, scheduler) {
-  this.f = f
-  this.concurrency = concurrency
-  this.sink = sink
-  this.scheduler = scheduler
-  this.pending = []
-  this.current = new LinkedList()
-  this.disposable = dispose.once(source.run(this, scheduler))
-  this.active = true
-}
-
-Outer.prototype.event = function (t, x) {
-  this._addInner(t, x)
-}
-
-Outer.prototype._addInner = function (t, x) {
-  if (this.current.length < this.concurrency) {
-    this._startInner(t, x)
-  } else {
-    this.pending.push(x)
+  run (sink, scheduler) {
+    return new Outer(this.f, this.concurrency, this.source, sink, scheduler)
   }
 }
 
-Outer.prototype._startInner = function (t, x) {
-  try {
-    this._initInner(t, x)
-  } catch (e) {
-    this.error(t, e)
+class Outer {
+  constructor (f, concurrency, source, sink, scheduler) {
+    this.f = f
+    this.concurrency = concurrency
+    this.sink = sink
+    this.scheduler = scheduler
+    this.pending = []
+    this.current = new LinkedList()
+    this.disposable = once(source.run(this, scheduler))
+    this.active = true
   }
-}
 
-Outer.prototype._initInner = function (t, x) {
-  var innerSink = new Inner(t, this, this.sink)
-  innerSink.disposable = mapAndRun(this.f, x, innerSink, this.scheduler)
-  this.current.add(innerSink)
-}
+  event (t, x) {
+    this._addInner(t, x)
+  }
 
-function mapAndRun (f, x, sink, scheduler) {
-  return f(x).source.run(sink, scheduler)
-}
+  _addInner (t, x) {
+    if (this.current.length < this.concurrency) {
+      this._startInner(t, x)
+    } else {
+      this.pending.push(x)
+    }
+  }
 
-Outer.prototype.end = function (t, x) {
-  this.active = false
-  dispose.tryDispose(t, this.disposable, this.sink)
-  this._checkEnd(t, x)
-}
+  _startInner (t, x) {
+    try {
+      this._initInner(t, x)
+    } catch (e) {
+      this.error(t, e)
+    }
+  }
 
-Outer.prototype.error = function (t, e) {
-  this.active = false
-  this.sink.error(t, e)
-}
+  _initInner (t, x) {
+    const innerSink = new Inner(t, this, this.sink)
+    innerSink.disposable = mapAndRun(this.f, x, innerSink, this.scheduler)
+    this.current.add(innerSink)
+  }
 
-Outer.prototype.dispose = function () {
-  this.active = false
-  this.pending.length = 0
-  return Promise.all([this.disposable.dispose(), this.current.dispose()])
-}
-
-Outer.prototype._endInner = function (t, x, inner) {
-  this.current.remove(inner)
-  dispose.tryDispose(t, inner, this)
-
-  if (this.pending.length === 0) {
+  end (t, x) {
+    this.active = false
+    tryDispose(t, this.disposable, this.sink)
     this._checkEnd(t, x)
-  } else {
-    this._startInner(t, this.pending.shift())
+  }
+
+  error (t, e) {
+    this.active = false
+    this.sink.error(t, e)
+  }
+
+  dispose () {
+    this.active = false
+    this.pending.length = 0
+    return Promise.all([this.disposable.dispose(), this.current.dispose()])
+  }
+
+  _endInner (t, x, inner) {
+    this.current.remove(inner)
+    tryDispose(t, inner, this)
+
+    if (this.pending.length === 0) {
+      this._checkEnd(t, x)
+    } else {
+      this._startInner(t, this.pending.shift())
+    }
+  }
+
+  _checkEnd (t, x) {
+    if (!this.active && this.current.isEmpty()) {
+      this.sink.end(t, x)
+    }
   }
 }
 
-Outer.prototype._checkEnd = function (t, x) {
-  if (!this.active && this.current.isEmpty()) {
-    this.sink.end(t, x)
+const mapAndRun = (f, x, sink, scheduler) =>
+  f(x).run(sink, scheduler)
+
+class Inner {
+  constructor (time, outer, sink) {
+    this.prev = this.next = null
+    this.time = time
+    this.outer = outer
+    this.sink = sink
+    this.disposable = void 0
+  }
+
+  event (t, x) {
+    this.sink.event(Math.max(t, this.time), x)
+  }
+
+  end (t, x) {
+    this.outer._endInner(Math.max(t, this.time), x, this)
+  }
+
+  error (t, e) {
+    this.outer.error(Math.max(t, this.time), e)
+  }
+
+  dispose () {
+    return this.disposable.dispose()
   }
 }
 
-function Inner (time, outer, sink) {
-  this.prev = this.next = null
-  this.time = time
-  this.outer = outer
-  this.sink = sink
-  this.disposable = void 0
-}
-
-Inner.prototype.event = function (t, x) {
-  this.sink.event(Math.max(t, this.time), x)
-}
-
-Inner.prototype.end = function (t, x) {
-  this.outer._endInner(Math.max(t, this.time), x, this)
-}
-
-Inner.prototype.error = function (t, e) {
-  this.outer.error(Math.max(t, this.time), e)
-}
-
-Inner.prototype.dispose = function () {
-  return this.disposable.dispose()
-}

@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import { runSourceEffects } from '../runEffects'
+import { runEffects } from '../runEffects'
 import defaultScheduler from '../scheduler/defaultScheduler'
 
 /**
@@ -16,7 +16,7 @@ import defaultScheduler from '../scheduler/defaultScheduler'
 * @returns {Promise} promise for the file result of the reduce
 */
 export const reduce = (f, initial, stream) =>
-  runSourceEffects(new Reduce(f, initial, stream.source), defaultScheduler)
+  runEffects(new Reduce(f, initial, stream), defaultScheduler)
 
 class Reduce {
   constructor (f, z, source) {
@@ -32,10 +32,9 @@ class Reduce {
 
 class ReduceSink extends Pipe {
   constructor (f, z, sink) {
-    super()
+    super(sink)
     this.f = f
     this.value = z
-    this.sink = sink
   }
 
   event (t, x) {

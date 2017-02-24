@@ -2,111 +2,112 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
 import Pipe from '../sink/Pipe'
-import * as dispose from '../disposable/dispose'
+import { all } from '../disposable/dispose'
 import { join } from './chain'
 
-export function until (signal, stream) {
-  return new Stream(new Until(signal.source, stream.source))
-}
+export const until = (signal, stream) =>
+  new Until(signal, stream)
 
-export function since (signal, stream) {
-  return new Stream(new Since(signal.source, stream.source))
-}
+export const since = (signal, stream) =>
+  new Since(signal, stream)
 
-export function during (timeWindow, stream) {
-  return until(join(timeWindow), since(timeWindow, stream))
-}
+export const during = (timeWindow, stream) =>
+  until(join(timeWindow), since(timeWindow, stream))
 
-function Until (maxSignal, source) {
-  this.maxSignal = maxSignal
-  this.source = source
-}
+class Until {
+  constructor (maxSignal, source) {
+    this.maxSignal = maxSignal
+    this.source = source
+  }
 
-Until.prototype.run = function (sink, scheduler) {
-  var min = new Bound(-Infinity, sink)
-  var max = new UpperBound(this.maxSignal, sink, scheduler)
-  var disposable = this.source.run(new TimeWindowSink(min, max, sink), scheduler)
+  run (sink, scheduler) {
+    const min = new Bound(-Infinity, sink)
+    const max = new UpperBound(this.maxSignal, sink, scheduler)
+    const disposable = this.source.run(new TimeWindowSink(min, max, sink), scheduler)
 
-  return dispose.all([min, max, disposable])
-}
-
-function Since (minSignal, source) {
-  this.minSignal = minSignal
-  this.source = source
-}
-
-Since.prototype.run = function (sink, scheduler) {
-  var min = new LowerBound(this.minSignal, sink, scheduler)
-  var max = new Bound(Infinity, sink)
-  var disposable = this.source.run(new TimeWindowSink(min, max, sink), scheduler)
-
-  return dispose.all([min, max, disposable])
-}
-
-function Bound (value, sink) {
-  this.value = value
-  this.sink = sink
-}
-
-Bound.prototype.error = Pipe.prototype.error
-Bound.prototype.event = noop
-Bound.prototype.end = noop
-Bound.prototype.dispose = noop
-
-function TimeWindowSink (min, max, sink) {
-  this.min = min
-  this.max = max
-  this.sink = sink
-}
-
-TimeWindowSink.prototype.event = function (t, x) {
-  if (t >= this.min.value && t < this.max.value) {
-    this.sink.event(t, x)
+    return all([min, max, disposable])
   }
 }
 
-TimeWindowSink.prototype.error = Pipe.prototype.error
-TimeWindowSink.prototype.end = Pipe.prototype.end
+class Since {
+  constructor (minSignal, source) {
+    this.minSignal = minSignal
+    this.source = source
+  }
 
-function LowerBound (signal, sink, scheduler) {
-  this.value = Infinity
-  this.sink = sink
-  this.disposable = signal.run(this, scheduler)
-}
+  run (sink, scheduler) {
+    const min = new LowerBound(this.minSignal, sink, scheduler)
+    const max = new Bound(Infinity, sink)
+    const disposable = this.source.run(new TimeWindowSink(min, max, sink), scheduler)
 
-LowerBound.prototype.event = function (t /*, x */) {
-  if (t < this.value) {
-    this.value = t
+    return all([min, max, disposable])
   }
 }
 
-LowerBound.prototype.end = noop
-LowerBound.prototype.error = Pipe.prototype.error
+class Bound extends Pipe {
+  constructor (value, sink) {
+    super(sink)
+    this.value = value
+  }
 
-LowerBound.prototype.dispose = function () {
-  return this.disposable.dispose()
+  event () {}
+  end () {}
+
+  dispose () {}
 }
 
-function UpperBound (signal, sink, scheduler) {
-  this.value = Infinity
-  this.sink = sink
-  this.disposable = signal.run(this, scheduler)
-}
+class TimeWindowSink extends Pipe {
+  constructor (min, max, sink) {
+    super(sink)
+    this.min = min
+    this.max = max
+  }
 
-UpperBound.prototype.event = function (t, x) {
-  if (t < this.value) {
-    this.value = t
-    this.sink.end(t, x)
+  event (t, x) {
+    if (t >= this.min.value && t < this.max.value) {
+      this.sink.event(t, x)
+    }
   }
 }
 
-UpperBound.prototype.end = noop
-UpperBound.prototype.error = Pipe.prototype.error
+class LowerBound extends Pipe {
+  constructor (signal, sink, scheduler) {
+    super(sink)
+    this.value = Infinity
+    this.disposable = signal.run(this, scheduler)
+  }
 
-UpperBound.prototype.dispose = function () {
-  return this.disposable.dispose()
+  event (t /*, x */) {
+    if (t < this.value) {
+      this.value = t
+    }
+  }
+
+  end () {}
+
+  dispose () {
+    return this.disposable.dispose()
+  }
 }
 
-function noop () {}
+class UpperBound extends Pipe {
+  constructor (signal, sink, scheduler) {
+    super(sink)
+    this.value = Infinity
+    this.disposable = signal.run(this, scheduler)
+  }
+
+  event (t, x) {
+    if (t < this.value) {
+      this.value = t
+      this.sink.end(t, x)
+    }
+  }
+
+  end () {}
+
+  dispose () {
+    return this.disposable.dispose()
+  }
+}

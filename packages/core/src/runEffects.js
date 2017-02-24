@@ -4,17 +4,15 @@
 
 import { settable } from './disposable/dispose'
 
-export const runEffects = ({ source }, scheduler) => runSourceEffects(source, scheduler)
-
-export const runSourceEffects = (source, scheduler) =>
+export const runEffects = (stream, scheduler) =>
   new Promise((resolve, reject) =>
-    runSource(source, scheduler, resolve, reject))
+    runStream(stream, scheduler, resolve, reject))
 
-function runSource (source, scheduler, resolve, reject) {
+function runStream (stream, scheduler, resolve, reject) {
   const disposable = settable()
   const observer = new RunEffectsSink(resolve, reject, disposable)
 
-  disposable.setDisposable(source.run(observer, scheduler))
+  disposable.setDisposable(stream.run(observer, scheduler))
 }
 
 class RunEffectsSink {

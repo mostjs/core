@@ -2,7 +2,6 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
 import { propagateEventTask } from '../scheduler/PropagateTask'
 
 /**
@@ -10,9 +9,8 @@ import { propagateEventTask } from '../scheduler/PropagateTask'
  * @param {Number} period periodicity of events in millis
  * @returns {Stream} new stream of periodic events, the event value is undefined
  */
-export function periodic (period) {
-  return new Stream(new Periodic(period))
-}
+export const periodic = period =>
+  new Periodic(period)
 
 class Periodic {
   constructor (period) {

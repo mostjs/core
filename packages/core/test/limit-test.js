@@ -84,16 +84,16 @@ describe('throttle', function () {
     it('should use max', function () {
       const s1 = throttle(2, throttle(1, atTimes([])))
       const s2 = throttle(1, throttle(2, atTimes([])))
-      eq(2, eq(s1.source.period, s2.source.period))
+      eq(2, eq(s1.period, s2.period))
     })
 
     it('should commute map', function () {
       const id = x => x
       const s = throttle(1, map(id, just()))
 
-      assert(s.source instanceof Map)
-      is(id, s.source.f)
-      eq(1, s.source.source.period)
+      assert(s instanceof Map)
+      is(id, s.f)
+      eq(1, s.source.period)
     })
   })
 

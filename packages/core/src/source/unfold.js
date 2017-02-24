@@ -2,8 +2,6 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
-
 /**
  * Compute a stream by unfolding tuples of future values from a seed value
  * Event times may be controlled by returning a Promise from f
@@ -14,46 +12,45 @@ import Stream from '../Stream'
  * @returns {Stream} stream containing all value of all tuples produced by the
  *  unfolding function.
  */
-export function unfold (f, seed) {
-  return new Stream(new UnfoldSource(f, seed))
-}
+export const unfold = (f, seed) =>
+  new UnfoldStream(f, seed)
 
-function UnfoldSource (f, seed) {
-  this.f = f
-  this.value = seed
-}
-
-UnfoldSource.prototype.run = function (sink, scheduler) {
-  return new Unfold(this.f, this.value, sink, scheduler)
-}
-
-function Unfold (f, x, sink, scheduler) {
-  this.f = f
-  this.sink = sink
-  this.scheduler = scheduler
-  this.active = true
-
-  var self = this
-  function err (e) {
-    self.sink.error(self.scheduler.now(), e)
+class UnfoldStream {
+  constructor (f, seed) {
+    this.f = f
+    this.value = seed
   }
 
-  function start (unfold) {
-    return stepUnfold(unfold, x)
+  run (sink, scheduler) {
+    return new Unfold(this.f, this.value, sink, scheduler)
   }
-
-  Promise.resolve(this).then(start).catch(err)
 }
 
-Unfold.prototype.dispose = function () {
-  this.active = false
+class Unfold {
+  constructor (f, x, sink, scheduler) {
+    this.f = f
+    this.sink = sink
+    this.scheduler = scheduler
+    this.active = true
+
+    const err = e =>
+      this.sink.error(this.scheduler.now(), e)
+
+    const start = unfold =>
+      stepUnfold(unfold, x)
+
+    Promise.resolve(this).then(start).catch(err)
+  }
+
+  dispose () {
+    this.active = false
+  }
 }
 
 function stepUnfold (unfold, x) {
-  var f = unfold.f
-  return Promise.resolve(f(x)).then(function (tuple) {
-    return continueUnfold(unfold, tuple)
-  })
+  const f = unfold.f
+  return Promise.resolve(f(x))
+    .then(tuple => continueUnfold(unfold, tuple))
 }
 
 function continueUnfold (unfold, tuple) {
@@ -64,8 +61,5 @@ function continueUnfold (unfold, tuple) {
 
   unfold.sink.event(unfold.scheduler.now(), tuple.value)
 
-  if (!unfold.active) {
-    return tuple.value
-  }
-  return stepUnfold(unfold, tuple.seed)
+  return unfold.active ? stepUnfold(unfold, tuple.seed) : tuple.value
 }

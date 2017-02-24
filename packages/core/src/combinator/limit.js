@@ -2,9 +2,8 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
 import Pipe from '../sink/Pipe'
-import * as dispose from '../disposable/dispose'
+import { all } from '../disposable/dispose'
 import { propagateEventTask } from '../scheduler/PropagateTask'
 import Map from '../fusion/Map'
 
@@ -15,18 +14,15 @@ import Map from '../fusion/Map'
  * @returns {Stream}
  */
 export const throttle = (period, stream) =>
-  new Stream(throttleSource(period, stream.source))
+  stream instanceof Map ? commuteMapThrottle(period, stream)
+    : stream instanceof Throttle ? fuseThrottle(period, stream)
+    : new Throttle(period, stream)
 
-const throttleSource = (period, source) =>
-  source instanceof Map ? commuteMapThrottle(period, source)
-    : source instanceof Throttle ? fuseThrottle(period, source)
-    : new Throttle(period, source)
+const commuteMapThrottle = (period, mapStream) =>
+  Map.create(mapStream.f, throttle(period, mapStream.source))
 
-const commuteMapThrottle = (period, source) =>
-  Map.create(source.f, throttleSource(period, source.source))
-
-const fuseThrottle = (period, source) =>
-  new Throttle(Math.max(period, source.period), source.source)
+const fuseThrottle = (period, throttleStream) =>
+  new Throttle(Math.max(period, throttleStream.period), throttleStream.source)
 
 class Throttle {
   constructor (period, source) {
@@ -61,7 +57,7 @@ class ThrottleSink extends Pipe {
  * @returns {Stream} new debounced stream
  */
 export const debounce = (period, stream) =>
-  new Stream(new Debounce(period, stream.source))
+  new Debounce(period, stream)
 
 class Debounce {
   constructor (dt, source) {
@@ -83,7 +79,7 @@ class DebounceSink {
     this.timer = null
 
     const sourceDisposable = source.run(this, scheduler)
-    this.disposable = dispose.all([this, sourceDisposable])
+    this.disposable = all([this, sourceDisposable])
   }
 
   event (t, x) {

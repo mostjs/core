@@ -2,12 +2,11 @@ import { describe, it } from 'mocha'
 import { is, eq, assert } from '@briancavalier/assert'
 import { spy } from 'sinon'
 
-import Stream from '../../src/Stream'
 import { loop } from '../../src/combinator/loop'
 import { throwError } from '../../src/combinator/errors'
 import { just } from '../../src/source/core'
 
-import FakeDisposeSource from '../helper/FakeDisposeSource'
+import FakeDisposeSource from '../helper/FakeDisposeStream'
 
 import { makeEventsFromArray, collectEventsFor } from '../helper/testEnv'
 
@@ -44,7 +43,7 @@ describe('loop', function () {
   it('should dispose', function () {
     const dispose = spy()
 
-    const stream = new Stream(new FakeDisposeSource(dispose, just(sentinel).source))
+    const stream = new FakeDisposeSource(dispose, just(sentinel))
     const s = loop(toPair, 0, stream)
 
     return collectEventsFor(1, s).then(() => assert(dispose.calledOnce))

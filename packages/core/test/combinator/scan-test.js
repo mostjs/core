@@ -2,32 +2,14 @@ import { describe, it } from 'mocha'
 import { assert, eq } from '@briancavalier/assert'
 import { spy } from 'sinon'
 
-import Stream from '../../src/Stream'
 import { scan } from '../../src/combinator/scan'
 
 import { runEffects } from '../../src/runEffects'
 import { atTime, makeEventsFromArray, collectEventsFor, ticks } from '../helper/testEnv'
-import FakeDisposeSource from '../helper/FakeDisposeSource'
+import FakeDisposeStream from '../helper/FakeDisposeStream'
+import { endWith } from '../helper/endWith'
 
 const sentinel = { value: 'sentinel' }
-
-function endWith (endValue, { source }) {
-  return new Stream({
-    run: (sink, scheduler) => {
-      return source.run({
-        end (t, _) {
-          sink.end(t, endValue)
-        },
-        event (t, x) {
-          sink.event(t, x)
-        },
-        error (t, e) {
-          sink.error(t, e)
-        }
-      }, scheduler)
-    }
-  })
-}
 
 describe('scan', function () {
   it('should yield incremental accumulated values', function () {
@@ -56,7 +38,7 @@ describe('scan', function () {
   it('should dispose', function () {
     const dispose = spy()
 
-    const stream = new Stream(new FakeDisposeSource(dispose, atTime(0, sentinel).source))
+    const stream = new FakeDisposeStream(dispose, atTime(0, sentinel))
     const s = scan((z, x) => x, 0, stream)
 
     return runEffects(s, ticks(1))

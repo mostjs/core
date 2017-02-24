@@ -6,11 +6,10 @@ import { take } from '../src/combinator/slice'
 import { periodic } from '../src/source/periodic'
 import { just, never } from '../src/source/core'
 import { delay } from '../src/combinator/delay'
-import { default as Stream } from '../src/Stream'
 
 import { runEffects } from '../src/runEffects'
 import { ticks, collectEvents, collectEventsFor, makeEvents } from './helper/testEnv'
-import FakeDisposeSource from './helper/FakeDisposeSource'
+import FakeDisposeStream from './helper/FakeDisposeStream'
 import { endWith } from './helper/endWith'
 
 import { spy } from 'sinon'
@@ -35,7 +34,7 @@ describe('during', function () {
 
   it('should dispose source stream', function () {
     const dispose = spy()
-    const stream = new Stream(FakeDisposeSource.from(dispose, periodic(1)))
+    const stream = FakeDisposeStream.from(dispose, periodic(1))
     const timespan = delay(1, just(delay(5, just())))
 
     const s = during(timespan, stream)
@@ -48,7 +47,7 @@ describe('during', function () {
 
     const stream = periodic(1)
     const timespan = delay(1, just(delay(5, just())))
-    const dt = new Stream(FakeDisposeSource.from(dispose, timespan))
+    const dt = FakeDisposeStream.from(dispose, timespan)
 
     const s = during(dt, stream)
     return collectEvents(s, ticks(6))
@@ -76,7 +75,7 @@ describe('until', function () {
 
   it('should dispose source stream', function () {
     const dispose = spy()
-    const stream = new Stream(FakeDisposeSource.from(dispose, periodic(1)))
+    const stream = FakeDisposeStream.from(dispose, periodic(1))
     const signal = delay(3, just())
 
     const s = until(signal, stream)
@@ -86,7 +85,7 @@ describe('until', function () {
 
   it('should end immediately on signal', function () {
     const dispose = spy()
-    const stream = new Stream(FakeDisposeSource.from(dispose, never()))
+    const stream = FakeDisposeStream.from(dispose, never())
     const signal = just()
 
     const s = until(signal, stream)
@@ -100,7 +99,7 @@ describe('until', function () {
   it('should dispose signal', function () {
     const dispose = spy()
     const stream = periodic(1)
-    const signal = new Stream(FakeDisposeSource.from(dispose, delay(3, just())))
+    const signal = FakeDisposeStream.from(dispose, delay(3, just()))
 
     const s = until(signal, stream)
     return collectEventsFor(5, s)
@@ -141,7 +140,7 @@ describe('since', function () {
   it('should dispose signal', function () {
     const dispose = spy()
     const stream = take(5, periodic(1))
-    const signal = new Stream(FakeDisposeSource.from(dispose, delay(3, just())))
+    const signal = FakeDisposeStream.from(dispose, delay(3, just()))
 
     const s = since(signal, stream)
     return collectEventsFor(5, s)
