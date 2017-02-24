@@ -53,11 +53,11 @@ const renderResult = result => {
 
 // x represents the current value of xInput,
 // updated on 'input' events
-const x = map(toNumber), input(xInput))
+const x = map(toNumber, input(xInput))
 
 // y represents the current value of yInput,
 // updated on 'input' events
-const y = map(toNumber), input(yInput))
+const y = map(toNumber, input(yInput))
 
 // result is the live current value of adding x and y
 // also updated on 'input' events from either
