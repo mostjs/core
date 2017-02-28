@@ -1,13 +1,12 @@
 /** @license MIT License (c) copyright 2010-2016 original author or authors */
 
-import Stream from '../Stream'
 import { getIterator } from '../iterable'
 import { propagateTask } from '../scheduler/PropagateTask'
 
 export const fromIterable = iterable =>
-  new Stream(new IterableSource(iterable))
+  new IterableStream(iterable)
 
-class IterableSource {
+class IterableStream {
   constructor (iterable) {
     this.iterable = iterable
   }

@@ -2,8 +2,7 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
-import * as base from '@most/prelude'
+import { tail } from '@most/prelude'
 
 /**
  * Compute a stream using an *async* generator, which yields promises
@@ -12,35 +11,39 @@ import * as base from '@most/prelude'
  * @returns {Stream}
  */
 export function generate (f /*, ...args */) {
-  return new Stream(new GenerateSource(f, base.tail(arguments)))
+  return new GeneratorStream(f, tail(arguments))
 }
 
-function GenerateSource (f, args) {
-  this.f = f
-  this.args = args
-}
-
-GenerateSource.prototype.run = function (sink, scheduler) {
-  return new Generate(this.f.apply(void 0, this.args), sink, scheduler)
-}
-
-function Generate (iterator, sink, scheduler) {
-  this.iterator = iterator
-  this.sink = sink
-  this.scheduler = scheduler
-  this.active = true
-
-  var self = this
-  function err (e) {
-    self.sink.error(self.scheduler.now(), e)
+class GeneratorStream {
+  constructor (f, args) {
+    this.f = f
+    this.args = args
   }
 
-  Promise.resolve(this).then(next).catch(err)
+  run (sink, scheduler) {
+    return new Generate(this.f.apply(void 0, this.args), sink, scheduler)
+  }
 }
 
-function next (generate, x) {
-  return generate.active ? handle(generate, generate.iterator.next(x)) : x
+class Generate {
+  constructor (iterator, sink, scheduler) {
+    this.iterator = iterator
+    this.sink = sink
+    this.scheduler = scheduler
+    this.active = true
+
+    const err = e => this.sink.error(this.scheduler.now(), e)
+
+    Promise.resolve(this).then(next).catch(err)
+  }
+
+  dispose () {
+    this.active = false
+  }
 }
+
+const next = (generate, x) =>
+  generate.active ? handle(generate, generate.iterator.next(x)) : x
 
 function handle (generate, result) {
   if (result.done) {
@@ -63,6 +66,3 @@ function error (generate, e) {
   return handle(generate, generate.iterator.throw(e))
 }
 
-Generate.prototype.dispose = function () {
-  this.active = false
-}

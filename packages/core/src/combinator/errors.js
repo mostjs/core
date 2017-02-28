@@ -2,10 +2,9 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
 import SafeSink from '../sink/SafeSink'
-import * as dispose from '../disposable/dispose'
-import * as tryEvent from '../source/tryEvent'
+import { tryDispose } from '../disposable/dispose'
+import { tryEvent, tryEnd } from '../source/tryEvent'
 import { propagateErrorTask } from '../scheduler/PropagateTask'
 
 /**
@@ -16,7 +15,7 @@ import { propagateErrorTask } from '../scheduler/PropagateTask'
  * @returns {Stream} new stream which will recover from an error by calling f
  */
 export const recoverWith = (f, stream) =>
-  new Stream(new RecoverWith(f, stream.source))
+  new RecoverWith(f, stream)
 
 /**
  * Create a stream containing only an error
@@ -24,9 +23,9 @@ export const recoverWith = (f, stream) =>
  * @returns {Stream} new stream containing only an error
  */
 export const throwError = e =>
-  new Stream(new ErrorSource(e))
+  new ErrorStream(e)
 
-class ErrorSource {
+class ErrorStream {
   constructor (e) {
     this.value = e
   }
@@ -56,17 +55,17 @@ class RecoverWithSink {
   }
 
   event (t, x) {
-    tryEvent.tryEvent(t, x, this.sink)
+    tryEvent(t, x, this.sink)
   }
 
   end (t, x) {
-    tryEvent.tryEnd(t, x, this.sink)
+    tryEnd(t, x, this.sink)
   }
 
   error (t, e) {
     const nextSink = this.sink.disable()
 
-    dispose.tryDispose(t, this.disposable, this.sink)
+    tryDispose(t, this.disposable, this.sink)
     this._startNext(t, e, nextSink)
   }
 
@@ -80,7 +79,7 @@ class RecoverWithSink {
 
   _continue (f, x, sink) {
     const stream = f(x)
-    return stream.source.run(sink, this.scheduler)
+    return stream.run(sink, this.scheduler)
   }
 
   dispose () {

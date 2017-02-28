@@ -2,7 +2,6 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
 import * as dispose from '../disposable/dispose'
 import { propagateTask, propagateEndTask } from '../scheduler/PropagateTask'
 
@@ -11,7 +10,7 @@ import { propagateTask, propagateEndTask } from '../scheduler/PropagateTask'
  * @param {*} x
  * @returns {Stream}
  */
-export const just = x => new Stream(new Just(x))
+export const just = x => new Just(x)
 
 class Just {
   constructor (x) {
@@ -34,7 +33,7 @@ function runJust (t, x, sink) {
  */
 export const empty = () => EMPTY
 
-class EmptySource {
+class Empty {
   run (sink, scheduler) {
     const task = propagateEndTask(undefined, sink)
     scheduler.asap(task)
@@ -45,7 +44,7 @@ class EmptySource {
 
 const disposeEmpty = task => task.dispose()
 
-const EMPTY = new Stream(new EmptySource())
+const EMPTY = new Empty()
 
 /**
  * Stream containing no events and never ends
@@ -53,10 +52,10 @@ const EMPTY = new Stream(new EmptySource())
  */
 export const never = () => NEVER
 
-class NeverSource {
+class Never {
   run () {
     return dispose.empty()
   }
 }
 
-const NEVER = new Stream(new NeverSource())
+const NEVER = new Never()

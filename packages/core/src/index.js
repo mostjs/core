@@ -1,8 +1,6 @@
 /** @license MIT License (c) copyright 2016 original author or authors */
 import { curry2, curry3 } from '@most/prelude'
 
-export { default as Stream } from './Stream'
-
 export { just, empty, never } from './source/core'
 
 export { periodic } from './source/periodic'

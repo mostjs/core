@@ -2,13 +2,12 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
 import { propagateTask } from '../scheduler/PropagateTask'
 
 export const fromArray = a =>
-  new Stream(new ArraySource(a))
+  new ArrayStream(a)
 
-class ArraySource {
+class ArrayStream {
   constructor (a) {
     this.array = a
   }

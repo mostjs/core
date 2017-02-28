@@ -1,13 +1,4 @@
 export interface Stream<A> {
-  source: Source<A>;
-}
-
-export class Stream<A> {
-  public source: Source<A>;
-  constructor (source: Source<A>);
-}
-
-export interface Source<A> {
   run (sink: Sink<A>, scheduler: Scheduler): Disposable;
 }
 

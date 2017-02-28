@@ -2,9 +2,8 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
 import Pipe from '../sink/Pipe'
-import * as dispose from '../disposable/dispose'
+import { all } from '../disposable/dispose'
 import { propagateEventTask } from '../scheduler/PropagateTask'
 
 /**
@@ -16,7 +15,7 @@ import { propagateEventTask } from '../scheduler/PropagateTask'
  * @returns {Stream} new stream containing successive reduce results
  */
 export const scan = (f, initial, stream) =>
-  new Stream(new Scan(f, initial, stream.source))
+  new Scan(f, initial, stream)
 
 class Scan {
   constructor (f, z, source) {
@@ -28,16 +27,15 @@ class Scan {
   run (sink, scheduler) {
     const d1 = scheduler.asap(propagateEventTask(this.value, sink))
     const d2 = this.source.run(new ScanSink(this.f, this.value, sink), scheduler)
-    return dispose.all([d1, d2])
+    return all([d1, d2])
   }
 }
 
 class ScanSink extends Pipe {
   constructor (f, z, sink) {
-    super()
+    super(sink)
     this.f = f
     this.value = z
-    this.sink = sink
   }
 
   event (t, x) {

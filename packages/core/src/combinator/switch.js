@@ -2,8 +2,7 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
-import * as dispose from '../disposable/dispose'
+import { all, empty, tryDispose } from '../disposable/dispose'
 
 /**
  * Given a stream of streams, return a new stream that adopts the behavior
@@ -11,7 +10,7 @@ import * as dispose from '../disposable/dispose'
  * @param {Stream} stream of streams on which to switch
  * @returns {Stream} switching stream
  */
-export const switchLatest = stream => new Stream(new Switch(stream.source))
+export const switchLatest = stream => new Switch(stream)
 
 class Switch {
   constructor (source) {
@@ -20,7 +19,7 @@ class Switch {
 
   run (sink, scheduler) {
     const switchSink = new SwitchSink(sink, scheduler)
-    return dispose.all([switchSink, this.source.run(switchSink, scheduler)])
+    return all([switchSink, this.source.run(switchSink, scheduler)])
   }
 }
 
@@ -35,7 +34,7 @@ class SwitchSink {
   event (t, stream) {
     this._disposeCurrent(t) // TODO: capture the result of this dispose
     this.current = new Segment(t, Infinity, this, this.sink)
-    this.current.disposable = stream.source.run(this.current, this.scheduler)
+    this.current.disposable = stream.run(this.current, this.scheduler)
   }
 
   end (t, x) {
@@ -88,7 +87,7 @@ class Segment {
     this.max = max
     this.outer = outer
     this.sink = sink
-    this.disposable = dispose.empty()
+    this.disposable = empty()
   }
 
   event (t, x) {
@@ -107,7 +106,7 @@ class Segment {
 
   _dispose (t) {
     this.max = t
-    dispose.tryDispose(t, this.disposable, this.sink)
+    tryDispose(t, this.disposable, this.sink)
   }
 }
 

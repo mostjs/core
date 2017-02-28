@@ -10,10 +10,9 @@ import { take } from '../../src/combinator/slice'
 import { drain } from '../../src/combinator/observe'
 import { just, never } from '../../src/source/core'
 import { fromArray } from '../../src/source/fromArray'
-import { default as Stream } from '../../src/Stream'
 
 import { ticks, atTimes, collectEventsFor, collectEvents } from '../helper/testEnv'
-import FakeDisposeSource from '../helper/FakeDisposeSource'
+import FakeDisposeSource from '../helper/FakeDisposeStream'
 
 const sentinel = { value: 'sentinel' }
 
@@ -70,14 +69,14 @@ describe('concatMap', function () {
     const inner = just(sentinel)
     const outer = just(inner)
 
-    const s = concatMap.concatMap(identity, new Stream(new FakeDisposeSource(dispose, outer.source)))
+    const s = concatMap.concatMap(identity, new FakeDisposeSource(dispose, outer))
 
     return drain(s).then(() => assert(dispose.called))
   })
 
   it('should dispose inner stream', function () {
     const dispose = spy()
-    const inner = new Stream(new FakeDisposeSource(dispose, just(sentinel).source))
+    const inner = new FakeDisposeSource(dispose, just(sentinel))
 
     const s = concatMap.concatMap(identity, just(inner))
 
@@ -94,7 +93,7 @@ describe('concatMap', function () {
     const values = [1, 2, 3]
     const spies = values.map(() => spy())
 
-    const inners = values.map((x, i) => new Stream(new FakeDisposeSource(spies[i], just(x).source)))
+    const inners = values.map((x, i) => new FakeDisposeSource(spies[i], just(x)))
 
     const s = concatMap.concatMap(identity, fromArray(inners))
 

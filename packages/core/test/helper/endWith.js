@@ -1,9 +1,9 @@
 import Pipe from '../../src/sink/Pipe'
 
 export const endWith = (endValue, stream) =>
-  new stream.constructor({
+  ({
     run: (sink, scheduler) =>
-      stream.source.run(new EndWithSink(endValue, sink), scheduler)
+      stream.run(new EndWithSink(endValue, sink), scheduler)
   })
 
 class EndWithSink extends Pipe {

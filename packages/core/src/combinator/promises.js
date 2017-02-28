@@ -2,7 +2,6 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
 import fatal from '../fatalError'
 import { just } from '../source/core'
 import { compose } from '@most/prelude'
@@ -11,7 +10,7 @@ import { compose } from '@most/prelude'
  * Turn a Stream<Promise<T>> into Stream<T> by awaiting each promise.
  * Event order is preserved. The stream will fail if any promise rejects.
  */
-export const awaitPromises = stream => new Stream(new Await(stream.source))
+export const awaitPromises = stream => new Await(stream)
 
 /**
  * Create a stream containing only the promise's fulfillment

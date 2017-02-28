@@ -68,12 +68,8 @@ export type Sink<A> = {
   error: (t: Time, e: Error) => void,
 }
 
-export type Source<A> = {
-  run: (sink: Sink<A>, scheduler: Scheduler) => Disposable
-}
-
 export type Stream<A> = {
-  source: Source<A>
+  run: (sink: Sink<A>, scheduler: Scheduler) => Disposable
 }
 
 export type SeedValue <S, A> = {

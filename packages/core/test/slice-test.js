@@ -11,22 +11,22 @@ describe('slice', function () {
   describe('fusion', function () {
     it('should narrow when second slice is smaller', function () {
       const s = slice(1, 5, slice(1, 10, makeEvents(1, 1)))
-      eq(2, s.source.min)
-      eq(6, s.source.max)
+      eq(2, s.min)
+      eq(6, s.max)
     })
 
     it('should narrow when second slice is larger', function () {
       const s = slice(1, 10, slice(1, 5, makeEvents(1, 1)))
-      eq(2, s.source.min)
-      eq(5, s.source.max)
+      eq(2, s.min)
+      eq(5, s.max)
     })
 
     it('should commute map', function () {
       const id = x => x
       const s = slice(0, 3, map(id, makeEventsFromArray(1, [0, 1, 2, 3])))
 
-      assert(s.source instanceof Map)
-      is(id, s.source.f)
+      assert(s instanceof Map)
+      is(id, s.f)
       return collectEventsFor(3, s)
         .then(eq([
           { time: 0, value: 0 },

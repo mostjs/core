@@ -2,7 +2,6 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
 import Pipe from '../sink/Pipe'
 
 /**
@@ -16,34 +15,36 @@ import Pipe from '../sink/Pipe'
  * @returns {Stream} new stream whose values are the `value` field of the objects
  * returned by the stepper
  */
-export function loop (stepper, seed, stream) {
-  return new Stream(new Loop(stepper, seed, stream.source))
+export const loop = (stepper, seed, stream) =>
+  new Loop(stepper, seed, stream)
+
+class Loop {
+  constructor (stepper, seed, source) {
+    this.step = stepper
+    this.seed = seed
+    this.source = source
+  }
+
+  run (sink, scheduler) {
+    return this.source.run(new LoopSink(this.step, this.seed, sink), scheduler)
+  }
 }
 
-function Loop (stepper, seed, source) {
-  this.step = stepper
-  this.seed = seed
-  this.source = source
+class LoopSink extends Pipe {
+  constructor (stepper, seed, sink) {
+    super(sink)
+    this.step = stepper
+    this.seed = seed
+  }
+
+  event (t, x) {
+    const result = this.step(this.seed, x)
+    this.seed = result.seed
+    this.sink.event(t, result.value)
+  }
+
+  end (t) {
+    this.sink.end(t, this.seed)
+  }
 }
 
-Loop.prototype.run = function (sink, scheduler) {
-  return this.source.run(new LoopSink(this.step, this.seed, sink), scheduler)
-}
-
-function LoopSink (stepper, seed, sink) {
-  this.step = stepper
-  this.seed = seed
-  this.sink = sink
-}
-
-LoopSink.prototype.error = Pipe.prototype.error
-
-LoopSink.prototype.event = function (t, x) {
-  var result = this.step(this.seed, x)
-  this.seed = result.seed
-  this.sink.event(t, result.value)
-}
-
-LoopSink.prototype.end = function (t) {
-  this.sink.end(t, this.seed)
-}

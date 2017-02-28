@@ -2,8 +2,6 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Stream from '../Stream'
-
 /**
  * Compute a stream by iteratively calling f to produce values
  * Event times may be controlled by returning a Promise from f
@@ -11,41 +9,39 @@ import Stream from '../Stream'
  * @param {*} x initial value
  * @returns {Stream}
  */
-export function iterate (f, x) {
-  return new Stream(new IterateSource(f, x))
-}
+export const iterate = (f, x) =>
+  new IterateStream(f, x)
 
-function IterateSource (f, x) {
-  this.f = f
-  this.value = x
-}
-
-IterateSource.prototype.run = function (sink, scheduler) {
-  return new Iterate(this.f, this.value, sink, scheduler)
-}
-
-function Iterate (f, initial, sink, scheduler) {
-  this.f = f
-  this.sink = sink
-  this.scheduler = scheduler
-  this.active = true
-
-  var x = initial
-
-  var self = this
-  function err (e) {
-    self.sink.error(self.scheduler.now(), e)
+class IterateStream {
+  constructor (f, x) {
+    this.f = f
+    this.value = x
   }
 
-  function start (iterate) {
-    return stepIterate(iterate, x)
+  run (sink, scheduler) {
+    return new Iterate(this.f, this.value, sink, scheduler)
   }
-
-  Promise.resolve(this).then(start).catch(err)
 }
 
-Iterate.prototype.dispose = function () {
-  this.active = false
+class Iterate {
+  constructor (f, initial, sink, scheduler) {
+    this.f = f
+    this.sink = sink
+    this.scheduler = scheduler
+    this.active = true
+
+    const err = e =>
+      this.sink.error(this.scheduler.now(), e)
+
+    const start = iterate =>
+      stepIterate(iterate, initial)
+
+    Promise.resolve(this).then(start).catch(err)
+  }
+
+  dispose () {
+    this.active = false
+  }
 }
 
 function stepIterate (iterate, x) {
@@ -55,12 +51,10 @@ function stepIterate (iterate, x) {
     return x
   }
 
-  var f = iterate.f
-  return Promise.resolve(f(x)).then(function (y) {
-    return continueIterate(iterate, y)
-  })
+  const f = iterate.f
+  return Promise.resolve(f(x))
+    .then(y => continueIterate(iterate, y))
 }
 
-function continueIterate (iterate, x) {
-  return !iterate.active ? iterate.value : stepIterate(iterate, x)
-}
+const continueIterate = (iterate, x) =>
+  iterate.active ? stepIterate(iterate, x) : iterate.value

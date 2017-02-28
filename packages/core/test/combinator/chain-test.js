@@ -9,11 +9,10 @@ import { take } from '../../src/combinator/slice'
 import { drain } from '../../src/combinator/observe'
 import { just, never } from '../../src/source/core'
 import { fromArray } from '../../src/source/fromArray'
-import Stream from '../../src/Stream'
 
 import { assertSame } from '../helper/stream-helper'
 import { collectEventsFor } from '../helper/testEnv'
-import FakeDisposeSource from './../helper/FakeDisposeSource'
+import FakeDisposeStream from '../helper/FakeDisposeStream'
 
 const sentinel = { value: 'sentinel' }
 
@@ -67,14 +66,14 @@ describe('join', function () {
     const inner = just(sentinel)
     const outer = just(inner)
 
-    const s = join(new Stream(new FakeDisposeSource(dispose, outer.source)))
+    const s = join(new FakeDisposeStream(dispose, outer))
 
     return drain(s).then(() => assert(dispose.calledOnce))
   })
 
   it('should dispose inner stream', function () {
     const dispose = spy()
-    const inner = new Stream(new FakeDisposeSource(dispose, just(sentinel).source))
+    const inner = new FakeDisposeStream(dispose, just(sentinel))
 
     const s = join(just(inner))
 
@@ -90,7 +89,7 @@ describe('join', function () {
     const values = [1, 2, 3]
     const spies = values.map(() => spy())
 
-    const inners = values.map((x, i) => new Stream(new FakeDisposeSource(spies[i], just(x).source)))
+    const inners = values.map((x, i) => new FakeDisposeStream(spies[i], just(x)))
 
     const s = join(fromArray(inners))
 

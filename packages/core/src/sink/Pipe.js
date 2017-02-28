@@ -2,24 +2,27 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-/**
- * A sink mixin that simply forwards event, end, and error to
- * another sink.
- * @param sink
- * @constructor
- */
-export default function Pipe (sink) {
-  this.sink = sink
+export default class Pipe {
+  /**
+   * A sink mixin that simply forwards event, end, and error to
+   * another sink.
+   * @param sink
+   * @constructor
+   */
+  constructor (sink) {
+    this.sink = sink
+  }
+
+  event (t, x) {
+    return this.sink.event(t, x)
+  }
+
+  end (t, x) {
+    return this.sink.end(t, x)
+  }
+
+  error (t, e) {
+    return this.sink.error(t, e)
+  }
 }
 
-Pipe.prototype.event = function (t, x) {
-  return this.sink.event(t, x)
-}
-
-Pipe.prototype.end = function (t, x) {
-  return this.sink.end(t, x)
-}
-
-Pipe.prototype.error = function (t, e) {
-  return this.sink.error(t, e)
-}
