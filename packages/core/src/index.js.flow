@@ -11,6 +11,9 @@ declare export function runEffects <A> (s: Stream<A>, scheduler: Scheduler): Pro
 declare export function empty (): Stream<any>
 declare export function never (): Stream<any>
 declare export function just <A> (a: A): Stream<A>
+
+declare export function newStream <A> (run: RunStream<A>): Stream<A>
+
 declare export function fromArray <A> (a: Array<A>): Stream<A>
 declare export function fromIterable <A> (a: Iterable<A>): Stream<A>
 

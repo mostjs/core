@@ -25,6 +25,7 @@ export * from './combinator/transform';
 export * from './combinator/zip';
 
 export * from './source/core';
+export * from './source/newStream';
 export * from './source/fromArray';
 export * from './source/fromIterable';
 export * from './source/generate';
