@@ -1,6 +1,4 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
-/** @author Brian Cavalier */
-/** @author John Hann */
+/** @license MIT License (c) copyright 2010-2017 original author or authors */
 
 export default function ScheduledTask (delay, period, task, scheduler) {
   this.time = delay

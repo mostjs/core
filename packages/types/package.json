@@ -1,0 +1,36 @@
+{
+  "name": "@most/types",
+  "version": "0.3.1",
+  "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
+  "typings": "index.d.ts",
+  "main": "index.js",
+  "module": "index.js",
+  "jsnext:main": "index.js",
+  "files": [
+    "*"
+  ],
+  "scripts": {
+    "test": "flow check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mostjs/core"
+  },
+  "keywords": [
+    "reactive",
+    "reactive programming",
+    "events",
+    "event stream",
+    "promise",
+    "promises",
+    "monad",
+    "monadic",
+    "functional",
+    "async"
+  ],
+  "author": "brian@hovercraftstudios.com",
+  "license": "MIT",
+  "devDependencies": {
+    "flow-bin": "^0.37.4"
+  }
+}

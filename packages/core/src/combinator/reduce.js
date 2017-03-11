@@ -47,4 +47,3 @@ class ReduceSink extends Pipe {
     this.sink.end(t, this.value)
   }
 }
-

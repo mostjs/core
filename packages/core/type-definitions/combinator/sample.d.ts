@@ -1,4 +1,4 @@
-import { Stream } from '../types';
+import { Stream } from '@most/types';
 
 // all 3 args
 export function sample<A, B, C>(f: (a: A, b: B) => C, sampler: Stream<A>, s: Stream<B>): Stream<C>;

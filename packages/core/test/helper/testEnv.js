@@ -2,9 +2,8 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
+import { newScheduler, newTimeline } from '@most/scheduler'
 import { propagateEventTask, propagateEndTask } from '../../src/scheduler/PropagateTask'
-import Scheduler from '../../src/scheduler/Scheduler'
-import Timeline from '../../src/scheduler/Timeline'
 import VirtualTimer from './VirtualTimer'
 import { runEffects } from '../../src/runEffects'
 import { tap } from '../../src/combinator/transform'
@@ -12,7 +11,7 @@ import { create as createDispose, empty as emptyDispose } from '../../src/dispos
 
 export function newEnv () {
   const timer = new VirtualTimer()
-  return { tick: n => timer.tick(n), scheduler: new Scheduler(timer, new Timeline()) }
+  return { tick: n => timer.tick(n), scheduler: newScheduler(timer, newTimeline()) }
 }
 
 export function ticks (dt) {

@@ -1,0 +1,8 @@
+[ignore]
+
+[include]
+.*\.js\.flow
+
+[libs]
+
+[options]

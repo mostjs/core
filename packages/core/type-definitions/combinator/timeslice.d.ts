@@ -1,4 +1,4 @@
-import { Stream } from '../types';
+import { Stream } from '@most/types';
 
 export function takeUntil<A>(signal: Stream<any>, s: Stream<A>): Stream<A>;
 export function takeUntil<A>(signal: Stream<A>): (s: Stream<A>) => Stream<A>;

@@ -1,0 +1,9 @@
+node_modules/
+.git/
+.idea/
+examples/
+benchmark/
+experiments/
+perf/
+test/perf/
+dist/

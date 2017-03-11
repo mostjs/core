@@ -165,27 +165,12 @@ import { recoverWith as _recoverWith, throwError } from './combinator/errors'
 export const recoverWith = curry2(_recoverWith)
 export { throwError }
 
-// -----------------------------------------------------------------------
-// Scheduler components
-
-// export the Scheduler components for third-party libraries
-import Scheduler from './scheduler/Scheduler'
-import Timeline from './scheduler/Timeline'
-import ClockTimer from './scheduler/ClockTimer'
-
-const _newScheduler = (timer, timeline) => new Scheduler(timer, timeline)
-
-export const newTimeline = () => new Timeline()
-export const newClockTimer = () => new ClockTimer()
-
-export const newScheduler = curry2(_newScheduler)
-
-export const newDefaultScheduler = () => _newScheduler(newClockTimer(), newTimeline())
-
-export { Scheduler, Timeline, ClockTimer }
-
-// export an implementation of Task used internally for third-party libraries
-import { propagateTask as _propagateTask, propagateEventTask as _propagateEventTask, propagateErrorTask as _propagateErrorTask, propagateEndTask as _propagateEndTask } from './scheduler/PropagateTask'
+import {
+  propagateTask as _propagateTask,
+  propagateEventTask as _propagateEventTask,
+  propagateErrorTask as _propagateErrorTask,
+  propagateEndTask as _propagateEndTask
+} from './scheduler/PropagateTask'
 
 export const propagateTask = curry3(_propagateTask)
 export const propagateEventTask = curry2(_propagateEventTask)

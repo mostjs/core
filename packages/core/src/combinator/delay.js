@@ -45,4 +45,3 @@ class DelaySink extends Pipe {
     this.scheduler.delay(this.dt, propagateEndTask(x, this.sink))
   }
 }
-
