@@ -2,10 +2,8 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Scheduler from './Scheduler'
-import ClockTimer from './ClockTimer'
-import Timeline from './Timeline'
+import { newDefaultScheduler } from '@most/scheduler'
 
-var defaultScheduler = new Scheduler(new ClockTimer(), new Timeline())
+var defaultScheduler = newDefaultScheduler()
 
 export default defaultScheduler

@@ -1,4 +1,4 @@
-import { Stream } from '../types';
+import { Stream } from '@most/types';
 
 export function map<A, B>(f: (a: A) => B, s: Stream<A>): Stream<B>;
 export function map<A, B>(f: (a: A) => B): (s: Stream<A>) => Stream<B>;

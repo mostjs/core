@@ -1,9 +1,7 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
-/** @author Brian Cavalier */
-/** @author John Hann */
+/** @license MIT License (c) copyright 2010-2017 original author or authors */
 
 import ScheduledTask from './ScheduledTask'
-import { runTask } from '../task'
+import { runTask } from './task'
 
 export default class Scheduler {
   constructor (timer, timeline) {
@@ -93,4 +91,3 @@ export default class Scheduler {
     this._scheduleNextRun(this.now())
   }
 }
-

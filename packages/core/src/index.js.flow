@@ -1,76 +1,5 @@
-/* @flow */
-// # Most.js
-
-// ## Types
-
-// ### Semantic Time Types
-
-// An instant in time.  This can be wall-clock time
-// or a virtual time, depending on the particular Scheduler
-// in use
-export type Time = number
-
-// Delay time offset
-export type Delay = number
-
-// Span of time between time instants
-export type Period = number
-
-// Opaque handle vended by some platform-specific functions,
-// like setTimeout.
-export type Handle = any
-
-// Interface of a resource that can be disposed
-export type Disposable = {
-  dispose: () => ?Promise<any>
-}
-
-// A Timer can schedule a function to run after
-// a particular delay
-export type Timer = {
-  setTimer: (f: () => any, delay: Delay) => Handle,
-  clearTimer: (c: Handle) => any
-}
-
-// Run a ScheduledTask
-export type TaskRunner = (st: ScheduledTask) => any
-
-// A Timeline is a set of ScheduledTasks to be executed at
-// particular times
-export type Timeline = {
-  add: (st: ScheduledTask) => void,
-  remove: (st: ScheduledTask) => boolean,
-  removeAll: (p: (st: ScheduledTask) => boolean) => void,
-  isEmpty: () => boolean,
-  nextArrival: () => Time,
-  runTasks: (t: Time, r: TaskRunner) => void
-}
-
-export type Scheduler = {
-  now: () => Time,
-  asap: (task: Task) => ScheduledTask,
-  delay: (delay: Delay, task: Task) => ScheduledTask,
-  periodic: (period: Period, task: Task) => ScheduledTask,
-  schedule: (delay: Delay, period: Period, task: Task) => ScheduledTask,
-  cancel: (task: ScheduledTask) => void
-}
-
-export type Task = Disposable & {
-  run: (t: Time) => void,
-  error: (t: Time, e:Error) => void,
-}
-
-export type ScheduledTask = Task
-
-export type Sink<A> = {
-  event: (t: Time, a: A) => void,
-  end: (t: Time, a: any) => void,
-  error: (t: Time, e: Error) => void,
-}
-
-export type Stream<A> = {
-  run: (sink: Sink<A>, scheduler: Scheduler) => Disposable
-}
+// @flow
+import type { Stream, Sink, Scheduler, Task, Time, Period, Delay } from '@most/types'
 
 export type SeedValue <S, A> = {
   seed: S,
@@ -242,13 +171,6 @@ declare export function recoverWith <A, E:Error> (f: (E) => Stream<A>, s: Stream
 declare export function recoverWith <A, E:Error> (f: (E) => Stream<A>): (s: Stream<A>) => Stream<A>
 
 declare export function throwError <E:Error> (e: Error): Stream<any>
-
-declare export function newDefaultScheduler (): Scheduler
-declare export function newTimeline (): Timeline
-declare export function newClockTimer (): Timer
-
-declare export function newScheduler (timer: Timer, timeline: Timeline): Scheduler
-declare export function newScheduler (timer: Timer): (timeline: Timeline) => Scheduler
 
 export type PropagateTask<A> = Task & {
   value: A,

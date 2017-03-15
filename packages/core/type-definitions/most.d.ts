@@ -1,5 +1,3 @@
-export * from './types';
-
 export * from './runEffects';
 export * from './scheduler';
 export * from './PropagateTask';

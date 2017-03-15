@@ -1,0 +1,73 @@
+// @flow
+
+// An instant in time.  This can be wall-clock time
+// or a virtual time, depending on the particular Scheduler
+// in use
+export type Time = number
+
+export type Stream<A> = {
+  run: (Sink<A>, Scheduler) => Disposable
+}
+
+export type Sink<A> = {
+  event: (Time, A) => void,
+  end: (Time, any) => void,
+  error: (Time, Error) => void,
+}
+
+// Interface of a resource that can be disposed
+export type Disposable = {
+  dispose: () => ?Promise<any>
+}
+
+// Delay time offset
+export type Delay = number
+
+// Span of time between time instants
+export type Period = number
+
+export type Scheduler = {
+  now: () => Time,
+  asap: (Task) => ScheduledTask,
+  delay: (Delay, Task) => ScheduledTask,
+  periodic: (Period, Task) => ScheduledTask,
+  schedule: (Delay, Period, Task) => ScheduledTask,
+  cancel: (ScheduledTask) => void,
+  cancelAll: ((ScheduledTask) => boolean) => void
+}
+
+// Opaque handle vended by some platform-specific functions,
+// like setTimeout.
+export type Handle = any
+
+// A Timer can schedule a function to run after
+// a particular delay
+export type Timer = {
+  now: () => Time,
+  setTimer: (() => any, Delay) => Handle,
+  clearTimer: (Handle) => void
+}
+
+// Run a ScheduledTask
+export type TaskRunner = (ScheduledTask) => any
+
+// A Timeline is a set of ScheduledTasks to be executed at
+// particular times
+export type Timeline = {
+  add: (ScheduledTask) => void,
+  remove: (ScheduledTask) => boolean,
+  removeAll: ((ScheduledTask) => boolean) => void,
+  isEmpty: () => boolean,
+  nextArrival: () => Time,
+  runTasks: (Time, TaskRunner) => void
+}
+
+export type Task = Disposable & {
+  run: (Time) => void,
+  error: (Time, Error) => void,
+}
+
+export type ScheduledTask = Disposable & {
+  run: () => void,
+  error: (Error) => void,
+}

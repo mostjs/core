@@ -1,4 +1,4 @@
-import { Stream } from '../types';
+import { Stream } from '@most/types';
 
 export function filter<A>(p: (a: A) => boolean, s: Stream<A>): Stream<A>;
 export function filter<A>(p: (a: A) => boolean): (s: Stream<A>) => Stream<A>;

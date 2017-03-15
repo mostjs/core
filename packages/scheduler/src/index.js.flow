@@ -1,0 +1,10 @@
+// @flow
+import type { Scheduler, Timeline, Timer } from '@most/types'
+
+declare export function newClockTimer (): Timer
+declare export function newTimeline (): Timeline
+
+declare export function newScheduler (timer: Timer, timeline: Timeline): Scheduler
+declare export function newScheduler (timer: Timer): (timeline: Timeline) => Scheduler
+
+declare export function newDefaultScheduler (): Scheduler

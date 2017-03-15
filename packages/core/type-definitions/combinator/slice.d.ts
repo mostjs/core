@@ -1,4 +1,4 @@
-import { Stream } from '../types';
+import { Stream } from '@most/types';
 
 export function take<A>(n: number, s: Stream<A>): Stream<A>;
 export function take<A>(n: number): (s: Stream<A>) => Stream<A>;

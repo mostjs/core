@@ -1,4 +1,4 @@
-import { Sink, Task } from './types';
+import { Sink, Task } from '@most/types';
 
 export function propagateTask<T>(run: PropagateTaskRun<T>, value: T, sink: Sink<T>): PropagateTask<T>;
 export function propagateTask<T>(run: PropagateTaskRun<T>, value: T): (sink: Sink<T>) => PropagateTask<T>;
