@@ -1,5 +1,5 @@
 // @flow
-import type { Stream, Sink, Scheduler, Task, Time, Period, Delay } from '@most/types'
+import type { Stream, Sink, Scheduler, Task, Disposable, Time, Period, Delay } from '@most/types'
 
 export type SeedValue <S, A> = {
   seed: S,
@@ -12,6 +12,7 @@ declare export function empty (): Stream<any>
 declare export function never (): Stream<any>
 declare export function just <A> (a: A): Stream<A>
 
+export type RunStream<A> = (sink: Sink<A>, scheduler: Scheduler) => Disposable
 declare export function newStream <A> (run: RunStream<A>): Stream<A>
 
 declare export function fromArray <A> (a: Array<A>): Stream<A>
