@@ -1,4 +1,4 @@
-import { Stream, Sink, Scheduler, Disposable } from '../types';
+import { Stream, Sink, Scheduler, Disposable } from '@most/types';
 
 export type RunStream<A> = (sink: Sink<A>, scheduler: Scheduler) => Disposable
 

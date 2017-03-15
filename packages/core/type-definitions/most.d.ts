@@ -1,5 +1,4 @@
 export * from './runEffects';
-export * from './scheduler';
 export * from './PropagateTask';
 
 export * from './combinator/applicative';
