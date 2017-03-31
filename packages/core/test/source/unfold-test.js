@@ -3,7 +3,7 @@ import { eq, is, fail } from '@briancavalier/assert'
 
 import { unfold } from '../../src/source/unfold'
 import { take } from '../../src/combinator/slice'
-import { observe } from '../../src/combinator/observe'
+import { observe } from '../helper/observe'
 
 import { collectEventsFor } from '../helper/testEnv'
 

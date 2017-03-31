@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import { eq, assert } from '@briancavalier/assert'
 
-import { observe, drain } from '../src/combinator/observe'
+import { observe, drain } from './helper/observe'
 import { iterate } from '../src/source/iterate'
 import { take } from '../src/combinator/slice'
 import { just as streamOf } from '../src/source/core'

@@ -6,7 +6,7 @@ import { chain, join } from '../../src/combinator/chain'
 import { delay } from '../../src/combinator/delay'
 import { concat } from '../../src/combinator/build'
 import { take } from '../../src/combinator/slice'
-import { drain } from '../../src/combinator/observe'
+import { drain } from '../helper/observe'
 import { just, never } from '../../src/source/core'
 import { fromArray } from '../../src/source/fromArray'
 

@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import { eq } from '@briancavalier/assert'
 
 import { generate } from '../../src/source/generate'
-import { reduce } from '../../src/combinator/reduce'
+import { reduce } from '../helper/reduce'
 import { getIterator } from '../../src/iterable'
 import ArrayIterable from '../helper/ArrayIterable'
 import delayPromise from '../helper/delayPromise'

@@ -2,9 +2,9 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { runEffects } from '../runEffects'
-import defaultScheduler from '../scheduler/defaultScheduler'
-import { tap } from './transform'
+import { runEffects } from '../../src/runEffects'
+import defaultScheduler from '../../src/scheduler/defaultScheduler'
+import { tap } from '../../src/combinator/transform'
 
 /**
  * Observe all the event values in the stream in time order. The

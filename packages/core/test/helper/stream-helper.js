@@ -1,5 +1,5 @@
 import { eq } from '@briancavalier/assert'
-import { reduce } from '../../src/combinator/reduce'
+import { reduce } from './reduce'
 
 export function assertSame (s1, s2) {
   return Promise.all([toArray(s1), toArray(s2)]).then(arrayEquals)

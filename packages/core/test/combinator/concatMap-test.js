@@ -7,7 +7,7 @@ import { assertSame } from '../helper/stream-helper'
 import * as concatMap from '../../src/combinator/concatMap'
 import { concat } from '../../src/combinator/build'
 import { take } from '../../src/combinator/slice'
-import { drain } from '../../src/combinator/observe'
+import { drain } from '../helper/observe'
 import { just, never } from '../../src/source/core'
 import { fromArray } from '../../src/source/fromArray'
 
