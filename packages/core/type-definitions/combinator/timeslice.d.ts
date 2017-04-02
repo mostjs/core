@@ -1,7 +1,7 @@
 import { Stream } from '@most/types';
 
-export function takeUntil<A>(signal: Stream<any>, s: Stream<A>): Stream<A>;
-export function takeUntil<A>(signal: Stream<A>): (s: Stream<A>) => Stream<A>;
+export function until<A>(signal: Stream<any>, s: Stream<A>): Stream<A>;
+export function until<A>(signal: Stream<A>): (s: Stream<A>) => Stream<A>;
 
 export function skipUntil<A>(signal: Stream<any>, s: Stream<A>): Stream<A>;
 export function skipUntil<A>(signal: Stream<any>): (s: Stream<A>) => Stream<A>;
