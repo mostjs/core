@@ -15,8 +15,8 @@ export interface Sink<A> {
 
 // Interface of a resource that can be disposed
 export interface Disposable {
-  dispose(): void | Promise<any>;
-};
+  dispose(): void;
+}
 
 // Delay time offset
 export type Delay = number;

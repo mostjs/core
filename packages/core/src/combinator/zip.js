@@ -6,7 +6,7 @@ import { map } from './transform'
 import { empty } from '../source/core'
 import Pipe from '../sink/Pipe'
 import IndexSink from '../sink/IndexSink'
-import { all } from '../disposable/dispose'
+import { disposeAll } from '@most/disposable'
 import { map as mapArray, tail } from '@most/prelude'
 import invoke from '../invoke'
 import Queue from '../Queue'
@@ -57,7 +57,7 @@ class Zip {
       disposables[i] = this.sources[i].run(indexSink, scheduler)
     }
 
-    return all(disposables)
+    return disposeAll(disposables)
   }
 }
 

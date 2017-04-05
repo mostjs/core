@@ -1,15 +1,13 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
-/** @author Brian Cavalier */
-/** @author John Hann */
+/** @license MIT License (c) copyright 2010-2017 original author or authors */
 
-import { settable } from './disposable/dispose'
+import SettableDisposable from './disposable/SettableDisposable'
 
 export const runEffects = (stream, scheduler) =>
   new Promise((resolve, reject) =>
     runStream(stream, scheduler, resolve, reject))
 
 function runStream (stream, scheduler, resolve, reject) {
-  const disposable = settable()
+  const disposable = new SettableDisposable()
   const observer = new RunEffectsSink(resolve, reject, disposable)
 
   disposable.setDisposable(stream.run(observer, scheduler))
@@ -29,15 +27,26 @@ class RunEffectsSink {
     if (!this.active) {
       return
     }
-    this.active = false
-    disposeThen(this._end, this._error, this._disposable, x)
+    this._dispose(this._error, this._end, x)
   }
 
   error (t, e) {
+    this._dispose(this._error, this._error, e)
+  }
+
+  _dispose (error, end, x) {
     this.active = false
-    disposeThen(this._error, this._error, this._disposable, e)
+    tryDispose(error, end, x, this._disposable)
   }
 }
 
-const disposeThen = (end, error, disposable, x) =>
-  Promise.resolve(disposable.dispose()).then(() => end(x), error)
+function tryDispose (error, end, x, disposable) {
+  try {
+    disposable.dispose()
+  } catch (e) {
+    error(e)
+    return
+  }
+
+  end(x)
+}

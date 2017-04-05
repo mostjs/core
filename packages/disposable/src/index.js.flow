@@ -1,0 +1,10 @@
+// @flow
+import type { Time, Disposable, Sink } from '@most/types'
+
+declare export function disposeNone (): Disposable
+declare export function disposeWith <R> (dispose: (R) => void, resource: R): Disposable
+declare export function disposeOnce (d: Disposable): Disposable
+declare export function disposeBoth (d1: Disposable, d2: Disposable): Disposable
+declare export function disposeAll (ds: Array<Disposable>): Disposable
+
+declare export function tryDispose (t: Time, disposable: Disposable, sink: Sink<any>): void

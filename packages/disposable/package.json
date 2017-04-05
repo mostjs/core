@@ -1,11 +1,11 @@
 {
-  "name": "@most/core",
+  "name": "@most/disposable",
   "version": "0.3.1",
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
-  "typings": "type-definitions/most.d.ts",
-  "main": "dist/mostCore.js",
-  "module": "dist/mostCore.es.js",
-  "jsnext:main": "dist/mostCore.es.js",
+  "typings": "type-definitions/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
   "files": [
     "type-definitions",
     "dist"
@@ -15,10 +15,9 @@
     "test:unit": "mocha -r buba/register --reporter dot --recursive 'test/**/*-test.js'",
     "test:lint": "eslint --fix --ignore-path ../../.eslintignore src test",
     "test:flow": "flow check",
-    "build": "npm run build:dist && npm run build:min && npm run build:flow",
+    "build": "npm run build:dist && npm run build:flow",
     "build:dist": "rollup -c",
-    "build:min": "uglifyjs dist/mostCore.js -m -o dist/mostCore.min.js",
-    "build:flow": "cpy src/index.js.flow dist --rename=mostCore.js.flow && cpy src/index.js.flow dist --rename=mostCore.es.js.flow",
+    "build:flow": "cpy src/index.js.flow dist --rename=index.js.flow && cpy src/index.js.flow dist --rename=index.es.js.flow",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -55,9 +54,7 @@
     "uglify-js": "^2.7.5"
   },
   "dependencies": {
-    "@most/disposable": "^0.3.1",
     "@most/prelude": "^1.4.0",
-    "@most/scheduler": "^0.3.1",
     "@most/types": "^0.3.1"
   }
 }

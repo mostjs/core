@@ -7,7 +7,7 @@ import { propagateEventTask, propagateEndTask } from '../../src/scheduler/Propag
 import VirtualTimer from './VirtualTimer'
 import { runEffects } from '../../src/runEffects'
 import { tap } from '../../src/combinator/transform'
-import { create as createDispose, empty as emptyDispose } from '../../src/disposable/dispose'
+import { disposeWith, disposeNone } from '@most/disposable'
 
 export function newEnv () {
   const timer = new VirtualTimer()
@@ -46,7 +46,7 @@ class AtTimes {
 
   run (sink, scheduler) {
     return this.events.length === 0
-      ? emptyDispose()
+      ? disposeNone()
       : runEvents(this.events, sink, scheduler)
   }
 }
@@ -54,7 +54,7 @@ class AtTimes {
 const runEvents = (events, sink, scheduler) => {
   const s = events.reduce(appendEvent(sink, scheduler), { tasks: [], time: 0 })
   const end = scheduler.delay(s.time, propagateEndTask(undefined, sink))
-  return createDispose(cancelAll, s.tasks.concat(end))
+  return disposeWith(cancelAll, s.tasks.concat(end))
 }
 
 const appendEvent = (sink, scheduler) => (s, event) => {

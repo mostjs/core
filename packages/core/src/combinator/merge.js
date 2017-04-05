@@ -5,7 +5,7 @@
 import Pipe from '../sink/Pipe'
 import IndexSink from '../sink/IndexSink'
 import { empty } from '../source/core'
-import { all, tryDispose } from '../disposable/dispose'
+import { disposeAll, tryDispose } from '@most/disposable'
 import { copy, reduce } from '@most/prelude'
 
 /**
@@ -60,7 +60,7 @@ class Merge {
       disposables[i] = this.sources[i].run(indexSink, scheduler)
     }
 
-    return all(disposables)
+    return disposeAll(disposables)
   }
 }
 
@@ -82,4 +82,3 @@ class MergeSink extends Pipe {
     }
   }
 }
-

@@ -17,7 +17,7 @@ export type Sink<A> = {
 
 // Interface of a resource that can be disposed
 export type Disposable = {
-  dispose: () => ?Promise<any>
+  dispose: () => void
 }
 
 // Delay time offset
