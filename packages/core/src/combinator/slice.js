@@ -4,7 +4,7 @@
 
 import Pipe from '../sink/Pipe'
 import { empty } from '../source/core'
-import { once } from '../disposable/dispose'
+import { disposeOnce } from '@most/disposable'
 import Map from '../fusion/Map'
 
 /**
@@ -64,7 +64,7 @@ class SliceSink extends Pipe {
     super(sink)
     this.skip = skip
     this.take = take
-    this.disposable = once(source.run(this, scheduler))
+    this.disposable = disposeOnce(source.run(this, scheduler))
   }
 
   event (t, x) { // eslint-disable-line complexity
@@ -109,7 +109,7 @@ class TakeWhileSink extends Pipe {
     super(sink)
     this.p = p
     this.active = true
-    this.disposable = once(source.run(this, scheduler))
+    this.disposable = disposeOnce(source.run(this, scheduler))
   }
 
   event (t, x) {
@@ -166,4 +166,3 @@ class SkipWhileSink extends Pipe {
     this.sink.event(t, x)
   }
 }
-

@@ -2,7 +2,7 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import * as dispose from '../disposable/dispose'
+import { disposeNone } from '@most/disposable'
 import { propagateTask, propagateEndTask } from '../scheduler/PropagateTask'
 
 /**
@@ -35,14 +35,9 @@ export const empty = () => EMPTY
 
 class Empty {
   run (sink, scheduler) {
-    const task = propagateEndTask(undefined, sink)
-    scheduler.asap(task)
-
-    return dispose.create(disposeEmpty, task)
+    return scheduler.asap(propagateEndTask(undefined, sink))
   }
 }
-
-const disposeEmpty = task => task.dispose()
 
 const EMPTY = new Empty()
 
@@ -54,7 +49,7 @@ export const never = () => NEVER
 
 class Never {
   run () {
-    return dispose.empty()
+    return disposeNone()
   }
 }
 

@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import { once, tryDispose } from '../disposable/dispose'
+import { disposeOnce, tryDispose } from '@most/disposable'
 
 export const continueWith = (f, stream) =>
   new ContinueWith(f, stream)
@@ -25,7 +25,7 @@ class ContinueWithSink extends Pipe {
     this.f = f
     this.scheduler = scheduler
     this.active = true
-    this.disposable = once(source.run(this, scheduler))
+    this.disposable = disposeOnce(source.run(this, scheduler))
   }
 
   event (t, x) {
@@ -61,4 +61,3 @@ class ContinueWithSink extends Pipe {
     return this.disposable.dispose()
   }
 }
-

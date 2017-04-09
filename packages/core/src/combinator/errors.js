@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import SafeSink from '../sink/SafeSink'
-import { tryDispose } from '../disposable/dispose'
+import { tryDispose } from '@most/disposable'
 import { tryEvent, tryEnd } from '../source/tryEvent'
 import { propagateErrorTask } from '../scheduler/PropagateTask'
 

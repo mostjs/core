@@ -1,4 +1,4 @@
-import * as dispose from '../../src/disposable/dispose'
+import { disposeWith, disposeBoth } from '@most/disposable'
 
 export default FakeDisposeStream
 
@@ -8,9 +8,9 @@ FakeDisposeStream.from = function (disposer, stream) {
 
 function FakeDisposeStream (disposer, source) {
   this.source = source
-  this.disposable = dispose.create(disposer)
+  this.disposable = disposeWith(disposer, undefined)
 }
 
 FakeDisposeStream.prototype.run = function (sink, scheduler) {
-  return dispose.all([this.source.run(sink, scheduler), this.disposable])
+  return disposeBoth(this.source.run(sink, scheduler), this.disposable)
 }
