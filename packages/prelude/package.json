@@ -3,6 +3,7 @@
   "version": "1.5.0",
   "description": "prelude",
   "main": "dist/prelude.js",
+  "module": "src/index.js",
   "jsnext:main": "src/index.js",
   "typings": "type-definitions/prelude.d.ts",
   "files": [
