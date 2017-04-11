@@ -2,11 +2,20 @@ import buble from 'rollup-plugin-buble'
 
 export default {
   entry: 'src/index.js',
-  dest: 'dist/prelude.js',
-  format: 'umd',
-  moduleName: 'mostPrelude',
-  sourceMap: true,
   plugins: [
     buble()
+  ],
+  targets: [
+    {
+      dest: 'dist/index.js',
+      format: 'umd',
+      moduleName: 'mostPrelude',
+      sourceMap: true
+    },
+    {
+      dest: 'dist/index.es.js',
+      format: 'es',
+      sourceMap: true
+    }
   ]
 }

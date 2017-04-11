@@ -2,18 +2,16 @@
   "name": "@most/prelude",
   "version": "1.5.1",
   "description": "prelude",
-  "main": "dist/prelude.js",
-  "module": "src/index.js",
-  "jsnext:main": "src/index.js",
-  "typings": "type-definitions/prelude.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
+  "typings": "type-definitions/index.d.ts",
   "files": [
-    "src/*",
-    "dist/*",
-    "type-definitions/prelude.d.ts"
+    "dist",
+    "type-definitions"
   ],
   "scripts": {
-    "build-dist": "rollup -c",
-    "build": "npm run build-dist && uglifyjs dist/prelude.js -o dist/prelude.min.js",
+    "build": "rollup -c",
     "prepublish": "npm run build",
     "preversion": "npm run build",
     "unit-test": "istanbul cover _mocha -- -r buba/register",
@@ -43,7 +41,6 @@
     "mocha": "^3.0.2",
     "power-assert": "^1.4.1",
     "rollup": "^0.34.7",
-    "rollup-plugin-buble": "^0.12.1",
-    "uglify-js": "^2.7.0"
+    "rollup-plugin-buble": "^0.12.1"
   }
 }
