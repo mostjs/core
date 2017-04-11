@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "@most/disposable": "^0.4.0",
-    "@most/prelude": "^1.4.0",
+    "@most/prelude": "^1.5.2",
     "@most/scheduler": "^0.4.0",
     "@most/types": "^0.4.0"
   }
