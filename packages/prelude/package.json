@@ -11,12 +11,14 @@
     "type-definitions"
   ],
   "scripts": {
-    "build": "rollup -c",
+    "build": "npm run build:dist && npm run build:flow",
+    "build:dist": "rollup -c",
+    "build:flow": "cpy src/index.js.flow dist && cpy src/index.js.flow dist --rename=index.es.js.flow",
     "prepublish": "npm run build",
-    "preversion": "npm run build",
-    "unit-test": "istanbul cover _mocha -- -r buba/register",
-    "lint": "jsinspect src && jsinspect -t 45 test && eslint src test",
-    "test": "npm run lint && npm run unit-test"
+    "test": "npm run test:lint && npm run test:unit && npm run test:flow",
+    "test:lint": "jsinspect src && jsinspect -t 45 test && eslint src test",
+    "test:unit": "nyc mocha -r buba/register",
+    "test:flow": "flow check"
   },
   "repository": {
     "type": "git",
@@ -32,13 +34,15 @@
     "@most/eslint-config-most": "^1.0.3",
     "babel-preset-power-assert": "^1.0.0",
     "buba": "^2.0.1",
+    "cpy-cli": "^1.0.1",
     "eslint": "^3.2.2",
     "eslint-config-standard": "^5.3.5",
     "eslint-plugin-promise": "^2.0.1",
     "eslint-plugin-standard": "^2.0.0",
-    "istanbul": "^1.1.0-alpha.1",
+    "flow-bin": "^0.43.1",
     "jsinspect": "^0.8.0",
     "mocha": "^3.0.2",
+    "nyc": "^10.2.0",
     "power-assert": "^1.4.1",
     "rollup": "^0.34.7",
     "rollup-plugin-buble": "^0.12.1"
