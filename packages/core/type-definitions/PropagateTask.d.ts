@@ -8,8 +8,7 @@ export function propagateTask<T>(run: PropagateTaskRun<T>): (value: T) => (sink:
 export function propagateEventTask<T>(value: T, sink: Sink<T>): PropagateTask<T>;
 export function propagateEventTask<T>(value: T): (sink: Sink<T>) => PropagateTask<T>;
 
-export function propagateEndTask<T>(value: T | void, sink: Sink<T>): PropagateTask<T>;
-export function propagateEndTask<T>(value: T | void): (sink: Sink<T>) => PropagateTask<T>;
+export function propagateEndTask<T>(sink: Sink<T>): PropagateTask<void>;
 
 export function propagateErrorTask(error: Error, sink: Sink<any>): PropagateTask<any>;
 export function propagateErrorTask(error: Error): (sink: Sink<any>) => PropagateTask<any>;

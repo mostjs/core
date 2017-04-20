@@ -41,7 +41,7 @@ class DelaySink extends Pipe {
     this.scheduler.delay(this.dt, propagateEventTask(x, this.sink))
   }
 
-  end (t, x) {
-    this.scheduler.delay(this.dt, propagateEndTask(x, this.sink))
+  end (t) {
+    this.scheduler.delay(this.dt, propagateEndTask(this.sink))
   }
 }

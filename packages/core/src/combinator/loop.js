@@ -42,9 +42,4 @@ class LoopSink extends Pipe {
     this.seed = result.seed
     this.sink.event(t, result.value)
   }
-
-  end (t) {
-    this.sink.end(t, this.seed)
-  }
 }
-

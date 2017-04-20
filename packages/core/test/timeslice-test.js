@@ -1,5 +1,5 @@
 import { describe, it } from 'mocha'
-import { eq, is, assert } from '@briancavalier/assert'
+import { eq, assert } from '@briancavalier/assert'
 
 import { until, since, during } from '../src/combinator/timeslice'
 import { take } from '../src/combinator/slice'
@@ -7,14 +7,10 @@ import { periodic } from '../src/source/periodic'
 import { just, never } from '../src/source/core'
 import { delay } from '../src/combinator/delay'
 
-import { runEffects } from '../src/runEffects'
 import { ticks, collectEvents, collectEventsFor, makeEvents } from './helper/testEnv'
 import FakeDisposeStream from './helper/FakeDisposeStream'
-import { endWith } from './helper/endWith'
 
 import { spy } from 'sinon'
-
-const sentinel = { value: 'sentinel' }
 
 describe('during', function () {
   it('should contain events at or later than min and earlier than max', function () {
@@ -112,15 +108,6 @@ describe('until', function () {
         assert(dispose.calledOnce)
       })
   })
-
-  it('should use until value as end value', function () {
-    const stream = periodic(1)
-    const end = delay(3, just(sentinel))
-
-    const s = until(end, stream)
-    return runEffects(s, ticks(5))
-      .then(is(sentinel))
-  })
 })
 
 describe('since', function () {
@@ -145,24 +132,5 @@ describe('since', function () {
     const s = since(signal, stream)
     return collectEventsFor(5, s)
       .then(() => assert(dispose.calledOnce))
-  })
-
-  it('should preserve end value', function () {
-    const stream = endWith(sentinel, take(3, periodic(1)))
-    const start = delay(3, just())
-
-    const s = since(start, stream)
-    return runEffects(s, ticks(3))
-      .then(is(sentinel))
-  })
-
-  it('should preserve end value if end signal occurs before start signal', function () {
-    const stream = take(3, periodic(1))
-    const start = delay(3, just())
-    const end = delay(1, just(sentinel))
-
-    const s = since(start, until(end, stream))
-    return runEffects(s, ticks(3))
-      .then(is(sentinel))
   })
 })

@@ -64,15 +64,16 @@ class CombineSink extends Pipe {
     const l = sinks.length
     this.awaiting = l
     this.values = new Array(l)
-    this.hasValue = new Array(l)
-    for (let i = 0; i < l; ++i) {
-      this.hasValue[i] = false
-    }
-
+    this.hasValue = new Array(l).fill(false)
     this.activeCount = sinks.length
   }
 
   event (t, indexedValue) {
+    if (!indexedValue.active) {
+      this._dispose(t, indexedValue.index)
+      return
+    }
+
     const i = indexedValue.index
     const awaiting = this._updateReady(i)
 
@@ -92,10 +93,10 @@ class CombineSink extends Pipe {
     return this.awaiting
   }
 
-  end (t, indexedValue) {
-    tryDispose(t, this.disposables[indexedValue.index], this.sink)
+  _dispose (t, index) {
+    tryDispose(t, this.disposables[index], this.sink)
     if (--this.activeCount === 0) {
-      this.sink.end(t, indexedValue.value)
+      this.sink.end(t)
     }
   }
 }

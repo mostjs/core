@@ -35,7 +35,7 @@ export const empty = () => EMPTY
 
 class Empty {
   run (sink, scheduler) {
-    return scheduler.asap(propagateEndTask(undefined, sink))
+    return scheduler.asap(propagateEndTask(sink))
   }
 }
 

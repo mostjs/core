@@ -187,4 +187,4 @@ export type PropagateTaskRun<A> = (time: Time, value: A, sink: Sink<A>, task: Pr
 declare export function propagateTask<A> (run: PropagateTaskRun<A>, value: A, sink: Sink<A>): PropagateTask<A>
 declare export function propagateEventTask<A> (value: A, sink: Sink<A>): PropagateTask<A>
 declare export function propagateErrorTask<E: Error> (e: E, sink: Sink<any>): PropagateTask<any>
-declare export function propagateEndTask (value: any, sink: Sink<any>): PropagateTask<any>
+declare export function propagateEndTask (sink: Sink<any>): PropagateTask<void>

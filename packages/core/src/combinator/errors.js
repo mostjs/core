@@ -58,8 +58,8 @@ class RecoverWithSink {
     tryEvent(t, x, this.sink)
   }
 
-  end (t, x) {
-    tryEnd(t, x, this.sink)
+  end (t) {
+    tryEnd(t, this.sink)
   }
 
   error (t, e) {

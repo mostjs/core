@@ -1,6 +1,6 @@
 {
   "name": "@most/scheduler",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
   "typings": "type-definitions/index.d.ts",
   "main": "dist/index.js",
@@ -56,6 +56,6 @@
   },
   "dependencies": {
     "@most/prelude": "^1.5.2",
-    "@most/types": "^0.4.0"
+    "@most/types": "^0.4.1"
   }
 }

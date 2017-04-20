@@ -10,9 +10,9 @@ export function tryEvent (t, x, sink) {
   }
 }
 
-export function tryEnd (t, x, sink) {
+export function tryEnd (t, sink) {
   try {
-    sink.end(t, x)
+    sink.end(t)
   } catch (e) {
     sink.error(t, e)
   }

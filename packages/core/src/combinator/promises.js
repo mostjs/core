@@ -39,7 +39,7 @@ class AwaitSink {
 
     // Pre-create closures, to avoid creating them per event
     this._eventBound = x => this.sink.event(this.scheduler.now(), x)
-    this._endBound = x => this.sink.end(this.scheduler.now(), x)
+    this._endBound = () => this.sink.end(this.scheduler.now())
     this._errorBound = e => this.sink.error(this.scheduler.now(), e)
   }
 
@@ -48,8 +48,8 @@ class AwaitSink {
       .catch(this._errorBound)
   }
 
-  end (t, x) {
-    this.queue = this.queue.then(() => this._end(x))
+  end (t) {
+    this.queue = this.queue.then(this._endBound)
       .catch(this._errorBound)
   }
 
@@ -61,9 +61,5 @@ class AwaitSink {
 
   _event (promise) {
     return promise.then(this._eventBound)
-  }
-
-  _end (x) {
-    return Promise.resolve(x).then(this._endBound)
   }
 }

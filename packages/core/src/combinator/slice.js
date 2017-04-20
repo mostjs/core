@@ -79,7 +79,7 @@ class SliceSink extends Pipe {
     this.take -= 1
     this.sink.event(t, x)
     if (this.take === 0) {
-      this.sink.end(t, x)
+      this.sink.end(t)
     }
   }
 }
@@ -116,7 +116,7 @@ class TakeWhileSink extends Pipe {
     if (this.active) {
       this.sink.event(t, x)
     } else {
-      this.sink.end(t, x)
+      this.sink.end(t)
     }
   }
 }
