@@ -4,7 +4,6 @@
 
 import Pipe from '../sink/Pipe'
 import { empty } from '../source/core'
-import { disposeOnce } from '@most/disposable'
 import Map from '../fusion/Map'
 
 /**
@@ -55,19 +54,19 @@ class Slice {
   }
 
   run (sink, scheduler) {
-    return new SliceSink(this.min, this.max - this.min, this.source, sink, scheduler)
+    return this.source.run(new SliceSink(this.min, this.max - this.min, sink), scheduler)
   }
 }
 
 class SliceSink extends Pipe {
-  constructor (skip, take, source, sink, scheduler) {
+  constructor (skip, take, sink) {
     super(sink)
     this.skip = skip
     this.take = take
-    this.disposable = disposeOnce(source.run(this, scheduler))
   }
 
-  event (t, x) { // eslint-disable-line complexity
+  event (t, x) {
+    /* eslint complexity: [1, 4] */
     if (this.skip > 0) {
       this.skip -= 1
       return
@@ -80,13 +79,8 @@ class SliceSink extends Pipe {
     this.take -= 1
     this.sink.event(t, x)
     if (this.take === 0) {
-      this.dispose()
       this.sink.end(t, x)
     }
-  }
-
-  dispose () {
-    return this.disposable.dispose()
   }
 }
 
@@ -100,16 +94,15 @@ class TakeWhile {
   }
 
   run (sink, scheduler) {
-    return new TakeWhileSink(this.p, this.source, sink, scheduler)
+    return this.source.run(new TakeWhileSink(this.p, sink), scheduler)
   }
 }
 
 class TakeWhileSink extends Pipe {
-  constructor (p, source, sink, scheduler) {
+  constructor (p, sink) {
     super(sink)
     this.p = p
     this.active = true
-    this.disposable = disposeOnce(source.run(this, scheduler))
   }
 
   event (t, x) {
@@ -123,13 +116,8 @@ class TakeWhileSink extends Pipe {
     if (this.active) {
       this.sink.event(t, x)
     } else {
-      this.dispose()
       this.sink.end(t, x)
     }
-  }
-
-  dispose () {
-    return this.disposable.dispose()
   }
 }
 
