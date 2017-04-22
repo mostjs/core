@@ -6,7 +6,7 @@ export type SeedValue <S, A> = {
   value: A
 }
 
-declare export function runEffects <A> (s: Stream<A>, scheduler: Scheduler): Promise<any>
+declare export function runEffects <A> (s: Stream<A>, scheduler: Scheduler): Promise<void>
 
 declare export function empty (): Stream<any>
 declare export function never (): Stream<any>

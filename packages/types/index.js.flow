@@ -11,7 +11,7 @@ export type Stream<A> = {
 
 export type Sink<A> = {
   event: (Time, A) => void,
-  end: (Time, any) => void,
+  end: (Time) => void,
   error: (Time, Error) => void,
 }
 

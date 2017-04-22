@@ -9,7 +9,7 @@ export interface Stream<A> {
 
 export interface Sink<A> {
   event(time: Time, value: A): void;
-  end(time: Time, value?: A): void;
+  end(time: Time): void;
   error(time: Time, err: Error): void;
 }
 
