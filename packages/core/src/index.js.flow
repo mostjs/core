@@ -151,6 +151,9 @@ declare export function takeWhile <A> (p: (A) => boolean): (s: Stream<A>) => Str
 declare export function skipWhile <A> (p: (A) => boolean, s: Stream<A>): Stream<A>
 declare export function skipWhile <A> (p: (A) => boolean): (s: Stream<A>) => Stream<A>
 
+declare export function skipAfter <A> (p: (A) => boolean, s: Stream<A>): Stream<A>
+declare export function skipAfter <A> (p: (A) => boolean): (s: Stream<A>) => Stream<A>
+
 declare export function until <A> (until: Stream<any>, s: Stream<A>): Stream<A>
 declare export function until <A> (until: Stream<any>): (s: Stream<A>) => Stream<A>
 
