@@ -23,11 +23,11 @@ class RunEffectsSink {
 
   event (t, x) {}
 
-  end (t, x) {
+  end (t) {
     if (!this.active) {
       return
     }
-    this._dispose(this._error, this._end, x)
+    this._dispose(this._error, this._end, undefined)
   }
 
   error (t, e) {

@@ -69,7 +69,13 @@ class ZipSink extends Pipe {
     this.buffers = buffers
   }
 
-  event (t, indexedValue) { // eslint-disable-line complexity
+  event (t, indexedValue) {
+    /* eslint complexity: [1, 5] */
+    if (!indexedValue.active) {
+      this._dispose(t, indexedValue.index)
+      return
+    }
+
     const buffers = this.buffers
     const buffer = buffers[indexedValue.index]
 
@@ -83,15 +89,15 @@ class ZipSink extends Pipe {
       emitZipped(this.f, t, buffers, this.sink)
 
       if (ended(this.buffers, this.sinks)) {
-        this.sink.end(t, void 0)
+        this.sink.end(t)
       }
     }
   }
 
-  end (t, indexedValue) {
-    const buffer = this.buffers[indexedValue.index]
+  _dispose (t, index) {
+    const buffer = this.buffers[index]
     if (buffer.isEmpty()) {
-      this.sink.end(t, indexedValue.value)
+      this.sink.end(t)
     }
   }
 }

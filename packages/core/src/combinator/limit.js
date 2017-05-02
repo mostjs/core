@@ -88,12 +88,12 @@ class DebounceSink {
     this.timer = this.scheduler.delay(this.dt, propagateEventTask(x, this.sink))
   }
 
-  end (t, x) {
+  end (t) {
     if (this._clearTimer()) {
       this.sink.event(t, this.value)
-      this.value = void 0
+      this.value = undefined
     }
-    this.sink.end(t, x)
+    this.sink.end(t)
   }
 
   error (t, x) {

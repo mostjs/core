@@ -8,7 +8,7 @@ export const propagateTask = (run, value, sink) => new PropagateTask(run, value,
 
 export const propagateEventTask = (value, sink) => propagateTask(runEvent, value, sink)
 
-export const propagateEndTask = (value, sink) => propagateTask(runEnd, value, sink)
+export const propagateEndTask = sink => propagateTask(runEnd, undefined, sink)
 
 export const propagateErrorTask = (value, sink) => propagateTask(runError, value, sink)
 
@@ -43,6 +43,6 @@ export class PropagateTask {
 
 const runEvent = (t, x, sink) => sink.event(t, x)
 
-const runEnd = (t, x, sink) => sink.end(t, x)
+const runEnd = (t, _, sink) => sink.end(t)
 
 const runError = (t, e, sink) => sink.error(t, e)

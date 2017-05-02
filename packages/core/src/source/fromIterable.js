@@ -24,5 +24,5 @@ function runProducer (t, iterator, sink, task) {
     r = iterator.next()
   }
 
-  task.active && sink.end(t, r.value)
+  task.active && sink.end(t)
 }

@@ -35,25 +35,25 @@ class ContinueWithSink extends Pipe {
     this.sink.event(t, x)
   }
 
-  end (t, x) {
+  end (t) {
     if (!this.active) {
       return
     }
 
     tryDispose(t, this.disposable, this.sink)
-    this._startNext(t, x, this.sink)
+    this._startNext(t, this.sink)
   }
 
-  _startNext (t, x, sink) {
+  _startNext (t, sink) {
     try {
-      this.disposable = this._continue(this.f, x, sink)
+      this.disposable = this._continue(this.f, sink)
     } catch (e) {
       sink.error(t, e)
     }
   }
 
-  _continue (f, x, sink) {
-    return f(x).run(sink, this.scheduler)
+  _continue (f, sink) {
+    return f().run(sink, this.scheduler)
   }
 
   dispose () {

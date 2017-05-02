@@ -101,7 +101,7 @@ class UpperBound extends Pipe {
   event (t, x) {
     if (t < this.value) {
       this.value = t
-      this.sink.end(t, x)
+      this.sink.end(t)
     }
   }
 

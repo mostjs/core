@@ -7,7 +7,6 @@ import { scan } from '../../src/combinator/scan'
 import { runEffects } from '../../src/runEffects'
 import { atTime, makeEventsFromArray, collectEventsFor, ticks } from '../helper/testEnv'
 import FakeDisposeStream from '../helper/FakeDisposeStream'
-import { endWith } from '../helper/endWith'
 
 const sentinel = { value: 'sentinel' }
 
@@ -26,13 +25,6 @@ describe('scan', function () {
 
     return collectEventsFor(a.length, s)
       .then(eq(expected))
-  })
-
-  it('should preserve end value', function () {
-    const stream = endWith(sentinel, atTime(0, {}))
-    const s = scan((a, x) => x, {}, stream)
-
-    return runEffects(s, ticks(1)).then(eq(sentinel))
   })
 
   it('should dispose', function () {

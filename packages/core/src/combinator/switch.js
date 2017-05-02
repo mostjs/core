@@ -37,9 +37,9 @@ class SwitchSink {
     this.current.disposable = stream.run(this.current, this.scheduler)
   }
 
-  end (t, x) {
+  end (t) {
     this.ended = true
-    this._checkEnd(t, x)
+    this._checkEnd(t)
   }
 
   error (t, e) {
@@ -64,15 +64,15 @@ class SwitchSink {
     }
   }
 
-  _checkEnd (t, x) {
+  _checkEnd (t) {
     if (this.ended && this.current === null) {
-      this.sink.end(t, x)
+      this.sink.end(t)
     }
   }
 
-  _endInner (t, x, inner) {
+  _endInner (t, inner) {
     this._disposeInner(t, inner)
-    this._checkEnd(t, x)
+    this._checkEnd(t)
   }
 
   _errorInner (t, e, inner) {
@@ -96,8 +96,8 @@ class Segment {
     }
   }
 
-  end (t, x) {
-    this.outer._endInner(Math.max(t, this.min), x, this)
+  end (t) {
+    this.outer._endInner(Math.max(t, this.min), this)
   }
 
   error (t, e) {

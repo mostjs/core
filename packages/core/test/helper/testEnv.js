@@ -53,7 +53,7 @@ class AtTimes {
 
 const runEvents = (events, sink, scheduler) => {
   const s = events.reduce(appendEvent(sink, scheduler), { tasks: [], time: 0 })
-  const end = scheduler.delay(s.time, propagateEndTask(undefined, sink))
+  const end = scheduler.delay(s.time, propagateEndTask(sink))
   return disposeWith(cancelAll, s.tasks.concat(end))
 }
 

@@ -169,10 +169,10 @@ import {
   propagateTask as _propagateTask,
   propagateEventTask as _propagateEventTask,
   propagateErrorTask as _propagateErrorTask,
-  propagateEndTask as _propagateEndTask
+  propagateEndTask
 } from './scheduler/PropagateTask'
 
 export const propagateTask = curry3(_propagateTask)
 export const propagateEventTask = curry2(_propagateEventTask)
 export const propagateErrorTask = curry2(_propagateErrorTask)
-export const propagateEndTask = curry2(_propagateEndTask)
+export { propagateEndTask }
