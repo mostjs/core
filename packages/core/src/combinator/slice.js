@@ -154,3 +154,39 @@ class SkipWhileSink extends Pipe {
     this.sink.event(t, x)
   }
 }
+
+export const skipAfter = (p, stream) =>
+  new SkipAfter(p, stream)
+
+class SkipAfter {
+  constructor (p, source) {
+    this.p = p
+    this.source = source
+  }
+
+  run (sink, scheduler) {
+    return this.source.run(new SkipAfterSink(this.p, sink), scheduler)
+  }
+}
+
+class SkipAfterSink extends Pipe {
+  constructor (p, sink) {
+    super(sink)
+    this.p = p
+    this.skipping = false
+  }
+
+  event (t, x) {
+    if (this.skipping) {
+      return
+    }
+
+    const p = this.p
+    this.skipping = p(x)
+    this.sink.event(t, x)
+
+    if (this.skipping) {
+      this.sink.end(t)
+    }
+  }
+}
