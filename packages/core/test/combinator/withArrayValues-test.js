@@ -10,7 +10,12 @@ import { collectEventsFor, makeEvents } from '../helper/testEnv'
 describe.only('withArrayValues', () => {
   describe('zipArrayValues', () => {
     it('should be empty for empty array', () => {
-      const s = zipArrayValues(fail, [], empty())
+      const s = zipArrayValues(fail, [], makeEvents(1, 1))
+      return collectEventsFor(1, s).then(eq([]))
+    })
+
+    it('should be empty for empty stream', () => {
+      const s = zipArrayValues(fail, [1, 2, 3], empty())
       return collectEventsFor(1, s).then(eq([]))
     })
 
@@ -42,11 +47,16 @@ describe.only('withArrayValues', () => {
 
   describe('withArrayValues', () => {
     it('should be empty for empty array', () => {
-      const s = withArrayValues([], empty())
+      const s = withArrayValues([], makeEvents(1, 1))
       return collectEventsFor(1, s).then(eq([]))
     })
 
-    it('should contain zipped values when more events than values', () => {
+    it('should be empty for empty stream', () => {
+      const s = withArrayValues([1, 2, 3], empty())
+      return collectEventsFor(1, s).then(eq([]))
+    })
+
+    it('should contain array values when more events than values', () => {
       const a = ['a', 'b', 'c']
       const n = a.length + 1
       const s = withArrayValues(a, makeEvents(1, n))
@@ -59,7 +69,7 @@ describe.only('withArrayValues', () => {
         ]))
     })
 
-    it('should contain zipped values when more values than events', () => {
+    it('should contain array values when more values than events', () => {
       const a = ['a', 'b', 'c']
       const n = a.length - 1
       const s = withArrayValues(a, makeEvents(1, n))
