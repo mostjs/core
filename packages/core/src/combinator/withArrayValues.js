@@ -6,7 +6,7 @@ export const withArrayValues = (array, stream) =>
   zipArrayValues(keepLeft, array, stream)
 
 export const zipArrayValues = (f, array, stream) =>
-  array.length === 0
+  array.length === 0 || stream === empty()
     ? empty()
     : new ZipArrayValues(f, array, stream)
 
