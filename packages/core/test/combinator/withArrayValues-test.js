@@ -7,7 +7,7 @@ import { empty } from '../../src/source/core'
 
 import { collectEventsFor, makeEvents } from '../helper/testEnv'
 
-describe.only('withArrayValues', () => {
+describe('withArrayValues', () => {
   describe('zipArrayValues', () => {
     it('should be empty for empty array', () => {
       const s = zipArrayValues(fail, [], makeEvents(1, 1))
