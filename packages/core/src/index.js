@@ -9,6 +9,10 @@ export { fromArray } from './source/fromArray'
 
 export { fromIterable } from './source/fromIterable'
 
+import { zipArrayValues as _zipArrayValues, withArrayValues as _withArrayValues } from './combinator/withArrayValues'
+export const zipArrayValues = curry3(_zipArrayValues)
+export const withArrayValues = curry2(_withArrayValues)
+
 // -----------------------------------------------------------------------
 // Observing
 

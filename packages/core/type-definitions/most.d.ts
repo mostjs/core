@@ -22,6 +22,7 @@ export * from './combinator/switch';
 export * from './combinator/timeslice';
 export * from './combinator/transform';
 export * from './combinator/zip';
+export * from './combinator/withArrayValues';
 
 export * from './source/core';
 export * from './source/newStream';
