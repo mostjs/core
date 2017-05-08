@@ -15,9 +15,6 @@ declare export function just <A> (a: A): Stream<A>
 export type RunStream<A> = (sink: Sink<A>, scheduler: Scheduler) => Disposable
 declare export function newStream <A> (run: RunStream<A>): Stream<A>
 
-declare export function fromArray <A> (a: Array<A>): Stream<A>
-declare export function fromIterable <A> (a: Iterable<A>): Stream<A>
-
 declare export function startWith <A> (a: A, s: Stream<A>): Stream<A>
 declare export function startWith <A> (a: A): (s: Stream<A>) => Stream<A>
 declare export function concat <A> (s1: Stream<A>, s2: Stream<A>): Stream<A>

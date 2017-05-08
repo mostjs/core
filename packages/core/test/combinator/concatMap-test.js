@@ -9,9 +9,8 @@ import { concat } from '../../src/combinator/build'
 import { take } from '../../src/combinator/slice'
 import { drain } from '../helper/observe'
 import { just, never } from '../../src/source/core'
-import { fromArray } from '../../src/source/fromArray'
 
-import { ticks, atTimes, collectEventsFor, collectEvents } from '../helper/testEnv'
+import { ticks, atTimes, makeEventsFromArray, collectEventsFor, collectEvents } from '../helper/testEnv'
 import FakeDisposeSource from '../helper/FakeDisposeStream'
 
 const sentinel = { value: 'sentinel' }
@@ -36,7 +35,7 @@ describe('concatMap', function () {
     const s1 = [{ time: 2, value: 2 }, { time: 3, value: 3 }]
     const s2 = [{ time: 1, value: 1 }]
     const s3 = [{ time: 0, value: 0 }]
-    const s = concatMap.concatMap(atTimes, fromArray([s1, s2, s3]))
+    const s = concatMap.concatMap(atTimes, makeEventsFromArray(1, [s1, s2, s3]))
 
     const expected = [
       { time: 2, value: 2 },
@@ -95,12 +94,9 @@ describe('concatMap', function () {
 
     const inners = values.map((x, i) => new FakeDisposeSource(spies[i], just(x)))
 
-    const s = concatMap.concatMap(identity, fromArray(inners))
+    const s = concatMap.concatMap(identity, makeEventsFromArray(1, inners))
 
-    return drain(s).then(() => {
-      spies.forEach(spy => {
-        assert(spy.calledOnce)
-      })
-    })
+    return collectEventsFor(3, s).then(() =>
+      spies.forEach(spy => assert(spy.calledOnce)))
   })
 })

@@ -26,9 +26,7 @@ export * from './combinator/withArrayValues';
 
 export * from './source/core';
 export * from './source/newStream';
-export * from './source/fromArray';
-export * from './source/fromIterable';
+export * from './source/periodic';
 export * from './source/generate';
 export * from './source/iterate';
-export * from './source/periodic';
 export * from './source/unfold';
