@@ -5,10 +5,8 @@ import { mergeMapConcurrently, mergeConcurrently } from '../../src/combinator/me
 import { periodic } from '../../src/source/periodic'
 import { take } from '../../src/combinator/slice'
 import { constant } from '../../src/combinator/transform'
-import { drain } from '../helper/observe'
-import { just as just } from '../../src/source/core'
-import { fromArray } from '../../src/source/fromArray'
-import { collectEventsFor } from '../helper/testEnv'
+import { just } from '../../src/source/core'
+import { collectEventsFor, makeEventsFromArray } from '../helper/testEnv'
 
 const sentinel = { value: 'sentinel' }
 
@@ -31,19 +29,19 @@ describe('mergeConcurrently', () => {
 
   it('should merge all when number of streams <= concurrency', () => {
     const streams = [periodicConstant(1, 1), periodicConstant(1, 2), periodicConstant(1, 3)]
-    const s = mergeConcurrently(streams.length, fromArray(streams))
+    const s = mergeConcurrently(streams.length, makeEventsFromArray(1, streams))
     const n = 3
 
     const expected = [
        { time: 0, value: 1 },
-       { time: 0, value: 2 },
-       { time: 0, value: 3 },
        { time: 1, value: 1 },
        { time: 1, value: 2 },
-       { time: 1, value: 3 },
        { time: 2, value: 1 },
        { time: 2, value: 2 },
-       { time: 2, value: 3 }
+       { time: 2, value: 3 },
+       { time: 3, value: 1 },
+       { time: 3, value: 2 },
+       { time: 3, value: 3 }
     ]
 
     return collectEventsFor(n, take(n * streams.length, s))
@@ -55,7 +53,7 @@ describe('mergeConcurrently', () => {
     const m = 2
 
     const streams = [take(n, periodicConstant(1, 1)), take(n, periodicConstant(1, 2)), take(n, periodicConstant(1, 3))]
-    const s = mergeConcurrently(m, fromArray(streams))
+    const s = mergeConcurrently(m, makeEventsFromArray(0, streams))
 
     const expected = [
       { time: 0, value: 1 },
@@ -78,6 +76,6 @@ describe('mergeMapConcurrently', () => {
   it('when mapping function throws, it should catch and propagate error', () => {
     const error = new Error()
     const s = mergeMapConcurrently(x => { throw error }, 1, just(0))
-    return drain(s).then(fail, is(error))
+    return collectEventsFor(1, s).then(fail, is(error))
   })
 })
