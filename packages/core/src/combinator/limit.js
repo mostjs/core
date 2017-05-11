@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import { all } from '../disposable/dispose'
+import { disposeBoth } from '@most/disposable'
 import { propagateEventTask } from '../scheduler/PropagateTask'
 import Map from '../fusion/Map'
 
@@ -79,7 +79,7 @@ class DebounceSink {
     this.timer = null
 
     const sourceDisposable = source.run(this, scheduler)
-    this.disposable = all([this, sourceDisposable])
+    this.disposable = disposeBoth(this, sourceDisposable)
   }
 
   event (t, x) {
@@ -88,12 +88,12 @@ class DebounceSink {
     this.timer = this.scheduler.delay(this.dt, propagateEventTask(x, this.sink))
   }
 
-  end (t, x) {
+  end (t) {
     if (this._clearTimer()) {
       this.sink.event(t, this.value)
-      this.value = void 0
+      this.value = undefined
     }
-    this.sink.end(t, x)
+    this.sink.end(t)
   }
 
   error (t, x) {

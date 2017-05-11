@@ -1,7 +1,7 @@
 /** @license MIT License (c) copyright 2010-2016 original author or authors */
 
 import Pipe from '../sink/Pipe'
-import { all } from '../disposable/dispose'
+import { disposeBoth } from '@most/disposable'
 
 export const sample = (f, sampler, stream) =>
   new Sample(f, sampler, stream)
@@ -18,7 +18,7 @@ export class Sample {
     const sourceDisposable = this.source.run(sampleSink.hold, scheduler)
     const samplerDisposable = this.sampler.run(sampleSink, scheduler)
 
-    return all([samplerDisposable, sourceDisposable])
+    return disposeBoth(samplerDisposable, sourceDisposable)
   }
 }
 

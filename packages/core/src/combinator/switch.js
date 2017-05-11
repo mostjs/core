@@ -2,7 +2,7 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { all, empty, tryDispose } from '../disposable/dispose'
+import { disposeBoth, disposeNone, tryDispose } from '@most/disposable'
 
 /**
  * Given a stream of streams, return a new stream that adopts the behavior
@@ -19,7 +19,7 @@ class Switch {
 
   run (sink, scheduler) {
     const switchSink = new SwitchSink(sink, scheduler)
-    return all([switchSink, this.source.run(switchSink, scheduler)])
+    return disposeBoth(switchSink, this.source.run(switchSink, scheduler))
   }
 }
 
@@ -37,9 +37,9 @@ class SwitchSink {
     this.current.disposable = stream.run(this.current, this.scheduler)
   }
 
-  end (t, x) {
+  end (t) {
     this.ended = true
-    this._checkEnd(t, x)
+    this._checkEnd(t)
   }
 
   error (t, e) {
@@ -64,15 +64,15 @@ class SwitchSink {
     }
   }
 
-  _checkEnd (t, x) {
+  _checkEnd (t) {
     if (this.ended && this.current === null) {
-      this.sink.end(t, x)
+      this.sink.end(t)
     }
   }
 
-  _endInner (t, x, inner) {
+  _endInner (t, inner) {
     this._disposeInner(t, inner)
-    this._checkEnd(t, x)
+    this._checkEnd(t)
   }
 
   _errorInner (t, e, inner) {
@@ -87,7 +87,7 @@ class Segment {
     this.max = max
     this.outer = outer
     this.sink = sink
-    this.disposable = empty()
+    this.disposable = disposeNone()
   }
 
   event (t, x) {
@@ -96,8 +96,8 @@ class Segment {
     }
   }
 
-  end (t, x) {
-    this.outer._endInner(Math.max(t, this.min), x, this)
+  end (t) {
+    this.outer._endInner(Math.max(t, this.min), this)
   }
 
   error (t, e) {
@@ -109,4 +109,3 @@ class Segment {
     tryDispose(t, this.disposable, this.sink)
   }
 }
-

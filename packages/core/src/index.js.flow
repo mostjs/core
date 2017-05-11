@@ -1,18 +1,19 @@
 // @flow
-import type { Stream, Sink, Scheduler, Task, Time, Period, Delay } from '@most/types'
+import type { Stream, Sink, Scheduler, Task, Disposable, Time, Period, Delay } from '@most/types'
 
 export type SeedValue <S, A> = {
   seed: S,
   value: A
 }
 
-declare export function runEffects <A> (s: Stream<A>, scheduler: Scheduler): Promise<any>
+declare export function runEffects <A> (s: Stream<A>, scheduler: Scheduler): Promise<void>
 
 declare export function empty (): Stream<any>
 declare export function never (): Stream<any>
 declare export function just <A> (a: A): Stream<A>
-declare export function fromArray <A> (a: Array<A>): Stream<A>
-declare export function fromIterable <A> (a: Iterable<A>): Stream<A>
+
+export type RunStream<A> = (sink: Sink<A>, scheduler: Scheduler) => Disposable
+declare export function newStream <A> (run: RunStream<A>): Stream<A>
 
 declare export function startWith <A> (a: A, s: Stream<A>): Stream<A>
 declare export function startWith <A> (a: A): (s: Stream<A>) => Stream<A>
@@ -121,6 +122,14 @@ declare export function zipArray <A, B, C, D, E, F, Z> (f: (A, B, C, D, E, F) =>
 declare export function zipArray <Z> (f: (...rest: Array<any>) => Z, ss: Array<Stream<any>>): Stream<Z>
 declare export function zipArray <Z> (f: (...rest: Array<any>) => Z): (ss: Array<Stream<any>>) => Stream<Z>
 
+declare export function withArrayValues <A> (a: Array<A>, s: Stream<any>): Stream<A>
+declare export function withArrayValues <A> (a: Array<A>): (s: Stream<any>) => Stream<A>
+
+declare export function zipArrayValues <A, B, C> (f: (A, B) => C, a: Array<A>, s: Stream<B>): Stream<C>
+declare export function zipArrayValues <A, B, C> (f: (A, B) => C): (a: Array<A>, s: Stream<B>) => Stream<C>
+declare export function zipArrayValues <A, B, C> (f: (A, B) => C, a: Array<A>): (s: Stream<B>) => Stream<C>
+declare export function zipArrayValues <A, B, C> (f: (A, B) => C): (a: Array<A>) => (s: Stream<B>) => Stream<C>
+
 declare export function filter <A> (p: (A) => boolean, s: Stream<A>): Stream<A>
 declare export function filter <A> (p: (A) => boolean): (s: Stream<A>) => Stream<A>
 
@@ -146,6 +155,9 @@ declare export function takeWhile <A> (p: (A) => boolean): (s: Stream<A>) => Str
 
 declare export function skipWhile <A> (p: (A) => boolean, s: Stream<A>): Stream<A>
 declare export function skipWhile <A> (p: (A) => boolean): (s: Stream<A>) => Stream<A>
+
+declare export function skipAfter <A> (p: (A) => boolean, s: Stream<A>): Stream<A>
+declare export function skipAfter <A> (p: (A) => boolean): (s: Stream<A>) => Stream<A>
 
 declare export function until <A> (until: Stream<any>, s: Stream<A>): Stream<A>
 declare export function until <A> (until: Stream<any>): (s: Stream<A>) => Stream<A>
@@ -183,4 +195,4 @@ export type PropagateTaskRun<A> = (time: Time, value: A, sink: Sink<A>, task: Pr
 declare export function propagateTask<A> (run: PropagateTaskRun<A>, value: A, sink: Sink<A>): PropagateTask<A>
 declare export function propagateEventTask<A> (value: A, sink: Sink<A>): PropagateTask<A>
 declare export function propagateErrorTask<E: Error> (e: E, sink: Sink<any>): PropagateTask<any>
-declare export function propagateEndTask (value: any, sink: Sink<any>): PropagateTask<any>
+declare export function propagateEndTask (sink: Sink<any>): PropagateTask<void>

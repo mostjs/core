@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import { once, tryDispose } from '../disposable/dispose'
+import { disposeOnce, tryDispose } from '@most/disposable'
 
 export const continueWith = (f, stream) =>
   new ContinueWith(f, stream)
@@ -25,7 +25,7 @@ class ContinueWithSink extends Pipe {
     this.f = f
     this.scheduler = scheduler
     this.active = true
-    this.disposable = once(source.run(this, scheduler))
+    this.disposable = disposeOnce(source.run(this, scheduler))
   }
 
   event (t, x) {
@@ -35,25 +35,25 @@ class ContinueWithSink extends Pipe {
     this.sink.event(t, x)
   }
 
-  end (t, x) {
+  end (t) {
     if (!this.active) {
       return
     }
 
     tryDispose(t, this.disposable, this.sink)
-    this._startNext(t, x, this.sink)
+    this._startNext(t, this.sink)
   }
 
-  _startNext (t, x, sink) {
+  _startNext (t, sink) {
     try {
-      this.disposable = this._continue(this.f, x, sink)
+      this.disposable = this._continue(this.f, sink)
     } catch (e) {
       sink.error(t, e)
     }
   }
 
-  _continue (f, x, sink) {
-    return f(x).run(sink, this.scheduler)
+  _continue (f, sink) {
+    return f().run(sink, this.scheduler)
   }
 
   dispose () {
@@ -61,4 +61,3 @@ class ContinueWithSink extends Pipe {
     return this.disposable.dispose()
   }
 }
-

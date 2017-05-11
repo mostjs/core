@@ -55,7 +55,7 @@ function stepUnfold (unfold, x) {
 
 function continueUnfold (unfold, tuple) {
   if (tuple.done) {
-    unfold.sink.end(unfold.scheduler.now(), tuple.value)
+    unfold.sink.end(unfold.scheduler.now())
     return tuple.value
   }
 

@@ -6,12 +6,11 @@ import { chain, join } from '../../src/combinator/chain'
 import { delay } from '../../src/combinator/delay'
 import { concat } from '../../src/combinator/build'
 import { take } from '../../src/combinator/slice'
-import { drain } from '../../src/combinator/observe'
+import { drain } from '../helper/observe'
 import { just, never } from '../../src/source/core'
-import { fromArray } from '../../src/source/fromArray'
 
 import { assertSame } from '../helper/stream-helper'
-import { collectEventsFor } from '../helper/testEnv'
+import { collectEventsFor, makeEventsFromArray } from '../helper/testEnv'
 import FakeDisposeStream from '../helper/FakeDisposeStream'
 
 const sentinel = { value: 'sentinel' }
@@ -31,7 +30,7 @@ describe('chain', function () {
   })
 
   it('should preserve time order', function () {
-    const s = chain(x => delay(x, just(x)), fromArray([2, 1]))
+    const s = chain(x => delay(x, just(x)), makeEventsFromArray(0, [2, 1]))
     const expected = [ { time: 1, value: 1 }, { time: 2, value: 2 } ]
 
     return collectEventsFor(3, s)
@@ -43,22 +42,19 @@ describe('join', function () {
   it('should merge items from all inner streams', function () {
     const a = [1, 2, 3]
     const b = [4, 5, 6]
-    const streamsToMerge = fromArray([delay(1, fromArray(a)), fromArray(b)])
+    const streamsToMerge = makeEventsFromArray(1, [makeEventsFromArray(2, b), makeEventsFromArray(2, a)])
 
     const s = join(streamsToMerge)
 
-    return collectEventsFor(2, s)
-      .then(events => {
-        const result = events.map(({ value }) => value)
-        // Include all items
-        eq(a.concat(b).sort(), result.sort())
-
-        // Relative order of items in each stream must be preserved
-        assert(result.indexOf(1) < result.indexOf(2))
-        assert(result.indexOf(2) < result.indexOf(3))
-        assert(result.indexOf(4) < result.indexOf(5))
-        assert(result.indexOf(5) < result.indexOf(6))
-      })
+    return collectEventsFor(5, s)
+      .then(eq([
+        { time: 0, value: 4 },
+        { time: 1, value: 1 },
+        { time: 2, value: 5 },
+        { time: 3, value: 2 },
+        { time: 4, value: 6 },
+        { time: 5, value: 3 }
+      ]))
   })
 
   it('should dispose outer stream', function () {
@@ -91,9 +87,10 @@ describe('join', function () {
 
     const inners = values.map((x, i) => new FakeDisposeStream(spies[i], just(x)))
 
-    const s = join(fromArray(inners))
+    const s = join(makeEventsFromArray(1, inners))
 
-    return drain(s).then(() =>
-      spies.forEach(spy => assert(spy.calledOnce)))
+    return collectEventsFor(3, s)
+      .then(() =>
+        spies.forEach(spy => assert(spy.calledOnce)))
   })
 })

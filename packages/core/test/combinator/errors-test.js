@@ -3,7 +3,7 @@ import { fail, is, eq } from '@briancavalier/assert'
 
 import { throwError, recoverWith } from '../../src/combinator/errors'
 import { map } from '../../src/combinator/transform'
-import { observe, drain } from '../../src/combinator/observe'
+import { observe, drain } from '../helper/observe'
 import { just } from '../../src/source/core'
 
 const sentinel = { value: 'sentinel' }

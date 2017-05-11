@@ -37,4 +37,3 @@ export default class SettableDisposable {
     return this.result
   }
 }
-

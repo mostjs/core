@@ -47,7 +47,7 @@ const next = (generate, x) =>
 
 function handle (generate, result) {
   if (result.done) {
-    return generate.sink.end(generate.scheduler.now(), result.value)
+    return generate.sink.end(generate.scheduler.now())
   }
 
   return Promise.resolve(result.value).then(function (x) {
@@ -65,4 +65,3 @@ function emit (generate, x) {
 function error (generate, e) {
   return handle(generate, generate.iterator.throw(e))
 }
-

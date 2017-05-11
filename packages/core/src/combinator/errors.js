@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import SafeSink from '../sink/SafeSink'
-import { tryDispose } from '../disposable/dispose'
+import { tryDispose } from '@most/disposable'
 import { tryEvent, tryEnd } from '../source/tryEvent'
 import { propagateErrorTask } from '../scheduler/PropagateTask'
 
@@ -58,8 +58,8 @@ class RecoverWithSink {
     tryEvent(t, x, this.sink)
   }
 
-  end (t, x) {
-    tryEnd(t, x, this.sink)
+  end (t) {
+    tryEnd(t, this.sink)
   }
 
   error (t, e) {

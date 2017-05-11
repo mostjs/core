@@ -2,7 +2,7 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { once, tryDispose } from '../disposable/dispose'
+import { disposeOnce, tryDispose } from '@most/disposable'
 import LinkedList from '../LinkedList'
 import { id as identity } from '@most/prelude'
 
@@ -32,7 +32,7 @@ class Outer {
     this.scheduler = scheduler
     this.pending = []
     this.current = new LinkedList()
-    this.disposable = once(source.run(this, scheduler))
+    this.disposable = disposeOnce(source.run(this, scheduler))
     this.active = true
   }
 
@@ -62,10 +62,10 @@ class Outer {
     this.current.add(innerSink)
   }
 
-  end (t, x) {
+  end (t) {
     this.active = false
     tryDispose(t, this.disposable, this.sink)
-    this._checkEnd(t, x)
+    this._checkEnd(t)
   }
 
   error (t, e) {
@@ -76,23 +76,24 @@ class Outer {
   dispose () {
     this.active = false
     this.pending.length = 0
-    return Promise.all([this.disposable.dispose(), this.current.dispose()])
+    this.disposable.dispose()
+    this.current.dispose()
   }
 
-  _endInner (t, x, inner) {
+  _endInner (t, inner) {
     this.current.remove(inner)
     tryDispose(t, inner, this)
 
     if (this.pending.length === 0) {
-      this._checkEnd(t, x)
+      this._checkEnd(t)
     } else {
       this._startInner(t, this.pending.shift())
     }
   }
 
-  _checkEnd (t, x) {
+  _checkEnd (t) {
     if (!this.active && this.current.isEmpty()) {
-      this.sink.end(t, x)
+      this.sink.end(t)
     }
   }
 }
@@ -113,8 +114,8 @@ class Inner {
     this.sink.event(Math.max(t, this.time), x)
   }
 
-  end (t, x) {
-    this.outer._endInner(Math.max(t, this.time), x, this)
+  end (t) {
+    this.outer._endInner(Math.max(t, this.time), this)
   }
 
   error (t, e) {
@@ -125,4 +126,3 @@ class Inner {
     return this.disposable.dispose()
   }
 }
-

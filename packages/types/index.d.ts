@@ -9,14 +9,14 @@ export interface Stream<A> {
 
 export interface Sink<A> {
   event(time: Time, value: A): void;
-  end(time: Time, value?: A): void;
+  end(time: Time): void;
   error(time: Time, err: Error): void;
 }
 
 // Interface of a resource that can be disposed
 export interface Disposable {
-  dispose(): void | Promise<any>;
-};
+  dispose(): void;
+}
 
 // Delay time offset
 export type Delay = number;
