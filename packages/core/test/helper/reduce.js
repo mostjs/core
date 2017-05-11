@@ -2,9 +2,9 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Pipe from '../sink/Pipe'
-import { runEffects } from '../runEffects'
-import defaultScheduler from '../scheduler/defaultScheduler'
+import Pipe from '../../src/sink/Pipe'
+import { runEffects } from '../../src/runEffects'
+import defaultScheduler from '../../src/scheduler/defaultScheduler'
 
 /**
 * Reduce a stream to produce a single result.  Note that reducing an infinite

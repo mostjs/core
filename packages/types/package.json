@@ -1,6 +1,6 @@
 {
   "name": "@most/types",
-  "version": "0.3.1",
+  "version": "0.5.0",
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
   "typings": "index.d.ts",
   "main": "index.js",
@@ -31,6 +31,6 @@
   "author": "brian@hovercraftstudios.com",
   "license": "MIT",
   "devDependencies": {
-    "flow-bin": "^0.37.4"
+    "flow-bin": "^0.43.1"
   }
 }

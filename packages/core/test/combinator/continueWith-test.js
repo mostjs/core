@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import { is, fail } from '@briancavalier/assert'
 
 import { continueWith } from '../../src/combinator/continueWith'
-import { drain } from '../../src/combinator/observe'
+import { drain } from '../helper/observe'
 import { just } from '../../src/source/core'
 
 describe('continueWith', () => {

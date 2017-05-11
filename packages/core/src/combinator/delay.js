@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import { all } from '../disposable/dispose'
+import { disposeBoth } from '@most/disposable'
 import { propagateEventTask, propagateEndTask } from '../scheduler/PropagateTask'
 
 /**
@@ -22,7 +22,7 @@ class Delay {
 
   run (sink, scheduler) {
     const delaySink = new DelaySink(this.dt, sink, scheduler)
-    return all([delaySink, this.source.run(delaySink, scheduler)])
+    return disposeBoth(delaySink, this.source.run(delaySink, scheduler))
   }
 }
 
@@ -41,7 +41,7 @@ class DelaySink extends Pipe {
     this.scheduler.delay(this.dt, propagateEventTask(x, this.sink))
   }
 
-  end (t, x) {
-    this.scheduler.delay(this.dt, propagateEndTask(x, this.sink))
+  end (t) {
+    this.scheduler.delay(this.dt, propagateEndTask(this.sink))
   }
 }

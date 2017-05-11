@@ -11,13 +11,13 @@ export type Stream<A> = {
 
 export type Sink<A> = {
   event: (Time, A) => void,
-  end: (Time, any) => void,
+  end: (Time) => void,
   error: (Time, Error) => void,
 }
 
 // Interface of a resource that can be disposed
 export type Disposable = {
-  dispose: () => ?Promise<any>
+  dispose: () => void
 }
 
 // Delay time offset

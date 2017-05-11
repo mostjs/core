@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import { all } from '../disposable/dispose'
+import { disposeAll } from '@most/disposable'
 import { join } from './chain'
 
 export const until = (signal, stream) =>
@@ -26,7 +26,7 @@ class Until {
     const max = new UpperBound(this.maxSignal, sink, scheduler)
     const disposable = this.source.run(new TimeWindowSink(min, max, sink), scheduler)
 
-    return all([min, max, disposable])
+    return disposeAll([min, max, disposable])
   }
 }
 
@@ -41,7 +41,7 @@ class Since {
     const max = new Bound(Infinity, sink)
     const disposable = this.source.run(new TimeWindowSink(min, max, sink), scheduler)
 
-    return all([min, max, disposable])
+    return disposeAll([min, max, disposable])
   }
 }
 
@@ -101,7 +101,7 @@ class UpperBound extends Pipe {
   event (t, x) {
     if (t < this.value) {
       this.value = t
-      this.sink.end(t, x)
+      this.sink.end(t)
     }
   }
 

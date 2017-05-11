@@ -4,27 +4,27 @@
 
 import Sink from './Pipe'
 
-export default function IndexSink (i, sink) {
-  this.sink = sink
-  this.index = i
-  this.active = true
-  this.value = void 0
-}
-
-IndexSink.prototype.event = function (t, x) {
-  if (!this.active) {
-    return
+export default class IndexSink extends Sink {
+  constructor (i, sink) {
+    super(sink)
+    this.index = i
+    this.active = true
+    this.value = undefined
   }
-  this.value = x
-  this.sink.event(t, this)
-}
 
-IndexSink.prototype.end = function (t, x) {
-  if (!this.active) {
-    return
+  event (t, x) {
+    if (!this.active) {
+      return
+    }
+    this.value = x
+    this.sink.event(t, this)
   }
-  this.active = false
-  this.sink.end(t, { index: this.index, value: x })
-}
 
-IndexSink.prototype.error = Sink.prototype.error
+  end (t) {
+    if (!this.active) {
+      return
+    }
+    this.active = false
+    this.sink.event(t, this)
+  }
+}

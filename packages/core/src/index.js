@@ -5,9 +5,9 @@ export { just, empty, never } from './source/core'
 
 export { periodic } from './source/periodic'
 
-export { fromArray } from './source/fromArray'
-
-export { fromIterable } from './source/fromIterable'
+import { zipArrayValues as _zipArrayValues, withArrayValues as _withArrayValues } from './combinator/withArrayValues'
+export const zipArrayValues = curry3(_zipArrayValues)
+export const withArrayValues = curry2(_withArrayValues)
 
 // -----------------------------------------------------------------------
 // Observing
@@ -169,10 +169,10 @@ import {
   propagateTask as _propagateTask,
   propagateEventTask as _propagateEventTask,
   propagateErrorTask as _propagateErrorTask,
-  propagateEndTask as _propagateEndTask
+  propagateEndTask
 } from './scheduler/PropagateTask'
 
 export const propagateTask = curry3(_propagateTask)
 export const propagateEventTask = curry2(_propagateEventTask)
 export const propagateErrorTask = curry2(_propagateErrorTask)
-export const propagateEndTask = curry2(_propagateEndTask)
+export { propagateEndTask }

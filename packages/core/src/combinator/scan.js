@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import { all } from '../disposable/dispose'
+import { disposeBoth } from '@most/disposable'
 import { propagateEventTask } from '../scheduler/PropagateTask'
 
 /**
@@ -27,7 +27,7 @@ class Scan {
   run (sink, scheduler) {
     const d1 = scheduler.asap(propagateEventTask(this.value, sink))
     const d2 = this.source.run(new ScanSink(this.f, this.value, sink), scheduler)
-    return all([d1, d2])
+    return disposeBoth(d1, d2)
   }
 }
 

@@ -1,5 +1,4 @@
 export * from './runEffects';
-export * from './scheduler';
 export * from './PropagateTask';
 
 export * from './combinator/applicative';
@@ -23,11 +22,11 @@ export * from './combinator/switch';
 export * from './combinator/timeslice';
 export * from './combinator/transform';
 export * from './combinator/zip';
+export * from './combinator/withArrayValues';
 
 export * from './source/core';
-export * from './source/fromArray';
-export * from './source/fromIterable';
+export * from './source/newStream';
+export * from './source/periodic';
 export * from './source/generate';
 export * from './source/iterate';
-export * from './source/periodic';
 export * from './source/unfold';

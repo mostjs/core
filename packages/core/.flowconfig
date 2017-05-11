@@ -1,6 +1,8 @@
 [ignore]
 
 [include]
+../../node_modules
+test/
 test/flow/**/*.js
 dist/.*\.flow
 
