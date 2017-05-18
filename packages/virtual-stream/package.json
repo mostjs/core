@@ -1,0 +1,57 @@
+{
+  "name": "@most/virtual-stream",
+  "version": "0.5.0",
+  "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
+  "typings": "type-definitions/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
+  "files": [
+    "type-definitions",
+    "dist"
+  ],
+  "scripts": {
+    "test": "npm run test:lint && npm run test:unit && npm run test:flow",
+    "test:unit": "mocha -r buba/register --reporter dot --recursive 'test/**/*-test.js'",
+    "test:lint": "eslint --fix --ignore-path ../../.eslintignore src test",
+    "test:flow": "flow check",
+    "build": "npm run build:dist && npm run build:min && npm run build:flow",
+    "build:dist": "rollup -c",
+    "build:min": "uglifyjs dist/index.js -m -o dist/index.min.js",
+    "build:flow": "cpy src/index.js.flow dist --rename=index.js.flow && cpy src/index.js.flow dist --rename=index.es.js.flow",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mostjs/core"
+  },
+  "keywords": [
+    "reactive",
+    "reactive programming",
+    "events",
+    "event stream",
+    "promise",
+    "promises",
+    "monad",
+    "monadic",
+    "functional",
+    "async"
+  ],
+  "author": "brian@hovercraftstudios.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@briancavalier/assert": "^3.2.0",
+    "@most/eslint-config-most": "^1.0.3",
+    "babel-eslint": "^7.1.1",
+    "buba": "^4.0.2",
+    "cpy-cli": "^1.0.1",
+    "eslint": "^3.15.0",
+    "flow-bin": "^0.43.1",
+    "mocha": "^3.2.0",
+    "rollup": "^0.41.4",
+    "rollup-plugin-buble": "^0.15.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "sinon": "^1.17.7",
+    "uglify-js": "^2.7.5"
+  }
+}
