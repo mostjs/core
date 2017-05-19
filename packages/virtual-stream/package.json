@@ -53,5 +53,10 @@
     "rollup-plugin-node-resolve": "^2.0.0",
     "sinon": "^1.17.7",
     "uglify-js": "^2.7.5"
+  },
+  "dependencies": {
+    "@most/core": "^0.6.1",
+    "@most/scheduler": "^0.5.0",
+    "@most/disposable": "^0.5.0"
   }
 }
