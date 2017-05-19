@@ -1,5 +1,5 @@
 import { at } from './event'
-import { vstream, never, errored } from './vstream'
+import { finite, never, errored } from './vstream'
 import { runEffects } from '@most/core'
 
 export const fromStream = (stream, scheduler) => {
@@ -23,11 +23,11 @@ class Collect {
   }
 
   end (t) {
-    this.vstream = vstream(this.events, t)
+    this.vstream = finite(this.events, t)
   }
 
   error (t, e) {
-    this.vstream = errored(e, vstream(this.events, t))
+    this.vstream = errored(e, this.events, t)
   }
 }
 

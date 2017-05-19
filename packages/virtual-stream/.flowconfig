@@ -1,7 +1,10 @@
 [ignore]
 
 [include]
-src
+../../node_modules
+dist/.*\.flow
+test/
+src/
 
 [libs]
 

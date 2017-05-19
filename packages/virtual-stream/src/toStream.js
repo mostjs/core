@@ -2,7 +2,8 @@ import { Finite, Errored } from './vstream'
 import { propagateEventTask, propagateEndTask, propagateErrorTask } from '@most/core'
 import { disposeWith } from '@most/disposable'
 
-export const toStream = vstream => new ToStream(vstream)
+export const toStream = vstream =>
+  new ToStream(vstream)
 
 class ToStream {
   constructor (vstream) {
@@ -37,5 +38,5 @@ const finish = (vstream, sink, scheduler, tasks) => {
   return disposeWith(cancelAll, tasks)
 }
 
-const cancelAll = tasks => Promise.all(tasks.map(cancelOne))
+const cancelAll = tasks => tasks.forEach(cancelOne)
 const cancelOne = task => task.dispose()

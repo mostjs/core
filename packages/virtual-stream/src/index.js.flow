@@ -10,26 +10,30 @@ export type VirtualStream<A> = Finite<A> | Infinite<A> | Errored<A>
 declare export class Finite<A> {
   events: Events<A>;
   time: Time;
-  constructor (events: Events<A>, time: Time): void;
+  constructor (events: Events<A>, time: Time): Finite<A>;
 }
 
 declare export class Infinite<A> {
   events: Events<A>;
   time: Time;
-  constructor (events: Events<A>, time: Time): void;
+  constructor (events: Events<A>, time: Time): Infinite<A>;
 }
 
 declare export class Errored<A> {
   events: Events<A>;
   time: Time;
   error: Error;
-  constructor (error: Error, events: Events<A>, time: Time): void;
+  constructor (error: Error, events: Events<A>, time: Time): Errored<A>;
 }
 
 declare export function at <A> (time: Time, value: A): Event<A>
 
 declare export function never <A> (): VirtualStream<A>
 declare export function empty <A> (): VirtualStream<A>
+
+declare export function finite <A> (events: Events<A>, endTime: Time): Finite<A>
+declare export function infinite <A> (events: Events<A>, knownTime: Time): Infinite<A>
+declare export function errored <E: Error, A> (error: E, events: Events<A>, errorTime: Time): Errored<A>
 
 declare export function toStream <A> (vsa: VirtualStream<A>): Stream<A>
 declare export function fromStream <A> (sa: Stream<A>): Promise<VirtualStream<A>>
