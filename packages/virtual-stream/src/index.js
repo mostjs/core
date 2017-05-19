@@ -1,2 +1,5 @@
 export * from './event'
 export * from './vstream'
+export * from './toStream'
+export * from './fromStream'
+export * from './VirtualTimer'

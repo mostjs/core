@@ -2,7 +2,10 @@
 
 /*global setTimeout, clearTimeout*/
 
-export class VirtualTimer {
+export const newVirtualTimer = (start = 0) =>
+  new VirtualTimer(start)
+
+class VirtualTimer {
   constructor (start) {
     this._now = this._targetNow = start
     this._time = Infinity

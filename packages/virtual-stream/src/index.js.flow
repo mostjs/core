@@ -1,1 +1,41 @@
 // @flow
+import type { Time, Stream, Timer, Delay } from '@most/types'
+
+export type Event<A> = { time: Time, value: A }
+
+export type Events<A> = Array<Event<A>>
+
+export type VirtualStream<A> = Finite<A> | Infinite<A> | Errored<A>
+
+declare export class Finite<A> {
+  events: Events<A>;
+  time: Time;
+  constructor (events: Events<A>, time: Time): void;
+}
+
+declare export class Infinite<A> {
+  events: Events<A>;
+  time: Time;
+  constructor (events: Events<A>, time: Time): void;
+}
+
+declare export class Errored<A> {
+  events: Events<A>;
+  time: Time;
+  error: Error;
+  constructor (error: Error, events: Events<A>, time: Time): void;
+}
+
+declare export function at <A> (time: Time, value: A): Event<A>
+
+declare export function never <A> (): VirtualStream<A>
+declare export function empty <A> (): VirtualStream<A>
+
+declare export function toStream <A> (vsa: VirtualStream<A>): Stream<A>
+declare export function fromStream <A> (sa: Stream<A>): Promise<VirtualStream<A>>
+
+export type VirtualTimer = Timer & {
+  tick: (Delay) => void
+}
+
+declare export function newVirtualTimer (start: Time): VirtualTimer

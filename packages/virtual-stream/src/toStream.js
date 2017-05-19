@@ -1,6 +1,6 @@
-import { Finite, Errored, Infinite } from './vstream'
+import { Finite, Errored } from './vstream'
 import { propagateEventTask, propagateEndTask, propagateErrorTask } from '@most/core'
-import { disposeNone, disposeWith } from '@most/disposable'
+import { disposeWith } from '@most/disposable'
 
 export const toStream = vstream => new ToStream(vstream)
 
