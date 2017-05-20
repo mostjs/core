@@ -1,5 +1,5 @@
 import { at } from './event'
-import { finite, never, errored } from './vstream'
+import { finite, errored } from './vstream'
 
 export const fromStream = (stream, scheduler) =>
   new Promise(collect(stream, scheduler))
@@ -17,7 +17,6 @@ class Collect {
   constructor (stream, scheduler, resolve) {
     this.resolve = resolve
     this.events = []
-    this.vstream = never()
     this.disposable = stream.run(this, scheduler)
   }
 
@@ -26,12 +25,14 @@ class Collect {
   }
 
   end (t) {
-    this.vstream = finite(this.events, t)
-    this.resolve(this)
+    this._end(finite(this.events, t))
   }
 
   error (t, e) {
-    this.vstream = errored(e, this.events, t)
-    this.resolve(this)
+    this._end(errored(e, this.events, t))
+  }
+
+  _end (vstream) {
+    this.resolve({ disposable: this.disposable, vstream })
   }
 }
