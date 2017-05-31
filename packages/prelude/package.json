@@ -1,0 +1,42 @@
+{
+  "name": "@most/prelude",
+  "version": "1.5.2",
+  "description": "prelude",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
+  "typings": "type-definitions/index.d.ts",
+  "files": [
+    "dist",
+    "type-definitions"
+  ],
+  "scripts": {
+    "build": "npm run build:dist && npm run build:flow",
+    "build:dist": "rollup -c",
+    "build:flow": "cpy src/index.js.flow dist && cpy src/index.js.flow dist --rename=index.es.js.flow",
+    "prepublish": "npm run build",
+    "test": "npm run test:lint && npm run test:unit && npm run test:flow",
+    "test:lint": "eslint src test",
+    "test:unit": "nyc mocha -r buba/register",
+    "test:flow": "flow check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mostjs/prelude.git"
+  },
+  "author": "Brian Cavalier <brian@hovercraftstudios.com> (github.com/briancavalier)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mostjs/prelude/issues"
+  },
+  "homepage": "https://github.com/mostjs/prelude#readme",
+  "devDependencies": {
+    "buba": "^4.0.2",
+    "cpy-cli": "^1.0.1",
+    "flow-bin": "^0.47.0",
+    "mocha": "^3.4.2",
+    "nyc": "^10.3.2",
+    "rollup": "^0.41.6",
+    "rollup-plugin-buble": "^0.15.0"
+  }
+}
