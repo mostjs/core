@@ -15,7 +15,7 @@ export default class Scheduler {
   }
 
   now () {
-    return Math.floor(this.timer.now())
+    return this.timer.now()
   }
 
   asap (task) {

@@ -1,6 +1,6 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 
-import * as base from '@most/prelude'
+import { findIndex, removeAll } from '@most/prelude'
 
 export default class Timeline {
   constructor () {
@@ -20,10 +20,10 @@ export default class Timeline {
   }
 
   remove (st) {
-    const i = binarySearch(st.time, this.tasks)
+    const i = binarySearch(getTime(st), this.tasks)
 
     if (i >= 0 && i < this.tasks.length) {
-      const at = base.findIndex(st, this.tasks[i].events)
+      const at = findIndex(st, this.tasks[i].events)
       if (at >= 0) {
         this.tasks[i].events.splice(at, 1)
         return true
@@ -76,27 +76,56 @@ function runReadyTasks (runTask, events, tasks) { // eslint-disable-line complex
   return tasks
 }
 
-function insertByTime (task, timeslots) { // eslint-disable-line complexity
+function insertByTime (task, timeslots) {
   const l = timeslots.length
+  const time = getTime(task)
 
   if (l === 0) {
-    timeslots.push(newTimeslot(task.time, [task]))
+    timeslots.push(newTimeslot(time, [task]))
     return
   }
 
-  const i = binarySearch(task.time, timeslots)
+  const i = binarySearch(time, timeslots)
 
   if (i >= l) {
-    timeslots.push(newTimeslot(task.time, [task]))
-  } else if (task.time === timeslots[i].time) {
-    timeslots[i].events.push(task)
+    timeslots.push(newTimeslot(time, [task]))
   } else {
-    timeslots.splice(i, 0, newTimeslot(task.time, [task]))
+    insertAtTimeslot(task, timeslots, time, i)
   }
 }
 
+function insertAtTimeslot (task, timeslots, time, i) {
+  const timeslot = timeslots[i]
+  if (time === timeslot.time) {
+    addEvent(task, timeslot.events, time)
+  } else {
+    timeslots.splice(i, 0, newTimeslot(time, [task]))
+  }
+}
+
+function addEvent (task, events) {
+  if (events.length === 0 || task.time >= events[events.length - 1].time) {
+    events.push(task)
+  } else {
+    spliceEvent(task, events)
+  }
+}
+
+function spliceEvent (task, events) {
+  for (let j = 0; j < events.length; j++) {
+    if (task.time < events[j].time) {
+      events.splice(j, 0, task)
+      break
+    }
+  }
+}
+
+function getTime (scheduledTask) {
+  return Math.floor(scheduledTask.time)
+}
+
 function removeAllFrom (f, timeslot) {
-  timeslot.events = base.removeAll(f, timeslot.events)
+  timeslot.events = removeAll(f, timeslot.events)
 }
 
 function binarySearch (t, sortedArray) { // eslint-disable-line complexity
