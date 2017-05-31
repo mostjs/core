@@ -5,8 +5,12 @@ import { defer } from './task'
 /*global setTimeout, clearTimeout*/
 
 export default class ClockTimer {
-  constructor () {
-    this.now = Date.now
+  constructor (clock) {
+    this._clock = clock
+  }
+
+  now () {
+    return this._clock.now()
   }
 
   setTimer (f, dt) {
