@@ -14,8 +14,8 @@ export function newDefaultScheduler (): Scheduler;
 export function newClockTimer (clock: Clock): Timer;
 export function newTimeline (): Timeline;
 
-declare function newPlatformClock (): Clock;
-declare function millisecondClockFromNow (now: Now): Clock;
-declare function newPerformanceNowClock (): Clock;
-declare function newDateNowClock (): Clock;
-declare function newHRTimeClock (): Clock;
+export function newPlatformClock (): Clock;
+export function millisecondClockFromNow (now: Now): Clock;
+export function newPerformanceNowClock (): Clock;
+export function newDateNowClock (): Clock;
+export function newHRTimeClock (): Clock;
