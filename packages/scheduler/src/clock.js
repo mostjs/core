@@ -2,7 +2,7 @@
 
 /*global performance, process*/
 
-class MillisecondClock {
+export class MillisecondClock {
   constructor (now, origin) {
     this.origin = origin
     this._now = now
@@ -13,7 +13,7 @@ class MillisecondClock {
   }
 }
 
-class HRTimeClock {
+export class HRTimeClock {
   constructor (hrtime, origin) {
     this.origin = origin
     this._hrtime = hrtime

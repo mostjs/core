@@ -3,8 +3,8 @@ import type { Scheduler, Timeline, Timer, Time } from '@most/types'
 
 export type Now = () => Time
 
-export interface Clock {
-  now (): Time
+export type Clock = {
+  now: Now
 }
 
 declare export function newScheduler (timer: Timer, timeline: Timeline): Scheduler
