@@ -3,6 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
+import RelativeSink from '../sink/RelativeSink'
 import { disposeOnce, tryDispose } from '@most/disposable'
 
 export const continueWith = (f, stream) =>
@@ -41,19 +42,20 @@ class ContinueWithSink extends Pipe {
     }
 
     tryDispose(t, this.disposable, this.sink)
+
     this._startNext(t, this.sink)
   }
 
   _startNext (t, sink) {
     try {
-      this.disposable = this._continue(this.f, sink)
+      this.disposable = this._continue(this.f, t, sink)
     } catch (e) {
       sink.error(t, e)
     }
   }
 
-  _continue (f, sink) {
-    return f().run(sink, this.scheduler)
+  _continue (f, t, sink) {
+    return f().run(new RelativeSink(t, sink), this.scheduler.relative(t))
   }
 
   dispose () {

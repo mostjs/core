@@ -58,7 +58,7 @@ class Outer {
 
   _initInner (t, x) {
     const innerSink = new Inner(t, this, this.sink)
-    innerSink.disposable = mapAndRun(this.f, x, innerSink, this.scheduler)
+    innerSink.disposable = mapAndRun(this.f, t, x, innerSink, this.scheduler)
     this.current.add(innerSink)
   }
 
@@ -98,8 +98,8 @@ class Outer {
   }
 }
 
-const mapAndRun = (f, x, sink, scheduler) =>
-  f(x).run(sink, scheduler)
+const mapAndRun = (f, t, x, sink, scheduler) =>
+  f(x).run(sink, scheduler.relative(t))
 
 class Inner {
   constructor (time, outer, sink) {
@@ -111,15 +111,15 @@ class Inner {
   }
 
   event (t, x) {
-    this.sink.event(Math.max(t, this.time), x)
+    this.sink.event(t + this.time, x)
   }
 
   end (t) {
-    this.outer._endInner(Math.max(t, this.time), this)
+    this.outer._endInner(t + this.time, this)
   }
 
   error (t, e) {
-    this.outer.error(Math.max(t, this.time), e)
+    this.outer.error(t + this.time, e)
   }
 
   dispose () {

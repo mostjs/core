@@ -32,9 +32,9 @@ class SwitchSink {
   }
 
   event (t, stream) {
-    this._disposeCurrent(t) // TODO: capture the result of this dispose
+    this._disposeCurrent(t)
     this.current = new Segment(t, Infinity, this, this.sink)
-    this.current.disposable = stream.run(this.current, this.scheduler)
+    this.current.disposable = stream.run(this.current, this.scheduler.relative(t))
   }
 
   end (t) {
@@ -91,21 +91,21 @@ class Segment {
   }
 
   event (t, x) {
-    if (t < this.max) {
-      this.sink.event(Math.max(t, this.min), x)
+    const time = Math.max(0, t + this.min)
+    if (time < this.max) {
+      this.sink.event(time, x)
     }
   }
 
   end (t) {
-    this.outer._endInner(Math.max(t, this.min), this)
+    this.outer._endInner(t + this.min, this)
   }
 
   error (t, e) {
-    this.outer._errorInner(Math.max(t, this.min), e, this)
+    this.outer._errorInner(t + this.min, e, this)
   }
 
   _dispose (t) {
-    this.max = t
-    tryDispose(t, this.disposable, this.sink)
+    tryDispose(t + this.min, this.disposable, this.sink)
   }
 }
