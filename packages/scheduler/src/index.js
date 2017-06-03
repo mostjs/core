@@ -5,12 +5,15 @@ import { curry2 } from '@most/prelude'
 import Scheduler from './Scheduler'
 import Timeline from './Timeline'
 import ClockTimer from './ClockTimer'
+import { newPlatformClock } from './clock'
 
-const _newScheduler = (timer, timeline) => new Scheduler(timer, timeline)
+export * from './clock'
+
+export const newScheduler = curry2((timer, timeline) => new Scheduler(timer, timeline))
+
+export const newDefaultScheduler = () => new Scheduler(newDefaultTimer(), new Timeline())
+
+export const newDefaultTimer = () => new ClockTimer(newPlatformClock())
+export const newClockTimer = clock => new ClockTimer(clock)
 
 export const newTimeline = () => new Timeline()
-export const newClockTimer = () => new ClockTimer()
-
-export const newScheduler = curry2(_newScheduler)
-
-export const newDefaultScheduler = () => _newScheduler(newClockTimer(), newTimeline())
