@@ -3,6 +3,7 @@
 /** @author John Hann */
 
 import SafeSink from '../sink/SafeSink'
+import RelativeSink from '../sink/RelativeSink'
 import { tryDispose } from '@most/disposable'
 import { tryEvent, tryEnd } from '../source/tryEvent'
 import { propagateErrorTask } from '../scheduler/PropagateTask'
@@ -66,20 +67,21 @@ class RecoverWithSink {
     const nextSink = this.sink.disable()
 
     tryDispose(t, this.disposable, this.sink)
+
     this._startNext(t, e, nextSink)
   }
 
   _startNext (t, x, sink) {
     try {
-      this.disposable = this._continue(this.f, x, sink)
+      this.disposable = this._continue(this.f, t, x, sink)
     } catch (e) {
       sink.error(t, e)
     }
   }
 
-  _continue (f, x, sink) {
+  _continue (f, t, x, sink) {
     const stream = f(x)
-    return stream.run(sink, this.scheduler)
+    return stream.run(new RelativeSink(t, sink), this.scheduler.relative(t))
   }
 
   dispose () {
