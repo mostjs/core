@@ -1,6 +1,7 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 
 import ScheduledTask from './ScheduledTask'
+import RelativeScheduler from './RelativeScheduler'
 import { runTask } from './task'
 
 export default class Scheduler {
@@ -19,24 +20,28 @@ export default class Scheduler {
   }
 
   asap (task) {
-    return this.schedule(0, -1, task)
+    return this.schedule(0, 0, -1, task)
   }
 
   delay (delay, task) {
-    return this.schedule(delay, -1, task)
+    return this.schedule(0, delay, -1, task)
   }
 
   periodic (period, task) {
-    return this.schedule(0, period, task)
+    return this.schedule(0, 0, period, task)
   }
 
-  schedule (delay, period, task) {
-    const now = this.now()
-    const st = new ScheduledTask(now + Math.max(0, delay), period, task, this)
+  schedule (localOffset, delay, period, task) {
+    const time = this.now() + Math.max(0, delay)
+    const st = new ScheduledTask(time, localOffset, period, task, this)
 
     this.timeline.add(st)
-    this._scheduleNextRun(now)
+    this._scheduleNextRun()
     return st
+  }
+
+  relative (offset) {
+    return new RelativeScheduler(offset, this)
   }
 
   cancel (task) {
@@ -64,7 +69,7 @@ export default class Scheduler {
     this._timer = null
   }
 
-  _scheduleNextRun (now) { // eslint-disable-line complexity
+  _scheduleNextRun () { // eslint-disable-line complexity
     if (this.timeline.isEmpty()) {
       return
     }
@@ -72,22 +77,22 @@ export default class Scheduler {
     const nextArrival = this.timeline.nextArrival()
 
     if (this._timer === null) {
-      this._scheduleNextArrival(nextArrival, now)
+      this._scheduleNextArrival(nextArrival)
     } else if (nextArrival < this._nextArrival) {
       this._unschedule()
-      this._scheduleNextArrival(nextArrival, now)
+      this._scheduleNextArrival(nextArrival)
     }
   }
 
-  _scheduleNextArrival (nextArrival, now) {
+  _scheduleNextArrival (nextArrival) {
     this._nextArrival = nextArrival
-    const delay = Math.max(0, nextArrival - now)
+    const delay = Math.max(0, nextArrival - this.now())
     this._timer = this.timer.setTimer(this._runReadyTasksBound, delay)
   }
 
-  _runReadyTasks (now) {
+  _runReadyTasks () {
     this._timer = null
-    this.timeline.runTasks(now, runTask)
-    this._scheduleNextRun(this.now())
+    this.timeline.runTasks(this.now(), runTask)
+    this._scheduleNextRun()
   }
 }
