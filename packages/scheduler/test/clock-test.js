@@ -2,20 +2,31 @@
 import { describe, it } from 'mocha'
 import { eq } from '@briancavalier/assert'
 
-import { millisecondClockFromNow, MillisecondClock, HRTimeClock } from '../src/clock'
+import { relativeClock, RelativeClock, HRTimeClock } from '../src/clock'
 
 describe('clock', () => {
-  describe('MillisecondClock', () => {
-    it('should be relative to origin', () => {
+  describe('RelativeClock', () => {
+    it('should be relative to origin clock', () => {
       const origin = Math.random()
       const time = Math.random()
-      const now = () => time
+      const baseClock = { now: () => time }
 
       const expected = time - origin
 
-      const c = new MillisecondClock(now, origin)
+      const c = new RelativeClock(baseClock, origin)
 
       eq(expected, c.now())
+    })
+  })
+
+  describe('relativeClock', () => {
+    it('should be relative to origin clock', () => {
+      let time = 0
+      const baseClock = { now: () => time++ }
+
+      const c = relativeClock(baseClock)
+
+      eq(1, c.now())
     })
   })
 
@@ -30,14 +41,5 @@ describe('clock', () => {
       const c = new HRTimeClock(hrtime, origin)
       eq(2037, c.now())
     })
-  })
-
-  describe('millisecondClockFromNow', () => {
-    let time = 0
-    const now = () => time++
-
-    const c = millisecondClockFromNow(now)
-
-    eq(1, c.now())
   })
 })

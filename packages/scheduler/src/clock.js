@@ -2,37 +2,37 @@
 
 /*global performance, process*/
 
-export class MillisecondClock {
-  constructor (now, origin) {
+export class RelativeClock {
+  constructor (clock, origin) {
     this.origin = origin
-    this._now = now
+    this.clock = clock
   }
 
   now () {
-    return this._now() - this.origin
+    return this.clock.now() - this.origin
   }
 }
 
 export class HRTimeClock {
   constructor (hrtime, origin) {
     this.origin = origin
-    this._hrtime = hrtime
+    this.hrtime = hrtime
   }
 
   now () {
-    const hrt = this._hrtime(this.origin)
+    const hrt = this.hrtime(this.origin)
     return (hrt[0] * 1e9 + hrt[1]) / 1e6
   }
 }
 
-export const millisecondClockFromNow = now =>
-  new MillisecondClock(now, now())
+export const relativeClock = clock =>
+  new RelativeClock(clock, clock.now())
 
 export const newPerformanceNowClock = () =>
-  millisecondClockFromNow(performance.now)
+  relativeClock(performance)
 
 export const newDateNowClock = () =>
-  millisecondClockFromNow(Date.now)
+  relativeClock(Date)
 
 export const newHRTimeClock = () =>
   new HRTimeClock(process.hrtime, process.hrtime())
