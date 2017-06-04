@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import RelativeSink from '../sink/RelativeSink'
+import { runWithLocalTime } from '../scheduler/runWithLocalTime'
 import { disposeOnce, tryDispose } from '@most/disposable'
 
 export const continueWith = (f, stream) =>
@@ -55,7 +55,7 @@ class ContinueWithSink extends Pipe {
   }
 
   _continue (f, t, sink) {
-    return f().run(new RelativeSink(t, sink), this.scheduler.relative(t))
+    return runWithLocalTime(t, f(), sink, this.scheduler)
   }
 
   dispose () {

@@ -3,10 +3,10 @@
 /** @author John Hann */
 
 import SafeSink from '../sink/SafeSink'
-import RelativeSink from '../sink/RelativeSink'
 import { tryDispose } from '@most/disposable'
 import { tryEvent, tryEnd } from '../source/tryEvent'
 import { propagateErrorTask } from '../scheduler/PropagateTask'
+import { runWithLocalTime } from '../scheduler/runWithLocalTime'
 
 /**
  * If stream encounters an error, recover and continue with items from stream
@@ -80,8 +80,7 @@ class RecoverWithSink {
   }
 
   _continue (f, t, x, sink) {
-    const stream = f(x)
-    return stream.run(new RelativeSink(t, sink), this.scheduler.relative(t))
+    return runWithLocalTime(t, f(x), sink, this.scheduler)
   }
 
   dispose () {
