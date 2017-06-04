@@ -78,14 +78,16 @@ export const mergeMapConcurrently = curry3(_mergeMapConcurrently)
 // -----------------------------------------------------------------------
 // Merging
 
-export { merge, mergeArray } from './combinator/merge'
+export { merge as _merge, mergeArray } from './combinator/merge'
+
+export const merge = curry2(_merge) 
 
 // -----------------------------------------------------------------------
 // Combining
 
-import { combine, combineArray as _combineArray } from './combinator/combine'
+import { combine as _combine, combineArray as _combineArray } from './combinator/combine'
 
-export { combine }
+export const combine = curry3(_combine) 
 export const combineArray = curry2(_combineArray)
 
 // -----------------------------------------------------------------------
@@ -98,9 +100,9 @@ export const sample = curry3(_sample)
 // -----------------------------------------------------------------------
 // Zipping
 
-import { zip, zipArray as _zipArray } from './combinator/zip'
+import { zip as _zip, zipArray as _zipArray } from './combinator/zip'
 
-export { zip }
+export const zip = curry3(_zip) 
 export const zipArray = curry2(_zipArray)
 
 // -----------------------------------------------------------------------
