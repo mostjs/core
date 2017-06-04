@@ -9,12 +9,11 @@ import { disposeAll, tryDispose } from '@most/disposable'
 import { copy, reduce } from '@most/prelude'
 
 /**
- * @returns {Stream} stream containing events from all streams in the argument
- * list in time order.  If two events are simultaneous they will be merged in
- * arbitrary order.
+ * @returns {Stream} stream containing events from two streams in time order.
+ * If two events are simultaneous they will be merged in arbitrary order.
  */
-export function merge (/* ...streams*/) {
-  return mergeArray(copy(arguments))
+export function merge (stream1, stream2) {
+  return mergeArray([stream1, stream2])
 }
 
 /**

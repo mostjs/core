@@ -12,15 +12,15 @@ import invoke from '../invoke'
 import Queue from '../Queue'
 
 /**
- * Combine streams pairwise (or tuple-wise) by index by applying f to values
- * at corresponding indices.  The returned stream ends when any of the input
- * streams ends.
+ * Combine two streams pairwise (or tuple-wise) by index by applying f to
+ * values at corresponding indices.  The returned stream ends when any of
+ * the input streams ends.
  * @param {function} f function to combine values
  * @returns {Stream} new stream with items at corresponding indices combined
  *  using f
  */
-export function zip (f /*, ...streams */) {
-  return zipArray(f, tail(arguments))
+export function zip (f, stream1, stream2) {
+  return zipArray(f, [stream1, stream2])
 }
 
 /**
