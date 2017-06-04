@@ -28,4 +28,12 @@ export default class RelativeScheduler {
   relative (offset) {
     return new RelativeScheduler(offset + this.offset, this.scheduler)
   }
+
+  cancel (task) {
+    return this.scheduler.cancel(task)
+  }
+
+  cancelAll (f) {
+    return this.scheduler.cancelAll(f)
+  }
 }

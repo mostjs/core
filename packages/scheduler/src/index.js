@@ -5,7 +5,6 @@ import { curry2 } from '@most/prelude'
 import Scheduler from './Scheduler'
 import Timeline from './Timeline'
 import ClockTimer from './ClockTimer'
-import RelativeScheduler from './RelativeScheduler'
 import { newPlatformClock } from './clock'
 
 export * from './clock'
