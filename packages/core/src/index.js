@@ -78,9 +78,10 @@ export const mergeMapConcurrently = curry3(_mergeMapConcurrently)
 // -----------------------------------------------------------------------
 // Merging
 
-export { merge as _merge, mergeArray } from './combinator/merge'
+import { merge as _merge, mergeArray } from './combinator/merge'
 
 export const merge = curry2(_merge)
+export { mergeArray }
 
 // -----------------------------------------------------------------------
 // Combining
