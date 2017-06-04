@@ -7,7 +7,6 @@ import { empty } from '../source/core'
 import Pipe from '../sink/Pipe'
 import IndexSink from '../sink/IndexSink'
 import { disposeAll, tryDispose } from '@most/disposable'
-import { tail } from '@most/prelude'
 import invoke from '../invoke'
 
 /**

@@ -7,7 +7,7 @@ import { empty } from '../source/core'
 import Pipe from '../sink/Pipe'
 import IndexSink from '../sink/IndexSink'
 import { disposeAll } from '@most/disposable'
-import { map as mapArray, tail } from '@most/prelude'
+import { map as mapArray } from '@most/prelude'
 import invoke from '../invoke'
 import Queue from '../Queue'
 

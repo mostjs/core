@@ -6,7 +6,7 @@ import Pipe from '../sink/Pipe'
 import IndexSink from '../sink/IndexSink'
 import { empty } from '../source/core'
 import { disposeAll, tryDispose } from '@most/disposable'
-import { copy, reduce } from '@most/prelude'
+import { reduce } from '@most/prelude'
 
 /**
  * @returns {Stream} stream containing events from two streams in time order.
