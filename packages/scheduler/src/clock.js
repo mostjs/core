@@ -29,7 +29,7 @@ export const millisecondClockFromNow = now =>
   new MillisecondClock(now, now())
 
 export const newPerformanceNowClock = () =>
-  millisecondClockFromNow(performance.now)
+  millisecondClockFromNow(performance.now.bind(performance))
 
 export const newDateNowClock = () =>
   millisecondClockFromNow(Date.now)
