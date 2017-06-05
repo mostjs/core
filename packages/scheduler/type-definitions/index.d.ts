@@ -1,9 +1,7 @@
 import { Scheduler, Timeline, Timer, Time } from '@most/types';
 
-export type Now = () => Time;
-
 export type Clock = {
-  now: Now
+  now: () => Time
 };
 
 export function newScheduler (timer: Timer, timeline: Timeline): Scheduler;
@@ -15,7 +13,7 @@ export function newClockTimer (clock: Clock): Timer;
 export function newTimeline (): Timeline;
 
 export function newPlatformClock (): Clock;
-export function millisecondClockFromNow (now: Now): Clock;
-export function newPerformanceNowClock (): Clock;
-export function newDateNowClock (): Clock;
+export function newPerformanceClock (): Clock;
+export function newDateClock (): Clock;
 export function newHRTimeClock (): Clock;
+export function clockRelativeTo (clock: Clock): Clock;
