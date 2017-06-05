@@ -1,6 +1,6 @@
 {
   "name": "@most/core",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
   "typings": "type-definitions/most.d.ts",
   "main": "dist/mostCore.js",
@@ -57,7 +57,7 @@
   "dependencies": {
     "@most/disposable": "^0.5.0",
     "@most/prelude": "^1.5.2",
-    "@most/scheduler": "^0.7.0",
+    "@most/scheduler": "^0.7.1",
     "@most/types": "^0.5.0"
   }
 }
