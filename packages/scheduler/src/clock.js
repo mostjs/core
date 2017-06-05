@@ -28,10 +28,10 @@ export class HRTimeClock {
 export const relativeClock = clock =>
   new RelativeClock(clock, clock.now())
 
-export const newPerformanceNowClock = () =>
+export const newPerformanceClock = () =>
   relativeClock(performance)
 
-export const newDateNowClock = () =>
+export const newDateClock = () =>
   relativeClock(Date)
 
 export const newHRTimeClock = () =>
@@ -39,10 +39,10 @@ export const newHRTimeClock = () =>
 
 export const newPlatformClock = () => {
   if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
-    return newPerformanceNowClock()
+    return newPerformanceClock()
   } else if (typeof process !== 'undefined' && typeof process.hrtime === 'function') {
     return newHRTimeClock()
   }
 
-  return newDateNowClock()
+  return newDateClock()
 }
