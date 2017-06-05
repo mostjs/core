@@ -17,4 +17,4 @@ declare export function newPlatformClock (): Clock
 declare export function newPerformanceClock (): Clock
 declare export function newDateClock (): Clock
 declare export function newHRTimeClock (): Clock
-declare export function relativeClock (clock: Clock): Clock
+declare export function clockRelativeTo (clock: Clock): Clock

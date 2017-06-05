@@ -25,14 +25,14 @@ export class HRTimeClock {
   }
 }
 
-export const relativeClock = clock =>
+export const clockRelativeTo = clock =>
   new RelativeClock(clock, clock.now())
 
 export const newPerformanceClock = () =>
-  relativeClock(performance)
+  clockRelativeTo(performance)
 
 export const newDateClock = () =>
-  relativeClock(Date)
+  clockRelativeTo(Date)
 
 export const newHRTimeClock = () =>
   new HRTimeClock(process.hrtime, process.hrtime())

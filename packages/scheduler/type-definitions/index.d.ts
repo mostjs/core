@@ -16,4 +16,4 @@ export function newPlatformClock (): Clock;
 export function newPerformanceClock (): Clock;
 export function newDateClock (): Clock;
 export function newHRTimeClock (): Clock;
-export function relativeClock (clock: Clock): Clock;
+export function clockRelativeTo (clock: Clock): Clock;
