@@ -86,7 +86,7 @@ class Segment {
     this.max = max
     this.outer = outer
     this.sink = sink
-    this.disposable = source.run(sink, scheduler)
+    this.disposable = source.run(this, scheduler)
   }
 
   event (t, x) {
