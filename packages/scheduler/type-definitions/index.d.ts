@@ -30,7 +30,7 @@ export function delay (delay: Delay): (task: Task, scheduler: Scheduler) => Sche
 export function delay (delay: Delay, task: Task): (scheduler: Scheduler) => ScheduledTask;
 export function delay (delay: Delay): (task: Task) => (scheduler: Scheduler) => ScheduledTask;
 
-export function period (period: Period, task: Task, scheduler: Scheduler): ScheduledTask;
-export function period (period: Period): (task: Task, scheduler: Scheduler) => ScheduledTask;
-export function period (period: Period, task: Task): (scheduler: Scheduler) => ScheduledTask;
-export function period (period: Period): (task: Task) => (scheduler: Scheduler) => ScheduledTask;
+export function periodic (period: Period, task: Task, scheduler: Scheduler): ScheduledTask;
+export function periodic (period: Period): (task: Task, scheduler: Scheduler) => ScheduledTask;
+export function periodic (period: Period, task: Task): (scheduler: Scheduler) => ScheduledTask;
+export function periodic (period: Period): (task: Task) => (scheduler: Scheduler) => ScheduledTask;
