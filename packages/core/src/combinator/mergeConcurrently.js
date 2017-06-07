@@ -5,6 +5,7 @@
 import { disposeOnce, tryDispose } from '@most/disposable'
 import LinkedList from '../LinkedList'
 import { id as identity } from '@most/prelude'
+import { schedulerRelativeTo } from '@most/scheduler'
 
 export const mergeConcurrently = (concurrency, stream) =>
   mergeMapConcurrently(identity, concurrency, stream)
@@ -99,7 +100,7 @@ class Outer {
 }
 
 const mapAndRun = (f, t, x, sink, scheduler) =>
-  f(x).run(sink, scheduler.relative(t))
+  f(x).run(sink, schedulerRelativeTo(t, scheduler))
 
 class Inner {
   constructor (time, outer, sink) {
