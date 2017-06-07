@@ -36,7 +36,8 @@ First, the HTML fragment for the inputs and a place to display the live result:
 Using `@most/core` to make it reactive:
 
 ```es6
-import { combine, runEffects, createDefaultScheduler } from '@most/core'
+import { map, tap, combine, runEffects } from '@most/core'
+import { newDefaultScheduler } from '@most/scheduler'
 import { input } from '@most/dom-event'
 
 const xInput = document.querySelector('input.x')
@@ -68,5 +69,5 @@ const result = combine(add, x, y)
 const update = tap(renderResult, result)
 
 // Observe the result, causing the DOM to be updated
-runEffects(update, createDefaultScheduler())
+runEffects(update, newDefaultScheduler())
 ```
