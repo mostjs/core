@@ -1,0 +1,15 @@
+import { curry2, curry3 } from '@most/prelude'
+
+// Schedule a task to run as soon as possible, but
+// not in the current call stack
+export const asap = curry2((task, scheduler) =>
+  delay(0, task, scheduler))
+
+// Schedule a task to run after a millisecond delay
+export const delay = curry3((delay, task, scheduler) =>
+  scheduler.schedule(0, delay, -1, task))
+
+// Schedule a task to run periodically, with the
+// first run starting asap
+export const periodic = curry3((period, task, scheduler) =>
+  scheduler.schedule(0, 0, period, task))
