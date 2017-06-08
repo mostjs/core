@@ -2,7 +2,7 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { disposeBoth, disposeNone, tryDispose } from '@most/disposable'
+import { disposeBoth, tryDispose } from '@most/disposable'
 
 /**
  * Given a stream of streams, return a new stream that adopts the behavior
@@ -33,8 +33,7 @@ class SwitchSink {
 
   event (t, stream) {
     this._disposeCurrent(t) // TODO: capture the result of this dispose
-    this.current = new Segment(t, Infinity, this, this.sink)
-    this.current.disposable = stream.run(this.current, this.scheduler)
+    this.current = new Segment(stream, t, Infinity, this, this.sink, this.scheduler)
   }
 
   end (t) {
@@ -82,12 +81,12 @@ class SwitchSink {
 }
 
 class Segment {
-  constructor (min, max, outer, sink) {
+  constructor (source, min, max, outer, sink, scheduler) {
     this.min = min
     this.max = max
     this.outer = outer
     this.sink = sink
-    this.disposable = disposeNone()
+    this.disposable = source.run(this, scheduler)
   }
 
   event (t, x) {
