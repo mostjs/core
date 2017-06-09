@@ -12,9 +12,8 @@ import invoke from '../invoke'
 import Queue from '../Queue'
 
 /**
- * Combine two streams pairwise (or tuple-wise) by index by applying f to
- * values at corresponding indices.  The returned stream ends when any of
- * the input streams ends.
+ * Combine two streams pairwise by index by applying f to values at corresponding
+ * indices.  The returned stream ends when either of the input streams ends.
  * @param {function} f function to combine values
  * @returns {Stream} new stream with items at corresponding indices combined
  *  using f
