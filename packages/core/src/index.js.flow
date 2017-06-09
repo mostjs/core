@@ -74,7 +74,8 @@ declare export function continueWith <A> (f: (any) => A): (s: Stream<A>) => Stre
 
 declare export function switchLatest <A> (s: Stream<Stream<A>>): Stream<A>
 
-declare export function merge <A> (...ss: Array<Stream<A>>): Stream<A>
+declare export function merge <A> (s1: Stream<A>, s2: Stream<A>): Stream<A>
+declare export function merge <A> (s1: Stream<A>): (s2: Stream<A>) => Stream<A>
 declare export function mergeArray <A> (ss: Array<Stream<A>>): Stream<A>
 
 declare export function sample <A, B, C> (f: (A, B) => C, sampler: Stream<A>, sampled: Stream<B>): Stream<C>
@@ -83,10 +84,9 @@ declare export function sample <A, B, C> (f: (A, B) => C, sampler: Stream<A>): (
 declare export function sample <A, B, C> (f: (A, B) => C): (sampler: Stream<A>) => (sampled: Stream<B>) => Stream<C>
 
 declare export function combine <A, B, Z> (f: (A, B) => Z, sa: Stream<A>, sb: Stream<B>): Stream<Z>
-declare export function combine <A, B, C, Z> (f: (A, B, C) => Z, sa: Stream<A>, sb: Stream<B>, sc: Stream<C>): Stream<Z>
-declare export function combine <A, B, C, D, Z> (f: (A, B, C, D) => Z, sa: Stream<A>, sb: Stream<B>, sc: Stream<C>, sd: Stream<D>): Stream<Z>
-declare export function combine <A, B, C, D, E, Z> (f: (A, B, C, D, E) => Z, sa: Stream<A>, sb: Stream<B>, sc: Stream<C>, sd: Stream<D>, se: Stream<E>): Stream<Z>
-declare export function combine <A, B, C, D, E, F, Z> (f: (A, B, C, D, E, F) => Z, sa: Stream<A>, sb: Stream<B>, sc: Stream<C>, sd: Stream<D>, se: Stream<E>, sf: Stream<F>): Stream<Z>
+declare export function combine <A, B, Z> (f: (A, B) => Z): (sa: Stream<A>, sb: Stream<B>) => Stream<Z>
+declare export function combine <A, B, Z> (f: (A, B) => Z, sa: Stream<A>): (sb: Stream<B>) => Stream<Z>
+declare export function combine <A, B, Z> (f: (A, B) => Z): (sa: Stream<A>) => (sb: Stream<B>) => Stream<Z>
 
 declare export function combineArray <A, B, Z> (f: (A, B) => Z, ss: [Stream<A>, Stream<B>]): Stream<Z>
 declare export function combineArray <A, B, Z> (f: (A, B) => Z): (ss: [Stream<A>, Stream<B>]) => Stream<Z>
@@ -103,10 +103,9 @@ declare export function combineArray <Z> (f: (...rest: Array<any>) => Z, ss: Arr
 declare export function combineArray <Z> (f: (...rest: Array<any>) => Z): (ss: Array<Stream<any>>) => Stream<Z>
 
 declare export function zip <A, B, Z> (f: (A, B) => Z, sa: Stream<A>, sb: Stream<B>): Stream<Z>
-declare export function zip <A, B, C, Z> (f: (A, B, C) => Z, sa: Stream<A>, sb: Stream<B>, sc: Stream<C>): Stream<Z>
-declare export function zip <A, B, C, D, Z> (f: (A, B, C, D) => Z, sa: Stream<A>, sb: Stream<B>, sc: Stream<C>, sd: Stream<D>): Stream<Z>
-declare export function zip <A, B, C, D, E, Z> (f: (A, B, C, D, E) => Z, sa: Stream<A>, sb: Stream<B>, sc: Stream<C>, sd: Stream<D>, se: Stream<E>): Stream<Z>
-declare export function zip <A, B, C, D, E, F, Z> (f: (A, B, C, D, E, F) => Z, sa: Stream<A>, sb: Stream<B>, sc: Stream<C>, sd: Stream<D>, se: Stream<E>, sf: Stream<F>): Stream<Z>
+declare export function zip <A, B, Z> (f: (A, B) => Z): (sa: Stream<A>, sb: Stream<B>) => Stream<Z>
+declare export function zip <A, B, Z> (f: (A, B) => Z, sa: Stream<A>): (sb: Stream<B>) => Stream<Z>
+declare export function zip <A, B, Z> (f: (A, B) => Z): (sa: Stream<A>) => (sb: Stream<B>) => Stream<Z>
 
 declare export function zipArray <A, B, Z> (f: (A, B) => Z, ss: [Stream<A>, Stream<B>]): Stream<Z>
 declare export function zipArray <A, B, Z> (f: (A, B) => Z): (ss: [Stream<A>, Stream<B>]) => Stream<Z>

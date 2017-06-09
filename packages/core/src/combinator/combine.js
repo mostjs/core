@@ -7,17 +7,16 @@ import { empty } from '../source/core'
 import Pipe from '../sink/Pipe'
 import IndexSink from '../sink/IndexSink'
 import { disposeAll, tryDispose } from '@most/disposable'
-import { tail } from '@most/prelude'
 import invoke from '../invoke'
 
 /**
- * Combine latest events from all input streams
+ * Combine latest events from two streams
  * @param {function(...events):*} f function to combine most recent events
  * @returns {Stream} stream containing the result of applying f to the most recent
  *  event of each input stream, whenever a new event arrives on any stream.
  */
-export function combine (f /*, ...streams */) {
-  return combineArray(f, tail(arguments))
+export function combine (f, stream1, stream2) {
+  return combineArray(f, [stream1, stream2])
 }
 
 /**
