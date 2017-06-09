@@ -103,6 +103,9 @@ declare export function combineArray <Z> (f: (...rest: Array<any>) => Z, ss: Arr
 declare export function combineArray <Z> (f: (...rest: Array<any>) => Z): (ss: Array<Stream<any>>) => Stream<Z>
 
 declare export function zip <A, B, Z> (f: (A, B) => Z, sa: Stream<A>, sb: Stream<B>): Stream<Z>
+declare export function zip <A, B, Z> (f: (A, B) => Z): (sa: Stream<A>, sb: Stream<B>) => Stream<Z>
+declare export function zip <A, B, Z> (f: (A, B) => Z, sa: Stream<A>): (sb: Stream<B>) => Stream<Z>
+declare export function zip <A, B, Z> (f: (A, B) => Z): (sa: Stream<A>) => (sb: Stream<B>) => Stream<Z>
 
 declare export function zipArray <A, B, Z> (f: (A, B) => Z, ss: [Stream<A>, Stream<B>]): Stream<Z>
 declare export function zipArray <A, B, Z> (f: (A, B) => Z): (ss: [Stream<A>, Stream<B>]) => Stream<Z>
