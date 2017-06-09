@@ -1,6 +1,8 @@
+import AbstractScheduler from './AbstractScheduler'
 
-export default class RelativeScheduler {
+export default class RelativeScheduler extends AbstractScheduler {
   constructor (offset, scheduler) {
+    super()
     this.offset = offset
     this.scheduler = scheduler
   }
@@ -9,19 +11,7 @@ export default class RelativeScheduler {
     return this.scheduler.now() - this.offset
   }
 
-  asap (task) {
-    return this.schedule(0, 0, -1, task)
-  }
-
-  delay (delay, task) {
-    return this.schedule(0, delay, -1, task)
-  }
-
-  periodic (period, task) {
-    return this.schedule(0, 0, period, task)
-  }
-
-  schedule (localOffset, delay, period, task) {
+  scheduleTask (localOffset, delay, period, task) {
     return this.scheduler.schedule(localOffset + this.offset, delay, period, task)
   }
 

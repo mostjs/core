@@ -1,11 +1,13 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 
 import ScheduledTask from './ScheduledTask'
+import AbstractScheduler from './AbstractScheduler'
 import RelativeScheduler from './RelativeScheduler'
 import { runTask } from './task'
 
-export default class Scheduler {
+export default class Scheduler extends AbstractScheduler {
   constructor (timer, timeline) {
+    super()
     this.timer = timer
     this.timeline = timeline
 
@@ -19,19 +21,7 @@ export default class Scheduler {
     return this.timer.now()
   }
 
-  asap (task) {
-    return this.schedule(0, 0, -1, task)
-  }
-
-  delay (delay, task) {
-    return this.schedule(0, delay, -1, task)
-  }
-
-  periodic (period, task) {
-    return this.schedule(0, 0, period, task)
-  }
-
-  schedule (localOffset, delay, period, task) {
+  scheduleTask (localOffset, delay, period, task) {
     const time = this.now() + Math.max(0, delay)
     const st = new ScheduledTask(time, localOffset, period, task, this)
 
