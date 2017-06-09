@@ -12,7 +12,7 @@ export default class RelativeScheduler extends AbstractScheduler {
   }
 
   scheduleTask (localOffset, delay, period, task) {
-    return this.scheduler.schedule(localOffset + this.offset, delay, period, task)
+    return this.scheduler.scheduleTask(localOffset + this.offset, delay, period, task)
   }
 
   relative (offset) {
