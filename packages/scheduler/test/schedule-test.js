@@ -4,15 +4,20 @@ import { eq, is, assert } from '@briancavalier/assert'
 import AbstractScheduler from '../src/AbstractScheduler'
 import ScheduledTask from '../src/ScheduledTask'
 
-import { asap } from '../src/schedule'
+import { asap, delay, periodic } from '../src/schedule'
 
 class FakeScheduler extends AbstractScheduler {
+  constructor (time) {
+    super()
+    this.time = time
+  }
+
   now () {
-    return 0
+    return this.time
   }
 
   scheduleTask (localOffset, delay, period, task) {
-    return new ScheduledTask(delay, localOffset, period, task, this)
+    return new ScheduledTask(this.time + delay, localOffset, period, task, this)
   }
 
   relative (offset) {
@@ -30,18 +35,57 @@ class FakeTask {
   }
 }
 
-describe('asap', () => {
-  it('should schedule a task at time 0', () => {
-    const scheduler = new FakeScheduler()
-    const task = new FakeTask()
+describe('schedule', () => {
+  describe('asap', () => {
+    it('should schedule a task at time 0', () => {
+      const time = Math.random()
+      const scheduler = new FakeScheduler(time)
+      const task = new FakeTask()
 
-    const st = asap(task, scheduler)
+      const st = asap(task, scheduler)
 
-    eq(scheduler.now(), st.time)
-    eq(0, st.localOffset)
-    eq(-1, st.period)
-    is(task, st.task)
-    is(scheduler, st.scheduler)
-    assert(st.active)
+      eq(scheduler.now(), st.time)
+      eq(0, st.localOffset)
+      eq(-1, st.period)
+      is(task, st.task)
+      is(scheduler, st.scheduler)
+      assert(st.active)
+    })
+  })
+
+  describe('delay', () => {
+    it('should schedule a task at delay time', () => {
+      const time = Math.random()
+      const scheduler = new FakeScheduler(time)
+      const task = new FakeTask()
+      const dt = Math.random()
+
+      const st = delay(dt, task, scheduler)
+
+      eq(scheduler.now() + dt, st.time)
+      eq(0, st.localOffset)
+      eq(-1, st.period)
+      is(task, st.task)
+      is(scheduler, st.scheduler)
+      assert(st.active)
+    })
+  })
+
+  describe('periodic', () => {
+    it('should schedule a task at delay time', () => {
+      const time = Math.random()
+      const scheduler = new FakeScheduler(time)
+      const task = new FakeTask()
+      const period = Math.random()
+
+      const st = periodic(period, task, scheduler)
+
+      eq(scheduler.now(), st.time)
+      eq(0, st.localOffset)
+      eq(period, st.period)
+      is(task, st.task)
+      is(scheduler, st.scheduler)
+      assert(st.active)
+    })
   })
 })
