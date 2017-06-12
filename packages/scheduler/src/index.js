@@ -8,6 +8,8 @@ import ClockTimer from './ClockTimer'
 import { newPlatformClock } from './clock'
 
 export * from './clock'
+export * from './schedule'
+export * from './relative'
 
 export const newScheduler = curry2((timer, timeline) => new Scheduler(timer, timeline))
 

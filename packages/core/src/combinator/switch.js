@@ -3,6 +3,7 @@
 /** @author John Hann */
 
 import { disposeBoth, tryDispose } from '@most/disposable'
+import { schedulerRelativeTo } from '@most/scheduler'
 
 /**
  * Given a stream of streams, return a new stream that adopts the behavior
@@ -86,25 +87,25 @@ class Segment {
     this.max = max
     this.outer = outer
     this.sink = sink
-    this.disposable = source.run(this, scheduler)
+    this.disposable = source.run(this, schedulerRelativeTo(min, scheduler))
   }
 
   event (t, x) {
-    if (t < this.max) {
-      this.sink.event(Math.max(t, this.min), x)
+    const time = Math.max(0, t + this.min)
+    if (time < this.max) {
+      this.sink.event(time, x)
     }
   }
 
   end (t) {
-    this.outer._endInner(Math.max(t, this.min), this)
+    this.outer._endInner(t + this.min, this)
   }
 
   error (t, e) {
-    this.outer._errorInner(Math.max(t, this.min), e, this)
+    this.outer._errorInner(t + this.min, e, this)
   }
 
   _dispose (t) {
-    this.max = t
-    tryDispose(t, this.disposable, this.sink)
+    tryDispose(t + this.min, this.disposable, this.sink)
   }
 }

@@ -3,7 +3,7 @@
 [include]
 ../../node_modules
 test/
-dist/.*\.flow
+src/
 
 [libs]
 

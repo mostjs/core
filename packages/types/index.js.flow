@@ -26,12 +26,17 @@ export type Delay = number
 // Span of time between time instants
 export type Period = number
 
+// Relative offset between two clocks / schedulers
+export type Offset = number
+
 export type Scheduler = {
   now: () => Time,
   asap: (Task) => ScheduledTask,
   delay: (Delay, Task) => ScheduledTask,
   periodic: (Period, Task) => ScheduledTask,
   schedule: (Delay, Period, Task) => ScheduledTask,
+  scheduleTask: (Offset, Delay, Period, Task) => ScheduledTask,
+  relative: (Offset) => Scheduler,
   cancel: (ScheduledTask) => void,
   cancelAll: ((ScheduledTask) => boolean) => void
 }

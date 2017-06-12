@@ -6,6 +6,7 @@ import SafeSink from '../sink/SafeSink'
 import { tryDispose } from '@most/disposable'
 import { tryEvent, tryEnd } from '../source/tryEvent'
 import { propagateErrorTask } from '../scheduler/PropagateTask'
+import { runWithLocalTime } from '../scheduler/runWithLocalTime'
 
 /**
  * If stream encounters an error, recover and continue with items from stream
@@ -66,20 +67,20 @@ class RecoverWithSink {
     const nextSink = this.sink.disable()
 
     tryDispose(t, this.disposable, this.sink)
+
     this._startNext(t, e, nextSink)
   }
 
   _startNext (t, x, sink) {
     try {
-      this.disposable = this._continue(this.f, x, sink)
+      this.disposable = this._continue(this.f, t, x, sink)
     } catch (e) {
       sink.error(t, e)
     }
   }
 
-  _continue (f, x, sink) {
-    const stream = f(x)
-    return stream.run(sink, this.scheduler)
+  _continue (f, t, x, sink) {
+    return runWithLocalTime(t, f(x), sink, this.scheduler)
   }
 
   dispose () {
