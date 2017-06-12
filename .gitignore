@@ -4,5 +4,8 @@ node_modules/
 .DS_Store
 experiments/
 dist/
+docs/_build
+docs/_static
+docs/_templates
 lerna-debug.log
 npm-debug.log
