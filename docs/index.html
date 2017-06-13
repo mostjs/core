@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>@most/monorepo - Reactive programming with lean, functions-only, curried, tree-shakeable API</title>
+  <meta name="description" content="Reactive programming with lean, functions-only, curried, tree-shakeable API">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/buble.css">
+</head>
+<body>
+  <div id="app"></div>
+</body>
+<script>
+  window.$docsify = {
+    name: '@most/core',
+    search: 'auto',
+    maxLevel: 6,
+    loadSidebar: true,
+    subMaxLevel: 2,
+    repo: 'https://github.com/mostjs/core'
+  }
+</script>
+
+<script src="https://unpkg.com/docsify/lib/docsify.min.js"></script>
+<script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+<script src="//unpkg.com/docsify/lib/plugins/external-script.min.js"></script>
+<script src="https://unpkg.com/prismjs/components/prism-bash.min.js"></script>
+<script src="https://unpkg.com/prismjs@1.6.0/components/prism-haskell.min.js"></script>
+<script src="https://embed.runkit.com"></script>
+<script>
+['map-example', 'chain-example'].forEach(el => {
+  RunKit.createNotebook({
+        // the parent element for the new notebook
+        element: document.getElementById(el),
+
+        // specify the source of the notebook
+       source: "const { map } = require('@most/core')"
+  })
+})
+</script>
+</html>
