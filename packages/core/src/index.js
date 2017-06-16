@@ -170,6 +170,13 @@ import { recoverWith as _recoverWith, throwError } from './combinator/errors'
 export const recoverWith = curry2(_recoverWith)
 export { throwError }
 
+// -----------------------------------------------------------------------
+// Multicasting
+
+import multicast from '@most/multicast'
+
+export { multicast }
+
 import {
   propagateTask as _propagateTask,
   propagateEventTask as _propagateEventTask,

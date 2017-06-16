@@ -56,6 +56,7 @@
   },
   "dependencies": {
     "@most/disposable": "^0.8.0",
+    "@most/multicast": "^1.2.5",
     "@most/prelude": "^1.5.2",
     "@most/scheduler": "^0.8.0",
     "@most/types": "^0.8.0"

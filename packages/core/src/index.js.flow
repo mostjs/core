@@ -183,6 +183,8 @@ declare export function recoverWith <A, E:Error> (f: (E) => Stream<A>): (s: Stre
 
 declare export function throwError <E:Error> (e: Error): Stream<any>
 
+declare export function multicast <A> (s: Stream<A>): Stream<A>
+
 export type PropagateTask<A> = Task & {
   value: A,
   sink: Sink<A>,
