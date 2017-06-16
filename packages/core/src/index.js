@@ -5,6 +5,8 @@ export { just, empty, never } from './source/core'
 
 export { periodic } from './source/periodic'
 
+export { newStream } from './source/newStream'
+
 import { zipArrayValues as _zipArrayValues, withArrayValues as _withArrayValues } from './combinator/withArrayValues'
 export const zipArrayValues = curry3(_zipArrayValues)
 export const withArrayValues = curry2(_withArrayValues)
