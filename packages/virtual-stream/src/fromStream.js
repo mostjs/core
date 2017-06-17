@@ -2,16 +2,7 @@ import { at } from './event'
 import { finite, errored } from './vstream'
 
 export const fromStream = (stream, scheduler) =>
-  new Promise(collect(stream, scheduler))
-    .then(disposeAndReturn)
-
-const collect = (stream, scheduler) => resolve =>
-  new Collect(stream, scheduler, resolve)
-
-const disposeAndReturn = ({ disposable, vstream }) => {
-  disposable.dispose()
-  return vstream
-}
+  new Promise(resolve => new Collect(stream, scheduler, resolve))
 
 class Collect {
   constructor (stream, scheduler, resolve) {
@@ -33,6 +24,7 @@ class Collect {
   }
 
   _end (vstream) {
-    this.resolve({ disposable: this.disposable, vstream })
+    this.disposable.dispose()
+    this.resolve(vstream)
   }
 }
