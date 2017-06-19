@@ -21,8 +21,6 @@ declare export function newStream <A> (run: RunStream<A>): Stream<A>
 
 declare export function startWith <A> (a: A, s: Stream<A>): Stream<A>
 declare export function startWith <A> (a: A): (s: Stream<A>) => Stream<A>
-declare export function concat <A> (s1: Stream<A>, s2: Stream<A>): Stream<A>
-declare export function concat <A> (s1: Stream<A>): (s2: Stream<A>) => Stream<A>
 
 declare export function periodic (period: Period): Stream<void>
 

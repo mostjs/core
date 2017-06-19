@@ -4,7 +4,7 @@ import { spy } from 'sinon'
 
 import { chain, join } from '../../src/combinator/chain'
 import { delay } from '../../src/combinator/delay'
-import { concat } from '../../src/combinator/build'
+import { startWith } from '../../src/combinator/startWith'
 import { take } from '../../src/combinator/slice'
 import { drain } from '../helper/observe'
 import { now } from '../../src/source/now'
