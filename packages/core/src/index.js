@@ -35,7 +35,7 @@ export const scan = curry3(_scan)
 // -----------------------------------------------------------------------
 // Extending
 
-import { startWith as _startWith } from './combinator/build'
+import { startWith as _startWith } from './combinator/startWith'
 
 export const startWith = curry2(_startWith)
 
