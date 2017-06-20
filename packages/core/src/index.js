@@ -31,17 +31,10 @@ import { scan as _scan } from './combinator/scan'
 export const scan = curry3(_scan)
 
 // -----------------------------------------------------------------------
-// Building and extending
-
-import { unfold as _unfold } from './source/unfold'
-export const unfold = curry2(_unfold)
-
-import { iterate as _iterate } from './source/iterate'
-export const iterate = curry2(_iterate)
-
-export { generate } from './source/generate'
+// Extending
 
 import { concat as _concat, startWith as _startWith } from './combinator/build'
+
 export const concat = curry2(_concat)
 export const startWith = curry2(_startWith)
 

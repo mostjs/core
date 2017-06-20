@@ -22,15 +22,6 @@ declare export function concat <A> (s1: Stream<A>): (s2: Stream<A>) => Stream<A>
 
 declare export function periodic (period: Period): Stream<void>
 
-declare export function iterate <S, A> (f: (A) => A|Promise<A>, seed: A): Stream<A>
-declare export function iterate <S, A> (f: (A) => A|Promise<A>): (seed: A) => Stream<A>
-
-declare export function unfold <S, A> (f: (S) => SeedValue<S, Promise<A>>, seed: S): Stream<A>
-declare export function unfold <S, A> (f: (S) => SeedValue<S, Promise<A>>): (seed: S) => Stream<A>
-
-export type GeneratorFunction<A> = (...args: Array<any>) => Generator<A>
-declare export function generate <A> (g: GeneratorFunction<A>, ...args: Array<any>): Stream<A>
-
 declare export function map <A, B> (f: (A) => B, s: Stream<A>): Stream<B>
 declare export function map <A, B> (f: (A) => B): (s: Stream<A>) => Stream<B>
 
