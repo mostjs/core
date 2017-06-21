@@ -4,7 +4,7 @@ import { spy } from 'sinon'
 
 import { loop } from '../../src/combinator/loop'
 import { throwError } from '../../src/combinator/errors'
-import { just } from '../../src/source/core'
+import { now } from '../../src/source/now'
 
 import FakeDisposeSource from '../helper/FakeDisposeStream'
 
@@ -43,7 +43,7 @@ describe('loop', function () {
   it('should dispose', function () {
     const dispose = spy()
 
-    const stream = new FakeDisposeSource(dispose, just(sentinel))
+    const stream = new FakeDisposeSource(dispose, now(sentinel))
     const s = loop(toPair, 0, stream)
 
     return collectEventsFor(1, s).then(() => assert(dispose.calledOnce))

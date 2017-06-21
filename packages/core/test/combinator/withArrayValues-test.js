@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import { eq, fail } from '@briancavalier/assert'
 
 import { zipArrayValues, withArrayValues } from '../../src/combinator/withArrayValues'
-import { empty } from '../../src/source/core'
+import { empty } from '../../src/source/empty'
 
 import { collectEventsFor, makeEvents } from '../helper/testEnv'
 

@@ -10,7 +10,11 @@ declare export function runEffects <A> (s: Stream<A>, scheduler: Scheduler): Pro
 
 declare export function empty (): Stream<any>
 declare export function never (): Stream<any>
-declare export function just <A> (a: A): Stream<A>
+
+declare export function now <A> (a: A): Stream<A>
+
+declare export function at <A> (t: Time, a: A): Stream<A>
+declare export function at <A> (t: Time): (a: A) => Stream<A>
 
 export type RunStream<A> = (sink: Sink<A>, scheduler: Scheduler) => Disposable
 declare export function newStream <A> (run: RunStream<A>): Stream<A>

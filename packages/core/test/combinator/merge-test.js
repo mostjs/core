@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import { eq } from '@briancavalier/assert'
 
-import { just } from '../../src/source/core'
+import { now } from '../../src/source/now'
 import { delay } from '../../src/combinator/delay'
 import { merge, mergeArray } from '../../src/combinator/merge'
 
@@ -13,9 +13,9 @@ describe('merge', function () {
   })
 
   it('should be associative', function () {
-    const s1 = just(1)
-    const s2 = just(2)
-    const s3 = just(3)
+    const s1 = now(1)
+    const s2 = now(2)
+    const s3 = now(3)
 
     const m1 = merge(merge(s1, s2), s3)
     const m2 = merge(s1, merge(s2, s3))

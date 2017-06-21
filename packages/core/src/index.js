@@ -1,7 +1,9 @@
 /** @license MIT License (c) copyright 2016 original author or authors */
 import { curry2, curry3 } from '@most/prelude'
 
-export { just, empty, never } from './source/core'
+export { now } from './source/now'
+export { empty } from './source/empty'
+export { never } from './source/never'
 
 export { periodic } from './source/periodic'
 

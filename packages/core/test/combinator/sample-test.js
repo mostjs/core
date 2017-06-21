@@ -4,7 +4,8 @@ import { describe, it } from 'mocha'
 import { is, eq } from '@briancavalier/assert'
 
 import { throwError } from '../../src/combinator/errors'
-import { just, never } from '../../src/source/core'
+import { now } from '../../src/source/now'
+import { never } from '../../src/source/never'
 import { sample } from '../../src/combinator/sample'
 
 import { makeEvents, ticks, collectEvents } from '../helper/testEnv'
@@ -17,7 +18,7 @@ describe('sample', () => {
     const justValue = Math.random()
 
     const f = (a, b) => [a, b]
-    const s = sample(f, just(samplerValue), just(justValue))
+    const s = sample(f, now(samplerValue), now(justValue))
 
     return collectEvents(s, ticks(1)).then(events => {
       eq(1, events.length)
@@ -44,7 +45,7 @@ describe('sample', () => {
   it('should repeat last value after source ends', () => {
     const n = 1 + rint(10)
     const x = Math.random()
-    const s = sample(Array, makeEvents(1, n), just(x))
+    const s = sample(Array, makeEvents(1, n), now(x))
 
     return collectEvents(s, ticks(n)).then(events => {
       eq(n, events.length)

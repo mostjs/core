@@ -2,7 +2,7 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { just } from '../source/core'
+import { now } from '../source/now'
 import { continueWith } from './continueWith'
 
 /**
@@ -10,7 +10,7 @@ import { continueWith } from './continueWith'
  * @param {Stream} stream
  * @returns {Stream} new stream with x prepended
  */
-export const startWith = (x, stream) => concat(just(x), stream)
+export const startWith = (x, stream) => concat(now(x), stream)
 
 /**
 * @param {Stream} left

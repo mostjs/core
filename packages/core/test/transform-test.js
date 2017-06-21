@@ -3,14 +3,14 @@ import { eq } from '@briancavalier/assert'
 
 import { assertSame } from './helper/stream-helper'
 import { map, tap, constant } from '../src/combinator/transform'
-import { just } from '../src/source/core'
+import { now } from '../src/source/now'
 
 import { collectEventsFor } from './helper/testEnv'
 
 describe('map', function () {
   it('should satisfy identity', function () {
     // u.map(function(a) { return a; })) ~= u
-    const u = just(Math.random())
+    const u = now(Math.random())
     return assertSame(map(x => x, u), u)
   })
 
@@ -19,7 +19,7 @@ describe('map', function () {
     const f = x => x + 'f'
     const g = x => x + 'g'
 
-    const u = just('e')
+    const u = now('e')
 
     return assertSame(
       map(x => f(g(x)), u),
@@ -31,7 +31,7 @@ describe('map', function () {
 describe('constant', function () {
   it('should satisfy identity', function () {
     // u.constant(x) ~= u.map(function(){return x;})
-    const u = just('e')
+    const u = now('e')
     const x = 1
     const f = () => x
     return assertSame(
@@ -44,7 +44,7 @@ describe('constant', function () {
 describe('tap', function () {
   it('should not transform stream items', function () {
     const expected = Math.random()
-    const s = tap(() => -1, just(expected))
+    const s = tap(() => -1, now(expected))
 
     return collectEventsFor(1, s)
       .then(eq([{ time: 0, value: expected }]))
