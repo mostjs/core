@@ -78,7 +78,7 @@ describe('join', function () {
   })
 
   it('should dispose inner stream immediately', function () {
-    const s = now(concat(now(1), never()))
+    const s = now(startWith(1, never()))
     return drain(take(1, join(s))).then(() => assert(true))
   })
 

@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import { eq } from '@briancavalier/assert'
 
 import { startWith } from '../src/combinator/startWith'
-import { empty } from '../src/source/core'
+import { empty } from '../src/source/empty'
 
 import { collectEventsFor } from './helper/testEnv'
 
