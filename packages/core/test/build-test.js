@@ -2,7 +2,8 @@ import { describe, it } from 'mocha'
 import { eq } from '@briancavalier/assert'
 
 import { startWith, concat } from '../src/combinator/build'
-import { just, empty } from '../src/source/core'
+import { now } from '../src/source/now'
+import { empty } from '../src/source/empty'
 import { delay } from '../src/combinator/delay'
 
 import { collectEventsFor, makeEventsFromArray } from './helper/testEnv'
@@ -40,14 +41,14 @@ describe('build', function () {
     })
 
     it('should satisfy left identity', function () {
-      const s = concat(just(sentinel), empty())
+      const s = concat(now(sentinel), empty())
 
       return collectEventsFor(1, s)
         .then(assertSingleEvent(sentinel))
     })
 
     it('should satisfy right identity', function () {
-      const s = concat(empty(), just(sentinel))
+      const s = concat(empty(), now(sentinel))
 
       return collectEventsFor(1, s)
         .then(assertSingleEvent(sentinel))

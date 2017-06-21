@@ -5,7 +5,8 @@ import { debounce, throttle } from '../src/combinator/limit'
 import { zip } from '../src/combinator/zip'
 import { map } from '../src/combinator/transform'
 import { take } from '../src/combinator/slice'
-import { empty, just } from '../src/source/core'
+import { empty } from '../src/source/empty'
+import { now } from '../src/source/now'
 import { default as Map } from '../src/fusion/Map'
 
 import { atTimes, collectEventsFor, makeEventsFromArray, makeEvents } from './helper/testEnv'
@@ -41,7 +42,7 @@ describe('debounce', function () {
     })
 
     it('should be identity when source is singleton', function () {
-      const s = debounce(1, just(sentinel))
+      const s = debounce(1, now(sentinel))
       return collectEventsFor(2, s)
         .then(eq([{ time: 0, value: sentinel }]))
     })
@@ -89,7 +90,7 @@ describe('throttle', function () {
 
     it('should commute map', function () {
       const id = x => x
-      const s = throttle(1, map(id, just()))
+      const s = throttle(1, map(id, now()))
 
       assert(s instanceof Map)
       is(id, s.f)

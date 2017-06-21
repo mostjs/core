@@ -5,7 +5,8 @@ import { switchLatest } from '../src/combinator/switch'
 import { take } from '../src/combinator/slice'
 import { constant, map, tap } from '../src/combinator/transform'
 import { periodic } from '../src/source/periodic'
-import { empty, just } from '../src/source/core'
+import { empty } from '../src/source/empty'
+import { now } from '../src/source/now'
 import { ticks, collectEventsFor, makeEvents, makeEventsFromArray } from './helper/testEnv'
 import { runEffects } from '../src/runEffects'
 
@@ -23,7 +24,7 @@ describe('switch', () => {
     const events = []
     const push = x => events.push(x)
     const toInner = x => x === 0
-      ? switchLatest(map(just, tap(push, take(1, periodic(1, 1)))))
+      ? switchLatest(map(now, tap(push, take(1, periodic(1, 1)))))
       : empty()
 
     const s = switchLatest(map(toInner, makeEventsFromArray(0, [0, 1])))
@@ -33,7 +34,7 @@ describe('switch', () => {
 
   describe('when input contains a single stream', () => {
     it('should return an equivalent stream', () => {
-      const s = just(makeEvents(1, 3))
+      const s = now(makeEvents(1, 3))
 
       return collectEventsFor(3, switchLatest(s))
         .then(eq([

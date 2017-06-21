@@ -17,5 +17,5 @@ class At {
 
 function runAt (t, x, sink) {
   sink.event(t, x)
-  sink.end(t, undefined)
+  sink.end(t)
 }

@@ -5,7 +5,7 @@ import { mergeMapConcurrently, mergeConcurrently } from '../../src/combinator/me
 import { periodic } from '../../src/source/periodic'
 import { take } from '../../src/combinator/slice'
 import { constant } from '../../src/combinator/transform'
-import { just } from '../../src/source/core'
+import { now } from '../../src/source/now'
 import { collectEventsFor, makeEventsFromArray } from '../helper/testEnv'
 
 const sentinel = { value: 'sentinel' }
@@ -14,7 +14,7 @@ const periodicConstant = (ms, x) => constant(x, periodic(ms))
 
 describe('mergeConcurrently', () => {
   it('should be identity for 1 stream', () => {
-    const s = mergeConcurrently(1, just(periodicConstant(1, sentinel)))
+    const s = mergeConcurrently(1, now(periodicConstant(1, sentinel)))
     const n = 3
 
     const expected = [
@@ -75,7 +75,7 @@ describe('mergeConcurrently', () => {
 describe('mergeMapConcurrently', () => {
   it('when mapping function throws, it should catch and propagate error', () => {
     const error = new Error()
-    const s = mergeMapConcurrently(x => { throw error }, 1, just(0))
+    const s = mergeMapConcurrently(x => { throw error }, 1, now(0))
     return collectEventsFor(1, s).then(fail, is(error))
   })
 })

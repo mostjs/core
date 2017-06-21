@@ -3,7 +3,7 @@ import { eq } from '@briancavalier/assert'
 
 import { combine, combineArray } from '../src/combinator/combine'
 import { delay } from '../src/combinator/delay'
-import { just } from '../src/source/core'
+import { now } from '../src/source/now'
 
 import { collectEventsFor, makeEvents, makeEventsFromArray } from './helper/testEnv'
 
@@ -11,8 +11,8 @@ const sentinel = { value: 'sentinel' }
 
 describe('combine', function () {
   it('should yield initial only after all inputs yield', function () {
-    const s1 = just(1)
-    const s2 = just(sentinel)
+    const s1 = now(1)
+    const s2 = now(sentinel)
 
     const sc = combine(Array, s1, delay(1, s2))
 
@@ -41,8 +41,8 @@ describe('combine', function () {
 
 describe('combineArray', function () {
   it('should yield initial only after all inputs yield', function () {
-    const s1 = just(1)
-    const s2 = just(sentinel)
+    const s1 = now(1)
+    const s2 = now(sentinel)
 
     const sc = combineArray(Array, [s1, delay(1, s2)])
 

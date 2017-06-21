@@ -24,6 +24,9 @@ export * from './combinator/transform';
 export * from './combinator/zip';
 export * from './combinator/withArrayValues';
 
-export * from './source/core';
+export * from './source/never';
+export * from './source/empty';
+export * from './source/now';
+export * from './source/at';
 export * from './source/newStream';
 export * from './source/periodic';

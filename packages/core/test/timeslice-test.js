@@ -4,7 +4,8 @@ import { eq, assert } from '@briancavalier/assert'
 import { until, since, during } from '../src/combinator/timeslice'
 import { take } from '../src/combinator/slice'
 import { periodic } from '../src/source/periodic'
-import { just, never } from '../src/source/core'
+import { now } from '../src/source/now'
+import { never } from '../src/source/never'
 import { delay } from '../src/combinator/delay'
 
 import { ticks, collectEvents, collectEventsFor, makeEvents } from './helper/testEnv'
@@ -15,7 +16,7 @@ import { spy } from 'sinon'
 describe('during', function () {
   it('should contain events at or later than min and earlier than max', function () {
     const stream = take(10, periodic(1))
-    const timespan = delay(1, just(delay(5, just())))
+    const timespan = delay(1, now(delay(5, now())))
 
     const s = during(timespan, stream)
     return collectEventsFor(10, s)
@@ -31,7 +32,7 @@ describe('during', function () {
   it('should dispose source stream', function () {
     const dispose = spy()
     const stream = FakeDisposeStream.from(dispose, periodic(1))
-    const timespan = delay(1, just(delay(5, just())))
+    const timespan = delay(1, now(delay(5, now())))
 
     const s = during(timespan, stream)
     return collectEvents(s, ticks(6))
@@ -42,7 +43,7 @@ describe('during', function () {
     const dispose = spy()
 
     const stream = periodic(1)
-    const timespan = delay(1, just(delay(5, just())))
+    const timespan = delay(1, now(delay(5, now())))
     const dt = FakeDisposeStream.from(dispose, timespan)
 
     const s = during(dt, stream)
@@ -57,7 +58,7 @@ describe('during', function () {
 describe('until', function () {
   it('should only contain events earlier than signal', function () {
     const stream = makeEvents(1, 10)
-    const signal = delay(3, just())
+    const signal = delay(3, now())
 
     const s = until(signal, stream)
     return collectEventsFor(10, s)
@@ -72,7 +73,7 @@ describe('until', function () {
   it('should dispose source stream', function () {
     const dispose = spy()
     const stream = FakeDisposeStream.from(dispose, periodic(1))
-    const signal = delay(3, just())
+    const signal = delay(3, now())
 
     const s = until(signal, stream)
     return collectEventsFor(5, s)
@@ -82,7 +83,7 @@ describe('until', function () {
   it('should end immediately on signal', function () {
     const dispose = spy()
     const stream = FakeDisposeStream.from(dispose, never())
-    const signal = just()
+    const signal = now()
 
     const s = until(signal, stream)
     return collectEventsFor(1, s)
@@ -95,7 +96,7 @@ describe('until', function () {
   it('should dispose signal', function () {
     const dispose = spy()
     const stream = periodic(1)
-    const signal = FakeDisposeStream.from(dispose, delay(3, just()))
+    const signal = FakeDisposeStream.from(dispose, delay(3, now()))
 
     const s = until(signal, stream)
     return collectEventsFor(5, s)
@@ -114,7 +115,7 @@ describe('since', function () {
   it('should only contain events at or later than signal', function () {
     const n = 5
     const stream = take(n, periodic(1))
-    const signal = delay(3, just())
+    const signal = delay(3, now())
 
     const s = since(signal, stream)
     return collectEventsFor(n, s)
@@ -127,7 +128,7 @@ describe('since', function () {
   it('should dispose signal', function () {
     const dispose = spy()
     const stream = take(5, periodic(1))
-    const signal = FakeDisposeStream.from(dispose, delay(3, just()))
+    const signal = FakeDisposeStream.from(dispose, delay(3, now()))
 
     const s = since(signal, stream)
     return collectEventsFor(5, s)

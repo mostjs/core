@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import { empty } from '../source/core'
+import { empty } from '../source/empty'
 import Map from '../fusion/Map'
 
 /**
