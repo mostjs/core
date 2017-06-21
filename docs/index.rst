@@ -6,8 +6,8 @@
 @most/core
 ==========
 
-.. note:: `@most/core` is not ready for production usage yet.
-          We'd love to have your feedback via [gitter](https://gitter.im/cujojs/most)!
+.. note:: ``@most/core`` is still in development.  It's not ready for production yet, but
+          we'd love to have your feedback via `gitter <https://gitter.im/cujojs/most>`_!
 
 ``@most/core`` is a toolkit for reactive programming.  It helps you write highly interactive apps by composing streams of events, and without many of the hazards of side effects and mutable shared state.
 

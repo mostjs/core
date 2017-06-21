@@ -16,9 +16,10 @@ These are timeline diagrams that try to give a simple, representative notion of 
 
 - letters (a,b,c,d,etc) - an event that occurs at a particular time
 - ``-`` - a time when no event occurs
-- ``|``` - event stream ended
+- ``|`` - event stream ended
 - ``X`` - an error occurred
 - ``>`` - stream continues infinitely
+
   - Typically, ``>`` means you can assume that events will continue to repeat some common pattern infinitely
 
 Examples
@@ -48,9 +49,9 @@ Examples
 
 An event stream where:
 
-- `a` occurs at time 0, `b` at time 1, and `c` at time 2
+- ``a`` occurs at time 0, ``b`` at time 1, and ``c`` at time 2
 - no events occur at time 3
-- `d` occurs at time 4, `e` at time 5, and `f` at time 6
+- ``d`` occurs at time 4, ``e`` at time 5, and ``f`` at time 6
 - no events occur at time 7
 - the pattern continues infinitely, repeating a similar pattern
 
@@ -65,9 +66,9 @@ You'll see function signatures like this:
 
 This is Haskell-like notation for a function which:
 
-- is named `numberToString`
-- takes a `Number`
-- returns a `String`
+- is named ``numberToString``
+- takes a ``Number``
+- returns a ``String``
 
 Example
 ^^^^^^^
@@ -80,9 +81,11 @@ Here's a more realistic example:
 
 This is a function which:
 
-- is named `map`
+- is named ``map``
 - has 2 *type parameters* ``a`` and ``b``
 - takes 2 arguments
-  - another function with signature ``(a -> b)```
+
+  - another function with signature ``(a -> b)``
   - an event stream with events of type ``a``
+
 - returns an event stream with events of type ``b``
