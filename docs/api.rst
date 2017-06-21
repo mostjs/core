@@ -13,8 +13,34 @@ Stream
     run :: Sink a -> Scheduler -> Disposable
   }
 
-Transform
----------
+Running
+-------
+
+runEffects :: Stream a -> Scheduler -> Promise void
+
+Construction
+------------
+
+empty :: () -> Stream *
+
+never :: () -> Stream *
+
+now :: a -> Stream a
+
+at :: Time -> a -> Stream a
+
+Transformation
+--------------
+
+zipArrayValues :: ((a, b) -> c) -> [a] -> Stream b -> Stream c
+
+withArrayValues :: [a] -> Stream b -> Stream a
+
+loop :: (b -> a -> { seed :: b, value :: c }) -> b -> Stream a -> Stream c
+
+scan :: (b -> a -> b) -> b -> Stream a -> Stream b
+
+startWith :: a -> Stream a -> Stream a
 
 map
 ^^^
@@ -31,3 +57,81 @@ Create a new stream by applying a function to each event of the input stream.::
 .. code-block:: javascript
 
   map(x => x + 1, stream)
+
+constant :: a -> Stream * -> Stream a
+
+tap :: (a -> *) -> Stream a -> Stream a
+
+ap :: Stream (a -> b) -> Stream a -> Stream b
+
+chain :: (a -> Stream b) -> Stream a -> Stream b
+
+join :: Stream (Stream a) -> Stream a
+
+continueWith :: (() -> Stream a) -> Stream a -> Stream a
+
+concatMap :: (a -> Stream b) -> Stream a -> Stream b
+
+mergeConcurrently :: int -> Stream (Stream a) -> Stream a
+
+mergeMapConcurently :: (a -> Stream b) -> int -> Stream a -> Stream b
+
+merge :: ...Stream a -> Stream a
+
+mergeArray :: [ (Stream a) ] -> Stream a
+
+combine :: ((...*) -> a) -> (...Stream *) -> Stream a
+
+combineArray :: ((...*) -> a) -> [ Stream * ] -> Stream a
+
+sample :: ((a, b) -> c) -> Stream a -> Stream b -> Stream c
+
+zip :: ((...*) -> a) -> (...Stream *) -> Stream a
+
+zipArray :: ((...*) -> a) -> [ Stream * ] -> Stream a
+
+switchLatest :: Stream (Stream a) -> Stream a
+
+filter :: (a -> bool) -> Stream a -> Stream a
+
+skipRepeats :: Stream a -> Stream a
+
+skipRepeatsWith :: ((a, a) -> bool) -> Stream a -> Stream a
+
+take :: int -> Stream a -> Stream a
+
+skip :: int -> Stream a -> Stream a
+
+slice :: int -> int -> Stream a -> Stream a
+
+takeWhile :: (a -> bool) -> Stream a -> Stream a
+
+skipWhile :: (a -> bool) -> Stream a -> Stream a
+
+until :: Stream * -> Stream a -> Stream a
+
+since :: Stream * -> Stream a -> Stream a
+
+during :: Stream (Stream *) -> Stream a -> Stream a
+
+delay :: int -> Stream a -> Stream a
+
+throttle :: int -> Stream a -> Stream a
+
+debounce :: int -> Stream a -> Stream a
+
+fromPromise :: Promise a -> Stream a
+
+awaitPromises :: Stream (Promise a) -> Stream a
+
+recoverWith :: (Error -> Stream a) -> Stream a -> Stream a
+
+throwError :: Error -> Stream void
+
+propagateTask :: (int -> a -> Sink a -> *) ->  a -> Sink a -> Task
+
+propagateEventTask :: a -> Sink a -> Task
+
+propagateEndTask :: Sink * -> Task
+
+propagateErrorTask :: Error -> Sink * -> Task
