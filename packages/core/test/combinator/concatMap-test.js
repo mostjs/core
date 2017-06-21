@@ -5,7 +5,7 @@ import { spy } from 'sinon'
 import { assertSame } from '../helper/stream-helper'
 
 import * as concatMap from '../../src/combinator/concatMap'
-import { concat } from '../../src/combinator/build'
+import { startWith } from '../../src/combinator/startWith'
 import { take } from '../../src/combinator/slice'
 import { drain } from '../helper/observe'
 import { now } from '../../src/source/now'
@@ -84,7 +84,7 @@ describe('concatMap', function () {
   })
 
   it('should dispose inner stream immediately', function () {
-    const s = now(concat(now(1), never()))
+    const s = now(startWith(1, never()))
 
     return drain(take(1, concatMap.concatMap(identity, s)))
   })
