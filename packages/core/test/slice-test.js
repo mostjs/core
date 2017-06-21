@@ -3,7 +3,7 @@ import { eq, is, assert } from '@briancavalier/assert'
 
 import { slice, take, skip, takeWhile, skipWhile, skipAfter } from '../src/combinator/slice'
 import { map } from '../src/combinator/transform'
-import { empty } from '../src/source/core'
+import { empty } from '../src/source/empty'
 import { default as Map } from '../src/fusion/Map'
 
 import { makeEventsFromArray, collectEventsFor, makeEvents } from './helper/testEnv'

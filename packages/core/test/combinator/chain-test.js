@@ -4,10 +4,11 @@ import { spy } from 'sinon'
 
 import { chain, join } from '../../src/combinator/chain'
 import { delay } from '../../src/combinator/delay'
-import { concat } from '../../src/combinator/build'
+import { startWith } from '../../src/combinator/startWith'
 import { take } from '../../src/combinator/slice'
 import { drain } from '../helper/observe'
-import { just, never } from '../../src/source/core'
+import { now } from '../../src/source/now'
+import { never } from '../../src/source/never'
 
 import { assertSame } from '../helper/stream-helper'
 import { collectEventsFor, makeEventsFromArray } from '../helper/testEnv'
@@ -18,10 +19,10 @@ const sentinel = { value: 'sentinel' }
 describe('chain', function () {
   it('should satisfy associativity', function () {
     // m.chain(f).chain(g) ~= m.chain(function(x) { return f(x).chain(g); })
-    const f = x => just(x + 'f')
-    const g = x => just(x + 'g')
+    const f = x => now(x + 'f')
+    const g = x => now(x + 'g')
 
-    const m = just('m')
+    const m = now('m')
 
     return assertSame(
       chain(x => chain(g, f(x)), m),
@@ -30,7 +31,7 @@ describe('chain', function () {
   })
 
   it('should preserve time order', function () {
-    const s = chain(x => delay(x, just(x)), makeEventsFromArray(0, [2, 1]))
+    const s = chain(x => delay(x, now(x)), makeEventsFromArray(0, [2, 1]))
     const expected = [ { time: 1, value: 1 }, { time: 2, value: 2 } ]
 
     return collectEventsFor(3, s)
@@ -59,8 +60,8 @@ describe('join', function () {
 
   it('should dispose outer stream', function () {
     const dispose = spy()
-    const inner = just(sentinel)
-    const outer = just(inner)
+    const inner = now(sentinel)
+    const outer = now(inner)
 
     const s = join(new FakeDisposeStream(dispose, outer))
 
@@ -69,15 +70,15 @@ describe('join', function () {
 
   it('should dispose inner stream', function () {
     const dispose = spy()
-    const inner = new FakeDisposeStream(dispose, just(sentinel))
+    const inner = new FakeDisposeStream(dispose, now(sentinel))
 
-    const s = join(just(inner))
+    const s = join(now(inner))
 
     return drain(s).then(() => assert(dispose.calledOnce))
   })
 
   it('should dispose inner stream immediately', function () {
-    const s = just(concat(just(1), never()))
+    const s = now(startWith(1, never()))
     return drain(take(1, join(s))).then(() => assert(true))
   })
 
@@ -85,7 +86,7 @@ describe('join', function () {
     const values = [1, 2, 3]
     const spies = values.map(() => spy())
 
-    const inners = values.map((x, i) => new FakeDisposeStream(spies[i], just(x)))
+    const inners = values.map((x, i) => new FakeDisposeStream(spies[i], now(x)))
 
     const s = join(makeEventsFromArray(1, inners))
 

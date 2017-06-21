@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import { map } from './transform'
-import { empty } from '../source/core'
+import { empty } from '../source/empty'
 import Pipe from '../sink/Pipe'
 import IndexSink from '../sink/IndexSink'
 import { disposeAll } from '@most/disposable'

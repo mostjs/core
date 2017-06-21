@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import fatal from '../fatalError'
-import { just } from '../source/core'
+import { now } from '../source/now'
 import { compose } from '@most/prelude'
 
 /**
@@ -19,7 +19,7 @@ export const awaitPromises = stream => new Await(stream)
  * @return {Stream<T>} stream containing promise's fulfillment value.
  *  If the promise rejects, the stream will error
  */
-export const fromPromise = compose(awaitPromises, just)
+export const fromPromise = compose(awaitPromises, now)
 
 class Await {
   constructor (source) {

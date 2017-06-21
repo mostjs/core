@@ -5,10 +5,11 @@ import { spy } from 'sinon'
 import { assertSame } from '../helper/stream-helper'
 
 import * as concatMap from '../../src/combinator/concatMap'
-import { concat } from '../../src/combinator/build'
+import { startWith } from '../../src/combinator/startWith'
 import { take } from '../../src/combinator/slice'
 import { drain } from '../helper/observe'
-import { just, never } from '../../src/source/core'
+import { now } from '../../src/source/now'
+import { never } from '../../src/source/never'
 
 import { ticks, atTimes, makeEventsFromArray, collectEventsFor, collectEvents } from '../helper/testEnv'
 import FakeDisposeSource from '../helper/FakeDisposeStream'
@@ -20,10 +21,10 @@ const identity = x => x
 describe('concatMap', function () {
   it('should satisfy associativity', function () {
     // m.concatMap(f).concatMap(g) ~= m.concatMap(function(x) { return f(x).concatMap(g); })
-    const f = x => just(x + 'f')
-    const g = x => just(x + 'g')
+    const f = x => now(x + 'f')
+    const g = x => now(x + 'g')
 
-    const m = just('m')
+    const m = now('m')
 
     return assertSame(
       concatMap.concatMap(x => concatMap.concatMap(g, f(x)), m),
@@ -65,8 +66,8 @@ describe('concatMap', function () {
 
   it('should dispose outer stream', function () {
     const dispose = spy()
-    const inner = just(sentinel)
-    const outer = just(inner)
+    const inner = now(sentinel)
+    const outer = now(inner)
 
     const s = concatMap.concatMap(identity, new FakeDisposeSource(dispose, outer))
 
@@ -75,15 +76,15 @@ describe('concatMap', function () {
 
   it('should dispose inner stream', function () {
     const dispose = spy()
-    const inner = new FakeDisposeSource(dispose, just(sentinel))
+    const inner = new FakeDisposeSource(dispose, now(sentinel))
 
-    const s = concatMap.concatMap(identity, just(inner))
+    const s = concatMap.concatMap(identity, now(inner))
 
     return drain(s).then(() => assert(dispose.called))
   })
 
   it('should dispose inner stream immediately', function () {
-    const s = just(concat(just(1), never()))
+    const s = now(startWith(1, never()))
 
     return drain(take(1, concatMap.concatMap(identity, s)))
   })
@@ -92,7 +93,7 @@ describe('concatMap', function () {
     const values = [1, 2, 3]
     const spies = values.map(() => spy())
 
-    const inners = values.map((x, i) => new FakeDisposeSource(spies[i], just(x)))
+    const inners = values.map((x, i) => new FakeDisposeSource(spies[i], now(x)))
 
     const s = concatMap.concatMap(identity, makeEventsFromArray(1, inners))
 

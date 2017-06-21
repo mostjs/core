@@ -4,7 +4,7 @@
 
 import Pipe from '../sink/Pipe'
 import IndexSink from '../sink/IndexSink'
-import { empty } from '../source/core'
+import { empty } from '../source/empty'
 import { disposeAll, tryDispose } from '@most/disposable'
 import { reduce } from '@most/prelude'
 
