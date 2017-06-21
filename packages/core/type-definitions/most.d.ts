@@ -2,7 +2,6 @@ export * from './runEffects';
 export * from './PropagateTask';
 
 export * from './combinator/applicative';
-export * from './combinator/build';
 export * from './combinator/chain';
 export * from './combinator/combine';
 export * from './combinator/concatMap';
@@ -18,6 +17,7 @@ export * from './combinator/promises';
 export * from './combinator/sample';
 export * from './combinator/scan';
 export * from './combinator/slice';
+export * from './combinator/startWith';
 export * from './combinator/switch';
 export * from './combinator/timeslice';
 export * from './combinator/transform';
