@@ -18,8 +18,8 @@ These are timeline diagrams that try to give a simple, representative notion of 
 - ``-`` - a time when no event occurs
 - ``|``` - event stream ended
 - ``X`` - an error occurred
-- ``>``` - stream continues infinitely
-	* Typically, ``>`` means you can assume that events will continue to repeat some common pattern infinitely
+- ``>`` - stream continues infinitely
+  - Typically, ``>`` means you can assume that events will continue to repeat some common pattern infinitely
 
 Examples
 ^^^^^^^^
@@ -83,6 +83,6 @@ This is a function which:
 - is named `map`
 - has 2 *type parameters* ``a`` and ``b``
 - takes 2 arguments
-	- another function with signature ``(a -> b)```
-	- an event stream with events of type ``a``
+  - another function with signature ``(a -> b)```
+  - an event stream with events of type ``a``
 - returns an event stream with events of type ``b``
