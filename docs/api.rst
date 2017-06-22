@@ -130,7 +130,8 @@ Remove adjacent repeated events
 
 Note that `===` is used to identify repeated items.  To use a different comparison, use :ref:`skipRepeatsWith`
 
-.. js:function:: skipRepeatsWith :: ((a, a) -> bool) -> Stream a -> Stream a
+skipRepeatsWith
+^^^^^^^^^^^^^^^
 
 .. code-block:: haskell
 
