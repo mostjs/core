@@ -128,7 +128,9 @@ skipRepeats
 
 Remove adjacent repeated events
 
-Note that `===` is used to identify repeated items.  To use a different comparison, use :ref:`skipRepeatsWith`
+Note that ``===`` is used to identify repeated items.  To use a different comparison, use :ref:`skipRepeatsWith`
+
+.. _skipRepeatsWith:
 
 skipRepeatsWith
 ^^^^^^^^^^^^^^^
