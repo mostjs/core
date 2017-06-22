@@ -5,6 +5,7 @@ node_modules/
 experiments/
 dist/
 docs/_build
+docs/_build_html
 docs/_static
 docs/_templates
 lerna-debug.log
