@@ -167,10 +167,9 @@ export { throwError }
 // -----------------------------------------------------------------------
 // Multicasting
 
-import multicast from '@most/multicast'
+export { multicast } from './combinator/multicast'
 
-export { multicast }
-
+// ----------------------------------------------------------------------
 import {
   propagateTask as _propagateTask,
   propagateEventTask as _propagateEventTask,
