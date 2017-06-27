@@ -1,26 +1,16 @@
 import { append, remove, findIndex } from '@most/prelude'
+import { disposeNone, disposeOnce } from '@most/disposable'
 import { tryEvent, tryEnd } from '../source/tryEvent'
 
-const dispose = disposable => disposable.dispose()
+export const multicast = stream =>
+  stream instanceof Multicast ? stream : new Multicast(stream)
 
-const emptyDisposable = {
-  dispose () {}
-}
-
-class MulticastDisposable {
-  constructor (source, sink) {
-    this.source = source
-    this.sink = sink
-    this.disposed = false
+class Multicast {
+  constructor (source) {
+    this.source = new MulticastSource(source)
   }
-
-  dispose () {
-    if (this.disposed) {
-      return
-    }
-    this.disposed = true
-    const remaining = this.source.remove(this.sink)
-    return remaining === 0 && this.source._dispose()
+  run (sink, scheduler) {
+    this.source.run(sink, scheduler)
   }
 }
 
@@ -28,7 +18,7 @@ class MulticastSource {
   constructor (source) {
     this.source = source
     this.sinks = []
-    this._disposable = emptyDisposable
+    this._disposable = disposeNone()
   }
 
   run (sink, scheduler) {
@@ -36,13 +26,13 @@ class MulticastSource {
     if (n === 1) {
       this._disposable = this.source.run(this, scheduler)
     }
-    return new MulticastDisposable(this, sink)
+    return disposeOnce(new MulticastDisposable(this, sink))
   }
 
   _dispose () {
     const disposable = this._disposable
-    this._disposable = emptyDisposable
-    return Promise.resolve(disposable).then(dispose)
+    this._disposable = disposeNone()
+    return disposable.dispose()
   }
 
   add (sink) {
@@ -85,14 +75,15 @@ class MulticastSource {
   }
 }
 
-class Multicast {
-  constructor (source) {
-    this.source = new MulticastSource(source)
+class MulticastDisposable {
+  constructor (source, sink) {
+    this.source = source
+    this.sink = sink
   }
-  run (sink, scheduler) {
-    this.source.run(sink, scheduler)
+
+  dispose () {
+    if (this.source.remove(this.sink === 0)) {
+      this.source._dispose()
+    }
   }
 }
-
-export const multicast = stream =>
-  stream instanceof Multicast ? stream : new Multicast(stream)
