@@ -94,4 +94,5 @@ class Multicast {
   }
 }
 
-export const multicast = stream => stream instanceof Multicast ? stream : new Multicast(stream)
+export const multicast = stream =>
+  stream instanceof Multicast ? stream : new Multicast(stream)
