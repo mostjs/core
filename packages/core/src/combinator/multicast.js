@@ -24,7 +24,6 @@ class MulticastDisposable {
   }
 }
 
-
 class MulticastSource {
   constructor (source) {
     this.source = source
@@ -95,4 +94,4 @@ class Multicast {
   }
 }
 
-export const multicast = stream => new Multicast(stream)
+export const multicast = stream => stream instanceof Multicast ? stream : new Multicast(stream)
