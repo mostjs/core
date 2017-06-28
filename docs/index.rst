@@ -11,7 +11,7 @@
 
 ``@most/core`` is a toolkit for reactive programming.  It helps you write highly interactive apps by composing streams of events, and without many of the hazards of side effects and mutable shared state.
 
-It features an ultra-high performance, low overhead architecture, and a small but powerful set of operations for merging, filtering, and transforming event streams.t
+It features an ultra-high performance, low overhead architecture, and a small but powerful set of operations for merging, filtering, and transforming event streams.
 
 .. toctree::
    :maxdepth: 2
@@ -20,6 +20,7 @@ It features an ultra-high performance, low overhead architecture, and a small bu
    notation
    concepts
    api
+   writing-docs
 
 Indices and tables
 ==================
