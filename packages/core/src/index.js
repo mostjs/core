@@ -167,7 +167,7 @@ export { throwError }
 // -----------------------------------------------------------------------
 // Multicasting
 
-export { multicast } from './combinator/multicast'
+export { multicast, MulticastSource } from './combinator/multicast'
 
 // ----------------------------------------------------------------------
 import {

@@ -10,11 +10,11 @@ class Multicast {
     this.source = new MulticastSource(source)
   }
   run (sink, scheduler) {
-    this.source.run(sink, scheduler)
+    return this.source.run(sink, scheduler)
   }
 }
 
-class MulticastSource {
+export class MulticastSource {
   constructor (source) {
     this.source = source
     this.sinks = []
@@ -75,14 +75,14 @@ class MulticastSource {
   }
 }
 
-class MulticastDisposable {
+export class MulticastDisposable {
   constructor (source, sink) {
     this.source = source
     this.sink = sink
   }
 
   dispose () {
-    if (this.source.remove(this.sink === 0)) {
+    if (this.source.remove(this.sink) === 0) {
       this.source._dispose()
     }
   }
