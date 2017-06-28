@@ -13,6 +13,7 @@ export * from './combinator/limit';
 export * from './combinator/loop';
 export * from './combinator/merge';
 export * from './combinator/mergeConcurrently';
+export * from './combinator/multicast';
 export * from './combinator/promises';
 export * from './combinator/sample';
 export * from './combinator/scan';
