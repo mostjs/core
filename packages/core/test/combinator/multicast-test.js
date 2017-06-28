@@ -20,6 +20,7 @@ describe('multicast', () => {
     const observer1Spy = spy()
     const observer2Spy = spy()
     const observer3Spy = spy()
+    const scheduler = ticks(1)
 
     const f = x => x + 1
     const x = Math.random()
@@ -29,9 +30,9 @@ describe('multicast', () => {
     const mapped = map(mapperSpy, s)
     const multicasted = multicast(mapped)
 
-    const o1 = runEffects(tap(observer1Spy, multicasted), ticks(1))
-    const o2 = runEffects(tap(observer2Spy, multicasted), ticks(1))
-    const o3 = runEffects(tap(observer3Spy, multicasted), ticks(1))
+    const o1 = runEffects(tap(observer1Spy, multicasted), scheduler)
+    const o2 = runEffects(tap(observer2Spy, multicasted), scheduler)
+    const o3 = runEffects(tap(observer3Spy, multicasted), scheduler)
 
     return Promise.all([o1, o2, o3]).then(() => {
       assert(mapperSpy.calledOnce)
@@ -56,8 +57,9 @@ describe('MulticastSource', () => {
   it('should call producer on first observer', () => {
     const eventSpy = spy()
     const s = new MulticastSource({run: () => {}})
+    const scheduler = ticks(1)
 
-    s.run({event: eventSpy}, ticks(1))
+    s.run({event: eventSpy}, scheduler)
     s.event(sentinel)
 
     eq(true, eventSpy.calledOnce)
@@ -66,12 +68,13 @@ describe('MulticastSource', () => {
   it('should call producer ONLY on the first observer', () => {
     const sourceSpy = spy()
     const s = new MulticastSource({run: sourceSpy})
+    const scheduler = ticks(1)
 
     return Promise.all([
-      s.run({ event: () => {} }, ticks(1)),
-      s.run({ event: () => {} }, ticks(1)),
-      s.run({ event: () => {} }, ticks(1)),
-      s.run({ event: () => {} }, ticks(1))
+      s.run({ event: () => {} }, scheduler),
+      s.run({ event: () => {} }, scheduler),
+      s.run({ event: () => {} }, scheduler),
+      s.run({ event: () => {} }, scheduler)
     ]).then(() => {
       eq(true, sourceSpy.calledOnce)
     })
@@ -94,10 +97,11 @@ describe('MulticastSource', () => {
     const fakeSource = {
       run () {}
     }
+    const scheduler = ticks(1)
 
     const ms = new MulticastSource(fakeSource)
     const s1 = sinkSpy()
-    ms.run(s1, ticks(1))
+    ms.run(s1, scheduler)
 
     const e1 = new Error()
     ms.error(1, e1)
@@ -106,7 +110,7 @@ describe('MulticastSource', () => {
     eq(e1, s1.errorValue)
 
     const s2 = sinkSpy()
-    ms.run(s2, ticks(1))
+    ms.run(s2, scheduler)
 
     const e2 = new Error()
     ms.error(2, e2)
@@ -137,8 +141,9 @@ describe('MulticastSource', () => {
   it('should call dispose if all observers disconnect', () => {
     const disposer = spy()
     const s = new MulticastSource(FakeDisposeStream.from(disposer, now(sentinel)))
+    const scheduler = ticks(1)
 
-    return Promise.all([runEffects(s, ticks(1)), runEffects(s, ticks(1))]).then(() => {
+    return Promise.all([runEffects(s, scheduler), runEffects(s, scheduler)]).then(() => {
       eq(true, disposer.calledOnce)
     })
   })
