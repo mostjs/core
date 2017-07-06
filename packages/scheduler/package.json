@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "test": "npm run test:lint && npm run test:unit && npm run test:flow",
-    "test:unit": "mocha -r buba/register --reporter dot --recursive 'test/**/*-test.js'",
+    "test:unit": "nyc --reporter=text-summary mocha -r buba/register --reporter dot --recursive 'test/**/*-test.js'",
     "test:lint": "eslint --fix --ignore-path ../../.eslintignore src test",
     "test:flow": "flow check",
     "build": "npm run build:dist && npm run build:min && npm run build:flow",
@@ -48,6 +48,7 @@
     "eslint": "^3.15.0",
     "flow-bin": "^0.47.0",
     "mocha": "^3.4.2",
+    "nyc": "^11.0.2",
     "rollup": "^0.43.0",
     "rollup-plugin-buble": "^0.15.0",
     "rollup-plugin-node-resolve": "^2.0.0",

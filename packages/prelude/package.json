@@ -17,7 +17,7 @@
     "prepublish": "npm run build",
     "test": "npm run test:lint && npm run test:unit && npm run test:flow",
     "test:lint": "eslint src test",
-    "test:unit": "nyc mocha -r buba/register",
+    "test:unit": "nyc --reporter=text-summary mocha -r buba/register --reporter dot",
     "test:flow": "flow check"
   },
   "repository": {
@@ -37,7 +37,7 @@
     "cpy-cli": "^1.0.1",
     "flow-bin": "^0.47.0",
     "mocha": "^3.4.2",
-    "nyc": "^10.3.2",
+    "nyc": "^11.0.2",
     "rollup": "^0.43.0",
     "rollup-plugin-buble": "^0.15.0"
   }
