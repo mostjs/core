@@ -181,6 +181,8 @@ switchLatest :: Stream (Stream a) -> Stream a
 Filtering
 ---------
 
+.. _filter:
+
 filter
 ^^^^^^
 
@@ -193,6 +195,8 @@ Retain only events for which a predicate is truthy.
   stream:               -1-2-3-4->
   filter(even, stream): ---2---4->
 
+.. _skipRepeats:
+
 skipRepeats
 ^^^^^^^^^^^
 
@@ -200,7 +204,10 @@ skipRepeats
 
   skipRepeats :: Stream a -> Stream a
 
-Remove adjacent repeated events
+Remove adjacent repeated events.::
+
+  stream:              -1-2-2-3-4-4-5->
+  skipRepeats(stream): -1-2---3-4---5->
 
 Note that ``===`` is used to identify repeated items.  To use a different comparison, use :ref:`skipRepeatsWith`
 
@@ -213,7 +220,12 @@ skipRepeatsWith
 
   skipRepeatsWith :: ((a, a) -> bool) -> Stream a -> Stream a
 
-Remove adjacent repeated events, using the provided equality function to compare adjacent events.
+Remove adjacent repeated events, using the provided equality function to compare adjacent events.::
+
+  stream:                                    -a-b-B-c-D-d-e->
+  skipRepeatsWith(equalsIgnoreCase, stream): -a-b---c-D---e->
+
+The equals function should return truthy if the two value are equal, or falsy if they are not equal.
 
 take :: int -> Stream a -> Stream a
 
