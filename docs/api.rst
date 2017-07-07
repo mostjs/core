@@ -82,7 +82,26 @@ Create a stream containing a single event at a specific time.::
 
   at(3, x): --x|
 
-startWith :: a -> Stream a -> Stream a
+.. _startWith:
+
+startWith
+^^^^^^^^^
+
+.. code-block:: haskell
+
+  startWith :: a -> Stream a -> Stream a
+
+Prepend an event at time 0.::
+
+  stream:              --a-b-c-d->
+  stream.startWith(x): x-a-b-c-d->
+
+Note that ``startWith`` *does not* delay other events.  If ``stream`` already contains an event at time 0, then ``startWith`` simply adds another event at time 0--the two will be simultanous, but ordered.  For example::
+
+  stream:               a-b-c-d->
+  stream.startWith(x): xa-b-c-d->
+
+Both ``x`` and ``a`` occur at time 0, but ``x`` will be observed before ``a``.
 
 Transformation
 --------------
