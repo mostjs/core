@@ -16,18 +16,71 @@ Stream
 Running
 -------
 
-runEffects :: Stream a -> Scheduler -> Promise void
+.. _runEffects:
+
+runEffects
+^^^^^^^^^^
+
+.. code-block:: haskell
+
+  runEffects :: Stream a -> Scheduler -> Promise void
+
+Activate an event stream, and consume all its events.
 
 Construction
 ------------
 
-empty :: () -> Stream *
+.. _empty:
 
-never :: () -> Stream *
+empty
+^^^^^
 
-now :: a -> Stream a
+.. code-block:: haskell
 
-at :: Time -> a -> Stream a
+  empty :: () -> Stream *
+
+Create a stream containing no events, which ends immediately.::
+
+  empty(): |
+
+.. _never:
+
+never
+^^^^^
+
+.. code-block:: haskell
+
+  never :: () -> Stream *
+
+Create a stream containing no events, which never ends.::
+
+  never(): ---->
+
+.. _now:
+
+now
+^^^
+
+.. code-block:: haskell
+
+  now :: a -> Stream a
+
+Create a stream containing a single event at time 0.::
+
+  now(x): x|
+
+.. _at:
+
+at
+^^
+
+.. code-block:: haskell
+
+  at :: Time -> a -> Stream a
+
+Create a stream containing a single event at a specific time.::
+
+  at(3, x): --x|
 
 startWith :: a -> Stream a -> Stream a
 
@@ -50,6 +103,8 @@ Apply a function to each event of the input stream.::
 
   map(x => x + 1, stream)
 
+.. _constant:
+
 constant
 ^^^^^^^^
 
@@ -57,7 +112,7 @@ constant
 
   constant :: a -> Stream * -> Stream a
 
-Replace each event of the input stream with x.
+Replace each event of the input stream with x.::
 
   stream:              -a-b-c-d->
   constant(x, stream): -x-x-x-x->
