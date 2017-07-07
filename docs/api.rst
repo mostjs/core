@@ -93,13 +93,13 @@ startWith
 
 Prepend an event at time 0.::
 
-  stream:              --a-b-c-d->
-  stream.startWith(x): x-a-b-c-d->
+  stream:               --a-b-c-d->
+  startWith(x, stream): x-a-b-c-d->
 
 Note that ``startWith`` *does not* delay other events.  If ``stream`` already contains an event at time 0, then ``startWith`` simply adds another event at time 0--the two will be simultanous, but ordered.  For example::
 
-  stream:               a-b-c-d->
-  stream.startWith(x): xa-b-c-d->
+  stream:                a-b-c-d->
+  startWith(x, stream): xa-b-c-d->
 
 Both ``x`` and ``a`` occur at time 0, but ``x`` will be observed before ``a``.
 
