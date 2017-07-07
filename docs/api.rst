@@ -227,11 +227,65 @@ Remove adjacent repeated events, using the provided equality function to compare
 
 The equals function should return truthy if the two value are equal, or falsy if they are not equal.
 
-take :: int -> Stream a -> Stream a
+.. _take:
 
-skip :: int -> Stream a -> Stream a
+.. _slice:
 
-slice :: int -> int -> Stream a -> Stream a
+slice
+^^^^^
+
+.. code-block:: haskell
+
+  slice :: int -> int -> Stream a -> Stream a
+
+Create a new stream containing only events where start <= index < end, where index is the ordinal index of an event in stream.::
+
+  stream:              -a-b-c-d-e-f->
+  slice(1, 4, stream): ---b-c-d|
+
+  stream:              -a-b-c|
+  slice(1, 4, stream): ---b-c|
+
+If stream contains fewer than start events, the returned stream will be empty.
+
+take
+^^^^
+
+.. code-block:: haskell
+
+  take :: int -> Stream a -> Stream a
+
+Create a new stream containing at most n events from stream.::
+
+  stream:          -a-b-c-d-e-f->
+  take(3, stream): -a-b-c|
+
+  stream:          -a-b|
+  take(3, stream): -a-b|
+
+If stream contains fewer than n events, the returned stream will be effectively equivalent to stream.
+
+.. _skip:
+
+skip
+^^^^
+
+.. code-block:: haskell
+
+  skip :: int -> Stream a -> Stream a
+
+Create a new stream that omits the first n events from stream.::
+
+  stream:          -a-b-c-d-e-f->
+  skip(3, stream): -------d-e-f->
+
+  stream:          -a-b-c-d-e|
+  skip(3, stream): -------d-e|
+
+  stream:          -a-b-c|
+  skip(3, stream): ------|
+
+If stream contains fewer than n events, the returned stream will be empty.
 
 takeWhile :: (a -> bool) -> Stream a -> Stream a
 
