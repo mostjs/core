@@ -144,9 +144,50 @@ tap :: (a -> *) -> Stream a -> Stream a
 
 ap :: Stream (a -> b) -> Stream a -> Stream b
 
-scan :: (b -> a -> b) -> b -> Stream a -> Stream b
+.. _scan:
 
-loop :: (b -> a -> { seed :: b, value :: c }) -> b -> Stream a -> Stream c
+scan
+^^^^
+
+.. code-block:: haskell
+
+  scan :: (b -> a -> b) -> b -> Stream a -> Stream b
+
+Incrementally accumulate results, starting with the provided initial value.::
+
+  stream:                           -1-2-3->
+  scan((x, y) => x + y, 0, stream): 01-3-6->
+
+.. _loop:
+
+loop
+^^^^
+
+  loop :: (b -> a -> { seed :: b, value :: c }) -> b -> Stream a -> Stream c
+
+Accumulate results using a feedback loop that emits one value and feeds back another to be used in the next iteration.::
+
+It allows you to maintain and update a "state" (aka feedback, aka seed for the next iteration) while emitting a different value. In contrast, scan feeds back and produces the same value.
+
+.. code-block:: javascript
+
+  // Average an array of values
+  const average = values =>
+  	values.reduce((sum, x) => sum + x, 0) / values.length
+
+  const stream = // ...
+
+  // Emit the simple (ie windowed) moving average of the 10 most recent values
+  loop((values, x) => {
+  	values.push(x)
+  	values = values.slice(-10) // Keep up to 10 most recent
+  	const avg = average(values)
+
+  	// Return { seed, value } pair.
+  	// seed will feed back into next iteration
+  	// value will be propagated
+  	return { seed: values, value: avg }
+  }, [], stream)
 
 zipArrayValues :: ((a, b) -> c) -> [a] -> Stream b -> Stream c
 
