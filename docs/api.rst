@@ -113,7 +113,7 @@ map
 
   map :: (a -> b) -> Stream a -> Stream b
 
-Apply a function to each event of the input stream.::
+Apply a function to each event value.::
 
   stream:        -a-b-c-d->
   stream.map(f): -f(a)-f(b)-f(c)-f(d)->
@@ -131,7 +131,7 @@ constant
 
   constant :: a -> Stream * -> Stream a
 
-Replace each event of the input stream with x.::
+Replace each event value with x.::
 
   stream:              -a-b-c-d->
   constant(x, stream): -x-x-x-x->
@@ -165,7 +165,7 @@ loop
 
   loop :: (b -> a -> { seed :: b, value :: c }) -> b -> Stream a -> Stream c
 
-Accumulate results using a feedback loop that emits one value and feeds back another to be used in the next iteration.::
+Accumulate results using a feedback loop that emits one value and feeds back another to be used in the next iteration.
 
 It allows you to maintain and update a "state" (aka feedback, aka seed for the next iteration) while emitting a different value. In contrast, scan feeds back and produces the same value.
 
