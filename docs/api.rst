@@ -16,20 +16,92 @@ Stream
 Running
 -------
 
-runEffects :: Stream a -> Scheduler -> Promise void
+.. _runEffects:
+
+runEffects
+^^^^^^^^^^
+
+.. code-block:: haskell
+
+  runEffects :: Stream a -> Scheduler -> Promise void
+
+Activate an event stream, and consume all its events.
 
 Construction
 ------------
 
-empty :: () -> Stream *
+.. _empty:
 
-never :: () -> Stream *
+empty
+^^^^^
 
-now :: a -> Stream a
+.. code-block:: haskell
 
-at :: Time -> a -> Stream a
+  empty :: () -> Stream *
 
-startWith :: a -> Stream a -> Stream a
+Create a stream containing no events, which ends immediately.::
+
+  empty(): |
+
+.. _never:
+
+never
+^^^^^
+
+.. code-block:: haskell
+
+  never :: () -> Stream *
+
+Create a stream containing no events, which never ends.::
+
+  never(): ---->
+
+.. _now:
+
+now
+^^^
+
+.. code-block:: haskell
+
+  now :: a -> Stream a
+
+Create a stream containing a single event at time 0.::
+
+  now(x): x|
+
+.. _at:
+
+at
+^^
+
+.. code-block:: haskell
+
+  at :: Time -> a -> Stream a
+
+Create a stream containing a single event at a specific time.::
+
+  at(3, x): --x|
+
+.. _startWith:
+
+startWith
+^^^^^^^^^
+
+.. code-block:: haskell
+
+  startWith :: a -> Stream a -> Stream a
+
+Prepend an event at time 0.::
+
+  stream:               --a-b-c-d->
+  startWith(x, stream): x-a-b-c-d->
+
+Note that ``startWith`` *does not* delay other events.  If ``stream`` already contains an event at time 0, then ``startWith`` simply adds another event at time 0--the two will be simultanous, but ordered.  For example::
+
+  stream:                a-b-c-d->
+  startWith(x, stream): xa-b-c-d->
+
+Both ``x`` and ``a`` occur at time 0, but ``x`` will be observed before ``a``.
 
 Transformation
 --------------
@@ -41,7 +113,7 @@ map
 
   map :: (a -> b) -> Stream a -> Stream b
 
-Apply a function to each event of the input stream.::
+Apply a function to each event value.::
 
   stream:        -a-b-c-d->
   stream.map(f): -f(a)-f(b)-f(c)-f(d)->
@@ -50,6 +122,8 @@ Apply a function to each event of the input stream.::
 
   map(x => x + 1, stream)
 
+.. _constant:
+
 constant
 ^^^^^^^^
 
@@ -57,7 +131,7 @@ constant
 
   constant :: a -> Stream * -> Stream a
 
-Replace each event of the input stream with x.
+Replace each event value with x.::
 
   stream:              -a-b-c-d->
   constant(x, stream): -x-x-x-x->
@@ -70,9 +144,50 @@ tap :: (a -> *) -> Stream a -> Stream a
 
 ap :: Stream (a -> b) -> Stream a -> Stream b
 
-scan :: (b -> a -> b) -> b -> Stream a -> Stream b
+.. _scan:
 
-loop :: (b -> a -> { seed :: b, value :: c }) -> b -> Stream a -> Stream c
+scan
+^^^^
+
+.. code-block:: haskell
+
+  scan :: (b -> a -> b) -> b -> Stream a -> Stream b
+
+Incrementally accumulate results, starting with the provided initial value.::
+
+  stream:                           -1-2-3->
+  scan((x, y) => x + y, 0, stream): 01-3-6->
+
+.. _loop:
+
+loop
+^^^^
+
+  loop :: (b -> a -> { seed :: b, value :: c }) -> b -> Stream a -> Stream c
+
+Accumulate results using a feedback loop that emits one value and feeds back another to be used in the next iteration.
+
+It allows you to maintain and update a "state" (aka feedback, aka seed for the next iteration) while emitting a different value. In contrast, scan feeds back and produces the same value.
+
+.. code-block:: javascript
+
+  // Average an array of values
+  const average = values =>
+  	values.reduce((sum, x) => sum + x, 0) / values.length
+
+  const stream = // ...
+
+  // Emit the simple (ie windowed) moving average of the 10 most recent values
+  loop((values, x) => {
+  	values.push(x)
+  	values = values.slice(-10) // Keep up to 10 most recent
+  	const avg = average(values)
+
+  	// Return { seed, value } pair.
+  	// seed will feed back into next iteration
+  	// value will be propagated
+  	return { seed: values, value: avg }
+  }, [], stream)
 
 zipArrayValues :: ((a, b) -> c) -> [a] -> Stream b -> Stream c
 
@@ -107,6 +222,8 @@ switchLatest :: Stream (Stream a) -> Stream a
 Filtering
 ---------
 
+.. _filter:
+
 filter
 ^^^^^^
 
@@ -119,6 +236,8 @@ Retain only events for which a predicate is truthy.
   stream:               -1-2-3-4->
   filter(even, stream): ---2---4->
 
+.. _skipRepeats:
+
 skipRepeats
 ^^^^^^^^^^^
 
@@ -126,7 +245,10 @@ skipRepeats
 
   skipRepeats :: Stream a -> Stream a
 
-Remove adjacent repeated events
+Remove adjacent repeated events.::
+
+  stream:              -1-2-2-3-4-4-5->
+  skipRepeats(stream): -1-2---3-4---5->
 
 Note that ``===`` is used to identify repeated items.  To use a different comparison, use :ref:`skipRepeatsWith`
 
@@ -139,13 +261,72 @@ skipRepeatsWith
 
   skipRepeatsWith :: ((a, a) -> bool) -> Stream a -> Stream a
 
-Remove adjacent repeated events, using the provided equality function to compare adjacent events.
+Remove adjacent repeated events, using the provided equality function to compare adjacent events.::
 
-take :: int -> Stream a -> Stream a
+  stream:                                    -a-b-B-c-D-d-e->
+  skipRepeatsWith(equalsIgnoreCase, stream): -a-b---c-D---e->
 
-skip :: int -> Stream a -> Stream a
+The equals function should return truthy if the two value are equal, or falsy if they are not equal.
 
-slice :: int -> int -> Stream a -> Stream a
+.. _take:
+
+.. _slice:
+
+slice
+^^^^^
+
+.. code-block:: haskell
+
+  slice :: int -> int -> Stream a -> Stream a
+
+Create a new stream containing only events where start <= index < end, where index is the ordinal index of an event in stream.::
+
+  stream:              -a-b-c-d-e-f->
+  slice(1, 4, stream): ---b-c-d|
+
+  stream:              -a-b-c|
+  slice(1, 4, stream): ---b-c|
+
+If stream contains fewer than start events, the returned stream will be empty.
+
+take
+^^^^
+
+.. code-block:: haskell
+
+  take :: int -> Stream a -> Stream a
+
+Create a new stream containing at most n events from stream.::
+
+  stream:          -a-b-c-d-e-f->
+  take(3, stream): -a-b-c|
+
+  stream:          -a-b|
+  take(3, stream): -a-b|
+
+If stream contains fewer than n events, the returned stream will be effectively equivalent to stream.
+
+.. _skip:
+
+skip
+^^^^
+
+.. code-block:: haskell
+
+  skip :: int -> Stream a -> Stream a
+
+Create a new stream that omits the first n events from stream.::
+
+  stream:          -a-b-c-d-e-f->
+  skip(3, stream): -------d-e-f->
+
+  stream:          -a-b-c-d-e|
+  skip(3, stream): -------d-e|
+
+  stream:          -a-b-c|
+  skip(3, stream): ------|
+
+If stream contains fewer than n events, the returned stream will be empty.
 
 takeWhile :: (a -> bool) -> Stream a -> Stream a
 
