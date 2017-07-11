@@ -6,18 +6,18 @@
 export type Time = number
 
 export type Stream<A> = {
-  run: (Sink<A>, Scheduler) => Disposable
+  +run: (Sink<A>, Scheduler) => Disposable
 }
 
 export type Sink<A> = {
-  event: (Time, A) => void,
-  end: (Time) => void,
-  error: (Time, Error) => void,
+  +event: (Time, A) => void,
+  +end: (Time) => void,
+  +error: (Time, Error) => void,
 }
 
 // Interface of a resource that can be disposed
 export type Disposable = {
-  dispose: () => void
+  +dispose: () => void
 }
 
 // Delay time offset
@@ -30,15 +30,15 @@ export type Period = number
 export type Offset = number
 
 export type Scheduler = {
-  now: () => Time,
-  asap: (Task) => ScheduledTask,
-  delay: (Delay, Task) => ScheduledTask,
-  periodic: (Period, Task) => ScheduledTask,
-  schedule: (Delay, Period, Task) => ScheduledTask,
-  scheduleTask: (Offset, Delay, Period, Task) => ScheduledTask,
-  relative: (Offset) => Scheduler,
-  cancel: (ScheduledTask) => void,
-  cancelAll: ((ScheduledTask) => boolean) => void
+  +now: () => Time,
+  +asap: (Task) => ScheduledTask,
+  +delay: (Delay, Task) => ScheduledTask,
+  +periodic: (Period, Task) => ScheduledTask,
+  +schedule: (Delay, Period, Task) => ScheduledTask,
+  +scheduleTask: (Offset, Delay, Period, Task) => ScheduledTask,
+  +relative: (Offset) => Scheduler,
+  +cancel: (ScheduledTask) => void,
+  +cancelAll: ((ScheduledTask) => boolean) => void
 }
 
 // Opaque handle vended by some platform-specific functions,
@@ -48,9 +48,9 @@ export type Handle = any
 // A Timer can schedule a function to run after
 // a particular delay
 export type Timer = {
-  now: () => Time,
-  setTimer: (() => any, Delay) => Handle,
-  clearTimer: (Handle) => void
+  +now: () => Time,
+  +setTimer: (() => any, Delay) => Handle,
+  +clearTimer: (Handle) => void
 }
 
 // Run a ScheduledTask
@@ -59,20 +59,20 @@ export type TaskRunner = (ScheduledTask) => any
 // A Timeline is a set of ScheduledTasks to be executed at
 // particular times
 export type Timeline = {
-  add: (ScheduledTask) => void,
-  remove: (ScheduledTask) => boolean,
-  removeAll: ((ScheduledTask) => boolean) => void,
-  isEmpty: () => boolean,
-  nextArrival: () => Time,
-  runTasks: (Time, TaskRunner) => void
+  +add: (ScheduledTask) => void,
+  +remove: (ScheduledTask) => boolean,
+  +removeAll: ((ScheduledTask) => boolean) => void,
+  +isEmpty: () => boolean,
+  +nextArrival: () => Time,
+  +runTasks: (Time, TaskRunner) => void
 }
 
 export type Task = Disposable & {
-  run: (Time) => void,
-  error: (Time, Error) => void,
+  +run: (Time) => void,
+  +error: (Time, Error) => void,
 }
 
 export type ScheduledTask = Disposable & {
-  run: () => void,
-  error: (Error) => void,
+  +run: () => void,
+  +error: (Error) => void,
 }
