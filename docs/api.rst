@@ -332,6 +332,8 @@ takeWhile :: (a -> bool) -> Stream a -> Stream a
 
 skipWhile :: (a -> bool) -> Stream a -> Stream a
 
+skipAfter :: (a -> bool) -> Stream a -> Stream a
+
 until :: Stream * -> Stream a -> Stream a
 
 since :: Stream * -> Stream a -> Stream a

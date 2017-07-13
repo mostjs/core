@@ -120,13 +120,14 @@ export const skipRepeatsWith = curry2(_skipRepeatsWith)
 // -----------------------------------------------------------------------
 // Slicing
 
-import { take as _take, skip as _skip, slice as _slice, takeWhile as _takeWhile, skipWhile as _skipWhile } from './combinator/slice'
+import { take as _take, skip as _skip, slice as _slice, takeWhile as _takeWhile, skipWhile as _skipWhile, skipAfter as _skipAfter } from './combinator/slice'
 
 export const take = curry2(_take)
 export const skip = curry2(_skip)
 export const slice = curry3(_slice)
 export const takeWhile = curry2(_takeWhile)
 export const skipWhile = curry2(_skipWhile)
+export const skipAfter = curry2(_skipAfter)
 
 // -----------------------------------------------------------------------
 // Time slicing
