@@ -178,6 +178,19 @@ declare export function throwError <E:Error> (e: Error): Stream<any>
 
 declare export function multicast <A> (s: Stream<A>): Stream<A>
 
+declare export class MulticastSource <A> {
+  constructor(Stream<A>): MulticastSource<A>;
+
+  run(Sink<A>, Scheduler): Disposable;
+
+  event(Time, A): void;
+  error(Time, Error): void;
+  end(Time): void;
+
+  add(Sink<A>): number;
+  remove(Sink<A>): number;
+}
+
 export type PropagateTask<A> = Task & {
   value: A,
   sink: Sink<A>,
