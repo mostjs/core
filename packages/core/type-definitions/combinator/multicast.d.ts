@@ -2,10 +2,10 @@ import { Disposable, Scheduler, Sink, Stream, Time } from '@most/types';
 
 export function multicast<A>(s: Stream<A>): Stream<A>;
 
-export class MulticastSource<A> implements Stream<A>, Sink<A> {
-  protected source: Stream<A>;
-  protected sinks: Array<Sink<A>>;
-  protected _disposable: Disposable;
+export class MulticastSource<A> implements Stream<A>, Sink<A>, Disposable {
+  public source: Stream<A>;
+  public sinks: Array<Sink<A>>;
+  public disposable: Disposable;
 
   constructor(source: Stream<A>);
 
@@ -15,6 +15,8 @@ export class MulticastSource<A> implements Stream<A>, Sink<A> {
   public error(time: Time, error: Error): void;
   public end(time: Time): void;
 
-  protected add(sink: Sink<A>): number;
-  protected remove(sink: Sink<A>): number;
+  public add(sink: Sink<A>): number;
+  public remove(sink: Sink<A>): number;
+
+  public dispose(): void;
 }

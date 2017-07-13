@@ -179,6 +179,10 @@ declare export function throwError <E:Error> (e: Error): Stream<any>
 declare export function multicast <A> (s: Stream<A>): Stream<A>
 
 declare export class MulticastSource <A> {
+  source: Stream<A>;
+  disposable: Disposable;
+  sinks: Array<Sink<A>>;
+
   constructor(Stream<A>): MulticastSource<A>;
 
   run(Sink<A>, Scheduler): Disposable;
@@ -189,6 +193,8 @@ declare export class MulticastSource <A> {
 
   add(Sink<A>): number;
   remove(Sink<A>): number;
+
+  dispose(): void;
 }
 
 export type PropagateTask<A> = Task & {
