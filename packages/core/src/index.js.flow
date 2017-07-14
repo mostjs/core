@@ -180,8 +180,8 @@ declare export function multicast <A> (s: Stream<A>): Stream<A>
 
 declare export class MulticastSource <A> {
   source: Stream<A>;
-  disposable: Disposable;
   sinks: Array<Sink<A>>;
+  disposable: Disposable;
 
   constructor(Stream<A>): MulticastSource<A>;
 
