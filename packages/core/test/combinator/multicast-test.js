@@ -1,14 +1,14 @@
-import { describe, it } from 'mocha'
+import { MulticastDisposable, MulticastSource, multicast } from '../../src/combinator/multicast'
 import { assert, eq } from '@briancavalier/assert'
-import { spy } from 'sinon'
-
-import { now } from '../../src/source/now'
+import { collectEvents, makeEvents, ticks } from '../helper/testEnv'
+import { describe, it } from 'mocha'
 import { map, tap } from '../../src/combinator/transform'
-import { multicast, MulticastSource, MulticastDisposable } from '../../src/combinator/multicast'
-import { runEffects } from '../../src/runEffects'
-import { ticks, makeEvents, collectEvents } from '../helper/testEnv'
-import { sinkSpy } from '../helper/sinkSpy'
+
 import FakeDisposeStream from '../helper/FakeDisposeStream'
+import { now } from '../../src/source/now'
+import { runEffects } from '../../src/runEffects'
+import { sinkSpy } from '../helper/sinkSpy'
+import { spy } from 'sinon'
 
 describe('multicast', () => {
   it('should be identity for already-multicasted stream', () => {
@@ -158,10 +158,10 @@ describe('MulticastDisposable', () => {
         return 0
       },
 
-      _dispose () {}
+      dispose () {}
     }
 
-    const disposed = spy(source, '_dispose')
+    const disposed = spy(source, 'dispose')
     const removed = spy(source, 'remove')
 
     const md = new MulticastDisposable(source, expectedSink)
@@ -180,10 +180,10 @@ describe('MulticastDisposable', () => {
         return 1
       },
 
-      _dispose () {}
+      dispose () {}
     }
 
-    const disposed = spy(source, '_dispose')
+    const disposed = spy(source, 'dispose')
     const removed = spy(source, 'remove')
 
     const md = new MulticastDisposable(source, expectedSink)
