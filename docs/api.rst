@@ -279,7 +279,7 @@ slice
 
   slice :: int -> int -> Stream a -> Stream a
 
-Create a new stream containing only events where start <= index < end, where index is the ordinal index of an event in stream.::
+Keep only events in a range, where start <= index < end, and index is the ordinal index of an event in stream.::
 
   stream:              -a-b-c-d-e-f->
   slice(1, 4, stream): ---b-c-d|
@@ -296,7 +296,7 @@ take
 
   take :: int -> Stream a -> Stream a
 
-Create a new stream containing at most n events from stream.::
+Keep at most the first n events from stream.::
 
   stream:          -a-b-c-d-e-f->
   take(3, stream): -a-b-c|
@@ -315,7 +315,7 @@ skip
 
   skip :: int -> Stream a -> Stream a
 
-Create a new stream that omits the first n events from stream.::
+Omit the first n events from stream.::
 
   stream:          -a-b-c-d-e-f->
   skip(3, stream): -------d-e-f->
@@ -328,11 +328,45 @@ Create a new stream that omits the first n events from stream.::
 
 If stream contains fewer than n events, the returned stream will be empty.
 
-takeWhile :: (a -> bool) -> Stream a -> Stream a
+takeWhile
+^^^^^^^^^
 
-skipWhile :: (a -> bool) -> Stream a -> Stream a
+.. code-block:: haskell
 
-skipAfter :: (a -> bool) -> Stream a -> Stream a
+  takeWhile :: (a -> bool) -> Stream a -> Stream a
+
+Keep all events until predicate returns false, and discard the rest.::
+
+  stream:                  -2-4-5-6-8->
+  takeWhile(even, stream): -2-4-|
+
+.. _skipWhile:
+
+skipWhile
+^^^^^^^^^
+
+.. code-block:: haskell
+
+  skipWhile :: (a -> bool) -> Stream a -> Stream a
+
+Discard all events until predicate returns false, and keep the rest.::
+
+  stream:                  -2-4-5-6-8->
+  skipWhile(even, stream): -----5-6-8->
+
+.. _skipAfter:
+
+skipAfter
+^^^^^^^^^
+
+.. code-block:: haskell
+
+  skipAfter :: (a -> bool) -> Stream a -> Stream a
+
+Discard all events after the first event for which predicate returns true.::
+
+  stream:                  -1-2-3-4-5-6-8->
+  skipAfter(even, stream): -1-2|
 
 until :: Stream * -> Stream a -> Stream a
 
