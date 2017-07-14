@@ -315,7 +315,7 @@ skip
 
   skip :: int -> Stream a -> Stream a
 
-Omit the first n events from stream.::
+Discard the first n events from stream.::
 
   stream:          -a-b-c-d-e-f->
   skip(3, stream): -------d-e-f->
