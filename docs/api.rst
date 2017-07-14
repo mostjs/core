@@ -368,11 +368,73 @@ Discard all events after the first event for which predicate returns true.::
   stream:                  -1-2-3-4-5-6-8->
   skipAfter(even, stream): -1-2|
 
-until :: Stream * -> Stream a -> Stream a
+until
+^^^^^
 
-since :: Stream * -> Stream a -> Stream a
+.. code-block:: haskell
 
-during :: Stream (Stream *) -> Stream a -> Stream a
+  until :: Stream * -> Stream a -> Stream a
+
+Keep all events in one stream until the first event occurs in another.::
+
+  stream:                   -a-b-c-d-e-f->
+  endSignal:                ------z->
+  until(endSignal, stream): -a-b-c|
+
+Note that if endSignal has no events, then the returned stream will be effectively equivalent to the original.
+
+.. code-block:: javascript
+
+  // Keep only 3 seconds of events, discard the rest
+  until(at(3000, null), stream)
+
+since
+^^^^^
+
+.. code-block:: haskell
+
+  since :: Stream * -> Stream a -> Stream a
+
+Discard all events in one stream until the first event occurs in another.::
+
+  stream:                     -a-b-c-d-e-f->
+  startSignal:                ------z->
+  since(startSignal, stream): -------d-e-f->
+
+Note that if startSignal is has no events, then the returned stream will be effectively equivalent to :ref:`never`.
+
+.. code-block:: javascript
+
+  // Discard events for 3 seconds, keep the rest
+  since(at(3000, null), stream)
+
+during
+^^^^^^
+
+.. code-block:: haskell
+
+  during :: Stream (Stream *) -> Stream a -> Stream a
+
+Keep events that occur during a time window defined by a higher-order stream.::
+
+  stream:                     -a-b-c-d-e-f-g->
+  timeWindow:                 -----s
+  s:                                -----x
+  during(timeWindow, stream): -----c-d-e-|
+
+This is similar to :ref:`slice`, but uses time rather than indices to "slice" the stream.
+
+.. code-block:: javascript
+
+  // A time window that:
+  // 1. starts at time = 1 second
+  // 2. ends at time = 6 seconds (1 second + 5 seconds)
+  const timeWindow = at(1000, at(5000, null))
+
+  // 1. discard events for 1 second, then
+  // 2. keep events for 5 more seconds, then
+  // 3. discard all subsequent events
+  during(timeWindow, stream)
 
 delay :: int -> Stream a -> Stream a
 
