@@ -494,8 +494,8 @@ Debouncing can be extremely useful when dealing with bursts of similar events, f
   const searchInput = document.querySelector('[name="search-text"]');
   const searchText = most.fromEvent('input', searchInput);
 
-  // Logs the current value of the searchInput, only after the
-  // user stops typing for 500 millis
+  // The current value of the searchInput, but only
+  // after the user stops typing for 500 millis
   map(e => e.target.value, debounce(500, searchText))
 
 fromPromise :: Promise a -> Stream a
