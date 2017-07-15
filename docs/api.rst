@@ -436,11 +436,67 @@ This is similar to :ref:`slice`, but uses time rather than indices to "slice" th
   // 3. discard all subsequent events
   during(timeWindow, stream)
 
-delay :: int -> Stream a -> Stream a
+.. _delay:
 
-throttle :: int -> Stream a -> Stream a
+delay
+^^^^^
 
-debounce :: int -> Stream a -> Stream a
+.. code-block:: haskell
+
+  delay :: int -> Stream a -> Stream a
+
+Timeshift a stream by a number of milliseconds.::
+
+  stream:           -a-b-c-d->
+  delay(1, stream): --a-b-c-d->
+  delay(5, stream): ------a-b-c-d->
+
+Delaying a stream timeshifts all the events by the same amount. It doesn't change the time *between* events.
+
+.. _throttle:
+
+throttle
+^^^^^^^^
+
+  throttle :: int -> Stream a -> Stream a
+
+Limit the rate of events to at most one per a number of milliseconds.::
+
+  stream:               abcd----abcd---->
+  throttle(2, stream):  a-c-----a-c----->
+
+In contrast to debounce, throttle simply drops events that occur "too often", whereas debounce waits for a "quiet period".
+
+.. _debounce:
+
+debounce
+^^^^^^^^
+
+.. code-block:: haskell
+
+  debounce :: int -> Stream a -> Stream a
+
+Wait for a burst of events to subside and keep only the last event in the burst.::
+
+  stream:              abcd----abcd---->
+  debounce(2, stream): -----d-------d-->
+
+If the stream ends while there is a pending debounced event (e.g. via until), the pending event will occur just before the stream ends.  For example::
+
+  s1:                         abcd----abcd---->
+  s2:                         ------------|
+  debounce(2, until(s2, s1)): -----d------d|
+
+Debouncing can be extremely useful when dealing with bursts of similar events, for example, debouncing keypress events before initiating a remote search query in a browser application.
+
+.. code-block:: javascript
+
+  const searchInput = document.querySelector('[name="search-text"]');
+  const searchText = most.fromEvent('input', searchInput);
+
+  // Logs the current value of the searchInput, only after the
+  // user stops typing for 500 millis
+  map(e => e.target.value, debounce(500, searchText))
 
 fromPromise :: Promise a -> Stream a
 
