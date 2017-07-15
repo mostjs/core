@@ -1,6 +1,6 @@
-import { append, remove, findIndex } from '@most/prelude'
+import { append, findIndex, remove } from '@most/prelude'
 import { disposeNone, disposeOnce } from '@most/disposable'
-import { tryEvent, tryEnd } from '../source/tryEvent'
+import { tryEnd, tryEvent } from '../source/tryEvent'
 
 export const multicast = stream =>
   stream instanceof Multicast ? stream : new Multicast(stream)
@@ -18,20 +18,20 @@ export class MulticastSource {
   constructor (source) {
     this.source = source
     this.sinks = []
-    this._disposable = disposeNone()
+    this.disposable = disposeNone()
   }
 
   run (sink, scheduler) {
     const n = this.add(sink)
     if (n === 1) {
-      this._disposable = this.source.run(this, scheduler)
+      this.disposable = this.source.run(this, scheduler)
     }
     return disposeOnce(new MulticastDisposable(this, sink))
   }
 
-  _dispose () {
-    const disposable = this._disposable
-    this._disposable = disposeNone()
+  dispose () {
+    const disposable = this.disposable
+    this.disposable = disposeNone()
     return disposable.dispose()
   }
 
@@ -83,7 +83,7 @@ export class MulticastDisposable {
 
   dispose () {
     if (this.source.remove(this.sink) === 0) {
-      this.source._dispose()
+      this.source.dispose()
     }
   }
 }
