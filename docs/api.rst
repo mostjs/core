@@ -203,19 +203,76 @@ mergeConcurrently :: int -> Stream (Stream a) -> Stream a
 
 mergeMapConcurently :: (a -> Stream b) -> int -> Stream a -> Stream b
 
-merge :: ...Stream a -> Stream a
+.. _merge:
 
-mergeArray :: [ (Stream a) ] -> Stream a
+merge
+^^^^^
 
-combine :: ((...*) -> a) -> (...Stream *) -> Stream a
+.. code-block:: haskell
 
-combineArray :: ((...*) -> a) -> [ Stream * ] -> Stream a
+  merge :: Stream a -> Stream a -> Stream a
+
+Create a new stream containing events from two streams.::
+
+  s1:            -a--b----c--->
+  s2:            --w---x-y--z->
+  merge(s1, s2): -aw-b-x-yc-z->
+
+Merging creates a new stream containing all events from the two original streams without affecting the time of the events. You can think of the events from the input streams simply being interleaved into the new, merged stream. A merged stream ends when all of its input streams have ended.
+
+.. _mergeArray:
+
+mergeArray
+^^^^^^^^^^
+
+.. code-block:: haskell
+
+  mergeArray :: [ (Stream a) ] -> Stream a
+
+Array form of :ref:`merge`. Create a new Stream containing all events from all streams in the array.
+
+  s1:                       -a--b----c---->
+  s2:                       --w---x-y--z-->
+  s3:                       ---1---2----3->
+  mergeArray([s1, s2, s3]): -aw1b-x2yc-z3->
+
+.. _combine:
+
+combine
+^^^^^^^
+
+.. code-block:: haskell
+
+  combine :: (a -> b -> c) -> Stream a -> Stream b -> Stream c
+
+.. _combineArray:
+
+combineArray
+^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  combineArray :: ((a, b, ...) -> z) -> [ Stream a, Stream b, ... ] -> Stream z
+
+.. _zip:
+
+zip
+^^^
+
+.. code-block:: haskell
+
+  zip :: (a -> b -> c) -> Stream a -> Stream b -> Stream c
+
+.. _zipArray:
+
+zipArray
+^^^^^^^^
+
+.. code-block:: haskell
+
+  zipArray :: ((a, b, ...) -> z) -> [ Stream a, Stream b, ... ] -> Stream z
 
 sample :: ((a, b) -> c) -> Stream a -> Stream b -> Stream c
-
-zip :: ((...*) -> a) -> (...Stream *) -> Stream a
-
-zipArray :: ((...*) -> a) -> [ Stream * ] -> Stream a
 
 switchLatest :: Stream (Stream a) -> Stream a
 
