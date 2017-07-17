@@ -498,9 +498,57 @@ Debouncing can be extremely useful when dealing with bursts of similar events, f
   // after the user stops typing for 500 millis
   map(e => e.target.value, debounce(500, searchText))
 
-fromPromise :: Promise a -> Stream a
+.. _fromPromise:
 
-awaitPromises :: Stream (Promise a) -> Stream a
+fromPromise
+^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  fromPromise :: Promise a -> Stream a
+
+Create a stream containing a promise's value.::
+
+  promise:              ----a
+  fromPromise(promise): ----a|
+
+If the promise rejects, the stream will be in an error state with the promise's rejection reason as its error. See :ref:`recoverWith` for error recovery.
+
+.. _awaitPromises:
+
+awaitPromises
+^^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  awaitPromises :: Stream (Promise a) -> Stream a
+
+Turn a stream of promises into a stream containing the promises' values.::
+
+  promise p:             ---1
+  promise q:             ------2
+  promise r:             -3
+  stream:                -p---q---r->
+  awaitPromises(stream): ---1--2--3->
+
+Note that order is always preserved, regardless of promise fulfillment order.
+
+To create a stream that merges promises in fulfillment order, use ``chain(fromPromise, stream)``. Note the difference::
+
+  promise p:                    --1
+  promise q:                    --------2
+  promise r:                    ------3
+  stream:                       -p-q-r----->
+  chain(fromPromise, stream):   --1---3-2-->
+  awaitPromises(stream):        --1-----23->
+
+If a promise rejects, the stream will be in an error state with the rejected promise's reason as its error. See recoverWith for error recovery. For example::
+
+  promise p:             ---1
+  promise q:             ------X
+  promise r:             -3
+  stream:                -p---q---r->
+  awaitPromises(stream): ---1--X
 
 continueWith :: (() -> Stream a) -> Stream a -> Stream a
 
