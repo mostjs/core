@@ -203,19 +203,108 @@ mergeConcurrently :: int -> Stream (Stream a) -> Stream a
 
 mergeMapConcurently :: (a -> Stream b) -> int -> Stream a -> Stream b
 
-merge :: ...Stream a -> Stream a
+.. _merge:
 
-mergeArray :: [ (Stream a) ] -> Stream a
+merge
+^^^^^
 
-combine :: ((...*) -> a) -> (...Stream *) -> Stream a
+.. code-block:: haskell
 
-combineArray :: ((...*) -> a) -> [ Stream * ] -> Stream a
+  merge :: Stream a -> Stream a -> Stream a
+
+Create a new stream containing events from two streams.::
+
+  s1:            -a--b----c--->
+  s2:            --w---x-y--z->
+  merge(s1, s2): -aw-b-x-yc-z->
+
+Merging creates a new stream containing all events from the two original streams without affecting the time of the events. You can think of the events from the input streams simply being interleaved into the new, merged stream. A merged stream ends when all of its input streams have ended.
+
+.. _mergeArray:
+
+mergeArray
+^^^^^^^^^^
+
+.. code-block:: haskell
+
+  mergeArray :: [ (Stream a) ] -> Stream a
+
+Array form of :ref:`merge`. Create a new Stream containing all events from all streams in the array.
+
+  s1:                       -a--b----c---->
+  s2:                       --w---x-y--z-->
+  s3:                       ---1---2----3->
+  mergeArray([s1, s2, s3]): -aw1b-x2yc-z3->
+
+.. _combine:
+
+combine
+^^^^^^^
+
+.. code-block:: haskell
+
+  combine :: (a -> b -> c) -> Stream a -> Stream b -> Stream c
+
+Apply a function to the most recent event from each stream when a new event arrives on any stream.::
+
+  s1:                   -0--1----2--->
+  s2:                   --3---4-5--6->
+  combine(add, s1, s2): --3-4-5-67-8->
+
+Note that ``combine`` waits for at least one event to arrive on all input streams before it produces any events.
+
+.. _combineArray:
+
+combineArray
+^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  combineArray :: ((a, b, ...) -> z) -> [ Stream a, Stream b, ... ] -> Stream z
+
+Array form of :ref:`combine`. Apply a function to the most recent event from all streams when a new event arrives on any stream.::
+
+  s1:                               -0--1----2->
+  s2:                               --3---4-5-->
+  s3:                               ---2---1--->
+  combineArray(add3, [s1, s2, s3]): ---56-7678->
+
+.. _zip:
+
+zip
+^^^
+
+.. code-block:: haskell
+
+  zip :: (a -> b -> c) -> Stream a -> Stream b -> Stream c
+
+Apply a function to corresponding pairs of events from the inputs streams.::
+
+  s1:               -1--2--3--4->
+  s2:               -1---2---3---4->
+  zip(add, s1, s2): -2---4---6---8->
+
+Zipping correlates by *index* corresponding events from two input streams. Note that zipping a "fast" stream and a "slow" stream will cause buffering. Events from the fast stream must be buffered in memory until an event at the corresponding index arrives on the slow stream.
+
+A zipped stream ends when any one of its input streams ends.
+
+.. _zipArray:
+
+zipArray
+^^^^^^^^
+
+.. code-block:: haskell
+
+  zipArray :: ((a, b, ...) -> z) -> [ Stream a, Stream b, ... ] -> Stream z
+
+Array form of :ref:`zip`.  Apply a function to corresponding events from all the inputs streams.::
+
+  s1:                           -1-2-3---->
+  s2:                           -1--2--3-->
+  s2:                           --1--2--3->
+  zipArray(add3, [s1, s2, s3]): --3--6--9->
 
 sample :: ((a, b) -> c) -> Stream a -> Stream b -> Stream c
-
-zip :: ((...*) -> a) -> (...Stream *) -> Stream a
-
-zipArray :: ((...*) -> a) -> [ Stream * ] -> Stream a
 
 switchLatest :: Stream (Stream a) -> Stream a
 
@@ -288,6 +377,8 @@ Keep only events in a range, where start <= index < end, and index is the ordina
   slice(1, 4, stream): ---b-c|
 
 If stream contains fewer than start events, the returned stream will be empty.
+
+.. _take:
 
 take
 ^^^^
@@ -368,6 +459,8 @@ Discard all events after the first event for which predicate returns true.::
   stream:                  -1-2-3-4-5-6-8->
   skipAfter(even, stream): -1-2|
 
+.. _until:
+
 until
 ^^^^^
 
@@ -388,6 +481,8 @@ Note that if endSignal has no events, then the returned stream will be effective
   // Keep only 3 seconds of events, discard the rest
   until(at(3000, null), stream)
 
+.. _since:
+
 since
 ^^^^^
 
@@ -407,6 +502,8 @@ Note that if startSignal is has no events, then the returned stream will be effe
 
   // Discard events for 3 seconds, keep the rest
   since(at(3000, null), stream)
+
+.. _during:
 
 during
 ^^^^^^
