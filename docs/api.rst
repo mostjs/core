@@ -198,11 +198,14 @@ zipArrayValues
 
   zipArrayValues :: ((a, b) -> c) -> [a] -> Stream b -> Stream c
 
-Creates a new stream by applying a function ``((a, b) -> c)`` to the latest value of ``Stream b`` with an increasing index of ``[a]`` until ``Stream b`` ends or there are no more values in ``[a]``.::
+Applies a function to the latest event and the array value at the respective index.::
 
   stream:                             --10---10---10---10---10--->
   array:                              [ 1, 2, 3 ]
   zipArrayValues(add, array, stream): --11---12---13|
+
+The resulting stream will contain the same number of events as the input stream, 
+or array.length events, whichever is less.
 
 .. _withArrayValues
 
@@ -213,13 +216,14 @@ withArrayValues
 
   withArrayValues :: [a] -> Stream b -> Stream a
 
-Creates a new stream by associating the time of event occurence from ``stream`` with the values of an array. The new stream 
-will end either when there are no more values in the array or the underlying stream has ended.::
+Each event is mapped to an array value at the respective index.::
 
   array:                          [ 1, 2, 3 ]
   stream:                         --x--x--x--x--x-->
   withArrayValues(array, stream): --1--2--3|
-..
+
+The resulting stream will contain the same number of events as the input stream, 
+or array.length events, whichever is less.
 
 .. _chain
 
