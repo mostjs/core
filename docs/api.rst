@@ -82,6 +82,21 @@ Create a stream containing a single event at a specific time.::
 
   at(3, x): --x|
 
+.. _throwError:
+
+throwError
+^^^^^^^^^^
+
+.. code-block:: haskell
+
+Create a stream that fails at time 0 with the provided Error. ::
+
+  throwError :: Error -> Stream void
+
+This can be useful for functions that need to return a stream and also need to propagate an error.::
+
+  throwError(X): X
+
 .. _startWith:
 
 startWith
@@ -708,11 +723,39 @@ If a promise rejects, the stream will be in an error state with the rejected pro
   stream:                -p---q---r->
   awaitPromises(stream): ---1--X
 
-continueWith :: (() -> Stream a) -> Stream a -> Stream a
+.. _continueWith:
 
-recoverWith :: (Error -> Stream a) -> Stream a -> Stream a
+continueWith
+^^^^^^^^^^^^
 
-throwError :: Error -> Stream void
+.. code-block:: haskell
+
+  continueWith :: (() -> Stream a) -> Stream a -> Stream a
+
+Replace the end of a stream with another stream.::
+
+  s:                  -a-b-c-d|
+  f(): 		                    -1-2-3-4-5->
+  continueWith(f, s): -a-b-c-d-1-2-3-4-5->
+
+When ``s`` ends, ``f`` will be called, and must return stream.
+
+.. _recoverWith:
+
+recoverWith
+^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  recoverWith :: (Error -> Stream a) -> Stream a -> Stream a
+
+Recover from a stream failure by calling a function to create a new stream.::
+
+  s:                 -a-b-c-X
+  f(X):                     d-e-f->
+  recoverWith(f, s): -a-b-c-d-e-f->
+
+When ``s`` fails with an error, ``f`` will be called with the error. f must return a new stream to replace the error.
 
 propagateTask :: (int -> a -> Sink a -> *) ->  a -> Sink a -> Task
 
