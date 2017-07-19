@@ -90,7 +90,7 @@ throwError
 .. code-block:: haskell
 
 Create a stream that fails at time 0 with the provided Error. ::
-  
+
   throwError :: Error -> Stream void
 
 This can be useful for functions that need to return a stream and also need to propagate an error.::
@@ -677,7 +677,7 @@ Replace the end of a stream with another stream.::
   f(): 		                    -1-2-3-4-5->
   continueWith(f, s): -a-b-c-d-1-2-3-4-5->
 
-Note that ``f`` will be called when ``s`` ends, and must return stream.
+When ``s`` ends, ``f`` will be called, and must return stream.
 
 .. _recoverWith:
 
@@ -693,8 +693,6 @@ Recover from a stream failure by calling a function to create a new stream.::
   s:                 -a-b-c-X
   f(X):                     d-e-f->
   recoverWith(f, s): -a-b-c-d-e-f->
-
-Note that ``f`` will be called when ``s`` fails, and must return stream.
 
 When ``s`` fails with an error, ``f`` will be called with the error. f must return a new stream to replace the error.
 
