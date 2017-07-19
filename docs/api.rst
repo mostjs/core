@@ -189,13 +189,74 @@ It allows you to maintain and update a "state" (aka feedback, aka seed for the n
   	return { seed: values, value: avg }
   }, [], stream)
 
-zipArrayValues :: ((a, b) -> c) -> [a] -> Stream b -> Stream c
+.. _zipArrayValues 
 
-withArrayValues :: [a] -> Stream b -> Stream a
+zipArrayValues
+^^^^^^^^^^^^^^
 
-chain :: (a -> Stream b) -> Stream a -> Stream b
+.. code-block:: haskell
 
-join :: Stream (Stream a) -> Stream a
+  zipArrayValues :: ((a, b) -> c) -> [a] -> Stream b -> Stream c
+
+Applies a function to the latest event and the array value at the respective index.::
+
+  stream:                             --10---10---10---10---10--->
+  array:                              [ 1, 2, 3 ]
+  zipArrayValues(add, array, stream): --11---12---13|
+
+The resulting stream will contain the same number of events as the input stream, 
+or array.length events, whichever is less.
+
+.. _withArrayValues
+
+withArrayValues
+^^^^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  withArrayValues :: [a] -> Stream b -> Stream a
+
+Each event is mapped to an array value at the respective index.::
+
+  array:                          [ 1, 2, 3 ]
+  stream:                         --x--x--x--x--x-->
+  withArrayValues(array, stream): --1--2--3|
+
+The resulting stream will contain the same number of events as the input stream, 
+or array.length events, whichever is less.
+
+.. _chain
+
+chain
+^^^^^
+
+.. code-block:: haskell
+
+  chain :: (a -> Stream b) -> Stream a -> Stream b
+
+Transform each event in ``stream`` into a stream, and then merge it into the resulting stream. Note that ``f`` must return a stream.::
+
+  stream:            -a----b----c|
+  f(a):               1--2--3|
+  f(b):                    1----2----3|
+  f(c):                           1-2-3|
+  chain(f, stream):  -1--2-13---2-1-233|
+
+.. _join
+
+join
+^^^^
+
+.. code-block:: haskell
+
+  join :: Stream (Stream a) -> Stream a
+
+Given a higher-order stream, return a new stream that merges all the inner streams as they arrive.::
+
+  s:             ---a---b---c---d-->
+  t:             -1--2--3--4--5--6->
+  stream:        -s------t--------->
+  join(stream):  ---a---b--4c-5-d6->
 
 concatMap :: (a -> Stream b) -> Stream a -> Stream b
 
