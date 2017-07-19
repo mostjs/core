@@ -29,7 +29,7 @@ export class PropagateTask {
       return
     }
     const run = this._run
-    run(t, this.value, this.sink, this)
+    run(t, this.value, this.sink)
   }
 
   error (t, e) {

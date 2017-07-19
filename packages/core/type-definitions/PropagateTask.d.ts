@@ -14,7 +14,7 @@ export function propagateErrorTask(error: Error, sink: Sink<any>): PropagateTask
 export function propagateErrorTask(error: Error): (sink: Sink<any>) => PropagateTask<any>;
 
 export type PropagateTaskRun<A> =
-  (time: number, value: A, sink: Sink<A>, task: PropagateTask<A>) => any
+  (time: number, value: A, sink: Sink<A>) => any
 
 export interface PropagateTask<A> extends Task {
   value: A;

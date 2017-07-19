@@ -203,7 +203,7 @@ export type PropagateTask<A> = Task & {
   active: boolean
 }
 
-export type PropagateTaskRun<A> = (time: Time, value: A, sink: Sink<A>, task: PropagateTask<A>) => any
+export type PropagateTaskRun<A> = (time: Time, value: A, sink: Sink<A>) => any
 
 declare export function propagateTask<A> (run: PropagateTaskRun<A>, value: A, sink: Sink<A>): PropagateTask<A>
 declare export function propagateEventTask<A> (value: A, sink: Sink<A>): PropagateTask<A>
