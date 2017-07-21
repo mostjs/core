@@ -1,16 +1,32 @@
 API
 ===
 
+.. _types:
+
 Types
 -----
 
-Stream
-^^^^^^
-
 .. code-block:: haskell
 
-  type Stream = {
+  type Time = number
+
+  type Stream a = {
     run :: Sink a -> Scheduler -> Disposable
+  }
+
+  type Sink a = {
+    event :: Time -> a -> void
+    error :: Time -> Error -> void
+    end :: Time -> void
+  }
+
+  type Disposable = {
+    dispose:: () -> void
+  }
+
+  type Task = Disposable & {
+    run :: Time -> void
+    error:: Time -> Error -> void
   }
 
 Running
@@ -155,9 +171,19 @@ Replace each event value with x.::
 
   constant('tick', periodic(1000))
 
-tap :: (a -> *) -> Stream a -> Stream a
+tap
+^^^
 
-ap :: Stream (a -> b) -> Stream a -> Stream b
+.. code-block:: haskell
+
+  tap :: (a -> *) -> Stream a -> Stream a
+
+ap
+^^
+
+.. code-block:: haskell
+
+  ap :: Stream (a -> b) -> Stream a -> Stream b
 
 .. _scan:
 
@@ -204,7 +230,7 @@ It allows you to maintain and update a "state" (aka feedback, aka seed for the n
   	return { seed: values, value: avg }
   }, [], stream)
 
-.. _zipArrayValues 
+.. _zipArrayValues:
 
 zipArrayValues
 ^^^^^^^^^^^^^^
@@ -213,16 +239,16 @@ zipArrayValues
 
   zipArrayValues :: ((a, b) -> c) -> [a] -> Stream b -> Stream c
 
-Applies a function to the latest event and the array value at the respective index.::
+Apply a function to the latest event and the array value at the respective index.::
 
   stream:                             --10---10---10---10---10--->
   array:                              [ 1, 2, 3 ]
   zipArrayValues(add, array, stream): --11---12---13|
 
-The resulting stream will contain the same number of events as the input stream, 
+The resulting stream will contain the same number of events as the input stream,
 or array.length events, whichever is less.
 
-.. _withArrayValues
+.. _withArrayValues:
 
 withArrayValues
 ^^^^^^^^^^^^^^^
@@ -231,16 +257,16 @@ withArrayValues
 
   withArrayValues :: [a] -> Stream b -> Stream a
 
-Each event is mapped to an array value at the respective index.::
+Replace each event value with the array value at the respective index.::
 
   array:                          [ 1, 2, 3 ]
   stream:                         --x--x--x--x--x-->
   withArrayValues(array, stream): --1--2--3|
 
-The resulting stream will contain the same number of events as the input stream, 
+The resulting stream will contain the same number of events as the input stream,
 or array.length events, whichever is less.
 
-.. _chain
+.. _chain:
 
 chain
 ^^^^^
@@ -257,7 +283,7 @@ Transform each event in ``stream`` into a stream, and then merge it into the res
   f(c):                           1-2-3|
   chain(f, stream):  -1--2-13---2-1-233|
 
-.. _join
+.. _join:
 
 join
 ^^^^
@@ -433,8 +459,6 @@ Remove adjacent repeated events, using the provided equality function to compare
 
 The equals function should return truthy if the two value are equal, or falsy if they are not equal.
 
-.. _take:
-
 .. _slice:
 
 slice
@@ -494,6 +518,8 @@ Discard the first n events from stream.::
   skip(3, stream): ------|
 
 If stream contains fewer than n events, the returned stream will be empty.
+
+.. _takeWhile:
 
 takeWhile
 ^^^^^^^^^
@@ -757,10 +783,49 @@ Recover from a stream failure by calling a function to create a new stream.::
 
 When ``s`` fails with an error, ``f`` will be called with the error. f must return a new stream to replace the error.
 
-propagateTask :: (int -> a -> Sink a -> *) ->  a -> Sink a -> Task
+Scheduling
+----------
 
-propagateEventTask :: a -> Sink a -> Task
+.. _propagateTask:
 
-propagateEndTask :: Sink * -> Task
+propagateTask
+^^^^^^^^^^^^^
 
-propagateErrorTask :: Error -> Sink * -> Task
+.. code-block:: haskell
+
+  propagateTask :: (Time -> a -> Sink a -> *) -> a -> Sink a -> Task
+
+Create a Task to propagate a value to a Sink.  When the task executes, the provided function will receive the current time (from the scheduler on which it was scheduled), and the provided value and Sink.  The Task can use the :ref:`Sink API <types>` to propagate the value in whatever way it chooses, for example, as an event or an error, or could choose not to propagate the event based on some condition, etc.
+
+.. _propagateEventTask:
+
+propagateEventTask
+^^^^^^^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  propagateEventTask :: a -> Sink a -> Task
+
+Create a :ref:`Task <types>` that can be scheduled to propagate an event value to a :ref:`Sink <types>`.  When the task executes, it will call the Sink's ``event`` method with the current time (from the scheduler on which it was scheduled) and the value.
+
+.. _propagateEndTask:
+
+propagateEndTask
+^^^^^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  propagateEndTask :: Sink * -> Task
+
+Create a :ref:`Task <types>` that can be scheduled to propagate end to a :ref:`Sink <types>`.  When the task executes, it will call the Sink's ``end`` method with the current time (from the scheduler on which it was scheduled).
+
+.. _propagateErrorTask:
+
+propagateErrorTask
+^^^^^^^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  propagateErrorTask :: Error -> Sink * -> Task
+
+Create a :ref:`Task <types>` that can be scheduled to propagate an error to a :ref:`Sink <types>`.  When the task executes, it will call the Sink's ``error`` method with the current time (from the scheduler on which it was scheduled) and the error.
