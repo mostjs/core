@@ -806,7 +806,7 @@ propagateEventTask
 
   propagateEventTask :: a -> Sink a -> Task
 
-Create a Task that can be scheduled to propagate an event value to a Sink.  When the task executes, it will call the Sink's ``event`` method with the current time (from the scheduler on which it was scheduled) and the value.
+Create a :ref:`Task <types>` that can be scheduled to propagate an event value to a :ref:`Sink <types>`.  When the task executes, it will call the Sink's ``event`` method with the current time (from the scheduler on which it was scheduled) and the value.
 
 .. _propagateEndTask:
 
@@ -817,7 +817,7 @@ propagateEndTask
 
   propagateEndTask :: Sink * -> Task
 
-Create a Task that can be scheduled to propagate end to a Sink.  When the task executes, it will call the Sink's ``end`` method with the current time (from the scheduler on which it was scheduled).
+Create a :ref:`Task <types>` that can be scheduled to propagate end to a :ref:`Sink <types>`.  When the task executes, it will call the Sink's ``end`` method with the current time (from the scheduler on which it was scheduled).
 
 .. _propagateErrorTask:
 
@@ -828,4 +828,4 @@ propagateErrorTask
 
   propagateErrorTask :: Error -> Sink * -> Task
 
-Create a Task that can be scheduled to propagate an error to a Sink.  When the task executes, it will call the Sink's ``error`` method with the current time (from the scheduler on which it was scheduled) and the error.
+Create a :ref:`Task <types>` that can be scheduled to propagate an error to a :ref:`Sink <types>`.  When the task executes, it will call the Sink's ``error`` method with the current time (from the scheduler on which it was scheduled) and the error.
