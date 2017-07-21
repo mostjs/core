@@ -20,6 +20,15 @@ Types
     end :: Time -> void
   }
 
+  type Disposable = {
+    dispose:: () -> void
+  }
+
+  type Task = Disposable & {
+    run :: Time -> void
+    error:: Time -> Error -> void
+  }
+
 Running
 -------
 
