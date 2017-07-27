@@ -105,9 +105,9 @@ throwError
 
 .. code-block:: haskell
 
-Create a stream that fails at time 0 with the provided Error. ::
-
   throwError :: Error -> Stream void
+
+Create a stream that fails at time 0 with the provided Error. ::
 
 This can be useful for functions that need to return a stream and also need to propagate an error.::
 
@@ -203,6 +203,7 @@ Incrementally accumulate results, starting with the provided initial value.::
 
 loop
 ^^^^
+.. code-block:: haskell
 
   loop :: (b -> a -> { seed :: b, value :: c }) -> b -> Stream a -> Stream c
 
@@ -331,7 +332,7 @@ mergeArray
 
   mergeArray :: [ (Stream a) ] -> Stream a
 
-Array form of :ref:`merge`. Create a new Stream containing all events from all streams in the array.
+Array form of :ref:`merge`. Create a new Stream containing all events from all streams in the array.::
 
   s1:                       -a--b----c---->
   s2:                       --w---x-y--z-->
@@ -422,7 +423,7 @@ filter
 
   filter :: (a -> bool) -> Stream a -> Stream a
 
-Retain only events for which a predicate is truthy.
+Retain only events for which a predicate is truthy.::
 
   stream:               -1-2-3-4->
   filter(even, stream): ---2---4->
@@ -656,6 +657,7 @@ Delaying a stream timeshifts all the events by the same amount. It doesn't chang
 
 throttle
 ^^^^^^^^
+.. code-block:: haskell
 
   throttle :: int -> Stream a -> Stream a
 
