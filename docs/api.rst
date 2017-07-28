@@ -312,11 +312,7 @@ Transform each event in stream into a stream, and then concatenate it onto the
 end of the resulting stream. Note that f must return a stream.
 
 The mapping function f is applied lazily. That is, f is called only once it is 
-time to concatenate a new stream.
-
-``function f(x) -> Stream``
-
-.. code-block:: javascript
+time to concatenate a new stream.::
 
   stream:                -a----b----c|
   f(a):                   1--2--3|
@@ -325,7 +321,7 @@ time to concatenate a new stream.
   concatMap(f, stream):  -1--2--31----2----31-2-3|
   f called lazily:        ^      ^          ^
 
-Note the difference between concatMap and chain: concatMap concatenates, while 
+Note the difference between concatMap and ref:`chain`: concatMap concatenates, while 
 chain merges.
 
 .. _mergeConcurrently:
@@ -340,9 +336,7 @@ mergeConcurrently
 Given a higher-order stream, return a new stream that merges inner streams as 
 they arrive up to the specified concurrency. Once concurrency number of streams 
 are being merged, newly arriving streams will be merged after an existing one 
-ends.
-
-.. code-block:: javascript
+ends.::
 
   s:                            --a--b--c--d--e-->
   t:                            --x------y|
@@ -370,9 +364,7 @@ mergeMapConcurently
 Lazily applies a function ``f`` to each event on a stream, merging them into the 
 resulting stream at the specified concurrency. Once concurrency number of streams 
 are being merged, newly arriving streams will be merged after an existing one 
-ends.
-
-..code-block:: javascript
+ends.::
 
   stream:                             --ab--c----d----->
   f(a):                               -1-2-3|
@@ -384,7 +376,7 @@ ends.
 Note that ``f(c)`` is only merged after ``f(a)`` ends.
 
 Also note that ``f`` will not get called with ``d`` until either ``f(b)`` or 
-``f(c)`` complete.
+``f(c)`` ends.
 
 To control concurrency, mergeMapConcurrently must maintain an internal queue of 
 newly arrived streams. If new streams arrive faster than the concurrency level 
@@ -400,9 +392,7 @@ switchLatest
   switchLatest :: Stream (Stream a) -> Stream a
 
 Given a higher-order stream, return a new stream that adopts the behavior of 
-(ie emits the events of) the most recent inner stream.
-
-.. code-block:: javascript
+(ie emits the events of) the most recent inner stream.::
 
   s:                    -a-b-c-d-e-f->
   t:                    -1-2-3-4-5-6->
