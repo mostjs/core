@@ -200,13 +200,13 @@ ap
 
   ap :: Stream (a -> b) -> Stream a -> Stream b
 
-Apply the latest function in a stream of functions to the latest value in stream.
+Apply the latest function in a stream of functions to the latest value of another stream.
 
 .. code-block:: javascript
 
-  streamOfFunctions:              --f---------g--------h------>
-  stream:                         -a-------b-------c-------d-->
-  ap(stream, streamOfFunctions.): --fa-----fb-gb---gc--hc--hd->
+  streamOfFunctions:              --f-----------g---------h--------->
+  stream:                         -a-------b---------c---------d---->
+  ap(stream, streamOfFunctions.): --f(a)---f(b)-g(b)-g(c)-h(c)-h(d)->
 
 In effect, ap applies a time-varying function to a time-varying value.
 
