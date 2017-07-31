@@ -171,6 +171,8 @@ Replace each event value with x.::
 
   constant('tick', periodic(1000))
 
+.. _tap:
+
 tap
 ^^^
 
@@ -178,12 +180,35 @@ tap
 
   tap :: (a -> *) -> Stream a -> Stream a
 
+Perform a side-effect for each event in stream.
+
+.. code-block:: javascript
+
+  stream:         -a-b-c-d->
+  tap(f, stream): -a-b-c-d->
+
+For each event in stream, f is called, but the value of its result is ignored. 
+If f fails (ie throws), then the returned stream will also fail. The stream 
+returned by tap will contain the same events as the original stream.
+
+.. _ap:
+
 ap
-^^
+^^^
 
 .. code-block:: haskell
 
   ap :: Stream (a -> b) -> Stream a -> Stream b
+
+Apply the latest function in a stream of functions to the latest value of another stream.
+
+.. code-block:: javascript
+
+  streamOfFunctions:              --f-----------g---------h--------->
+  stream:                         -a-------b---------c---------d---->
+  ap(stream, streamOfFunctions.): --f(a)---f(b)-g(b)-g(c)-h(c)-h(d)->
+
+In effect, ap applies a time-varying function to a time-varying value.
 
 .. _scan:
 
