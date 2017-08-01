@@ -1,42 +1,44 @@
 import { describe, it } from 'mocha'
-import { throws, is } from '@briancavalier/assert'
+import { throws, assert } from '@briancavalier/assert'
 
 import { default as SettableDisposable } from '../../src/disposable/SettableDisposable'
 
-describe('SettableDisposable', function () {
-  it('should allow setDisposable before dispose', function () {
-    var d = new SettableDisposable()
-    var data = {}
+const testDisposable = () => ({
+  disposed: false,
+  dispose () {
+    this.disposed = true
+  }
+})
 
-    d.setDisposable({
-      dispose: function () { return data }
-    })
+describe('SettableDisposable', () => {
+  it('should allow setDisposable before dispose', () => {
+    const sd = new SettableDisposable()
+    const d = testDisposable()
 
-    var x = d.dispose()
+    sd.setDisposable(d)
+    sd.dispose()
 
-    is(data, x)
+    assert(d.disposed)
   })
 
-  it('should allow setDisposable after dispose', function () {
-    var d = new SettableDisposable()
-    var data = {}
+  it('should allow setDisposable after dispose', () => {
+    const sd = new SettableDisposable()
+    const d = testDisposable()
 
-    var p = d.dispose()
+    sd.dispose()
 
-    d.setDisposable({
-      dispose: function () { return data }
-    })
+    sd.setDisposable(d)
 
-    return p.then(is(data))
+    assert(d.disposed)
   })
 
-  it('should allow setDisposable at most once', function () {
-    var d = new SettableDisposable()
+  it('should allow setDisposable at most once', () => {
+    const d = new SettableDisposable()
 
-    d.setDisposable({})
+    d.setDisposable(testDisposable())
 
     throws(() => {
-      d.setDisposable({})
+      d.setDisposable(testDisposable())
     })
   })
 })

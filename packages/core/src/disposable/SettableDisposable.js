@@ -1,14 +1,9 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
+/** @license MIT License (c) copyright 2010-2017 original author or authors */
 
 export default class SettableDisposable {
   constructor () {
-    this.disposable = void 0
+    this.disposable = undefined
     this.disposed = false
-    this._resolve = void 0
-
-    this.result = new Promise(resolve => {
-      this._resolve = resolve
-    })
   }
 
   setDisposable (disposable) {
@@ -19,21 +14,19 @@ export default class SettableDisposable {
     this.disposable = disposable
 
     if (this.disposed) {
-      this._resolve(disposable.dispose())
+      disposable.dispose()
     }
   }
 
   dispose () {
     if (this.disposed) {
-      return this.result
+      return
     }
 
     this.disposed = true
 
     if (this.disposable !== void 0) {
-      this.result = this.disposable.dispose()
+      this.disposable.dispose()
     }
-
-    return this.result
   }
 }

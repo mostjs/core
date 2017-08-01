@@ -5,6 +5,7 @@
 import Pipe from '../sink/Pipe'
 import { empty } from '../source/empty'
 import Map from '../fusion/Map'
+import SettableDisposable from '../disposable/SettableDisposable'
 
 /**
  * @param {number} n
@@ -54,15 +55,21 @@ class Slice {
   }
 
   run (sink, scheduler) {
-    return this.source.run(new SliceSink(this.min, this.max - this.min, sink), scheduler)
+    const disposable = new SettableDisposable()
+    const sliceSink = new SliceSink(this.min, this.max - this.min, sink, disposable)
+
+    disposable.setDisposable(this.source.run(sliceSink, scheduler))
+
+    return disposable
   }
 }
 
 class SliceSink extends Pipe {
-  constructor (skip, take, sink) {
+  constructor (skip, take, sink, disposable) {
     super(sink)
     this.skip = skip
     this.take = take
+    this.disposable = disposable
   }
 
   event (t, x) {
@@ -79,6 +86,7 @@ class SliceSink extends Pipe {
     this.take -= 1
     this.sink.event(t, x)
     if (this.take === 0) {
+      this.disposable.dispose()
       this.sink.end(t)
     }
   }
@@ -94,15 +102,21 @@ class TakeWhile {
   }
 
   run (sink, scheduler) {
-    return this.source.run(new TakeWhileSink(this.p, sink), scheduler)
+    const disposable = new SettableDisposable()
+    const takeWhileSink = new TakeWhileSink(this.p, sink, disposable)
+
+    disposable.setDisposable(this.source.run(takeWhileSink, scheduler))
+
+    return disposable
   }
 }
 
 class TakeWhileSink extends Pipe {
-  constructor (p, sink) {
+  constructor (p, sink, disposable) {
     super(sink)
     this.p = p
     this.active = true
+    this.disposable = disposable
   }
 
   event (t, x) {
@@ -116,6 +130,7 @@ class TakeWhileSink extends Pipe {
     if (this.active) {
       this.sink.event(t, x)
     } else {
+      this.disposable.dispose()
       this.sink.end(t)
     }
   }
