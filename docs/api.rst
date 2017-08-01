@@ -432,7 +432,23 @@ Array form of :ref:`zip`.  Apply a function to corresponding events from all the
   s2:                           --1--2--3->
   zipArray(add3, [s1, s2, s3]): --3--6--9->
 
-sample :: ((a, b) -> c) -> Stream a -> Stream b -> Stream c
+sample
+^^^^^^
+.. code-block:: haskell 
+
+  sample :: ((a, b) -> c) -> Stream a -> Stream b -> Stream c
+
+For each event in a sampler stream, apply a function to combine it with the most recent event in another stream. The resulting stream will contain the same number of events as the sampler stream.::
+  
+  s1:                       -1--2--3--4--5->
+  sampler:                  -1-----2-----3->
+  sample(sum, sampler, s1): -2-----5-----8->
+
+  s1:                       -1-----2-----3->
+  sampler:                  -1--2--3--4--5->
+  sample(sum, sampler, s1): -2--3--5--6--8->
+
+Note ``sample`` produces a value only when an event arrives on the sampler
 
 switchLatest :: Stream (Stream a) -> Stream a
 
