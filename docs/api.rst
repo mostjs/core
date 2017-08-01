@@ -325,11 +325,105 @@ Given a higher-order stream, return a new stream that merges all the inner strea
   stream:        -s------t--------->
   join(stream):  ---a---b--4c-5-d6->
 
-concatMap :: (a -> Stream b) -> Stream a -> Stream b
+.. _concatMap:
 
-mergeConcurrently :: int -> Stream (Stream a) -> Stream a
+concatMap
+^^^^^^^^^
 
-mergeMapConcurently :: (a -> Stream b) -> int -> Stream a -> Stream b
+.. code-block:: haskell
+
+  concatMap :: (a -> Stream b) -> Stream a -> Stream b
+
+Transform each event in stream into a stream, and then concatenate it onto the 
+end of the resulting stream. Note that f must return a stream.
+
+The mapping function f is applied lazily. That is, f is called only once it is 
+time to concatenate a new stream.::
+
+  stream:                -a----b----c|
+  f(a):                   1--2--3|
+  f(b):                        1----2----3|
+  f(c):                               1-2-3|
+  concatMap(f, stream):  -1--2--31----2----31-2-3|
+  f called lazily:        ^      ^          ^
+
+Note the difference between concatMap and ref:`chain`: concatMap concatenates, while 
+chain merges.
+
+.. _mergeConcurrently:
+
+mergeConcurrently
+^^^^^^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  mergeConcurrently :: int -> Stream (Stream a) -> Stream a
+
+Given a higher-order stream, return a new stream that merges inner streams as 
+they arrive up to the specified concurrency. Once concurrency number of streams 
+are being merged, newly arriving streams will be merged after an existing one 
+ends.::
+
+  s:                            --a--b--c--d--e-->
+  t:                            --x------y|
+  u:                            -1--2--3--4--5--6>
+  stream:                       -s--t--u--------->
+  mergeConcurrently(2, stream): --a--b--cy4d-5e-6>
+
+Note that u is only merged after t ends, due to the concurrency level of 2.
+
+Note also that ``mergeConcurrently(Infinity, stream)`` is equivalent to ``join(stream)``.
+
+To control concurrency, mergeConcurrently must maintain an internal queue of 
+newly arrived streams. If new streams arrive faster than the concurrency level 
+allows them to be merged, the internal queue will grow infinitely.
+
+.. _mergeMapConcurrently:
+
+mergeMapConcurently
+^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  mergeMapConcurently :: (a -> Stream b) -> int -> Stream a -> Stream b
+
+Lazily applies a function ``f`` to each event on a stream, merging them into the 
+resulting stream at the specified concurrency. Once concurrency number of streams 
+are being merged, newly arriving streams will be merged after an existing one 
+ends.::
+
+  stream:                             --ab--c----d----->
+  f(a):                               -1-2-3|
+  f(b):                               -4-5-6----------->
+  f(c):                               -7--------------->
+  f(d):                               -1-2-3-4-5-6-7-8->
+  mergeMapConcurently(f, 2, stream) : ---142536-7------>
+
+Note that ``f(c)`` is only merged after ``f(a)`` ends.
+
+Also note that ``f`` will not get called with ``d`` until either ``f(b)`` or 
+``f(c)`` ends.
+
+To control concurrency, mergeMapConcurrently must maintain an internal queue of 
+newly arrived streams. If new streams arrive faster than the concurrency level 
+allows them to be merged, the internal queue will grow infinitely.
+
+.. _switchLatest:
+
+switchLatest
+^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  switchLatest :: Stream (Stream a) -> Stream a
+
+Given a higher-order stream, return a new stream that adopts the behavior of 
+(ie emits the events of) the most recent inner stream.::
+
+  s:                    -a-b-c-d-e-f->
+  t:                    -1-2-3-4-5-6->
+  stream:               -s-----t----->
+  switchLatest(stream): -a-b-c-4-5-6->
 
 .. _merge:
 
