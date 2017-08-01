@@ -412,7 +412,7 @@ sample
 
   sample :: ((a, b) -> c) -> Stream a -> Stream b -> Stream c
 
-Create a new stream by combining sampled values from many input streams.::
+For each event in a sampler stream, apply a function to combine it with the most recent event in another stream. The resulting stream will contain the same number of events as the sampler stream..::
   
   s1:                       -1--2--3--4--5->
   sampler:                  -1-----2-----3->
