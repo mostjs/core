@@ -10,9 +10,31 @@ Types
 
   type Time = number
 
+Time is a monotonic number. It represents the current time according to a Scheduler.  A Scheduler measures time starting at `0` when it is created.
+
+The default Scheduler uses ``performance.now`` in browsers, and ``process.hrtime`` (transformed to a `number`) in Node.
+
+.. code-block:: haskell
+
+  type Delay = number
+  type Period = number
+  type Offset = number
+
+Delay, Period, and Offset are semantic time-related types.  They're all numbers, but are intended to provide helpful semantics for working with Task and Scheduler methods.
+
+.. code-block:: haskell
+
   type Stream a = {
     run :: Sink a -> Scheduler -> Disposable
   }
+
+A Stream represents a view of events over time. It's ``run`` method arranges to propagate events to the provided Sink. Each stream has a local clock, defined by the provided Scheduler, which has methods for knowing the current time, and scheduling future tasks.
+
+Some Streams, like :ref:`now` are simple, while others sources, like :ref:`combine`, do sophisticated things such as combining multiple streams, or dealing with higher order streams.
+
+Some Streams act as event producers, such as from DOM events. A producer Stream must never produce an event in the same call stack as its run method is called. It must begin producing items asynchronously. In some cases, this comes for free, such as DOM events. In other cases, it must be done explicitly using the provided Scheduler to schedule asynchronous tasks.
+
+.. code-block:: haskell
 
   type Sink a = {
     event :: Time -> a -> void
@@ -20,14 +42,57 @@ Types
     end :: Time -> void
   }
 
+A sink receives events, typically does something with them, such as transforming or filtering them, and then propagates them to another sink.
+
+Typically, a combinator will be implemented as a Stream and a Sink. The Stream is usually stateless/immutable, and creates a new Sink for each new observer. In most cases, the relationship of a Stream to Sink is 1-many.
+
+.. code-block:: haskell
+
   type Disposable = {
     dispose:: () -> void
   }
+
+A Disposable represents a resource that must be disposed (or released), such as a DOM event listener.
+
+.. _Task:
+.. code-block:: haskell
 
   type Task = Disposable & {
     run :: Time -> void
     error:: Time -> Error -> void
   }
+
+A Task is any unit of work that can be scheduled for execution on a Scheduler.
+
+.. _Scheduler:
+.. code-block:: haskell
+
+  type Scheduler = {
+    now :: () -> Time
+    asap :: Task -> ScheduledTask
+    delay :: Delay -> Task -> ScheduledTask
+    periodic :: Period -> Task -> ScheduledTask
+    schedule :: Delay -> Period -> Task -> ScheduledTask
+    scheduleTask :: Offset -> Delay -> Period -> Task -> ScheduledTask
+    relative :: Offset -> Scheduler
+    cancel :: ScheduledTask -> void
+    cancelAll :: (ScheduledTask -> boolean) -> void
+  }
+
+A Scheduler provides the central notion of time for the Streams in an application.
+
+An application will typically create a single "root" Scheduler so that all Streams share the same underlying time.
+
+.. todo:: Add Scheduler API section and link to it
+
+.. code-block:: haskell
+
+  type ScheduledTask = Disposable & {
+    run :: () -> void
+    error :: Error -> void
+  }
+
+A Scheduled Task represents a :ref:`Task` which has been scheduled on a particular :ref:`Scheduler`.  A ``ScheduledTask``'s ``dispose`` method will cancel the Task on the Scheduler on which it was scheduled.
 
 Running
 -------
