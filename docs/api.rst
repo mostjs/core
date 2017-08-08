@@ -3,16 +3,18 @@ API
 
 .. _types:
 
-Types
------
+Base Types
+----------
+
+.. _Time:
+Time
+^^^^
 
 .. code-block:: haskell
 
   type Time = number
 
-Time is a monotonic number. It represents the current time according to a Scheduler.  A Scheduler measures time starting at `0` when it is created.
-
-The default Scheduler uses ``performance.now`` in browsers, and ``process.hrtime`` (transformed to a `number`) in Node.
+Time is a monotonic number. It represents the current time according to a Scheduler.  The default Scheduler uses ``performance.now`` in browsers, and ``process.hrtime`` (transformed to a `number`) in Node.
 
 .. code-block:: haskell
 
@@ -21,6 +23,22 @@ The default Scheduler uses ``performance.now`` in browsers, and ``process.hrtime
   type Offset = number
 
 Delay, Period, and Offset are semantic time-related types.  They're all numbers, but are intended to provide helpful semantics for working with Task and Scheduler methods.
+
+.. _Disposable:
+Disposable
+^^^^^^^^^^
+
+.. code-block:: haskell
+
+  type Disposable = {
+    dispose:: () -> void
+  }
+
+A Disposable represents a resource that must be disposed (or released), such as a DOM event listener.
+
+.. _Stream:
+Stream
+------
 
 .. code-block:: haskell
 
@@ -46,61 +64,15 @@ A sink receives events, typically does something with them, such as transforming
 
 Typically, a combinator will be implemented as a Stream and a Sink. The Stream is usually stateless/immutable, and creates a new Sink for each new observer. In most cases, the relationship of a Stream to Sink is 1-many.
 
-.. code-block:: haskell
+.. _Stream API:
 
-  type Disposable = {
-    dispose:: () -> void
-  }
-
-A Disposable represents a resource that must be disposed (or released), such as a DOM event listener.
-
-.. _Task:
-.. code-block:: haskell
-
-  type Task = Disposable & {
-    run :: Time -> void
-    error:: Time -> Error -> void
-  }
-
-A Task is any unit of work that can be scheduled for execution on a Scheduler.
-
-.. _Scheduler:
-.. code-block:: haskell
-
-  type Scheduler = {
-    now :: () -> Time
-    asap :: Task -> ScheduledTask
-    delay :: Delay -> Task -> ScheduledTask
-    periodic :: Period -> Task -> ScheduledTask
-    schedule :: Delay -> Period -> Task -> ScheduledTask
-    scheduleTask :: Offset -> Delay -> Period -> Task -> ScheduledTask
-    relative :: Offset -> Scheduler
-    cancel :: ScheduledTask -> void
-    cancelAll :: (ScheduledTask -> boolean) -> void
-  }
-
-A Scheduler provides the central notion of time for the Streams in an application.
-
-An application will typically create a single "root" Scheduler so that all Streams share the same underlying time.
-
-.. todo:: Add Scheduler API section and link to it
-
-.. code-block:: haskell
-
-  type ScheduledTask = Disposable & {
-    run :: () -> void
-    error :: Error -> void
-  }
-
-A Scheduled Task represents a :ref:`Task` which has been scheduled on a particular :ref:`Scheduler`.  A ``ScheduledTask``'s ``dispose`` method will cancel the Task on the Scheduler on which it was scheduled.
-
+.. _Running:
 Running
--------
+^^^^^^^
 
 .. _runEffects:
-
 runEffects
-^^^^^^^^^^
+``````````
 
 .. code-block:: haskell
 
@@ -109,12 +81,11 @@ runEffects
 Activate an event stream, and consume all its events.
 
 Construction
-------------
+^^^^^^^^^^^^
 
 .. _empty:
-
 empty
-^^^^^
+`````
 
 .. code-block:: haskell
 
@@ -127,7 +98,7 @@ Create a stream containing no events, which ends immediately.::
 .. _never:
 
 never
-^^^^^
+`````
 
 .. code-block:: haskell
 
@@ -140,7 +111,7 @@ Create a stream containing no events, which never ends.::
 .. _now:
 
 now
-^^^
+```
 
 .. code-block:: haskell
 
@@ -153,7 +124,7 @@ Create a stream containing a single event at time 0.::
 .. _at:
 
 at
-^^
+``
 
 .. code-block:: haskell
 
@@ -166,7 +137,7 @@ Create a stream containing a single event at a specific time.::
 .. _throwError:
 
 throwError
-^^^^^^^^^^
+``````````
 
 .. code-block:: haskell
 
@@ -181,7 +152,7 @@ This can be useful for functions that need to return a stream and also need to p
 .. _startWith:
 
 startWith
-^^^^^^^^^
+`````````
 
 .. code-block:: haskell
 
@@ -252,8 +223,8 @@ Perform a side-effect for each event in stream.
   stream:         -a-b-c-d->
   tap(f, stream): -a-b-c-d->
 
-For each event in stream, f is called, but the value of its result is ignored. 
-If f fails (ie throws), then the returned stream will also fail. The stream 
+For each event in stream, f is called, but the value of its result is ignored.
+If f fails (ie throws), then the returned stream will also fail. The stream
 returned by tap will contain the same events as the original stream.
 
 .. _ap:
@@ -399,10 +370,10 @@ concatMap
 
   concatMap :: (a -> Stream b) -> Stream a -> Stream b
 
-Transform each event in stream into a stream, and then concatenate it onto the 
+Transform each event in stream into a stream, and then concatenate it onto the
 end of the resulting stream. Note that f must return a stream.
 
-The mapping function f is applied lazily. That is, f is called only once it is 
+The mapping function f is applied lazily. That is, f is called only once it is
 time to concatenate a new stream.::
 
   stream:                -a----b----c|
@@ -412,7 +383,7 @@ time to concatenate a new stream.::
   concatMap(f, stream):  -1--2--31----2----31-2-3|
   f called lazily:        ^      ^          ^
 
-Note the difference between concatMap and ref:`chain`: concatMap concatenates, while 
+Note the difference between concatMap and ref:`chain`: concatMap concatenates, while
 chain merges.
 
 .. _mergeConcurrently:
@@ -424,9 +395,9 @@ mergeConcurrently
 
   mergeConcurrently :: int -> Stream (Stream a) -> Stream a
 
-Given a higher-order stream, return a new stream that merges inner streams as 
-they arrive up to the specified concurrency. Once concurrency number of streams 
-are being merged, newly arriving streams will be merged after an existing one 
+Given a higher-order stream, return a new stream that merges inner streams as
+they arrive up to the specified concurrency. Once concurrency number of streams
+are being merged, newly arriving streams will be merged after an existing one
 ends.::
 
   s:                            --a--b--c--d--e-->
@@ -439,8 +410,8 @@ Note that u is only merged after t ends, due to the concurrency level of 2.
 
 Note also that ``mergeConcurrently(Infinity, stream)`` is equivalent to ``join(stream)``.
 
-To control concurrency, mergeConcurrently must maintain an internal queue of 
-newly arrived streams. If new streams arrive faster than the concurrency level 
+To control concurrency, mergeConcurrently must maintain an internal queue of
+newly arrived streams. If new streams arrive faster than the concurrency level
 allows them to be merged, the internal queue will grow infinitely.
 
 .. _mergeMapConcurrently:
@@ -452,9 +423,9 @@ mergeMapConcurently
 
   mergeMapConcurently :: (a -> Stream b) -> int -> Stream a -> Stream b
 
-Lazily applies a function ``f`` to each event on a stream, merging them into the 
-resulting stream at the specified concurrency. Once concurrency number of streams 
-are being merged, newly arriving streams will be merged after an existing one 
+Lazily applies a function ``f`` to each event on a stream, merging them into the
+resulting stream at the specified concurrency. Once concurrency number of streams
+are being merged, newly arriving streams will be merged after an existing one
 ends.::
 
   stream:                             --ab--c----d----->
@@ -466,11 +437,11 @@ ends.::
 
 Note that ``f(c)`` is only merged after ``f(a)`` ends.
 
-Also note that ``f`` will not get called with ``d`` until either ``f(b)`` or 
+Also note that ``f`` will not get called with ``d`` until either ``f(b)`` or
 ``f(c)`` ends.
 
-To control concurrency, mergeMapConcurrently must maintain an internal queue of 
-newly arrived streams. If new streams arrive faster than the concurrency level 
+To control concurrency, mergeMapConcurrently must maintain an internal queue of
+newly arrived streams. If new streams arrive faster than the concurrency level
 allows them to be merged, the internal queue will grow infinitely.
 
 .. _switchLatest:
@@ -482,7 +453,7 @@ switchLatest
 
   switchLatest :: Stream (Stream a) -> Stream a
 
-Given a higher-order stream, return a new stream that adopts the behavior of 
+Given a higher-order stream, return a new stream that adopts the behavior of
 (ie emits the events of) the most recent inner stream.::
 
   s:                    -a-b-c-d-e-f->
@@ -593,12 +564,12 @@ Array form of :ref:`zip`.  Apply a function to corresponding events from all the
 
 sample
 ^^^^^^
-.. code-block:: haskell 
+.. code-block:: haskell
 
   sample :: ((a, b) -> c) -> Stream a -> Stream b -> Stream c
 
 For each event in a sampler stream, apply a function to combine it with the most recent event in another stream. The resulting stream will contain the same number of events as the sampler stream.::
-  
+
   s1:                       -1--2--3--4--5->
   sampler:                  -1-----2-----3->
   sample(sum, sampler, s1): -2-----5-----8->
@@ -985,11 +956,7 @@ Recover from a stream failure by calling a function to create a new stream.::
 
 When ``s`` fails with an error, ``f`` will be called with the error. f must return a new stream to replace the error.
 
-Scheduling
-----------
-
 .. _propagateTask:
-
 propagateTask
 ^^^^^^^^^^^^^
 
@@ -1000,7 +967,6 @@ propagateTask
 Create a Task to propagate a value to a Sink.  When the task executes, the provided function will receive the current time (from the scheduler on which it was scheduled), and the provided value and Sink.  The Task can use the :ref:`Sink API <types>` to propagate the value in whatever way it chooses, for example, as an event or an error, or could choose not to propagate the event based on some condition, etc.
 
 .. _propagateEventTask:
-
 propagateEventTask
 ^^^^^^^^^^^^^^^^^^
 
@@ -1011,7 +977,6 @@ propagateEventTask
 Create a :ref:`Task <types>` that can be scheduled to propagate an event value to a :ref:`Sink <types>`.  When the task executes, it will call the Sink's ``event`` method with the current time (from the scheduler on which it was scheduled) and the value.
 
 .. _propagateEndTask:
-
 propagateEndTask
 ^^^^^^^^^^^^^^^^
 
@@ -1031,3 +996,118 @@ propagateErrorTask
   propagateErrorTask :: Error -> Sink * -> Task
 
 Create a :ref:`Task <types>` that can be scheduled to propagate an error to a :ref:`Sink <types>`.  When the task executes, it will call the Sink's ``error`` method with the current time (from the scheduler on which it was scheduled) and the error.
+
+.. _Scheduler:
+Scheduler
+---------
+
+.. code-block:: haskell
+
+  type Scheduler = {
+    now :: () -> Time
+    asap :: Task -> ScheduledTask
+    delay :: Delay -> Task -> ScheduledTask
+    periodic :: Period -> Task -> ScheduledTask
+    schedule :: Delay -> Period -> Task -> ScheduledTask
+    scheduleTask :: Offset -> Delay -> Period -> Task -> ScheduledTask
+    relative :: Offset -> Scheduler
+    cancel :: ScheduledTask -> void
+    cancelAll :: (ScheduledTask -> boolean) -> void
+  }
+
+A Scheduler provides the central notion of time for the Streams in an application.
+
+An application will typically create a single "root" Scheduler so that all Streams share the same underlying time.
+
+.. _Task:
+.. code-block:: haskell
+
+  type Task = Disposable & {
+    run :: Time -> void,
+    error:: Time -> Error -> void
+  }
+
+A Task is any unit of work that can be scheduled for execution on a Scheduler.
+
+.. code-block:: haskell
+
+  type ScheduledTask = Disposable & {
+    task :: Task,
+    run :: () -> void,
+    error :: Error -> void
+  }
+
+A Scheduled Task represents a :ref:`Task` which has been scheduled on a particular :ref:`Scheduler`.  A ``ScheduledTask``'s ``dispose`` method will cancel the Task on the Scheduler on which it was scheduled.
+
+.. _Scheduler API:
+
+.. _Scheduler-now:
+now
+^^^
+
+.. code-block:: haskell
+
+  now :: Scheduler ~> () -> Time
+
+Get the scheduler's current time.
+
+.. _Scheduler-asap:
+asap
+^^^^
+
+.. code-block:: haskell
+
+  asap :: Task -> Scheduler -> ScheduledTask
+
+Schedule a Task to execute as soon as possible, but still asynchronously.
+
+.. _Scheduler-delay:
+delay
+^^^^^
+
+.. code-block:: haskell
+
+  delay :: Delay -> Task -> Scheduler -> ScheduledTask
+
+Schedule a Task to execute after a specified millisecond Delay.
+
+.. _Scheduler-periodic:
+periodic
+^^^^^^^^
+
+.. code-block:: haskell
+
+  periodic :: Period -> Task -> Scheduler -> ScheduledTask
+
+Schedule a Task to execute periodically with the specified Period.
+
+.. _Scheduler-relative:
+relative
+^^^^^^^^
+
+.. code-block:: haskell
+
+  relative :: Offset -> Scheduler -> Scheduler
+
+Create a new Scheduler with origin (i.e. zero time) at the specified :ref:`Offset` of the provided Scheduler.
+
+When implementing higher-order stream combinators, this function can be used to create a Scheduler with local time for each "inner" stream.
+
+.. code-block:: javascript
+
+  scheduler.now() //> 1637
+  const relativeScheduler = relative(1234, scheduler)
+  relativeScheduler.now() //> 0
+
+  // ... later ...
+
+  scheduler.now() //> 3929
+  relativeScheduler.now() //> 2292
+
+.. _Scheduler-cancel:
+cancel
+^^^^^^
+
+.. _Scheduler-cancelAll:
+cancelAll
+^^^^^^^^^
