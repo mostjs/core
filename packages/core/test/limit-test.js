@@ -1,5 +1,6 @@
 import { describe, it } from 'mocha'
 import { eq, is, assert } from '@briancavalier/assert'
+import { spy } from 'sinon'
 
 import { debounce, throttle } from '../src/combinator/limit'
 import { zip } from '../src/combinator/zip'
@@ -11,6 +12,7 @@ import { default as Map } from '../src/fusion/Map'
 
 import { atTimes, collectEventsFor, makeEventsFromArray, makeEvents } from './helper/testEnv'
 import { assertSame } from './helper/stream-helper'
+import FakeDisposeSource from './helper/FakeDisposeStream'
 
 const sentinel = { value: 'sentinel' }
 
@@ -77,6 +79,15 @@ describe('debounce', function () {
         { time: 4, value: 1 },
         { time: 7, value: 2 }
       ]))
+  })
+
+  it('should dispose source', () => {
+    const dispose = spy()
+    const s = new FakeDisposeSource(dispose, now(sentinel))
+    const debounced = debounce(1, s)
+
+    return collectEventsFor(1, debounced).then(() =>
+      assert(dispose.calledOnce))
   })
 })
 
