@@ -5,7 +5,6 @@ import { spy } from 'sinon'
 import { debounce, throttle } from '../src/combinator/limit'
 import { zip } from '../src/combinator/zip'
 import { map } from '../src/combinator/transform'
-import { take } from '../src/combinator/slice'
 import { empty } from '../src/source/empty'
 import { now } from '../src/source/now'
 import { default as Map } from '../src/fusion/Map'
@@ -130,7 +129,7 @@ describe('throttle', function () {
 
   it('should be identity when period === 0 and all items are simultaneous', function () {
     const a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    const s = take(10, makeEventsFromArray(0, a))
+    const s = makeEventsFromArray(0, a)
     return assertSame(s, throttle(0, s))
   })
 
