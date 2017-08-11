@@ -1,16 +1,17 @@
 import { describe, it } from 'mocha'
 import { eq, is, assert } from '@briancavalier/assert'
+import { spy } from 'sinon'
 
 import { debounce, throttle } from '../src/combinator/limit'
 import { zip } from '../src/combinator/zip'
 import { map } from '../src/combinator/transform'
-import { take } from '../src/combinator/slice'
 import { empty } from '../src/source/empty'
 import { now } from '../src/source/now'
 import { default as Map } from '../src/fusion/Map'
 
 import { atTimes, collectEventsFor, makeEventsFromArray, makeEvents } from './helper/testEnv'
 import { assertSame } from './helper/stream-helper'
+import FakeDisposeSource from './helper/FakeDisposeStream'
 
 const sentinel = { value: 'sentinel' }
 
@@ -78,6 +79,15 @@ describe('debounce', function () {
         { time: 7, value: 2 }
       ]))
   })
+
+  it('should dispose source', () => {
+    const dispose = spy()
+    const s = new FakeDisposeSource(dispose, now(sentinel))
+    const debounced = debounce(1, s)
+
+    return collectEventsFor(1, debounced).then(() =>
+      assert(dispose.calledOnce))
+  })
 })
 
 describe('throttle', function () {
@@ -119,7 +129,7 @@ describe('throttle', function () {
 
   it('should be identity when period === 0 and all items are simultaneous', function () {
     const a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    const s = take(10, makeEventsFromArray(0, a))
+    const s = makeEventsFromArray(0, a)
     return assertSame(s, throttle(0, s))
   })
 

@@ -1,9 +1,6 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
-/** @author Brian Cavalier */
-/** @author John Hann */
+/** @license MIT License (c) copyright 2010-2017 original author or authors */
 
 import Pipe from '../sink/Pipe'
-import { disposeBoth } from '@most/disposable'
 import { propagateEventTask } from '../scheduler/PropagateTask'
 import Map from '../fusion/Map'
 
@@ -78,8 +75,7 @@ class DebounceSink {
     this.value = void 0
     this.timer = null
 
-    const sourceDisposable = source.run(this, scheduler)
-    this.disposable = disposeBoth(this, sourceDisposable)
+    this.disposable = source.run(this, scheduler)
   }
 
   event (t, x) {
@@ -103,6 +99,7 @@ class DebounceSink {
 
   dispose () {
     this._clearTimer()
+    this.disposable.dispose()
   }
 
   _clearTimer () {
