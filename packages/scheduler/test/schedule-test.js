@@ -4,7 +4,7 @@ import { eq, is, assert } from '@briancavalier/assert'
 import FakeScheduler from './helper/FakeScheduler'
 import { noopTask } from './helper/FakeTask'
 
-import { asap, delay, periodic } from '../src/schedule'
+import { asap, cancelAllTasks, cancelTask, delay, periodic } from '../src/schedule'
 
 describe('schedule', () => {
   describe('asap', () => {
@@ -57,6 +57,44 @@ describe('schedule', () => {
       is(task, st.task)
       is(scheduler, st.scheduler)
       assert(st.active)
+    })
+  })
+
+  describe('cancelTask', () => {
+    it('should cancel a ScheduledTask', () => {
+      const scheduler = new FakeScheduler(Math.random())
+      const task = noopTask()
+
+      const st = asap(task, scheduler)
+
+      cancelTask(st)
+
+      assert(task.disposed)
+      assert(!st.active)
+    })
+  })
+
+  describe('cancelAllTasks', () => {
+    it('should cancel only matching ScheduledTasks', () => {
+      const scheduler = new FakeScheduler(Math.random())
+      const t1 = noopTask()
+      const t2 = noopTask()
+      const t3 = noopTask()
+
+      const st1 = asap(t1, scheduler)
+      const st2 = asap(t2, scheduler)
+      const st3 = asap(t3, scheduler)
+
+      cancelAllTasks(st => st === st1 || st === st3, scheduler)
+
+      assert(!st1.active)
+      assert(t1.disposed)
+
+      assert(st2.active)
+      assert(!t2.disposed)
+
+      assert(!st3.active)
+      assert(t3.disposed)
     })
   })
 })

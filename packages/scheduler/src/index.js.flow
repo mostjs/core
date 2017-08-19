@@ -35,3 +35,8 @@ declare export function periodic (period: Period, task: Task, scheduler: Schedul
 declare export function periodic (period: Period): (task: Task, scheduler: Scheduler) => ScheduledTask
 declare export function periodic (period: Period, task: Task): (scheduler: Scheduler) => ScheduledTask
 declare export function periodic (period: Period): (task: Task) => (scheduler: Scheduler) => ScheduledTask
+
+declare export function cancelTask (scheduledTask: ScheduledTask): void
+
+declare export function cancelAllTasks (predicate: (ScheduledTask) => boolean, scheduler: Scheduler): void
+declare export function cancelAllTasks (predicate: (ScheduledTask) => boolean): (Scheduler) => void
