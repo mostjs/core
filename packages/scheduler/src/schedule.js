@@ -13,3 +13,12 @@ export const delay = curry3((delay, task, scheduler) =>
 // first run starting asap
 export const periodic = curry3((period, task, scheduler) =>
   scheduler.periodic(period, task))
+
+// Cancel a scheduledTask
+export const cancelTask = scheduledTask =>
+  scheduledTask.dispose()
+
+// Cancel all ScheduledTasks for which a predicate
+// is true
+export const cancelAllTasks = curry2((predicate, scheduler) =>
+  scheduler.cancelAll(predicate))

@@ -6,3 +6,7 @@ dist/.*\.flow
 [libs]
 
 [options]
+include_warnings=true
+
+[lints]
+all=warn

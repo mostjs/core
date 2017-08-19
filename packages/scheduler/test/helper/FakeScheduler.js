@@ -30,7 +30,7 @@ export default class FakeScheduler extends AbstractScheduler {
   cancelAll (f) {
     this.tasks = this.tasks.reduce((tasks, task) => {
       if (f(task)) {
-        task.active = false
+        task.dispose()
         return tasks
       }
       return tasks.concat(task)

@@ -35,7 +35,7 @@
     "babel-preset-power-assert": "^1.0.0",
     "buba": "^4.0.2",
     "cpy-cli": "^1.0.1",
-    "flow-bin": "^0.47.0",
+    "flow-bin": "^0.52.0",
     "mocha": "^3.4.2",
     "nyc": "^11.0.2",
     "rollup": "^0.43.0",

@@ -2,10 +2,14 @@ export class FakeTask {
   constructor (run, error) {
     this.run = run
     this.error = error
+    this.disposed = false
   }
   run (t) {}
   error (t, e) {
     throw e
+  }
+  dispose () {
+    this.disposed = true
   }
 }
 
