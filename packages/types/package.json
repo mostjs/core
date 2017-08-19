@@ -31,6 +31,6 @@
   "author": "brian@hovercraftstudios.com",
   "license": "MIT",
   "devDependencies": {
-    "flow-bin": "^0.52.0"
+    "flow-bin": "^0.53.1"
   }
 }
