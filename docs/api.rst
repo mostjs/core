@@ -1143,120 +1143,15 @@ Create a :ref:`Task` that can be scheduled to propagate an error to a :ref:`Sink
 @most/scheduler
 ---------------
 
-.. _newScheduler:
+.. _Scheduling Tasks:
 
-newScheduler
-^^^^^^^^^^^^
-
-.. code-block:: haskell
-
-  newScheduler :: Timer -> Timeline -> Scheduler
-
-Create a new scheduler that uses the provided :ref:`Timer` and :ref:`Timeline` for scheduling tasks.
-
-.. _newDefaultScheduler:
-
-newDefaultScheduler
-^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: haskell
-
-  newDefaultScheduler :: () -> Scheduler
-
-Create a new Scheduler that uses a default platform-specific :ref:`Timer` and new, empty :ref:`Timeline`.
-
-.. _newClockTimer:
-
-newClockTimer
-^^^^^^^^^^^^^
-
-.. code-block:: haskell
-
-  newClockTimer :: Clock -> Timer
-
-Create a new :ref:`Timer` that uses the provided :ref:`Clock` as a source of the current :ref:`Time`.
-
-.. _newTimeline:
-
-newTimeline
-^^^^^^^^^^^
-
-.. code-block:: haskell
-
-  newTimeline :: () -> Timeline
-
-Create an empty :ref:`Timeline`
-
-.. _newPlatformClock:
-
-newPlatformClock
+Scheduling Tasks
 ^^^^^^^^^^^^^^^^
-
-.. code-block:: haskell
-
-  newPlatformClock :: () -> Clock
-
-Create a new :ref:`Clock` by autodetecting the best platform-specific source of :ref:`Time`.  On modern browsers, uses `performance.now`, and on Node, `process.hrtime`.  If neither is available, falls back to `Date.now`.
-
-.. _newPerformanceClock:
-
-newPerformanceClock
-^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: haskell
-
-  newPerformanceClock :: () -> Clock
-
-Create a new :ref:`Clock` using`performance.now`.
-
-.. _newHRTimeClock:
-
-newHRTimeClock
-^^^^^^^^^^^^^^
-
-.. code-block:: haskell
-
-  newHRTimeClock :: () -> Clock
-
-Create a new :ref:`Clock` using`process.hrtime`.
-
-.. _newDateClock:
-
-newDateClock
-^^^^^^^^^^^^
-
-.. code-block:: haskell
-
-  newDateClock :: () -> Clock
-
-Create a new :ref:`Clock` using`Date.now`. Note that a Clock using `Date.now` is not guaranteed to be monotonic, and is subject to system clock changes, e.g. NTP can change your system clock!
-
-.. _clockRelativeTo
-
-clockRelativeTo
-^^^^^^^^^^^^^^^
-
-.. code-block:: haskell
-
-  clockRelativeTo :: Clock -> Clock
-
-Create a new :ref:`Clock` whose origin is at the *current time* (at the instant of calling ``clockRelativeTime``) of the provided Clock.
-
-.. _Scheduler-now:
-
-now
-^^^
-
-.. code-block:: haskell
-
-  now :: Scheduler ~> () -> Time
-
-Get the scheduler's current time.
 
 .. _Scheduler-asap:
 
 asap
-^^^^
+````
 
 .. code-block:: haskell
 
@@ -1267,7 +1162,7 @@ Schedule a Task to execute as soon as possible, but still asynchronously.
 .. _Scheduler-delay:
 
 delay
-^^^^^
+`````
 
 .. code-block:: haskell
 
@@ -1278,7 +1173,7 @@ Schedule a Task to execute after a specified millisecond Delay.
 .. _Scheduler-periodic:
 
 periodic
-^^^^^^^^
+````````
 
 .. code-block:: haskell
 
@@ -1286,10 +1181,77 @@ periodic
 
 Schedule a Task to execute periodically with the specified Period.
 
+.. _Canceling Tasks:
+
+Canceling Tasks
+^^^^^^^^^^^^^^^
+
+.. _Scheduler-cancelTask:
+
+cancelTask
+``````````
+
+.. code-block:: haskell
+
+  cancelTask :: ScheduledTask -> void
+
+Cancel all future scheduled executions of a ScheduledTask.
+
+.. _Scheduler-cancelAllTasks:
+
+cancelAllTasks
+``````````````
+
+.. code-block:: haskell
+
+  cancelAllTasks :: (ScheduledTask -> boolean) -> Scheduler -> void
+
+Cancel all future scheduled executions of all ScheduledTasks for which the provided predicate is true.
+
+Current Time
+^^^^^^^^^^^^
+
+.. _Scheduler-now:
+
+now
+```
+
+.. code-block:: haskell
+
+  now :: Scheduler ~> () -> Time
+
+Get the scheduler's current time.
+
+Creating a Scheduler
+^^^^^^^^^^^^^^^^^^^^
+
+.. _newScheduler:
+
+newScheduler
+````````````
+
+.. code-block:: haskell
+
+  newScheduler :: Timer -> Timeline -> Scheduler
+
+Create a new scheduler that uses the provided :ref:`Timer` and :ref:`Timeline` for scheduling tasks.
+
+.. _newDefaultScheduler:
+
+newDefaultScheduler
+```````````````````
+
+.. code-block:: haskell
+
+  newDefaultScheduler :: () -> Scheduler
+
+Create a new Scheduler that uses a default platform-specific :ref:`Timer` and new, empty :ref:`Timeline`.
+
+
 .. _Scheduler-relative:
 
 schedulerRelativeTo
-^^^^^^^^^^^^^^^^^^^
+```````````````````
 
 .. code-block:: haskell
 
@@ -1310,24 +1272,82 @@ When implementing higher-order stream combinators, this function can be used to 
   scheduler.now() //> 3929
   relativeScheduler.now() //> 2292
 
-.. _Scheduler-cancelTask:
+Timer, Timeline, and Clock
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-cancelTask
-^^^^^^^^^^
+.. _newClockTimer:
 
-.. code-block:: haskell
-
-  cancelTask :: ScheduledTask -> void
-
-Cancel all future scheduled executions of a ScheduledTask.
-
-.. _Scheduler-cancelAllTasks:
-
-cancelAllTasks
-^^^^^^^^^^^^^^
+newClockTimer
+`````````````
 
 .. code-block:: haskell
 
-  cancelAllTasks :: (ScheduledTask -> boolean) -> Scheduler -> void
+  newClockTimer :: Clock -> Timer
 
-Cancel all future scheduled executions of all ScheduledTasks for which the provided predicate is true.
+Create a new :ref:`Timer` that uses the provided :ref:`Clock` as a source of the current :ref:`Time`.
+
+.. _newTimeline:
+
+newTimeline
+```````````
+
+.. code-block:: haskell
+
+  newTimeline :: () -> Timeline
+
+Create an empty :ref:`Timeline`
+
+.. _newPlatformClock:
+
+newPlatformClock
+````````````````
+
+.. code-block:: haskell
+
+  newPlatformClock :: () -> Clock
+
+Create a new :ref:`Clock` by autodetecting the best platform-specific source of :ref:`Time`.  On modern browsers, uses `performance.now`, and on Node, `process.hrtime`.  If neither is available, falls back to `Date.now`.
+
+.. _newPerformanceClock:
+
+newPerformanceClock
+```````````````````
+
+.. code-block:: haskell
+
+  newPerformanceClock :: () -> Clock
+
+Create a new :ref:`Clock` using`performance.now`.
+
+.. _newHRTimeClock:
+
+newHRTimeClock
+``````````````
+
+.. code-block:: haskell
+
+  newHRTimeClock :: () -> Clock
+
+Create a new :ref:`Clock` using`process.hrtime`.
+
+.. _newDateClock:
+
+newDateClock
+````````````
+
+.. code-block:: haskell
+
+  newDateClock :: () -> Clock
+
+Create a new :ref:`Clock` using`Date.now`. Note that a Clock using `Date.now` is not guaranteed to be monotonic, and is subject to system clock changes, e.g. NTP can change your system clock!
+
+.. _clockRelativeTo:
+
+clockRelativeTo
+```````````````
+
+.. code-block:: haskell
+
+  clockRelativeTo :: Clock -> Clock
+
+Create a new :ref:`Clock` whose origin is at the *current time* (at the instant of calling ``clockRelativeTime``) of the provided Clock.
