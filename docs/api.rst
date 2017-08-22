@@ -1,10 +1,10 @@
 API
 ===
 
-.. _types:
+.. _@most/types:
 
-Base Types
-----------
+@most/types
+-----------
 
 .. _Time:
 
@@ -23,25 +23,7 @@ Time is a monotonic number. It represents the current time according to a Schedu
   type Period = number
   type Offset = number
 
-Delay, Period, and Offset are semantic time-related types.  They're all numbers, but are intended to provide helpful semantics for working with Task and Scheduler methods.
-
-.. _Disposable:
-
-Disposable
-^^^^^^^^^^
-
-.. code-block:: haskell
-
-  type Disposable = {
-    dispose:: () -> void
-  }
-
-A Disposable represents a resource that must be disposed (or released), such as a DOM event listener.
-
-.. _@most/core:
-
-@most/core
-----------
+Delay, Period, and Offset are semantic time-related types.  They're all numbers, but are intended to provide helpful semantics for working with :ref:`Task` and :ref:`Scheduler` methods.
 
 .. _Stream:
 
@@ -77,7 +59,123 @@ A sink receives events, typically does something with them, such as transforming
 
 Typically, a combinator will be implemented as a Stream and a Sink. The Stream is usually stateless/immutable, and creates a new Sink for each new observer. In most cases, the relationship of a Stream to Sink is 1-many.
 
-.. _Stream API:
+.. _Disposable:
+
+Disposable
+^^^^^^^^^^
+
+.. code-block:: haskell
+
+  type Disposable = {
+    dispose:: () -> void
+  }
+
+A Disposable represents a resource that must be disposed (or released), such as a DOM event listener.
+
+.. _Scheduler:
+
+Scheduler
+^^^^^^^^^
+
+.. code-block:: haskell
+
+  type Scheduler = {
+    now :: () -> Time
+    asap :: Task -> ScheduledTask
+    delay :: Delay -> Task -> ScheduledTask
+    periodic :: Period -> Task -> ScheduledTask
+    schedule :: Delay -> Period -> Task -> ScheduledTask
+    scheduleTask :: Offset -> Delay -> Period -> Task -> ScheduledTask
+    relative :: Offset -> Scheduler
+    cancel :: ScheduledTask -> void
+    cancelAll :: (ScheduledTask -> boolean) -> void
+  }
+
+A Scheduler provides the central notion of time for the Streams in an application.
+
+An application will typically create a single "root" Scheduler so that all Streams share the same underlying time.
+
+.. _Clock:
+
+Clock
+^^^^^
+
+.. code-block:: haskell
+
+  type Clock = {
+    now :: () -> Time
+  }
+
+A Clock represents a source of the current time
+
+.. _Timer:
+
+Timer
+^^^^^
+
+.. code-block:: haskell
+
+  type Handle = any -- intentionally opaque handle
+
+  type Timer = {
+    now :: () -> Time,
+    setTimer :: () => any -> Delay -> Handle,
+    clearTimer :: Handle -> void
+  }
+
+A Timer abstracts platform time, typically relying on a :ref:`Clock`, and timer scheduling, typically using ``setTimeout``.
+
+.. _Timeline:
+
+Timeline
+^^^^^^^^
+
+.. code-block:: haskell
+
+  type TaskRunner = (ScheduledTask) -> any
+
+  type Timeline = {
+    add :: ScheduledTask -> void,
+    remove :: ScheduledTask -> boolean,
+    removeAll :: (ScheduledTask) -> boolean) -> void,
+    isEmpty :: () -> boolean,
+    nextArrival :: () -> Time,
+    runTasks :: Time -> TaskRunner -> void
+  }
+
+A Timeline represents a set of ScheduledTasks to be executed at particular times
+
+.. _Task:
+
+Task
+^^^^
+
+.. code-block:: haskell
+
+  type Task = Disposable & {
+    run :: Time -> void,
+    error:: Time -> Error -> void
+  }
+
+A Task is any unit of work that can be scheduled for execution on a Scheduler.
+
+ScheduledTask
+^^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  type ScheduledTask = Disposable & {
+    task :: Task,
+    run :: () -> void,
+    error :: Error -> void
+  }
+
+A Scheduled Task represents a :ref:`Task` which has been scheduled on a particular :ref:`Scheduler`.  A ``ScheduledTask``'s ``dispose`` method will cancel the Task on the Scheduler on which it was scheduled.
+
+.. _@most/core:
+
+@most/core
+----------
 
 .. _Running:
 
@@ -1005,7 +1103,7 @@ propagateTask
 
   propagateTask :: (Time -> a -> Sink a -> *) -> a -> Sink a -> Task
 
-Create a Task to propagate a value to a Sink.  When the task executes, the provided function will receive the current time (from the scheduler on which it was scheduled), and the provided value and Sink.  The Task can use the :ref:`Sink API <types>` to propagate the value in whatever way it chooses, for example, as an event or an error, or could choose not to propagate the event based on some condition, etc.
+Create a Task to propagate a value to a Sink.  When the task executes, the provided function will receive the current time (from the scheduler on which it was scheduled), and the provided value and Sink.  The Task can use the :ref:`Sink` to propagate the value in whatever way it chooses, for example, as an event or an error, or could choose not to propagate the event based on some condition, etc.
 
 .. _propagateEventTask:
 
@@ -1016,7 +1114,7 @@ propagateEventTask
 
   propagateEventTask :: a -> Sink a -> Task
 
-Create a :ref:`Task <types>` that can be scheduled to propagate an event value to a :ref:`Sink <types>`.  When the task executes, it will call the Sink's ``event`` method with the current time (from the scheduler on which it was scheduled) and the value.
+Create a :ref:`Task` that can be scheduled to propagate an event value to a :ref:`Sink`.  When the task executes, it will call the Sink's ``event`` method with the current time (from the scheduler on which it was scheduled) and the value.
 
 .. _propagateEndTask:
 
@@ -1027,7 +1125,7 @@ propagateEndTask
 
   propagateEndTask :: Sink * -> Task
 
-Create a :ref:`Task <types>` that can be scheduled to propagate end to a :ref:`Sink <types>`.  When the task executes, it will call the Sink's ``end`` method with the current time (from the scheduler on which it was scheduled).
+Create a :ref:`Task` that can be scheduled to propagate end to a :ref:`Sink`.  When the task executes, it will call the Sink's ``end`` method with the current time (from the scheduler on which it was scheduled).
 
 .. _propagateErrorTask:
 
@@ -1038,62 +1136,111 @@ propagateErrorTask
 
   propagateErrorTask :: Error -> Sink * -> Task
 
-Create a :ref:`Task <types>` that can be scheduled to propagate an error to a :ref:`Sink <types>`.  When the task executes, it will call the Sink's ``error`` method with the current time (from the scheduler on which it was scheduled) and the error.
+Create a :ref:`Task` that can be scheduled to propagate an error to a :ref:`Sink`.  When the task executes, it will call the Sink's ``error`` method with the current time (from the scheduler on which it was scheduled) and the error.
 
 .. _@most/scheduler:
 
 @most/scheduler
 ---------------
 
-.. _Scheduler:
+.. _newScheduler:
 
-Scheduler
-^^^^^^^^^
-
-.. code-block:: haskell
-
-  type Scheduler = {
-    now :: () -> Time
-    asap :: Task -> ScheduledTask
-    delay :: Delay -> Task -> ScheduledTask
-    periodic :: Period -> Task -> ScheduledTask
-    schedule :: Delay -> Period -> Task -> ScheduledTask
-    scheduleTask :: Offset -> Delay -> Period -> Task -> ScheduledTask
-    relative :: Offset -> Scheduler
-    cancel :: ScheduledTask -> void
-    cancelAll :: (ScheduledTask -> boolean) -> void
-  }
-
-A Scheduler provides the central notion of time for the Streams in an application.
-
-An application will typically create a single "root" Scheduler so that all Streams share the same underlying time.
-
-.. _Task:
-
-Task
-^^^^
+newScheduler
+^^^^^^^^^^^^
 
 .. code-block:: haskell
 
-  type Task = Disposable & {
-    run :: Time -> void,
-    error:: Time -> Error -> void
-  }
+  newScheduler :: Timer -> Timeline -> Scheduler
 
-A Task is any unit of work that can be scheduled for execution on a Scheduler.
+Create a new scheduler that uses the provided :ref:`Timer` and :ref:`Timeline` for scheduling tasks.
 
-ScheduledTask
+.. _newDefaultScheduler:
+
+newDefaultScheduler
+^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  newDefaultScheduler :: () -> Scheduler
+
+Create a new Scheduler that uses a default platform-specific :ref:`Timer` and new, empty :ref:`Timeline`.
+
+.. _newClockTimer:
+
+newClockTimer
 ^^^^^^^^^^^^^
 
 .. code-block:: haskell
 
-  type ScheduledTask = Disposable & {
-    task :: Task,
-    run :: () -> void,
-    error :: Error -> void
-  }
+  newClockTimer :: Clock -> Timer
 
-A Scheduled Task represents a :ref:`Task` which has been scheduled on a particular :ref:`Scheduler`.  A ``ScheduledTask``'s ``dispose`` method will cancel the Task on the Scheduler on which it was scheduled.
+Create a new :ref:`Timer` that uses the provided :ref:`Clock` as a source of the current :ref:`Time`.
+
+.. _newTimeline:
+
+newTimeline
+^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  newTimeline :: () -> Timeline
+
+Create an empty :ref:`Timeline`
+
+.. _newPlatformClock:
+
+newPlatformClock
+^^^^^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  newPlatformClock :: () -> Clock
+
+Create a new :ref:`Clock` by autodetecting the best platform-specific source of :ref:`Time`.  On modern browsers, uses `performance.now`, and on Node, `process.hrtime`.  If neither is available, falls back to `Date.now`.
+
+.. _newPerformanceClock:
+
+newPerformanceClock
+^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  newPerformanceClock :: () -> Clock
+
+Create a new :ref:`Clock` using`performance.now`.
+
+.. _newHRTimeClock:
+
+newHRTimeClock
+^^^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  newHRTimeClock :: () -> Clock
+
+Create a new :ref:`Clock` using`process.hrtime`.
+
+.. _newDateClock:
+
+newDateClock
+^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  newDateClock :: () -> Clock
+
+Create a new :ref:`Clock` using`Date.now`. Note that a Clock using `Date.now` is not guaranteed to be monotonic, and is subject to system clock changes, e.g. NTP can change your system clock!
+
+.. _clockRelativeTo
+
+clockRelativeTo
+^^^^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  clockRelativeTo :: Clock -> Clock
+
+Create a new :ref:`Clock` whose origin is at the *current time* (at the instant of calling ``clockRelativeTime``) of the provided Clock.
 
 .. _Scheduler-now:
 
@@ -1141,12 +1288,12 @@ Schedule a Task to execute periodically with the specified Period.
 
 .. _Scheduler-relative:
 
-relative
-^^^^^^^^
+schedulerRelativeTo
+^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: haskell
 
-  relative :: Offset -> Scheduler -> Scheduler
+  schedulerRelativeTo :: Offset -> Scheduler -> Scheduler
 
 Create a new Scheduler with origin (i.e. zero time) at the specified :ref:`Offset <Time>` of the provided Scheduler.
 

@@ -1,8 +1,4 @@
-import { Scheduler, Task, ScheduledTask, Timeline, Timer, Time, Delay, Period, Offset } from '@most/types';
-
-export type Clock = {
-  now: () => Time
-};
+import { Scheduler, Task, ScheduledTask, Timeline, Timer, Clock, Delay, Period, Offset } from '@most/types';
 
 export function newScheduler (timer: Timer, timeline: Timeline): Scheduler;
 export function newScheduler (timer: Timer): (timeline: Timeline) => Scheduler;
