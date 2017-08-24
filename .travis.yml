@@ -3,11 +3,8 @@ sudo: false
 node_js:
   - "8"
   - "6"
-  - "4"
 env:
   - CXX=g++-4.8
 branches:
   only:
     - master
-
-before_install: if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
