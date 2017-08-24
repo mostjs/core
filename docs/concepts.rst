@@ -27,7 +27,7 @@ As it travels, that message composes a *:ref:`Sink` chain* analogous to the sour
 Event propagation
 -----------------
 
-Each event propagation is synchronous by default.  One sink calls the :ref:`event <Stream>` method of the next, forming a synchronous call stack.
+Each event propagation is synchronous by default.  One sink calls the :ref:`event <Sink>` method of the next, forming a synchronous call stack.
 
 Some combinators, like :ref:`delay`, introduce asynchrony into the sink chain.
 
