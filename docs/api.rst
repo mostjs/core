@@ -1351,3 +1351,86 @@ clockRelativeTo
   clockRelativeTo :: Clock -> Clock
 
 Create a new :ref:`Clock` whose origin is at the *current time* (at the instant of calling ``clockRelativeTime``) of the provided Clock.
+
+.. _@most/disposable:
+
+@most/disposable
+----------------
+
+.. _Creating Disposables:
+
+Creating Disposables
+^^^^^^^^^^^^^^^^^^^^
+
+.. _disposeNone:
+
+disposeNone
+```````````
+
+.. code-block:: haskell
+
+  disposeNone :: () -> Disposable
+
+Create a no-op :ref:`Disposable`.
+
+.. _ disposeWith:
+
+disposeWith
+```````````
+
+.. code-block:: haskell
+
+  disposeWith :: (a -> void) -> a -> Disposable
+
+Create a :ref:`Disposable` which, when disposed will call the provided function, passing the provided value.
+
+.. _disposeOnce:
+
+disposeOnce
+```````````
+
+.. code-block:: haskell
+
+  disposeOnce :: Disposable -> Disposable
+
+Wrap a :ref:`Disposable` so the underlying Disposable will only be disposed once, even if the returned Disposable is disposed multiple times.
+
+.. _disposeBoth:
+
+disposeBoth
+```````````
+
+.. code-block:: haskell
+
+  disposeBoth :: Disposable -> Disposable -> Disposable
+
+Combine two :ref:`Disposable`s into a single Disposable which will dispose both.
+
+.. _disposeAll:
+
+disposeAll
+``````````
+
+.. code-block:: haskell
+
+  disposeAll :: [Disposable] -> Disposable
+
+Combine an array of :ref:`Disposable`s into a single Disposable which will dispose all the Disposables in the array.
+
+.. _Disposing Disposables:
+
+Disposing Disposables
+^^^^^^^^^^^^^^^^^^^^^
+
+.. _tryDispose:
+
+tryDispose
+``````````
+
+.. code-block:: haskell
+
+  tryDispose :: Time -> Disposable -> Sink * -> void
+
+Attempt to dispose the provided :ref:`Disposable`.  If the Disposable throws an exception, catch and propagate it to the provided :ref:`Sink` with the provided :ref:`Time`.
+
+Note: Only an exception thrown by the Disposable will be caught.  If the act of propagating an error to the Sink throws, that exception *will not* be caught.
