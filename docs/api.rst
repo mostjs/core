@@ -1,18 +1,53 @@
 API
 ===
 
-.. _types:
+.. _@most/types:
 
-Types
------
+@most/types
+-----------
+
+.. _Time:
+
+Time
+^^^^
 
 .. code-block:: haskell
 
   type Time = number
 
+Time is a monotonic number. It represents the current time according to a Scheduler.  The default Scheduler uses ``performance.now`` in browsers, and ``process.hrtime`` (transformed to a `number`) in Node.
+
+.. code-block:: haskell
+
+  type Delay = number
+  type Period = number
+  type Offset = number
+
+Delay, Period, and Offset are semantic time-related types.  They're all numbers, but are intended to provide helpful semantics for working with :ref:`Task` and :ref:`Scheduler` methods.
+
+.. _Stream:
+
+Stream
+^^^^^^
+
+.. code-block:: haskell
+
   type Stream a = {
     run :: Sink a -> Scheduler -> Disposable
   }
+
+A Stream represents a view of events over time. It's ``run`` method arranges to propagate events to the provided Sink. Each stream has a local clock, defined by the provided Scheduler, which has methods for knowing the current time, and scheduling future tasks.
+
+Some Streams, like :ref:`now` are simple, while others, like :ref:`combine`, do sophisticated things such as combining multiple streams, or dealing with higher order streams.
+
+Some Streams act as event producers, such as from DOM events. A producer Stream must never produce an event in the same call stack as its run method is called. It must begin producing items asynchronously. In some cases, this comes for free, such as DOM events. In other cases, it must be done explicitly using the provided Scheduler to schedule asynchronous tasks.
+
+.. _Sink:
+
+Sink
+^^^^
+
+.. code-block:: haskell
 
   type Sink a = {
     event :: Time -> a -> void
@@ -20,22 +55,137 @@ Types
     end :: Time -> void
   }
 
+A sink receives events, typically does something with them, such as transforming or filtering them, and then propagates them to another sink.
+
+Typically, a combinator will be implemented as a Stream and a Sink. The Stream is usually stateless/immutable, and creates a new Sink for each new observer. In most cases, the relationship of a Stream to Sink is 1-many.
+
+.. _Disposable:
+
+Disposable
+^^^^^^^^^^
+
+.. code-block:: haskell
+
   type Disposable = {
     dispose:: () -> void
   }
 
+A Disposable represents a resource that must be disposed (or released), such as a DOM event listener.
+
+.. _Scheduler:
+
+Scheduler
+^^^^^^^^^
+
+.. code-block:: haskell
+
+  type Scheduler = {
+    now :: () -> Time
+    asap :: Task -> ScheduledTask
+    delay :: Delay -> Task -> ScheduledTask
+    periodic :: Period -> Task -> ScheduledTask
+    schedule :: Delay -> Period -> Task -> ScheduledTask
+    scheduleTask :: Offset -> Delay -> Period -> Task -> ScheduledTask
+    relative :: Offset -> Scheduler
+    cancel :: ScheduledTask -> void
+    cancelAll :: (ScheduledTask -> boolean) -> void
+  }
+
+A Scheduler provides the central notion of time for the Streams in an application.
+
+An application will typically create a single "root" Scheduler so that all Streams share the same underlying time.
+
+.. _Clock:
+
+Clock
+^^^^^
+
+.. code-block:: haskell
+
+  type Clock = {
+    now :: () -> Time
+  }
+
+A Clock represents a source of the current time
+
+.. _Timer:
+
+Timer
+^^^^^
+
+.. code-block:: haskell
+
+  type Handle = any -- intentionally opaque handle
+
+  type Timer = {
+    now :: () -> Time,
+    setTimer :: () => any -> Delay -> Handle,
+    clearTimer :: Handle -> void
+  }
+
+A Timer abstracts platform time, typically relying on a :ref:`Clock`, and timer scheduling, typically using ``setTimeout``.
+
+.. _Timeline:
+
+Timeline
+^^^^^^^^
+
+.. code-block:: haskell
+
+  type TaskRunner = (ScheduledTask) -> any
+
+  type Timeline = {
+    add :: ScheduledTask -> void,
+    remove :: ScheduledTask -> boolean,
+    removeAll :: (ScheduledTask) -> boolean) -> void,
+    isEmpty :: () -> boolean,
+    nextArrival :: () -> Time,
+    runTasks :: Time -> TaskRunner -> void
+  }
+
+A Timeline represents a set of ScheduledTasks to be executed at particular times
+
+.. _Task:
+
+Task
+^^^^
+
+.. code-block:: haskell
+
   type Task = Disposable & {
-    run :: Time -> void
+    run :: Time -> void,
     error:: Time -> Error -> void
   }
 
+A Task is any unit of work that can be scheduled for execution on a Scheduler.
+
+ScheduledTask
+^^^^^^^^^^^^^
+
+.. code-block:: haskell
+
+  type ScheduledTask = Disposable & {
+    task :: Task,
+    run :: () -> void,
+    error :: Error -> void
+  }
+
+A Scheduled Task represents a :ref:`Task` which has been scheduled on a particular :ref:`Scheduler`.  A ``ScheduledTask``'s ``dispose`` method will cancel the Task on the Scheduler on which it was scheduled.
+
+.. _@most/core:
+
+@most/core
+----------
+
+.. _Running:
+
 Running
--------
+^^^^^^^
 
 .. _runEffects:
 
 runEffects
-^^^^^^^^^^
+``````````
 
 .. code-block:: haskell
 
@@ -44,12 +194,12 @@ runEffects
 Activate an event stream, and consume all its events.
 
 Construction
-------------
+^^^^^^^^^^^^
 
 .. _empty:
 
 empty
-^^^^^
+`````
 
 .. code-block:: haskell
 
@@ -62,7 +212,7 @@ Create a stream containing no events, which ends immediately.::
 .. _never:
 
 never
-^^^^^
+`````
 
 .. code-block:: haskell
 
@@ -75,7 +225,7 @@ Create a stream containing no events, which never ends.::
 .. _now:
 
 now
-^^^
+```
 
 .. code-block:: haskell
 
@@ -88,7 +238,7 @@ Create a stream containing a single event at time 0.::
 .. _at:
 
 at
-^^
+``
 
 .. code-block:: haskell
 
@@ -101,22 +251,25 @@ Create a stream containing a single event at a specific time.::
 .. _throwError:
 
 throwError
-^^^^^^^^^^
+``````````
 
 .. code-block:: haskell
 
   throwError :: Error -> Stream void
 
-Create a stream that fails at time 0 with the provided Error. ::
+Create a stream that fails at time 0 with the provided Error.
 
 This can be useful for functions that need to return a stream and also need to propagate an error.::
 
   throwError(X): X
 
+Extending
+^^^^^^^^^
+
 .. _startWith:
 
 startWith
-^^^^^^^^^
+`````````
 
 .. code-block:: haskell
 
@@ -134,11 +287,27 @@ Note that ``startWith`` *does not* delay other events.  If ``stream`` already co
 
 Both ``x`` and ``a`` occur at time 0, but ``x`` will be observed before ``a``.
 
-Transformation
---------------
+.. _continueWith:
 
+continueWith
+````````````
+
+.. code-block:: haskell
+
+  continueWith :: (() -> Stream a) -> Stream a -> Stream a
+
+Replace the end of a stream with another stream.::
+
+  s:                  -a-b-c-d|
+  f(): 		                    -1-2-3-4-5->
+  continueWith(f, s): -a-b-c-d-1-2-3-4-5->
+
+When ``s`` ends, ``f`` will be called, and must return stream.
+
+Transformation
+^^^^^^^^^^^^^^
 map
-^^^
+```
 
 .. code-block:: haskell
 
@@ -156,7 +325,7 @@ Apply a function to each event value.::
 .. _constant:
 
 constant
-^^^^^^^^
+````````
 
 .. code-block:: haskell
 
@@ -187,14 +356,14 @@ Perform a side-effect for each event in stream.
   stream:         -a-b-c-d->
   tap(f, stream): -a-b-c-d->
 
-For each event in stream, f is called, but the value of its result is ignored. 
-If f fails (ie throws), then the returned stream will also fail. The stream 
+For each event in stream, f is called, but the value of its result is ignored.
+If f fails (ie throws), then the returned stream will also fail. The stream
 returned by tap will contain the same events as the original stream.
 
 .. _ap:
 
 ap
-^^^
+```
 
 .. code-block:: haskell
 
@@ -213,7 +382,7 @@ In effect, ap applies a time-varying function to a time-varying value.
 .. _scan:
 
 scan
-^^^^
+````
 
 .. code-block:: haskell
 
@@ -227,7 +396,7 @@ Incrementally accumulate results, starting with the provided initial value.::
 .. _loop:
 
 loop
-^^^^
+````
 .. code-block:: haskell
 
   loop :: (b -> a -> { seed :: b, value :: c }) -> b -> Stream a -> Stream c
@@ -259,7 +428,7 @@ It allows you to maintain and update a "state" (aka feedback, aka seed for the n
 .. _zipArrayValues:
 
 zipArrayValues
-^^^^^^^^^^^^^^
+``````````````
 
 .. code-block:: haskell
 
@@ -277,7 +446,7 @@ or array.length events, whichever is less.
 .. _withArrayValues:
 
 withArrayValues
-^^^^^^^^^^^^^^^
+```````````````
 
 .. code-block:: haskell
 
@@ -292,10 +461,46 @@ Replace each event value with the array value at the respective index.::
 The resulting stream will contain the same number of events as the input stream,
 or array.length events, whichever is less.
 
+Flattening
+^^^^^^^^^^
+
+.. _switchLatest:
+
+switchLatest
+````````````
+
+.. code-block:: haskell
+
+  switchLatest :: Stream (Stream a) -> Stream a
+
+Given a higher-order stream, return a new stream that adopts the behavior of
+(ie emits the events of) the most recent inner stream.::
+
+  s:                    -a-b-c-d-e-f->
+  t:                    -1-2-3-4-5-6->
+  stream:               -s-----t----->
+  switchLatest(stream): -a-b-c-4-5-6->
+
+.. _join:
+
+join
+````
+
+.. code-block:: haskell
+
+  join :: Stream (Stream a) -> Stream a
+
+Given a higher-order stream, return a new stream that merges all the inner streams as they arrive.::
+
+  s:             ---a---b---c---d-->
+  t:             -1--2--3--4--5--6->
+  stream:        -s------t--------->
+  join(stream):  ---a---b--4c-5-d6->
+
 .. _chain:
 
 chain
-^^^^^
+`````
 
 .. code-block:: haskell
 
@@ -309,35 +514,19 @@ Transform each event in ``stream`` into a stream, and then merge it into the res
   f(c):                           1-2-3|
   chain(f, stream):  -1--2-13---2-1-233|
 
-.. _join:
-
-join
-^^^^
-
-.. code-block:: haskell
-
-  join :: Stream (Stream a) -> Stream a
-
-Given a higher-order stream, return a new stream that merges all the inner streams as they arrive.::
-
-  s:             ---a---b---c---d-->
-  t:             -1--2--3--4--5--6->
-  stream:        -s------t--------->
-  join(stream):  ---a---b--4c-5-d6->
-
 .. _concatMap:
 
 concatMap
-^^^^^^^^^
+`````````
 
 .. code-block:: haskell
 
   concatMap :: (a -> Stream b) -> Stream a -> Stream b
 
-Transform each event in stream into a stream, and then concatenate it onto the 
+Transform each event in stream into a stream, and then concatenate it onto the
 end of the resulting stream. Note that f must return a stream.
 
-The mapping function f is applied lazily. That is, f is called only once it is 
+The mapping function f is applied lazily. That is, f is called only once it is
 time to concatenate a new stream.::
 
   stream:                -a----b----c|
@@ -347,21 +536,21 @@ time to concatenate a new stream.::
   concatMap(f, stream):  -1--2--31----2----31-2-3|
   f called lazily:        ^      ^          ^
 
-Note the difference between concatMap and ref:`chain`: concatMap concatenates, while 
+Note the difference between concatMap and ref:`chain`: concatMap concatenates, while
 chain merges.
 
 .. _mergeConcurrently:
 
 mergeConcurrently
-^^^^^^^^^^^^^^^^^
+`````````````````
 
 .. code-block:: haskell
 
   mergeConcurrently :: int -> Stream (Stream a) -> Stream a
 
-Given a higher-order stream, return a new stream that merges inner streams as 
-they arrive up to the specified concurrency. Once concurrency number of streams 
-are being merged, newly arriving streams will be merged after an existing one 
+Given a higher-order stream, return a new stream that merges inner streams as
+they arrive up to the specified concurrency. Once concurrency number of streams
+are being merged, newly arriving streams will be merged after an existing one
 ends.::
 
   s:                            --a--b--c--d--e-->
@@ -374,22 +563,22 @@ Note that u is only merged after t ends, due to the concurrency level of 2.
 
 Note also that ``mergeConcurrently(Infinity, stream)`` is equivalent to ``join(stream)``.
 
-To control concurrency, mergeConcurrently must maintain an internal queue of 
-newly arrived streams. If new streams arrive faster than the concurrency level 
+To control concurrency, mergeConcurrently must maintain an internal queue of
+newly arrived streams. If new streams arrive faster than the concurrency level
 allows them to be merged, the internal queue will grow infinitely.
 
 .. _mergeMapConcurrently:
 
 mergeMapConcurently
-^^^^^^^^^^^^^^^^^^^
+```````````````````
 
 .. code-block:: haskell
 
   mergeMapConcurently :: (a -> Stream b) -> int -> Stream a -> Stream b
 
-Lazily applies a function ``f`` to each event on a stream, merging them into the 
-resulting stream at the specified concurrency. Once concurrency number of streams 
-are being merged, newly arriving streams will be merged after an existing one 
+Lazily applies a function ``f`` to each event on a stream, merging them into the
+resulting stream at the specified concurrency. Once concurrency number of streams
+are being merged, newly arriving streams will be merged after an existing one
 ends.::
 
   stream:                             --ab--c----d----->
@@ -401,34 +590,20 @@ ends.::
 
 Note that ``f(c)`` is only merged after ``f(a)`` ends.
 
-Also note that ``f`` will not get called with ``d`` until either ``f(b)`` or 
+Also note that ``f`` will not get called with ``d`` until either ``f(b)`` or
 ``f(c)`` ends.
 
-To control concurrency, mergeMapConcurrently must maintain an internal queue of 
-newly arrived streams. If new streams arrive faster than the concurrency level 
+To control concurrency, mergeMapConcurrently must maintain an internal queue of
+newly arrived streams. If new streams arrive faster than the concurrency level
 allows them to be merged, the internal queue will grow infinitely.
 
-.. _switchLatest:
-
-switchLatest
-^^^^^^^^^^^^
-
-.. code-block:: haskell
-
-  switchLatest :: Stream (Stream a) -> Stream a
-
-Given a higher-order stream, return a new stream that adopts the behavior of 
-(ie emits the events of) the most recent inner stream.::
-
-  s:                    -a-b-c-d-e-f->
-  t:                    -1-2-3-4-5-6->
-  stream:               -s-----t----->
-  switchLatest(stream): -a-b-c-4-5-6->
+Merging
+^^^^^^^
 
 .. _merge:
 
 merge
-^^^^^
+`````
 
 .. code-block:: haskell
 
@@ -445,7 +620,7 @@ Merging creates a new stream containing all events from the two original streams
 .. _mergeArray:
 
 mergeArray
-^^^^^^^^^^
+``````````
 
 .. code-block:: haskell
 
@@ -461,7 +636,7 @@ Array form of :ref:`merge`. Create a new Stream containing all events from all s
 .. _combine:
 
 combine
-^^^^^^^
+```````
 
 .. code-block:: haskell
 
@@ -478,7 +653,7 @@ Note that ``combine`` waits for at least one event to arrive on all input stream
 .. _combineArray:
 
 combineArray
-^^^^^^^^^^^^
+````````````
 
 .. code-block:: haskell
 
@@ -494,7 +669,7 @@ Array form of :ref:`combine`. Apply a function to the most recent event from all
 .. _zip:
 
 zip
-^^^
+```
 
 .. code-block:: haskell
 
@@ -513,7 +688,7 @@ A zipped stream ends when any one of its input streams ends.
 .. _zipArray:
 
 zipArray
-^^^^^^^^
+````````
 
 .. code-block:: haskell
 
@@ -527,13 +702,14 @@ Array form of :ref:`zip`.  Apply a function to corresponding events from all the
   zipArray(add3, [s1, s2, s3]): --3--6--9->
 
 sample
-^^^^^^
-.. code-block:: haskell 
+``````
+
+.. code-block:: haskell
 
   sample :: ((a, b) -> c) -> Stream a -> Stream b -> Stream c
 
 For each event in a sampler stream, apply a function to combine it with the most recent event in another stream. The resulting stream will contain the same number of events as the sampler stream.::
-  
+
   s1:                       -1--2--3--4--5->
   sampler:                  -1-----2-----3->
   sample(sum, sampler, s1): -2-----5-----8->
@@ -547,12 +723,12 @@ Note ``sample`` produces a value only when an event arrives on the sampler
 switchLatest :: Stream (Stream a) -> Stream a
 
 Filtering
----------
+^^^^^^^^^
 
 .. _filter:
 
 filter
-^^^^^^
+``````
 
 .. code-block:: haskell
 
@@ -566,7 +742,7 @@ Retain only events for which a predicate is truthy.::
 .. _skipRepeats:
 
 skipRepeats
-^^^^^^^^^^^
+```````````
 
 .. code-block:: haskell
 
@@ -582,7 +758,7 @@ Note that ``===`` is used to identify repeated items.  To use a different compar
 .. _skipRepeatsWith:
 
 skipRepeatsWith
-^^^^^^^^^^^^^^^
+```````````````
 
 .. code-block:: haskell
 
@@ -597,8 +773,11 @@ The equals function should return truthy if the two value are equal, or falsy if
 
 .. _slice:
 
+Slicing
+^^^^^^^
+
 slice
-^^^^^
+`````
 
 .. code-block:: haskell
 
@@ -617,7 +796,7 @@ If stream contains fewer than start events, the returned stream will be empty.
 .. _take:
 
 take
-^^^^
+````
 
 .. code-block:: haskell
 
@@ -636,7 +815,7 @@ If stream contains fewer than n events, the returned stream will be effectively 
 .. _skip:
 
 skip
-^^^^
+````
 
 .. code-block:: haskell
 
@@ -658,7 +837,7 @@ If stream contains fewer than n events, the returned stream will be empty.
 .. _takeWhile:
 
 takeWhile
-^^^^^^^^^
+`````````
 
 .. code-block:: haskell
 
@@ -672,7 +851,7 @@ Keep all events until predicate returns false, and discard the rest.::
 .. _skipWhile:
 
 skipWhile
-^^^^^^^^^
+`````````
 
 .. code-block:: haskell
 
@@ -686,7 +865,7 @@ Discard all events until predicate returns false, and keep the rest.::
 .. _skipAfter:
 
 skipAfter
-^^^^^^^^^
+`````````
 
 .. code-block:: haskell
 
@@ -700,7 +879,7 @@ Discard all events after the first event for which predicate returns true.::
 .. _until:
 
 until
-^^^^^
+`````
 
 .. code-block:: haskell
 
@@ -722,7 +901,7 @@ Note that if endSignal has no events, then the returned stream will be effective
 .. _since:
 
 since
-^^^^^
+`````
 
 .. code-block:: haskell
 
@@ -744,7 +923,7 @@ Note that if startSignal is has no events, then the returned stream will be effe
 .. _during:
 
 during
-^^^^^^
+``````
 
 .. code-block:: haskell
 
@@ -774,7 +953,7 @@ This is similar to :ref:`slice`, but uses time rather than indices to "slice" th
 .. _delay:
 
 delay
-^^^^^
+`````
 
 .. code-block:: haskell
 
@@ -791,7 +970,8 @@ Delaying a stream timeshifts all the events by the same amount. It doesn't chang
 .. _throttle:
 
 throttle
-^^^^^^^^
+````````
+
 .. code-block:: haskell
 
   throttle :: int -> Stream a -> Stream a
@@ -806,7 +986,7 @@ In contrast to debounce, throttle simply drops events that occur "too often", wh
 .. _debounce:
 
 debounce
-^^^^^^^^
+````````
 
 .. code-block:: haskell
 
@@ -834,10 +1014,13 @@ Debouncing can be extremely useful when dealing with bursts of similar events, f
   // after the user stops typing for 500 millis
   map(e => e.target.value, debounce(500, searchText))
 
+Dealing with Promises
+^^^^^^^^^^^^^^^^^^^^^
+
 .. _fromPromise:
 
 fromPromise
-^^^^^^^^^^^
+```````````
 
 .. code-block:: haskell
 
@@ -853,7 +1036,7 @@ If the promise rejects, the stream will be in an error state with the promise's 
 .. _awaitPromises:
 
 awaitPromises
-^^^^^^^^^^^^^
+`````````````
 
 .. code-block:: haskell
 
@@ -886,27 +1069,13 @@ If a promise rejects, the stream will be in an error state with the rejected pro
   stream:                -p---q---r->
   awaitPromises(stream): ---1--X
 
-.. _continueWith:
-
-continueWith
-^^^^^^^^^^^^
-
-.. code-block:: haskell
-
-  continueWith :: (() -> Stream a) -> Stream a -> Stream a
-
-Replace the end of a stream with another stream.::
-
-  s:                  -a-b-c-d|
-  f(): 		                    -1-2-3-4-5->
-  continueWith(f, s): -a-b-c-d-1-2-3-4-5->
-
-When ``s`` ends, ``f`` will be called, and must return stream.
+Handling Errors
+^^^^^^^^^^^^^^^
 
 .. _recoverWith:
 
 recoverWith
-^^^^^^^^^^^
+```````````
 
 .. code-block:: haskell
 
@@ -920,49 +1089,348 @@ Recover from a stream failure by calling a function to create a new stream.::
 
 When ``s`` fails with an error, ``f`` will be called with the error. f must return a new stream to replace the error.
 
-Scheduling
-----------
+Tasks
+^^^^^
+
+Helper functions for creating :ref:`Task` s to propagate events.
 
 .. _propagateTask:
 
 propagateTask
-^^^^^^^^^^^^^
+`````````````
 
 .. code-block:: haskell
 
   propagateTask :: (Time -> a -> Sink a -> *) -> a -> Sink a -> Task
 
-Create a Task to propagate a value to a Sink.  When the task executes, the provided function will receive the current time (from the scheduler on which it was scheduled), and the provided value and Sink.  The Task can use the :ref:`Sink API <types>` to propagate the value in whatever way it chooses, for example, as an event or an error, or could choose not to propagate the event based on some condition, etc.
+Create a Task to propagate a value to a Sink.  When the task executes, the provided function will receive the current time (from the scheduler on which it was scheduled), and the provided value and Sink.  The Task can use the :ref:`Sink` to propagate the value in whatever way it chooses, for example, as an event or an error, or could choose not to propagate the event based on some condition, etc.
 
 .. _propagateEventTask:
 
 propagateEventTask
-^^^^^^^^^^^^^^^^^^
+``````````````````
 
 .. code-block:: haskell
 
   propagateEventTask :: a -> Sink a -> Task
 
-Create a :ref:`Task <types>` that can be scheduled to propagate an event value to a :ref:`Sink <types>`.  When the task executes, it will call the Sink's ``event`` method with the current time (from the scheduler on which it was scheduled) and the value.
+Create a :ref:`Task` that can be scheduled to propagate an event value to a :ref:`Sink`.  When the task executes, it will call the Sink's ``event`` method with the current time (from the scheduler on which it was scheduled) and the value.
 
 .. _propagateEndTask:
 
 propagateEndTask
-^^^^^^^^^^^^^^^^
+````````````````
 
 .. code-block:: haskell
 
   propagateEndTask :: Sink * -> Task
 
-Create a :ref:`Task <types>` that can be scheduled to propagate end to a :ref:`Sink <types>`.  When the task executes, it will call the Sink's ``end`` method with the current time (from the scheduler on which it was scheduled).
+Create a :ref:`Task` that can be scheduled to propagate end to a :ref:`Sink`.  When the task executes, it will call the Sink's ``end`` method with the current time (from the scheduler on which it was scheduled).
 
 .. _propagateErrorTask:
 
 propagateErrorTask
-^^^^^^^^^^^^^^^^^^
+``````````````````
 
 .. code-block:: haskell
 
   propagateErrorTask :: Error -> Sink * -> Task
 
-Create a :ref:`Task <types>` that can be scheduled to propagate an error to a :ref:`Sink <types>`.  When the task executes, it will call the Sink's ``error`` method with the current time (from the scheduler on which it was scheduled) and the error.
+Create a :ref:`Task` that can be scheduled to propagate an error to a :ref:`Sink`.  When the task executes, it will call the Sink's ``error`` method with the current time (from the scheduler on which it was scheduled) and the error.
+
+.. _@most/scheduler:
+
+@most/scheduler
+---------------
+
+.. _Scheduling Tasks:
+
+Scheduling Tasks
+^^^^^^^^^^^^^^^^
+
+.. _Scheduler-asap:
+
+asap
+````
+
+.. code-block:: haskell
+
+  asap :: Task -> Scheduler -> ScheduledTask
+
+Schedule a Task to execute as soon as possible, but still asynchronously.
+
+.. _Scheduler-delay:
+
+delay
+`````
+
+.. code-block:: haskell
+
+  delay :: Delay -> Task -> Scheduler -> ScheduledTask
+
+Schedule a Task to execute after a specified millisecond Delay.
+
+.. _Scheduler-periodic:
+
+periodic
+````````
+
+.. code-block:: haskell
+
+  periodic :: Period -> Task -> Scheduler -> ScheduledTask
+
+Schedule a Task to execute periodically with the specified Period.
+
+.. _Canceling Tasks:
+
+Canceling Tasks
+^^^^^^^^^^^^^^^
+
+.. _Scheduler-cancelTask:
+
+cancelTask
+``````````
+
+.. code-block:: haskell
+
+  cancelTask :: ScheduledTask -> void
+
+Cancel all future scheduled executions of a ScheduledTask.
+
+.. _Scheduler-cancelAllTasks:
+
+cancelAllTasks
+``````````````
+
+.. code-block:: haskell
+
+  cancelAllTasks :: (ScheduledTask -> boolean) -> Scheduler -> void
+
+Cancel all future scheduled executions of all ScheduledTasks for which the provided predicate is true.
+
+Current Time
+^^^^^^^^^^^^
+
+.. _Scheduler-now:
+
+now
+```
+
+.. code-block:: haskell
+
+  now :: Scheduler ~> () -> Time
+
+Get the scheduler's current time.
+
+Creating a Scheduler
+^^^^^^^^^^^^^^^^^^^^
+
+.. _newScheduler:
+
+newScheduler
+````````````
+
+.. code-block:: haskell
+
+  newScheduler :: Timer -> Timeline -> Scheduler
+
+Create a new scheduler that uses the provided :ref:`Timer` and :ref:`Timeline` for scheduling tasks.
+
+.. _newDefaultScheduler:
+
+newDefaultScheduler
+```````````````````
+
+.. code-block:: haskell
+
+  newDefaultScheduler :: () -> Scheduler
+
+Create a new Scheduler that uses a default platform-specific :ref:`Timer` and new, empty :ref:`Timeline`.
+
+
+.. _Scheduler-relative:
+
+schedulerRelativeTo
+```````````````````
+
+.. code-block:: haskell
+
+  schedulerRelativeTo :: Offset -> Scheduler -> Scheduler
+
+Create a new Scheduler with origin (i.e. zero time) at the specified :ref:`Offset <Time>` of the provided Scheduler.
+
+When implementing higher-order stream combinators, this function can be used to create a Scheduler with local time for each "inner" stream.
+
+.. code-block:: javascript
+
+  scheduler.now() //> 1637
+  const relativeScheduler = relative(1234, scheduler)
+  relativeScheduler.now() //> 0
+
+  // ... later ...
+
+  scheduler.now() //> 3929
+  relativeScheduler.now() //> 2292
+
+Timer, Timeline, and Clock
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. _newClockTimer:
+
+newClockTimer
+`````````````
+
+.. code-block:: haskell
+
+  newClockTimer :: Clock -> Timer
+
+Create a new :ref:`Timer` that uses the provided :ref:`Clock` as a source of the current :ref:`Time`.
+
+.. _newTimeline:
+
+newTimeline
+```````````
+
+.. code-block:: haskell
+
+  newTimeline :: () -> Timeline
+
+Create an empty :ref:`Timeline`
+
+.. _newPlatformClock:
+
+newPlatformClock
+````````````````
+
+.. code-block:: haskell
+
+  newPlatformClock :: () -> Clock
+
+Create a new :ref:`Clock` by autodetecting the best platform-specific source of :ref:`Time`.  On modern browsers, uses `performance.now`, and on Node, `process.hrtime`.  If neither is available, falls back to `Date.now`.
+
+.. _newPerformanceClock:
+
+newPerformanceClock
+```````````````````
+
+.. code-block:: haskell
+
+  newPerformanceClock :: () -> Clock
+
+Create a new :ref:`Clock` using`performance.now`.
+
+.. _newHRTimeClock:
+
+newHRTimeClock
+``````````````
+
+.. code-block:: haskell
+
+  newHRTimeClock :: () -> Clock
+
+Create a new :ref:`Clock` using`process.hrtime`.
+
+.. _newDateClock:
+
+newDateClock
+````````````
+
+.. code-block:: haskell
+
+  newDateClock :: () -> Clock
+
+Create a new :ref:`Clock` using`Date.now`. Note that a Clock using `Date.now` is not guaranteed to be monotonic, and is subject to system clock changes, e.g. NTP can change your system clock!
+
+.. _clockRelativeTo:
+
+clockRelativeTo
+```````````````
+
+.. code-block:: haskell
+
+  clockRelativeTo :: Clock -> Clock
+
+Create a new :ref:`Clock` whose origin is at the *current time* (at the instant of calling ``clockRelativeTime``) of the provided Clock.
+
+.. _@most/disposable:
+
+@most/disposable
+----------------
+
+.. _Creating Disposables:
+
+Creating Disposables
+^^^^^^^^^^^^^^^^^^^^
+
+.. _disposeNone:
+
+disposeNone
+```````````
+
+.. code-block:: haskell
+
+  disposeNone :: () -> Disposable
+
+Create a no-op :ref:`Disposable`.
+
+.. _ disposeWith:
+
+disposeWith
+```````````
+
+.. code-block:: haskell
+
+  disposeWith :: (a -> void) -> a -> Disposable
+
+Create a :ref:`Disposable` which, when disposed will call the provided function, passing the provided value.
+
+.. _disposeOnce:
+
+disposeOnce
+```````````
+
+.. code-block:: haskell
+
+  disposeOnce :: Disposable -> Disposable
+
+Wrap a :ref:`Disposable` so the underlying Disposable will only be disposed once, even if the returned Disposable is disposed multiple times.
+
+.. _disposeBoth:
+
+disposeBoth
+```````````
+
+.. code-block:: haskell
+
+  disposeBoth :: Disposable -> Disposable -> Disposable
+
+Combine two :ref:`Disposable`s into a single Disposable which will dispose both.
+
+.. _disposeAll:
+
+disposeAll
+``````````
+
+.. code-block:: haskell
+
+  disposeAll :: [Disposable] -> Disposable
+
+Combine an array of :ref:`Disposable`s into a single Disposable which will dispose all the Disposables in the array.
+
+.. _Disposing Disposables:
+
+Disposing Disposables
+^^^^^^^^^^^^^^^^^^^^^
+
+.. _tryDispose:
+
+tryDispose
+``````````
+
+.. code-block:: haskell
+
+  tryDispose :: Time -> Disposable -> Sink * -> void
+
+Attempt to dispose the provided :ref:`Disposable`.  If the Disposable throws an exception, catch and propagate it to the provided :ref:`Sink` with the provided :ref:`Time`.
+
+Note: Only an exception thrown by the Disposable will be caught.  If the act of propagating an error to the Sink throws, that exception *will not* be caught.

@@ -3,6 +3,11 @@
 // in use
 export type Time = number;
 
+// A Clock represents a source of the current time
+export type Clock = {
+  now (): Time;
+}
+
 export interface Stream<A> {
   run (sink: Sink<A>, scheduler: Scheduler): Disposable;
 }
