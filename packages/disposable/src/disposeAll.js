@@ -1,13 +1,13 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
-import { reduce } from '@most/prelude'
+import { reduce, curry2 } from '@most/prelude'
 
 // Aggregate a list of disposables into a DisposeAll
 export const disposeAll = ds =>
   new DisposeAll(ds)
 
 // Convenience to aggregate 2 disposables
-export const disposeBoth = (d1, d2) =>
-  disposeAll([d1, d2])
+export const disposeBoth = curry2((d1, d2) =>
+  disposeAll([d1, d2]))
 
 export class DisposeAll {
   constructor (disposables) {

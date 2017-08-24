@@ -1,10 +1,11 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 import { disposeOnce } from './disposeOnce'
+import { curry2 } from '@most/prelude'
 
 // Create a Disposable that will use the provided
 // dispose function to dispose the resource
-export const disposeWith = (dispose, resource) =>
-  disposeOnce(new Disposable(dispose, resource))
+export const disposeWith = curry2((dispose, resource) =>
+  disposeOnce(new Disposable(dispose, resource)))
 
 // Disposable represents a resource that must be
 // disposed/released. It aggregates a function to dispose
