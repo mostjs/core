@@ -343,7 +343,7 @@ Replace each event value with x.::
 .. _tap:
 
 tap
-^^^
+```
 
 .. code-block:: haskell
 
