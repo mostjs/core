@@ -720,8 +720,6 @@ For each event in a sampler stream, apply a function to combine it with the most
 
 Note ``sample`` produces a value only when an event arrives on the sampler
 
-switchLatest :: Stream (Stream a) -> Stream a
-
 Filtering
 ^^^^^^^^^
 
