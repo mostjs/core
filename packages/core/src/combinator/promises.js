@@ -44,19 +44,18 @@ class AwaitSink {
   }
 
   event (t, promise) {
-    this.queue = this.queue.then(() => this._event(promise))
+    this.queue = this.queue
+      .then(() => this._event(promise))
       .catch(this._errorBound)
   }
 
   end (t) {
-    this.queue = this.queue.then(this._endBound)
-      .catch(this._errorBound)
+    this.queue = this.queue.then(this._endBound).catch(this._errorBound)
   }
 
   error (t, e) {
     // Don't resolve error values, propagate directly
-    this.queue = this.queue.then(() => this._errorBound(e))
-      .catch(fatal)
+    this.queue = this.queue.then(() => this._errorBound(e)).catch(fatal)
   }
 
   _event (promise) {

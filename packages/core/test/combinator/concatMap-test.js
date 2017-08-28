@@ -11,7 +11,13 @@ import { drain } from '../helper/observe'
 import { now } from '../../src/source/now'
 import { never } from '../../src/source/never'
 
-import { ticks, atTimes, makeEventsFromArray, collectEventsFor, collectEvents } from '../helper/testEnv'
+import {
+  ticks,
+  atTimes,
+  makeEventsFromArray,
+  collectEventsFor,
+  collectEvents
+} from '../helper/testEnv'
 import FakeDisposeSource from '../helper/FakeDisposeStream'
 
 const sentinel = { value: 'sentinel' }
@@ -45,23 +51,21 @@ describe('concatMap', function () {
       { time: 4, value: 0 }
     ]
 
-    return collectEventsFor(5, s)
-      .then(eq(expected))
+    return collectEventsFor(5, s).then(eq(expected))
   })
 
   it('should map lazily', function () {
     const s1 = atTimes([{ time: 0, value: 0 }, { time: 1, value: 1 }])
 
     const scheduler = ticks(4)
-    const s = concatMap.concatMap(x => atTimes([{ time: 2, value: scheduler.now() }]), s1)
+    const s = concatMap.concatMap(
+      x => atTimes([{ time: 2, value: scheduler.now() }]),
+      s1
+    )
 
-    const expected = [
-      { time: 2, value: 0 },
-      { time: 4, value: 2 }
-    ]
+    const expected = [{ time: 2, value: 0 }, { time: 4, value: 2 }]
 
-    return collectEvents(s, scheduler)
-      .then(eq(expected))
+    return collectEvents(s, scheduler).then(eq(expected))
   })
 
   it('should dispose outer stream', function () {
@@ -69,7 +73,10 @@ describe('concatMap', function () {
     const inner = now(sentinel)
     const outer = now(inner)
 
-    const s = concatMap.concatMap(identity, new FakeDisposeSource(dispose, outer))
+    const s = concatMap.concatMap(
+      identity,
+      new FakeDisposeSource(dispose, outer)
+    )
 
     return drain(s).then(() => assert(dispose.called))
   })
@@ -98,6 +105,7 @@ describe('concatMap', function () {
     const s = concatMap.concatMap(identity, makeEventsFromArray(1, inners))
 
     return collectEventsFor(3, s).then(() =>
-      spies.forEach(spy => assert(spy.calledOnce)))
+      spies.forEach(spy => assert(spy.calledOnce))
+    )
   })
 })

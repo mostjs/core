@@ -10,10 +10,14 @@ export function expectArray (array, s) {
 }
 
 function toArray (s) {
-  return reduce(function (a, x) {
-    a.push(x)
-    return a
-  }, [], s)
+  return reduce(
+    function (a, x) {
+      a.push(x)
+      return a
+    },
+    [],
+    s
+  )
 }
 
 function arrayEquals (ss) {

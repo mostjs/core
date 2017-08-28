@@ -39,9 +39,6 @@ describe('ap', function () {
     const u = now(f)
     const y = 'y'
 
-    return assertSame(
-      ap(u, now(y)),
-      ap(now(f => f(y)), u)
-    )
+    return assertSame(ap(u, now(y)), ap(now(f => f(y)), u))
   })
 })

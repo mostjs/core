@@ -32,9 +32,9 @@ export function zip (f, stream1, stream2) {
 *  using f
 */
 export const zipArray = (f, streams) =>
-  streams.length === 0 ? empty()
-    : streams.length === 1 ? map(f, streams[0])
-    : new Zip(f, streams)
+  streams.length === 0
+    ? empty()
+    : streams.length === 1 ? map(f, streams[0]) : new Zip(f, streams)
 
 class Zip {
   constructor (f, sources) {

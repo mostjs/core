@@ -3,8 +3,7 @@
 import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
 
-export const sample = (f, sampler, stream) =>
-  new Sample(f, sampler, stream)
+export const sample = (f, sampler, stream) => new Sample(f, sampler, stream)
 
 export class Sample {
   constructor (f, sampler, stream) {

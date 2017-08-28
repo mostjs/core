@@ -1,4 +1,12 @@
 {
-  "parser": "babel-eslint",
-  "extends": "@most/eslint-config-most"
+  "parserOptions": {
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": false,
+      "jsx": false
+    }
+  },
+  "rules": {
+    "arrow-parens": [2, "as-needed"],
+    "complexity": [2, 3]
+  }
 }
