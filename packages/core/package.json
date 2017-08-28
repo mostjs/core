@@ -1,6 +1,6 @@
 {
   "name": "@most/core",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
   "typings": "type-definitions/most.d.ts",
   "main": "dist/mostCore.js",
