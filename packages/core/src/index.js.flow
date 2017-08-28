@@ -62,7 +62,7 @@ declare export function mergeMapConcurrently <A, B> (concurrency: number): (f: (
 declare export function mergeMapConcurrently <A, B> (concurrency: number, f: (A) => Stream<B>): (s: Stream<A>) => Stream<B>
 declare export function mergeMapConcurrently <A, B> (concurrency: number): (f: (A) => Stream<B>) => (s: Stream<A>) => Stream<B>
 
-declare export function continueWith <A> (f: (any) => String<A>, s: Stream<A>): Stream<A>
+declare export function continueWith <A> (f: (any) => Stream<A>, s: Stream<A>): Stream<A>
 declare export function continueWith <A> (f: (any) => Stream<A>): (s: Stream<A>) => Stream<A>
 
 declare export function switchLatest <A> (s: Stream<Stream<A>>): Stream<A>
