@@ -3,7 +3,10 @@
 /** @author John Hann */
 
 import { newScheduler, newTimeline } from '@most/scheduler'
-import { propagateEventTask, propagateEndTask } from '../../src/scheduler/PropagateTask'
+import {
+  propagateEventTask,
+  propagateEndTask
+} from '../../src/scheduler/PropagateTask'
 import VirtualTimer from './VirtualTimer'
 import { runEffects } from '../../src/runEffects'
 import { tap } from '../../src/combinator/transform'
@@ -11,7 +14,10 @@ import { disposeWith, disposeNone } from '@most/disposable'
 
 export function newEnv () {
   const timer = new VirtualTimer()
-  return { tick: n => timer.tick(n), scheduler: newScheduler(timer, newTimeline()) }
+  return {
+    tick: n => timer.tick(n),
+    scheduler: newScheduler(timer, newTimeline())
+  }
 }
 
 export function ticks (dt) {
@@ -58,7 +64,10 @@ const runEvents = (events, sink, scheduler) => {
 }
 
 const appendEvent = (sink, scheduler) => (s, event) => {
-  const task = scheduler.delay(event.time, propagateEventTask(event.value, sink))
+  const task = scheduler.delay(
+    event.time,
+    propagateEventTask(event.value, sink)
+  )
   return { tasks: s.tasks.concat(task), time: Math.max(s.time, event.time) }
 }
 

@@ -2,7 +2,10 @@
 import { describe, it } from 'mocha'
 import { eq, fail } from '@briancavalier/assert'
 
-import { zipArrayValues, withArrayValues } from '../../src/combinator/withArrayValues'
+import {
+  zipArrayValues,
+  withArrayValues
+} from '../../src/combinator/withArrayValues'
 import { empty } from '../../src/source/empty'
 
 import { collectEventsFor, makeEvents } from '../helper/testEnv'
@@ -24,12 +27,13 @@ describe('withArrayValues', () => {
       const n = a.length + 1
       const s = zipArrayValues((a, b) => a + String(b), a, makeEvents(1, n))
 
-      return collectEventsFor(n, s)
-        .then(eq([
+      return collectEventsFor(n, s).then(
+        eq([
           { time: 0, value: 'a0' },
           { time: 1, value: 'b1' },
           { time: 2, value: 'c2' }
-        ]))
+        ])
+      )
     })
 
     it('should contain zipped values when more values than events', () => {
@@ -37,11 +41,9 @@ describe('withArrayValues', () => {
       const n = a.length - 1
       const s = zipArrayValues((a, b) => a + String(b), a, makeEvents(1, n))
 
-      return collectEventsFor(a.length, s)
-        .then(eq([
-          { time: 0, value: 'a0' },
-          { time: 1, value: 'b1' }
-        ]))
+      return collectEventsFor(a.length, s).then(
+        eq([{ time: 0, value: 'a0' }, { time: 1, value: 'b1' }])
+      )
     })
   })
 
@@ -61,12 +63,13 @@ describe('withArrayValues', () => {
       const n = a.length + 1
       const s = withArrayValues(a, makeEvents(1, n))
 
-      return collectEventsFor(n, s)
-        .then(eq([
+      return collectEventsFor(n, s).then(
+        eq([
           { time: 0, value: 'a' },
           { time: 1, value: 'b' },
           { time: 2, value: 'c' }
-        ]))
+        ])
+      )
     })
 
     it('should contain array values when more values than events', () => {
@@ -74,11 +77,9 @@ describe('withArrayValues', () => {
       const n = a.length - 1
       const s = withArrayValues(a, makeEvents(1, n))
 
-      return collectEventsFor(a.length, s)
-        .then(eq([
-          { time: 0, value: 'a' },
-          { time: 1, value: 'b' }
-        ]))
+      return collectEventsFor(a.length, s).then(
+        eq([{ time: 0, value: 'a' }, { time: 1, value: 'b' }])
+      )
     })
   })
 })

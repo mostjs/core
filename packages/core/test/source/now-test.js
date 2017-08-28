@@ -9,7 +9,8 @@ import { collectEventsFor } from '../helper/testEnv'
 describe('now', () => {
   it('should contain event at time 0', function () {
     const expected = Math.random()
-    return collectEventsFor(1, now(expected))
-      .then(eq([{ time: 0, value: expected }]))
+    return collectEventsFor(1, now(expected)).then(
+      eq([{ time: 0, value: expected }])
+    )
   })
 })

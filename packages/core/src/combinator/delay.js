@@ -4,7 +4,10 @@
 
 import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
-import { propagateEventTask, propagateEndTask } from '../scheduler/PropagateTask'
+import {
+  propagateEventTask,
+  propagateEndTask
+} from '../scheduler/PropagateTask'
 
 /**
  * @param {Number} delayTime milliseconds to delay each item

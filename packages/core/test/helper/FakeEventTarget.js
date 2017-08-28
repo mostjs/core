@@ -17,8 +17,13 @@ FakeEventTarget.prototype.addEventListener = function (e, handler, capture) {
   this._capture = capture
 }
 
-FakeEventTarget.prototype.removeEventListener = function (e, handler, capture) { // eslint-disable-line complexity
-  if (e !== this._event || handler !== this._handler || this._capture !== capture) {
+FakeEventTarget.prototype.removeEventListener = function (e, handler, capture) {
+  // eslint-disable-line complexity
+  if (
+    e !== this._event ||
+    handler !== this._handler ||
+    this._capture !== capture
+  ) {
     throw new Error('unexpected args passed to removeEventListener')
   }
   this._handler = this._event = void 0

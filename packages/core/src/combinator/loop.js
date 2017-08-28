@@ -15,8 +15,7 @@ import Pipe from '../sink/Pipe'
  * @returns {Stream} new stream whose values are the `value` field of the objects
  * returned by the stepper
  */
-export const loop = (stepper, seed, stream) =>
-  new Loop(stepper, seed, stream)
+export const loop = (stepper, seed, stream) => new Loop(stepper, seed, stream)
 
 class Loop {
   constructor (stepper, seed, source) {

@@ -33,10 +33,12 @@ describe('SafeSink', function () {
   it('should propagate event while active', function () {
     var time = 123
     var expected = {}
-    var sink = new SafeSink(testEvent(function (t, x) {
-      eq(time, t)
-      eq(expected, x)
-    }))
+    var sink = new SafeSink(
+      testEvent(function (t, x) {
+        eq(time, t)
+        eq(expected, x)
+      })
+    )
 
     sink.event(time, expected)
   })
@@ -44,10 +46,12 @@ describe('SafeSink', function () {
   it('should propagate end while active', function () {
     var time = 123
     var expected = {}
-    var sink = new SafeSink(testEnd(function (t, x) {
-      eq(time, t)
-      eq(expected, x)
-    }))
+    var sink = new SafeSink(
+      testEnd(function (t, x) {
+        eq(time, t)
+        eq(expected, x)
+      })
+    )
 
     sink.end(time, expected)
   })
@@ -55,10 +59,12 @@ describe('SafeSink', function () {
   it('should propagate error while active', function () {
     var time = 123
     var expected = new Error()
-    var sink = new SafeSink(testError(function (t, x) {
-      eq(time, t)
-      eq(expected, x)
-    }))
+    var sink = new SafeSink(
+      testError(function (t, x) {
+        eq(time, t)
+        eq(expected, x)
+      })
+    )
 
     sink.error(time, expected)
   })
@@ -66,10 +72,12 @@ describe('SafeSink', function () {
   it('should not propagate event or end after end', function () {
     var time = 123
     var expected = {}
-    var sink = new SafeSink(testEnd(function (t, x) {
-      eq(time, t)
-      eq(expected, x)
-    }))
+    var sink = new SafeSink(
+      testEnd(function (t, x) {
+        eq(time, t)
+        eq(expected, x)
+      })
+    )
 
     sink.end(time, expected)
     sink.end(time + 1, expected)
@@ -79,10 +87,12 @@ describe('SafeSink', function () {
   it('should not propagate event or end after error', function () {
     var time = 123
     var expected = new Error()
-    var sink = new SafeSink(testError(function (t, x) {
-      eq(time, t)
-      eq(expected, x)
-    }))
+    var sink = new SafeSink(
+      testError(function (t, x) {
+        eq(time, t)
+        eq(expected, x)
+      })
+    )
 
     sink.error(time, expected)
     sink.end(time + 1, expected)
@@ -99,9 +109,11 @@ describe('SafeSink', function () {
 
   it('should propagate error after disable', function () {
     var errorCalled = 0
-    var sink = new SafeSink(testError(function () {
-      errorCalled += 1
-    }))
+    var sink = new SafeSink(
+      testError(function () {
+        errorCalled += 1
+      })
+    )
 
     sink.disable()
     sink.error(1, new Error())
@@ -110,9 +122,11 @@ describe('SafeSink', function () {
 
   it('should propagate error after end', function () {
     var errorCalled = 0
-    var sink = new SafeSink(testSink(fail, noop, function () {
-      errorCalled += 1
-    }))
+    var sink = new SafeSink(
+      testSink(fail, noop, function () {
+        errorCalled += 1
+      })
+    )
 
     sink.end(0, {})
     sink.error(1, new Error())
@@ -121,9 +135,11 @@ describe('SafeSink', function () {
 
   it('should propagate error after error', function () {
     var errorCalled = 0
-    var sink = new SafeSink(testSink(fail, noop, function () {
-      errorCalled += 1
-    }))
+    var sink = new SafeSink(
+      testSink(fail, noop, function () {
+        errorCalled += 1
+      })
+    )
 
     sink.error(0, new Error())
     sink.error(1, new Error())

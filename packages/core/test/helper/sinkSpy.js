@@ -2,9 +2,23 @@
 
 export const sinkSpy = () => new SinkSpy(noop, noop, noop)
 
-export const eventErrorSinkSpy = e => new SinkSpy(() => { throw e }, noop, noop)
+export const eventErrorSinkSpy = e =>
+  new SinkSpy(
+    () => {
+      throw e
+    },
+    noop,
+    noop
+  )
 
-export const endErrorSinkSpy = e => new SinkSpy(noop, () => { throw e }, noop)
+export const endErrorSinkSpy = e =>
+  new SinkSpy(
+    noop,
+    () => {
+      throw e
+    },
+    noop
+  )
 
 const noop = () => {}
 

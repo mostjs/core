@@ -11,16 +11,14 @@ import Filter from '../fusion/Filter'
  * @param {Stream} stream stream to filter
  * @returns {Stream} stream containing only items for which predicate returns truthy
  */
-export const filter = (p, stream) =>
-  Filter.create(p, stream)
+export const filter = (p, stream) => Filter.create(p, stream)
 
 /**
  * Skip repeated events, using === to detect duplicates
  * @param {Stream} stream stream from which to omit repeated events
  * @returns {Stream} stream without repeated events
  */
-export const skipRepeats = stream =>
-  skipRepeatsWith(same, stream)
+export const skipRepeats = stream => skipRepeatsWith(same, stream)
 
 /**
  * Skip repeated events using the provided equals function to detect duplicates

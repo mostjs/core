@@ -23,9 +23,9 @@ export function merge (stream1, stream2) {
  * arbitrary order.
  */
 export const mergeArray = streams =>
-  streams.length === 0 ? empty()
-    : streams.length === 1 ? streams[0]
-    : mergeStreams(streams)
+  streams.length === 0
+    ? empty()
+    : streams.length === 1 ? streams[0] : mergeStreams(streams)
 
 /**
  * This implements fusion/flattening for merge.  It will
@@ -36,8 +36,7 @@ export const mergeArray = streams =>
  * any nested Merge sources, in effect "flattening" nested
  * merge operations into a single merge.
  */
-const mergeStreams = streams =>
-  new Merge(reduce(appendSources, [], streams))
+const mergeStreams = streams => new Merge(reduce(appendSources, [], streams))
 
 const appendSources = (sources, stream) =>
   sources.concat(stream instanceof Merge ? stream.sources : stream)
