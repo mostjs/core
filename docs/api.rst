@@ -80,7 +80,7 @@ Scheduler
 .. code-block:: haskell
 
   type Scheduler = {
-    now :: () -> Time
+    currentTime :: () -> Time
     asap :: Task -> ScheduledTask
     delay :: Delay -> Task -> ScheduledTask
     periodic :: Period -> Task -> ScheduledTask
@@ -1141,6 +1141,22 @@ Create a :ref:`Task` that can be scheduled to propagate an error to a :ref:`Sink
 @most/scheduler
 ---------------
 
+.. _Reading Current Time:
+
+Reading Current Time
+^^^^^^^^^^^^^^^^^^^^
+
+.. _currentTime:
+
+currentTime
+```````````
+
+.. code-block:: haskell
+
+  currentTime :: Scheduler -> Time
+
+Read the current :ref:`Time` from a :ref:`Scheduler`
+
 .. _Scheduling Tasks:
 
 Scheduling Tasks
@@ -1261,14 +1277,14 @@ When implementing higher-order stream combinators, this function can be used to 
 
 .. code-block:: javascript
 
-  scheduler.now() //> 1637
-  const relativeScheduler = relative(1234, scheduler)
-  relativeScheduler.now() //> 0
+  currentTime(scheduler) //> 1637
+  const relativeScheduler = schedulerRelativeTo(1234, scheduler)
+  currentTime(relativeScheduler) //> 0
 
   // ... later ...
 
-  scheduler.now() //> 3929
-  relativeScheduler.now() //> 2292
+  currentTime(scheduler) //> 3929
+  currentTime(relativeScheduler) //> 2292
 
 Timer, Timeline, and Clock
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

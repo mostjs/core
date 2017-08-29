@@ -8,8 +8,12 @@ export default class FakeScheduler extends AbstractScheduler {
     this.tasks = []
   }
 
-  now () {
+  currentTime () {
     return this.time
+  }
+
+  now () {
+    return this.currentTime()
   }
 
   scheduleTask (localOffset, delay, period, task) {

@@ -7,8 +7,13 @@ export default class RelativeScheduler extends AbstractScheduler {
     this.scheduler = scheduler
   }
 
+  currentTime () {
+    return this.scheduler.currentTime() - this.origin
+  }
+
+  // @deprecated use currentTime
   now () {
-    return this.scheduler.now() - this.origin
+    return this.currentTime()
   }
 
   scheduleTask (localOffset, delay, period, task) {

@@ -14,15 +14,20 @@ export default class Scheduler extends AbstractScheduler {
     this._timer = null
     this._nextArrival = Infinity
 
-    this._runReadyTasksBound = () => this._runReadyTasks(this.now())
+    this._runReadyTasksBound = () => this._runReadyTasks(this.currentTime())
   }
 
-  now () {
+  currentTime () {
     return this.timer.now()
   }
 
+  // @deprecated use currentTime
+  now () {
+    return this.currentTime()
+  }
+
   scheduleTask (localOffset, delay, period, task) {
-    const time = this.now() + Math.max(0, delay)
+    const time = this.currentTime() + Math.max(0, delay)
     const st = new ScheduledTask(time, localOffset, period, task, this)
 
     this.timeline.add(st)
@@ -50,7 +55,7 @@ export default class Scheduler extends AbstractScheduler {
     if (this.timeline.isEmpty()) {
       this._unschedule()
     } else {
-      this._scheduleNextRun(this.now())
+      this._scheduleNextRun(this.currentTime())
     }
   }
 
@@ -76,13 +81,13 @@ export default class Scheduler extends AbstractScheduler {
 
   _scheduleNextArrival (nextArrival) {
     this._nextArrival = nextArrival
-    const delay = Math.max(0, nextArrival - this.now())
+    const delay = Math.max(0, nextArrival - this.currentTime())
     this._timer = this.timer.setTimer(this._runReadyTasksBound, delay)
   }
 
   _runReadyTasks () {
     this._timer = null
-    this.timeline.runTasks(this.now(), runTask)
+    this.timeline.runTasks(this.currentTime(), runTask)
     this._scheduleNextRun()
   }
 }

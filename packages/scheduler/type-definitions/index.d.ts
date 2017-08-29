@@ -1,4 +1,4 @@
-import { Scheduler, Task, ScheduledTask, Timeline, Timer, Clock, Delay, Period, Offset } from '@most/types';
+import { Scheduler, Task, ScheduledTask, Timeline, Timer, Time, Clock, Delay, Period, Offset } from '@most/types';
 
 export function newScheduler (timer: Timer, timeline: Timeline): Scheduler;
 export function newScheduler (timer: Timer): (timeline: Timeline) => Scheduler;
@@ -17,6 +17,8 @@ export function newDateClock (): Clock;
 export function newHRTimeClock (): Clock;
 
 export function clockRelativeTo (clock: Clock): Clock;
+
+export function currentTime (scheduler: Scheduler): Time
 
 export function asap (task: Task, scheduler: Scheduler): ScheduledTask;
 export function asap (task: Task): (scheduler: Scheduler) => ScheduledTask;

@@ -33,7 +33,8 @@ export type Period = number;
 export type Offset = number
 
 export interface Scheduler {
-  now(): Time;
+  currentTime(): Time;
+  now (): Time; // @deprecated use currentTime()
   asap (task: Task): ScheduledTask;
   delay (delay: Delay, task: Task): ScheduledTask;
   periodic (period: Period, task: Task): ScheduledTask;

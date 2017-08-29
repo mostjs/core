@@ -4,9 +4,18 @@ import { eq, is, assert } from '@briancavalier/assert'
 import FakeScheduler from './helper/FakeScheduler'
 import { noopTask } from './helper/FakeTask'
 
-import { asap, cancelAllTasks, cancelTask, delay, periodic } from '../src/schedule'
+import { asap, cancelAllTasks, cancelTask, currentTime, delay, periodic } from '../src/schedule'
 
 describe('schedule', () => {
+  describe('currentTime', () => {
+    it('should read current time value from scheduler', () => {
+      const time = Math.random()
+      const scheduler = new FakeScheduler(time)
+
+      eq(time, currentTime(scheduler))
+    })
+  })
+
   describe('asap', () => {
     it('should schedule a task at time 0', () => {
       const time = Math.random()

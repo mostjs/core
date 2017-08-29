@@ -1,5 +1,9 @@
 import { curry2, curry3 } from '@most/prelude'
 
+// Read the current time from the provided Scheduler
+export const currentTime = scheduler =>
+  scheduler.currentTime()
+
 // Schedule a task to run as soon as possible, but
 // not in the current call stack
 export const asap = curry2((task, scheduler) =>
