@@ -36,7 +36,7 @@ Stream
     run :: Sink a -> Scheduler -> Disposable
   }
 
-A Stream represents a view of events over time. It's ``run`` method arranges to propagate events to the provided Sink. Each stream has a local clock, defined by the provided Scheduler, which has methods for knowing the current time, and scheduling future tasks.
+A Stream represents a view of events over time. It's ``run`` method arranges to propagate events to the provided Sink. Each stream has a local clock, defined by the provided :ref:`Scheduler`, which has methods for knowing the current time, and scheduling future tasks.
 
 Some Streams, like :ref:`now` are simple, while others, like :ref:`combine`, do sophisticated things such as combining multiple streams, or dealing with higher order streams.
 
@@ -57,7 +57,7 @@ Sink
 
 A sink receives events, typically does something with them, such as transforming or filtering them, and then propagates them to another sink.
 
-Typically, a combinator will be implemented as a Stream and a Sink. The Stream is usually stateless/immutable, and creates a new Sink for each new observer. In most cases, the relationship of a Stream to Sink is 1-many.
+Typically, a combinator will be implemented as a Stream and a Sink. The :ref:`Stream` is usually stateless/immutable, and creates a new Sink for each new observer. In most cases, the relationship of a Stream to Sink is 1-many.
 
 .. _Disposable:
 
@@ -81,17 +81,13 @@ Scheduler
 
   type Scheduler = {
     currentTime :: () -> Time
-    asap :: Task -> ScheduledTask
-    delay :: Delay -> Task -> ScheduledTask
-    periodic :: Period -> Task -> ScheduledTask
-    schedule :: Delay -> Period -> Task -> ScheduledTask
     scheduleTask :: Offset -> Delay -> Period -> Task -> ScheduledTask
     relative :: Offset -> Scheduler
     cancel :: ScheduledTask -> void
     cancelAll :: (ScheduledTask -> boolean) -> void
   }
 
-A Scheduler provides the central notion of time for the Streams in an application.
+A Scheduler provides the central notion of time for the :ref:`Stream`s in an application.
 
 An application will typically create a single "root" Scheduler so that all Streams share the same underlying time.
 
@@ -119,7 +115,7 @@ Timer
 
   type Timer = {
     now :: () -> Time,
-    setTimer :: () => any -> Delay -> Handle,
+    setTimer :: (() -> any) -> Delay -> Handle,
     clearTimer :: Handle -> void
   }
 
@@ -143,7 +139,7 @@ Timeline
     runTasks :: Time -> TaskRunner -> void
   }
 
-A Timeline represents a set of ScheduledTasks to be executed at particular times
+A Timeline represents a set of :ref:`ScheduledTask`s to be executed at particular times
 
 .. _Task:
 
@@ -1221,20 +1217,6 @@ cancelAllTasks
   cancelAllTasks :: (ScheduledTask -> boolean) -> Scheduler -> void
 
 Cancel all future scheduled executions of all ScheduledTasks for which the provided predicate is true.
-
-Current Time
-^^^^^^^^^^^^
-
-.. _Scheduler-now:
-
-now
-```
-
-.. code-block:: haskell
-
-  now :: Scheduler ~> () -> Time
-
-Get the scheduler's current time.
 
 Creating a Scheduler
 ^^^^^^^^^^^^^^^^^^^^

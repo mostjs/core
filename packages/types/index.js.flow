@@ -36,11 +36,6 @@ export type Offset = number
 
 export type Scheduler = {
   currentTime (): Time,
-  now (): Time, // @deprecated use currentTime()
-  asap (Task): ScheduledTask,
-  delay (Delay, Task): ScheduledTask,
-  periodic (Period, Task): ScheduledTask,
-  schedule (Delay, Period, Task): ScheduledTask,
   scheduleTask (Offset, Delay, Period, Task): ScheduledTask,
   relative (Offset): Scheduler,
   cancel (ScheduledTask): void,
@@ -79,6 +74,7 @@ export type Task = Disposable & {
 }
 
 export type ScheduledTask = Disposable & {
+  task: Task,
   run (): void,
   error (Error): void,
 }

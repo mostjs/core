@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import { disposeBoth, tryDispose } from '@most/disposable'
-import { schedulerRelativeTo } from '@most/scheduler'
+import { schedulerRelativeTo, currentTime } from '@most/scheduler'
 
 /**
  * Given a stream of streams, return a new stream that adopts the behavior
@@ -33,7 +33,7 @@ class SwitchSink {
   }
 
   event (t, stream) {
-    this._disposeCurrent(t) // TODO: capture the result of this dispose
+    this._disposeCurrent(t)
     this.current = new Segment(stream, t, Infinity, this, this.sink, this.scheduler)
   }
 
@@ -48,7 +48,7 @@ class SwitchSink {
   }
 
   dispose () {
-    return this._disposeCurrent(this.scheduler.now())
+    return this._disposeCurrent(currentTime(this.scheduler))
   }
 
   _disposeCurrent (t) {
@@ -58,7 +58,7 @@ class SwitchSink {
   }
 
   _disposeInner (t, inner) {
-    inner._dispose(t) // TODO: capture the result of this dispose
+    inner._dispose(t)
     if (inner === this.current) {
       this.current = null
     }

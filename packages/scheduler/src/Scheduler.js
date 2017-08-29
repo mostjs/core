@@ -1,13 +1,11 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 
 import ScheduledTask from './ScheduledTask'
-import AbstractScheduler from './AbstractScheduler'
 import RelativeScheduler from './RelativeScheduler'
 import { runTask } from './task'
 
-export default class Scheduler extends AbstractScheduler {
+export default class Scheduler {
   constructor (timer, timeline) {
-    super()
     this.timer = timer
     this.timeline = timeline
 
@@ -19,11 +17,6 @@ export default class Scheduler extends AbstractScheduler {
 
   currentTime () {
     return this.timer.now()
-  }
-
-  // @deprecated use currentTime
-  now () {
-    return this.currentTime()
   }
 
   scheduleTask (localOffset, delay, period, task) {

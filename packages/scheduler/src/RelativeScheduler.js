@@ -1,19 +1,11 @@
-import AbstractScheduler from './AbstractScheduler'
-
-export default class RelativeScheduler extends AbstractScheduler {
+export default class RelativeScheduler {
   constructor (origin, scheduler) {
-    super()
     this.origin = origin
     this.scheduler = scheduler
   }
 
   currentTime () {
     return this.scheduler.currentTime() - this.origin
-  }
-
-  // @deprecated use currentTime
-  now () {
-    return this.currentTime()
   }
 
   scheduleTask (localOffset, delay, period, task) {

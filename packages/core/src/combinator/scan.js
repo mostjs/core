@@ -4,6 +4,7 @@
 
 import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
+import { asap } from '@most/scheduler'
 import { propagateEventTask } from '../scheduler/PropagateTask'
 
 /**
@@ -25,7 +26,7 @@ class Scan {
   }
 
   run (sink, scheduler) {
-    const d1 = scheduler.asap(propagateEventTask(this.value, sink))
+    const d1 = asap(propagateEventTask(this.value, sink), scheduler)
     const d2 = this.source.run(new ScanSink(this.f, this.value, sink), scheduler)
     return disposeBoth(d1, d2)
   }

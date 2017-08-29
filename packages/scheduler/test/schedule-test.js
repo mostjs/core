@@ -24,7 +24,7 @@ describe('schedule', () => {
 
       const st = asap(task, scheduler)
 
-      eq(scheduler.now(), st.time)
+      eq(currentTime(scheduler), st.time)
       eq(0, st.localOffset)
       eq(-1, st.period)
       is(task, st.task)
@@ -42,7 +42,7 @@ describe('schedule', () => {
 
       const st = delay(dt, task, scheduler)
 
-      eq(scheduler.now() + dt, st.time)
+      eq(currentTime(scheduler) + dt, st.time)
       eq(0, st.localOffset)
       eq(-1, st.period)
       is(task, st.task)
@@ -60,7 +60,7 @@ describe('schedule', () => {
 
       const st = periodic(period, task, scheduler)
 
-      eq(scheduler.now(), st.time)
+      eq(currentTime(scheduler), st.time)
       eq(0, st.localOffset)
       eq(period, st.period)
       is(task, st.task)

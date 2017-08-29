@@ -5,6 +5,7 @@
 import fatal from '../fatalError'
 import { now } from '../source/now'
 import { compose } from '@most/prelude'
+import { currentTime } from '@most/scheduler'
 
 /**
  * Turn a Stream<Promise<T>> into Stream<T> by awaiting each promise.
@@ -38,9 +39,9 @@ class AwaitSink {
     this.queue = Promise.resolve()
 
     // Pre-create closures, to avoid creating them per event
-    this._eventBound = x => this.sink.event(this.scheduler.now(), x)
-    this._endBound = () => this.sink.end(this.scheduler.now())
-    this._errorBound = e => this.sink.error(this.scheduler.now(), e)
+    this._eventBound = x => this.sink.event(currentTime(this.scheduler), x)
+    this._endBound = () => this.sink.end(currentTime(this.scheduler))
+    this._errorBound = e => this.sink.error(currentTime(this.scheduler), e)
   }
 
   event (t, promise) {

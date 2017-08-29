@@ -1,19 +1,13 @@
-import AbstractScheduler from '../../src/AbstractScheduler'
 import ScheduledTask from '../../src/ScheduledTask'
 
-export default class FakeScheduler extends AbstractScheduler {
+export default class FakeScheduler {
   constructor (time) {
-    super()
     this.time = time
     this.tasks = []
   }
 
   currentTime () {
     return this.time
-  }
-
-  now () {
-    return this.currentTime()
   }
 
   scheduleTask (localOffset, delay, period, task) {
