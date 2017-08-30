@@ -14,7 +14,7 @@ describe('relative', () => {
 
       const rs = schedulerRelativeTo(origin, s)
 
-      eq(time - origin, rs.now())
+      eq(time - origin, rs.currentTime())
     })
   })
 })

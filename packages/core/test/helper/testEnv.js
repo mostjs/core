@@ -2,7 +2,7 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { newScheduler, newTimeline } from '@most/scheduler'
+import { newScheduler, newTimeline, currentTime, delay } from '@most/scheduler'
 import { propagateEventTask, propagateEndTask } from '../../src/scheduler/PropagateTask'
 import VirtualTimer from './VirtualTimer'
 import { runEffects } from '../../src/runEffects'
@@ -22,7 +22,7 @@ export function ticks (dt) {
 
 export function collectEvents (stream, scheduler) {
   const into = []
-  const s = tap(x => into.push({ time: scheduler.now(), value: x }), stream)
+  const s = tap(x => into.push({ time: currentTime(scheduler), value: x }), stream)
   return runEffects(s, scheduler).then(() => into)
 }
 
@@ -53,12 +53,12 @@ class AtTimes {
 
 const runEvents = (events, sink, scheduler) => {
   const s = events.reduce(appendEvent(sink, scheduler), { tasks: [], time: 0 })
-  const end = scheduler.delay(s.time, propagateEndTask(sink))
+  const end = delay(s.time, propagateEndTask(sink), scheduler)
   return disposeWith(cancelAll, s.tasks.concat(end))
 }
 
 const appendEvent = (sink, scheduler) => (s, event) => {
-  const task = scheduler.delay(event.time, propagateEventTask(event.value, sink))
+  const task = delay(event.time, propagateEventTask(event.value, sink), scheduler)
   return { tasks: s.tasks.concat(task), time: Math.max(s.time, event.time) }
 }
 

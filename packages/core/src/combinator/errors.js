@@ -4,6 +4,7 @@
 
 import SafeSink from '../sink/SafeSink'
 import { tryDispose } from '@most/disposable'
+import { asap } from '@most/scheduler'
 import { tryEvent, tryEnd } from '../source/tryEvent'
 import { propagateErrorTask } from '../scheduler/PropagateTask'
 import { runWithLocalTime } from '../scheduler/runWithLocalTime'
@@ -32,7 +33,7 @@ class ErrorStream {
   }
 
   run (sink, scheduler) {
-    return scheduler.asap(propagateErrorTask(this.value, sink))
+    return asap(propagateErrorTask(this.value, sink), scheduler)
   }
 }
 

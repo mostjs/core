@@ -4,9 +4,18 @@ import { eq, is, assert } from '@briancavalier/assert'
 import FakeScheduler from './helper/FakeScheduler'
 import { noopTask } from './helper/FakeTask'
 
-import { asap, cancelAllTasks, cancelTask, delay, periodic } from '../src/schedule'
+import { asap, cancelAllTasks, cancelTask, currentTime, delay, periodic } from '../src/schedule'
 
 describe('schedule', () => {
+  describe('currentTime', () => {
+    it('should read current time value from scheduler', () => {
+      const time = Math.random()
+      const scheduler = new FakeScheduler(time)
+
+      eq(time, currentTime(scheduler))
+    })
+  })
+
   describe('asap', () => {
     it('should schedule a task at time 0', () => {
       const time = Math.random()
@@ -15,7 +24,7 @@ describe('schedule', () => {
 
       const st = asap(task, scheduler)
 
-      eq(scheduler.now(), st.time)
+      eq(currentTime(scheduler), st.time)
       eq(0, st.localOffset)
       eq(-1, st.period)
       is(task, st.task)
@@ -33,7 +42,7 @@ describe('schedule', () => {
 
       const st = delay(dt, task, scheduler)
 
-      eq(scheduler.now() + dt, st.time)
+      eq(currentTime(scheduler) + dt, st.time)
       eq(0, st.localOffset)
       eq(-1, st.period)
       is(task, st.task)
@@ -51,7 +60,7 @@ describe('schedule', () => {
 
       const st = periodic(period, task, scheduler)
 
-      eq(scheduler.now(), st.time)
+      eq(currentTime(scheduler), st.time)
       eq(0, st.localOffset)
       eq(period, st.period)
       is(task, st.task)

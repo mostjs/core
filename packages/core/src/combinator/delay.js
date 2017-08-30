@@ -4,7 +4,8 @@
 
 import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
-import { propagateEventTask, propagateEndTask } from '../scheduler/PropagateTask'
+import { cancelAllTasks, delay as scheduleDelay } from '@most/scheduler'
+import { propagateEndTask, propagateEventTask } from '../scheduler/PropagateTask'
 
 /**
  * @param {Number} delayTime milliseconds to delay each item
@@ -34,14 +35,14 @@ class DelaySink extends Pipe {
   }
 
   dispose () {
-    this.scheduler.cancelAll(task => task.sink === this.sink)
+    cancelAllTasks(task => task.sink === this.sink, this.scheduler)
   }
 
   event (t, x) {
-    this.scheduler.delay(this.dt, propagateEventTask(x, this.sink))
+    scheduleDelay(this.dt, propagateEventTask(x, this.sink), this.scheduler)
   }
 
   end (t) {
-    this.scheduler.delay(this.dt, propagateEndTask(this.sink))
+    scheduleDelay(this.dt, propagateEndTask(this.sink), this.scheduler)
   }
 }

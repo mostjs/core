@@ -11,8 +11,9 @@ import { drain } from '../helper/observe'
 import { now } from '../../src/source/now'
 import { never } from '../../src/source/never'
 
-import { ticks, atTimes, makeEventsFromArray, collectEventsFor, collectEvents } from '../helper/testEnv'
+import { atTimes, collectEvents, collectEventsFor, makeEventsFromArray, ticks } from '../helper/testEnv'
 import FakeDisposeSource from '../helper/FakeDisposeStream'
+import { currentTime } from '@most/scheduler'
 
 const sentinel = { value: 'sentinel' }
 
@@ -53,7 +54,7 @@ describe('concatMap', function () {
     const s1 = atTimes([{ time: 0, value: 0 }, { time: 1, value: 1 }])
 
     const scheduler = ticks(4)
-    const s = concatMap.concatMap(x => atTimes([{ time: 2, value: scheduler.now() }]), s1)
+    const s = concatMap.concatMap(x => atTimes([{ time: 2, value: currentTime(scheduler) }]), s1)
 
     const expected = [
       { time: 2, value: 0 },

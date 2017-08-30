@@ -15,7 +15,7 @@ describe('RelativeScheduler', () => {
 
       const rs = new RelativeScheduler(origin, s)
 
-      eq(time - origin, rs.now())
+      eq(time - origin, rs.currentTime())
     })
   })
 

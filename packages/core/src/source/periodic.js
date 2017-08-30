@@ -3,6 +3,7 @@
 /** @author John Hann */
 
 import { propagateEventTask } from '../scheduler/PropagateTask'
+import { periodic as schedulePeriodic } from '@most/scheduler'
 
 /**
  * Create a stream of events that occur at a regular period
@@ -18,6 +19,6 @@ class Periodic {
   }
 
   run (sink, scheduler) {
-    return scheduler.periodic(this.period, propagateEventTask(undefined, sink))
+    return schedulePeriodic(this.period, propagateEventTask(undefined, sink), scheduler)
   }
 }

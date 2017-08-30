@@ -1,12 +1,13 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 
 import { propagateEndTask } from '../scheduler/PropagateTask'
+import { asap } from '@most/scheduler'
 
 export const empty = () => EMPTY
 
 class Empty {
   run (sink, scheduler) {
-    return scheduler.asap(propagateEndTask(sink))
+    return asap(propagateEndTask(sink), scheduler)
   }
 }
 

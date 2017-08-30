@@ -3,6 +3,7 @@
 import Pipe from '../sink/Pipe'
 import { propagateEventTask } from '../scheduler/PropagateTask'
 import Map from '../fusion/Map'
+import { delay } from '@most/scheduler'
 
 /**
  * Limit the rate of events by suppressing events that occur too often
@@ -81,7 +82,7 @@ class DebounceSink {
   event (t, x) {
     this._clearTimer()
     this.value = x
-    this.timer = this.scheduler.delay(this.dt, propagateEventTask(x, this.sink))
+    this.timer = delay(this.dt, propagateEventTask(x, this.sink), this.scheduler)
   }
 
   end (t) {

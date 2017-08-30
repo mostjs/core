@@ -35,11 +35,7 @@ export type Period = number
 export type Offset = number
 
 export type Scheduler = {
-  now (): Time,
-  asap (Task): ScheduledTask,
-  delay (Delay, Task): ScheduledTask,
-  periodic (Period, Task): ScheduledTask,
-  schedule (Delay, Period, Task): ScheduledTask,
+  currentTime (): Time,
   scheduleTask (Offset, Delay, Period, Task): ScheduledTask,
   relative (Offset): Scheduler,
   cancel (ScheduledTask): void,
@@ -78,6 +74,7 @@ export type Task = Disposable & {
 }
 
 export type ScheduledTask = Disposable & {
+  task: Task,
   run (): void,
   error (Error): void,
 }
