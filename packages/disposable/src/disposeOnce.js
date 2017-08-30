@@ -5,7 +5,7 @@
 export const disposeOnce = disposable =>
   new DisposeOnce(disposable)
 
-export class DisposeOnce {
+class DisposeOnce {
   constructor (disposable) {
     this.disposed = false
     this.disposable = disposable
