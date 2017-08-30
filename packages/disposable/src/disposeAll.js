@@ -9,7 +9,7 @@ export const disposeAll = ds =>
 export const disposeBoth = curry2((d1, d2) =>
   disposeAll([d1, d2]))
 
-export class DisposeAll {
+class DisposeAll {
   constructor (disposables) {
     this.disposables = disposables
   }

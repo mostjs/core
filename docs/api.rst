@@ -1418,6 +1418,17 @@ Combine an array of :ref:`Disposable`s into a single Disposable which will dispo
 Disposing Disposables
 ^^^^^^^^^^^^^^^^^^^^^
 
+.. _dispose:
+
+dispose
+```````
+
+.. code-block:: haskell
+
+  dispose :: Disposable -> void
+
+Dispose the provided :ref:`Disposable`.  Note that ``dispose`` does not catch exceptions.  If the Disposable throws, the exception will propagate out of ``dispose``.
+
 .. _tryDispose:
 
 tryDispose
