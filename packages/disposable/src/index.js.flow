@@ -13,6 +13,8 @@ declare export function disposeBoth (d1: Disposable): (d2: Disposable) => Dispos
 
 declare export function disposeAll (ds: Array<Disposable>): Disposable
 
+declare export function dispose (d: Disposable): void
+
 declare export function tryDispose (t: Time, disposable: Disposable, sink: Sink<any>): void
 declare export function tryDispose (t: Time): (disposable: Disposable, sink: Sink<any>) => void
 declare export function tryDispose (t: Time, disposable: Disposable): (sink: Sink<any>) => void
