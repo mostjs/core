@@ -1,4 +1,5 @@
 export * from './runEffects';
+export * from './runStream';
 export * from './PropagateTask';
 
 export * from './combinator/applicative';
