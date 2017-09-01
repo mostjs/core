@@ -12,16 +12,14 @@ import SettableDisposable from '../disposable/SettableDisposable'
  * @param {Stream} stream
  * @returns {Stream} new stream containing only up to the first n items from stream
  */
-export const take = (n, stream) =>
-  slice(0, n, stream)
+export const take = (n, stream) => slice(0, n, stream)
 
 /**
  * @param {number} n
  * @param {Stream} stream
  * @returns {Stream} new stream with the first n items removed
  */
-export const skip = (n, stream) =>
-  slice(n, Infinity, stream)
+export const skip = (n, stream) => slice(n, Infinity, stream)
 
 /**
  * Slice a stream by index. Negative start/end indexes are not supported
@@ -34,9 +32,11 @@ export const slice = (start, end, stream) =>
   end <= start ? empty() : sliceSource(start, end, stream)
 
 const sliceSource = (start, end, stream) =>
-  stream instanceof Map ? commuteMapSlice(start, end, stream)
-    : stream instanceof Slice ? fuseSlice(start, end, stream)
-    : new Slice(start, end, stream)
+  stream instanceof Map
+    ? commuteMapSlice(start, end, stream)
+    : stream instanceof Slice
+      ? fuseSlice(start, end, stream)
+      : new Slice(start, end, stream)
 
 const commuteMapSlice = (start, end, mapStream) =>
   Map.create(mapStream.f, sliceSource(start, end, mapStream.source))
@@ -56,7 +56,12 @@ class Slice {
 
   run (sink, scheduler) {
     const disposable = new SettableDisposable()
-    const sliceSink = new SliceSink(this.min, this.max - this.min, sink, disposable)
+    const sliceSink = new SliceSink(
+      this.min,
+      this.max - this.min,
+      sink,
+      disposable
+    )
 
     disposable.setDisposable(this.source.run(sliceSink, scheduler))
 
@@ -92,8 +97,7 @@ class SliceSink extends Pipe {
   }
 }
 
-export const takeWhile = (p, stream) =>
-  new TakeWhile(p, stream)
+export const takeWhile = (p, stream) => new TakeWhile(p, stream)
 
 class TakeWhile {
   constructor (p, source) {
@@ -136,8 +140,7 @@ class TakeWhileSink extends Pipe {
   }
 }
 
-export const skipWhile = (p, stream) =>
-  new SkipWhile(p, stream)
+export const skipWhile = (p, stream) => new SkipWhile(p, stream)
 
 class SkipWhile {
   constructor (p, source) {
@@ -170,8 +173,7 @@ class SkipWhileSink extends Pipe {
   }
 }
 
-export const skipAfter = (p, stream) =>
-  new SkipAfter(p, stream)
+export const skipAfter = (p, stream) => new SkipAfter(p, stream)
 
 class SkipAfter {
   constructor (p, source) {

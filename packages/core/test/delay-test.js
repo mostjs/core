@@ -12,7 +12,6 @@ describe('delay', function () {
     const value = Math.random()
     const s = delay(time, now(value))
 
-    return collectEventsFor(time + 1, s)
-      .then(eq([{ time, value }]))
+    return collectEventsFor(time + 1, s).then(eq([{ time, value }]))
   })
 })

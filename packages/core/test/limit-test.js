@@ -9,7 +9,12 @@ import { empty } from '../src/source/empty'
 import { now } from '../src/source/now'
 import { default as Map } from '../src/fusion/Map'
 
-import { atTimes, collectEventsFor, makeEventsFromArray, makeEvents } from './helper/testEnv'
+import {
+  atTimes,
+  collectEventsFor,
+  makeEventsFromArray,
+  makeEvents
+} from './helper/testEnv'
 import { assertSame } from './helper/stream-helper'
 import FakeDisposeSource from './helper/FakeDisposeStream'
 
@@ -24,28 +29,27 @@ describe('debounce', function () {
 
       const debounced = debounce(1, s)
 
-      return collectEventsFor(n * period, debounced)
-        .then(eq([
+      return collectEventsFor(n * period, debounced).then(
+        eq([
           { time: 1, value: 0 },
           { time: 3, value: 1 },
           { time: 5, value: 2 },
           { time: 7, value: 3 },
           { time: 8, value: 4 } // stream ends, last event emitted immediately
-        ]))
+        ])
+      )
     })
   })
 
   describe('when events always occur more frequently than debounce period', function () {
     it('should be empty when source is empty', function () {
       const s = debounce(1, empty())
-      return collectEventsFor(1, s)
-        .then(eq([]))
+      return collectEventsFor(1, s).then(eq([]))
     })
 
     it('should be identity when source is singleton', function () {
       const s = debounce(1, now(sentinel))
-      return collectEventsFor(2, s)
-        .then(eq([{ time: 0, value: sentinel }]))
+      return collectEventsFor(2, s).then(eq([{ time: 0, value: sentinel }]))
     })
 
     it('should contain last event when source has many', function () {
@@ -55,8 +59,9 @@ describe('debounce', function () {
 
       const debounced = debounce(n, makeEventsFromArray(1, a))
 
-      return collectEventsFor(n, debounced)
-        .then(eq([{ time: 9, value: expected }]))
+      return collectEventsFor(n, debounced).then(
+        eq([{ time: 9, value: expected }])
+      )
     })
   })
 
@@ -73,11 +78,9 @@ describe('debounce', function () {
 
     const debounced = debounce(2, s)
 
-    return collectEventsFor(8, debounced)
-      .then(eq([
-        { time: 4, value: 1 },
-        { time: 7, value: 2 }
-      ]))
+    return collectEventsFor(8, debounced).then(
+      eq([{ time: 4, value: 1 }, { time: 7, value: 2 }])
+    )
   })
 
   it('should dispose source', () => {
@@ -85,8 +88,7 @@ describe('debounce', function () {
     const s = new FakeDisposeSource(dispose, now(sentinel))
     const debounced = debounce(1, s)
 
-    return collectEventsFor(1, debounced).then(() =>
-      assert(dispose.calledOnce))
+    return collectEventsFor(1, debounced).then(() => assert(dispose.calledOnce))
   })
 })
 
@@ -119,12 +121,9 @@ describe('throttle', function () {
 
     const throttled = throttle(2, s)
 
-    return collectEventsFor(5, throttled)
-      .then(eq([
-        { time: 0, value: 0 },
-        { time: 2, value: 2 },
-        { time: 4, value: 4 }
-      ]))
+    return collectEventsFor(5, throttled).then(
+      eq([{ time: 0, value: 0 }, { time: 2, value: 2 }, { time: 4, value: 4 }])
+    )
   })
 
   it('should be identity when period === 0 and all items are simultaneous', function () {
@@ -141,7 +140,8 @@ describe('throttle', function () {
 
     const zipped = zip(Array, s1, s2)
 
-    return collectEventsFor(a.length, zipped)
-      .then(pairs => pairs.forEach(pair => eq(pair[0], pair[1])))
+    return collectEventsFor(a.length, zipped).then(pairs =>
+      pairs.forEach(pair => eq(pair[0], pair[1]))
+    )
   })
 })

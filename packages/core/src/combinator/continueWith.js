@@ -6,8 +6,7 @@ import Pipe from '../sink/Pipe'
 import { runWithLocalTime } from '../scheduler/runWithLocalTime'
 import { disposeOnce, tryDispose } from '@most/disposable'
 
-export const continueWith = (f, stream) =>
-  new ContinueWith(f, stream)
+export const continueWith = (f, stream) => new ContinueWith(f, stream)
 
 class ContinueWith {
   constructor (f, source) {

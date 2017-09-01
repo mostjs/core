@@ -8,7 +8,9 @@ import { now } from '../../src/source/now'
 describe('continueWith', () => {
   it('when f throws, should propagate error', () => {
     const error = new Error()
-    const s = continueWith(() => { throw error }, now(0))
+    const s = continueWith(() => {
+      throw error
+    }, now(0))
     return drain(s).then(fail, is(error))
   })
 })

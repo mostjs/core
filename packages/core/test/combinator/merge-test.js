@@ -20,9 +20,9 @@ describe('merge', function () {
     const m1 = merge(merge(s1, s2), s3)
     const m2 = merge(s1, merge(s2, s3))
 
-    return collectEventsFor(1, m1)
-      .then(events1 => collectEventsFor(1, m2)
-        .then(eq(events1)))
+    return collectEventsFor(1, m1).then(events1 =>
+      collectEventsFor(1, m2).then(eq(events1))
+    )
   })
 })
 
@@ -41,10 +41,11 @@ function testMerge (merge) {
 
   const s = merge(delay(2, sa), delay(1, sb))
 
-  return collectEventsFor(count, s)
-    .then(events => {
-      eq(count, events.length)
-      const expected = b.map(value => ({ time: 1, value })).concat(a.map(value => ({ time: 2, value })))
-      eq(expected, events)
-    })
+  return collectEventsFor(count, s).then(events => {
+    eq(count, events.length)
+    const expected = b
+      .map(value => ({ time: 1, value }))
+      .concat(a.map(value => ({ time: 2, value })))
+    eq(expected, events)
+  })
 }

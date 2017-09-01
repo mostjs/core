@@ -28,7 +28,8 @@ LinkedList.prototype.add = function (x) {
  * Remove the provided node from the list
  * @param {{prev:Object|null, next:Object|null, dispose:function}} x node to remove
  */
-LinkedList.prototype.remove = function (x) { // eslint-disable-line  complexity
+// eslint-disable-next-line complexity
+LinkedList.prototype.remove = function (x) {
   --this.length
   if (x === this.head) {
     this.head = this.head.next

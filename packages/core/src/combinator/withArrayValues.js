@@ -21,7 +21,10 @@ class ZipArrayValues {
   }
 
   run (sink, scheduler) {
-    return this.source.run(new ZipArrayValuesSink(this.f, this.values, sink), scheduler)
+    return this.source.run(
+      new ZipArrayValuesSink(this.f, this.values, sink),
+      scheduler
+    )
   }
 }
 

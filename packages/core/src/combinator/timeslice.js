@@ -6,11 +6,9 @@ import Pipe from '../sink/Pipe'
 import { disposeAll } from '@most/disposable'
 import { join } from './chain'
 
-export const until = (signal, stream) =>
-  new Until(signal, stream)
+export const until = (signal, stream) => new Until(signal, stream)
 
-export const since = (signal, stream) =>
-  new Since(signal, stream)
+export const since = (signal, stream) => new Since(signal, stream)
 
 export const during = (timeWindow, stream) =>
   until(join(timeWindow), since(timeWindow, stream))
@@ -24,7 +22,10 @@ class Until {
   run (sink, scheduler) {
     const min = new Bound(-Infinity, sink)
     const max = new UpperBound(this.maxSignal, sink, scheduler)
-    const disposable = this.source.run(new TimeWindowSink(min, max, sink), scheduler)
+    const disposable = this.source.run(
+      new TimeWindowSink(min, max, sink),
+      scheduler
+    )
 
     return disposeAll([min, max, disposable])
   }
@@ -39,7 +40,10 @@ class Since {
   run (sink, scheduler) {
     const min = new LowerBound(this.minSignal, sink, scheduler)
     const max = new Bound(Infinity, sink)
-    const disposable = this.source.run(new TimeWindowSink(min, max, sink), scheduler)
+    const disposable = this.source.run(
+      new TimeWindowSink(min, max, sink),
+      scheduler
+    )
 
     return disposeAll([min, max, disposable])
   }

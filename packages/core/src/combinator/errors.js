@@ -16,16 +16,14 @@ import { runWithLocalTime } from '../scheduler/runWithLocalTime'
  * @param {Stream} stream
  * @returns {Stream} new stream which will recover from an error by calling f
  */
-export const recoverWith = (f, stream) =>
-  new RecoverWith(f, stream)
+export const recoverWith = (f, stream) => new RecoverWith(f, stream)
 
 /**
  * Create a stream containing only an error
  * @param {*} e error value, preferably an Error or Error subtype
  * @returns {Stream} new stream containing only an error
  */
-export const throwError = e =>
-  new ErrorStream(e)
+export const throwError = e => new ErrorStream(e)
 
 class ErrorStream {
   constructor (e) {
