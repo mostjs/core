@@ -27,9 +27,9 @@ export function combine (f, stream1, stream2) {
 *  event of each input stream, whenever a new event arrives on any stream.
 */
 export const combineArray = (f, streams) =>
-  streams.length === 0 ? empty()
-    : streams.length === 1 ? map(f, streams[0])
-    : new Combine(f, streams)
+  streams.length === 0
+    ? empty()
+    : streams.length === 1 ? map(f, streams[0]) : new Combine(f, streams)
 
 class Combine {
   constructor (f, sources) {

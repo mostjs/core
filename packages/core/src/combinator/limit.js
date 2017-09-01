@@ -12,9 +12,11 @@ import { delay } from '@most/scheduler'
  * @returns {Stream}
  */
 export const throttle = (period, stream) =>
-  stream instanceof Map ? commuteMapThrottle(period, stream)
-    : stream instanceof Throttle ? fuseThrottle(period, stream)
-    : new Throttle(period, stream)
+  stream instanceof Map
+    ? commuteMapThrottle(period, stream)
+    : stream instanceof Throttle
+      ? fuseThrottle(period, stream)
+      : new Throttle(period, stream)
 
 const commuteMapThrottle = (period, mapStream) =>
   Map.create(mapStream.f, throttle(period, mapStream.source))
@@ -54,8 +56,7 @@ class ThrottleSink extends Pipe {
  * @param {Stream} stream stream to debounce
  * @returns {Stream} new debounced stream
  */
-export const debounce = (period, stream) =>
-  new Debounce(period, stream)
+export const debounce = (period, stream) => new Debounce(period, stream)
 
 class Debounce {
   constructor (dt, source) {
@@ -82,7 +83,11 @@ class DebounceSink {
   event (t, x) {
     this._clearTimer()
     this.value = x
-    this.timer = delay(this.dt, propagateEventTask(x, this.sink), this.scheduler)
+    this.timer = delay(
+      this.dt,
+      propagateEventTask(x, this.sink),
+      this.scheduler
+    )
   }
 
   end (t) {

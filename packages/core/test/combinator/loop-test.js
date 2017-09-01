@@ -21,16 +21,18 @@ describe('loop', function () {
 
     const s = loop((z, x) => toPair(z + 1, x + z), 0, makeEventsFromArray(1, a))
 
-    return collectEventsFor(a.length, s)
-      .then(events => {
-        eq(a.length, events.length)
-        eq([
+    return collectEventsFor(a.length, s).then(events => {
+      eq(a.length, events.length)
+      eq(
+        [
           { time: 0, value: 'a0' },
           { time: 1, value: 'b1' },
           { time: 2, value: 'c2' },
           { time: 3, value: 'd3' }
-        ], events)
-      })
+        ],
+        events
+      )
+    })
   })
 
   it('should propagate errors', function () {

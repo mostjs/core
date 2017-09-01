@@ -11,7 +11,6 @@ describe('startWith', function () {
     const value = Math.random()
     const s = startWith(value, empty())
 
-    return collectEventsFor(1, s)
-      .then(eq([{ time: 0, value }]))
+    return collectEventsFor(1, s).then(eq([{ time: 0, value }]))
   })
 })

@@ -3,5 +3,4 @@
 import { now } from '../source/now'
 import { continueWith } from './continueWith'
 
-export const startWith = (x, stream) =>
-  continueWith(() => stream, now(x))
+export const startWith = (x, stream) => continueWith(() => stream, now(x))

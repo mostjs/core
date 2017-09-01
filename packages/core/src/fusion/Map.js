@@ -13,7 +13,8 @@ export default class Map {
     this.source = source
   }
 
-  run (sink, scheduler) { // eslint-disable-line no-extend-native
+  run (sink, scheduler) {
+    // eslint-disable-line no-extend-native
     return this.source.run(new MapSink(this.f, sink), scheduler)
   }
 
@@ -48,4 +49,3 @@ class MapSink extends Pipe {
     this.sink.event(t, f(x))
   }
 }
-

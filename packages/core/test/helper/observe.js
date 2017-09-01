@@ -14,8 +14,7 @@ import { tap } from '../../src/combinator/transform'
  * @return {Promise} promise that fulfills after the stream ends without
  *  an error, or rejects if the stream ends with an error.
  */
-export const observe = (f, stream) =>
-  drain(tap(f, stream))
+export const observe = (f, stream) => drain(tap(f, stream))
 
 /**
  * "Run" a stream by creating demand and consuming all events
@@ -23,5 +22,4 @@ export const observe = (f, stream) =>
  * @return {Promise} promise that fulfills after the stream ends without
  *  an error, or rejects if the stream ends with an error.
  */
-export const drain = stream =>
-  runEffects(stream, defaultScheduler)
+export const drain = stream => runEffects(stream, defaultScheduler)

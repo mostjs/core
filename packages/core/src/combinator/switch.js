@@ -34,7 +34,14 @@ class SwitchSink {
 
   event (t, stream) {
     this._disposeCurrent(t)
-    this.current = new Segment(stream, t, Infinity, this, this.sink, this.scheduler)
+    this.current = new Segment(
+      stream,
+      t,
+      Infinity,
+      this,
+      this.sink,
+      this.scheduler
+    )
   }
 
   end (t) {

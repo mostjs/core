@@ -7,7 +7,12 @@ import { constant, map, tap } from '../src/combinator/transform'
 import { periodic } from '../src/source/periodic'
 import { empty } from '../src/source/empty'
 import { now } from '../src/source/now'
-import { ticks, collectEventsFor, makeEvents, makeEventsFromArray } from './helper/testEnv'
+import {
+  ticks,
+  collectEventsFor,
+  makeEvents,
+  makeEventsFromArray
+} from './helper/testEnv'
 import { runEffects } from '../src/runEffects'
 
 describe('switch', () => {
@@ -23,25 +28,26 @@ describe('switch', () => {
     // that can be observed (i.e. by observe())
     const events = []
     const push = x => events.push(x)
-    const toInner = x => x === 0
-      ? switchLatest(map(now, tap(push, take(1, periodic(1, 1)))))
-      : empty()
+    const toInner = x =>
+      x === 0
+        ? switchLatest(map(now, tap(push, take(1, periodic(1, 1)))))
+        : empty()
 
     const s = switchLatest(map(toInner, makeEventsFromArray(0, [0, 1])))
-    return collectEventsFor(10, s)
-      .then(eq(events))
+    return collectEventsFor(10, s).then(eq(events))
   })
 
   describe('when input contains a single stream', () => {
     it('should return an equivalent stream', () => {
       const s = now(makeEvents(1, 3))
 
-      return collectEventsFor(3, switchLatest(s))
-        .then(eq([
+      return collectEventsFor(3, switchLatest(s)).then(
+        eq([
           { time: 0, value: 0 },
           { time: 1, value: 1 },
           { time: 2, value: 2 }
-        ]))
+        ])
+      )
     })
   })
 
@@ -53,12 +59,13 @@ describe('switch', () => {
           makeEventsFromArray(1, [1, 2, 3])
         ])
 
-        return collectEventsFor(2, switchLatest(s))
-          .then(eq([
+        return collectEventsFor(2, switchLatest(s)).then(
+          eq([
             { time: 0, value: 1 },
             { time: 1, value: 2 },
             { time: 2, value: 3 }
-          ]))
+          ])
+        )
       })
     })
 
@@ -66,8 +73,8 @@ describe('switch', () => {
       let i = 0
       const s = map(() => constant(++i, periodic(1)), periodic(3))
 
-      return collectEventsFor(250, take(10, switchLatest(s)))
-        .then(eq([
+      return collectEventsFor(250, take(10, switchLatest(s))).then(
+        eq([
           { time: 0, value: 1 },
           { time: 1, value: 1 },
           { time: 2, value: 1 },
@@ -78,7 +85,8 @@ describe('switch', () => {
           { time: 7, value: 3 },
           { time: 8, value: 3 },
           { time: 9, value: 4 }
-        ]))
+        ])
+      )
     })
   })
 })

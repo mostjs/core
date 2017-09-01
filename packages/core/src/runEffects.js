@@ -4,7 +4,8 @@ import SettableDisposable from './disposable/SettableDisposable'
 
 export const runEffects = (stream, scheduler) =>
   new Promise((resolve, reject) =>
-    runStream(stream, scheduler, resolve, reject))
+    runStream(stream, scheduler, resolve, reject)
+  )
 
 function runStream (stream, scheduler, resolve, reject) {
   const disposable = new SettableDisposable()
