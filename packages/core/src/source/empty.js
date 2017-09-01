@@ -6,7 +6,7 @@ import { asap } from '@most/scheduler'
 export const empty = () => EMPTY
 
 class Empty {
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return asap(propagateEndTask(sink), scheduler)
   }
 }

@@ -10,15 +10,18 @@ import { periodic as schedulePeriodic } from '@most/scheduler'
  * @param {Number} period periodicity of events in millis
  * @returns {Stream} new stream of periodic events, the event value is undefined
  */
-export const periodic = period =>
-  new Periodic(period)
+export const periodic = period => new Periodic(period)
 
 class Periodic {
-  constructor (period) {
+  constructor(period) {
     this.period = period
   }
 
-  run (sink, scheduler) {
-    return schedulePeriodic(this.period, propagateEventTask(undefined, sink), scheduler)
+  run(sink, scheduler) {
+    return schedulePeriodic(
+      this.period,
+      propagateEventTask(undefined, sink),
+      scheduler
+    )
   }
 }

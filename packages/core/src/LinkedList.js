@@ -6,7 +6,7 @@
  * Doubly linked list
  * @constructor
  */
-export default function LinkedList () {
+export default function LinkedList() {
   this.head = null
   this.length = 0
 }
@@ -15,7 +15,7 @@ export default function LinkedList () {
  * Add a node to the end of the list
  * @param {{prev:Object|null, next:Object|null, dispose:function}} x node to add
  */
-LinkedList.prototype.add = function (x) {
+LinkedList.prototype.add = function(x) {
   if (this.head !== null) {
     this.head.prev = x
     x.next = this.head
@@ -28,7 +28,8 @@ LinkedList.prototype.add = function (x) {
  * Remove the provided node from the list
  * @param {{prev:Object|null, next:Object|null, dispose:function}} x node to remove
  */
-LinkedList.prototype.remove = function (x) { // eslint-disable-line  complexity
+// eslint-disable-next-line complexity
+LinkedList.prototype.remove = function(x) {
   --this.length
   if (x === this.head) {
     this.head = this.head.next
@@ -46,7 +47,7 @@ LinkedList.prototype.remove = function (x) { // eslint-disable-line  complexity
 /**
  * @returns {boolean} true iff there are no nodes in the list
  */
-LinkedList.prototype.isEmpty = function () {
+LinkedList.prototype.isEmpty = function() {
   return this.length === 0
 }
 
@@ -55,7 +56,7 @@ LinkedList.prototype.isEmpty = function () {
  * @returns {Promise} promise that fulfills when all nodes have been disposed,
  *  or rejects if an error occurs while disposing
  */
-LinkedList.prototype.dispose = function () {
+LinkedList.prototype.dispose = function() {
   if (this.isEmpty()) {
     return Promise.resolve()
   }

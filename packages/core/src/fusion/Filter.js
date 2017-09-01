@@ -5,12 +5,12 @@
 import Pipe from '../sink/Pipe'
 
 export default class Filter {
-  constructor (p, source) {
+  constructor(p, source) {
     this.p = p
     this.source = source
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return this.source.run(new FilterSink(this.p, sink), scheduler)
   }
 
@@ -20,7 +20,7 @@ export default class Filter {
    * @param {{run:function}} source source to filter
    * @returns {Filter} filtered source
    */
-  static create (p, source) {
+  static create(p, source) {
     if (source instanceof Filter) {
       return new Filter(and(source.p, p), source.source)
     }
@@ -30,12 +30,12 @@ export default class Filter {
 }
 
 class FilterSink extends Pipe {
-  constructor (p, sink) {
+  constructor(p, sink) {
     super(sink)
     this.p = p
   }
 
-  event (t, x) {
+  event(t, x) {
     const p = this.p
     p(x) && this.sink.event(t, x)
   }

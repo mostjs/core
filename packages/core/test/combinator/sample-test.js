@@ -30,16 +30,14 @@ describe('sample', () => {
     const n = rint(10)
     const s = sample(Array, makeEvents(1, n), never())
 
-    return collectEvents(s, ticks(n))
-      .then(events => eq(0, events.length))
+    return collectEvents(s, ticks(n)).then(events => eq(0, events.length))
   })
 
   it('should end when sampler ends', () => {
     const n = rint(10)
     const s = sample(Array, makeEvents(1, n), makeEvents(5, n * 2))
 
-    return collectEvents(s, ticks(n))
-      .then(events => eq(n, events.length))
+    return collectEvents(s, ticks(n)).then(events => eq(n, events.length))
   })
 
   it('should repeat last value after source ends', () => {
@@ -49,8 +47,7 @@ describe('sample', () => {
 
     return collectEvents(s, ticks(n)).then(events => {
       eq(n, events.length)
-      events.forEach((event, i) =>
-        eq({ time: i, value: [i, x] }, event))
+      events.forEach((event, i) => eq({ time: i, value: [i, x] }, event))
     })
   })
 
@@ -58,7 +55,6 @@ describe('sample', () => {
     const error = new Error('fail')
     const s = sample(Array, makeEvents(1, 1), throwError(error))
 
-    return collectEvents(s, ticks(1))
-      .catch(is(error))
+    return collectEvents(s, ticks(1)).catch(is(error))
   })
 })

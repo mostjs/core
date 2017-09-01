@@ -15,29 +15,28 @@ import Pipe from '../sink/Pipe'
  * @returns {Stream} new stream whose values are the `value` field of the objects
  * returned by the stepper
  */
-export const loop = (stepper, seed, stream) =>
-  new Loop(stepper, seed, stream)
+export const loop = (stepper, seed, stream) => new Loop(stepper, seed, stream)
 
 class Loop {
-  constructor (stepper, seed, source) {
+  constructor(stepper, seed, source) {
     this.step = stepper
     this.seed = seed
     this.source = source
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return this.source.run(new LoopSink(this.step, this.seed, sink), scheduler)
   }
 }
 
 class LoopSink extends Pipe {
-  constructor (stepper, seed, sink) {
+  constructor(stepper, seed, sink) {
     super(sink)
     this.step = stepper
     this.seed = seed
   }
 
-  event (t, x) {
+  event(t, x) {
     const result = this.step(this.seed, x)
     this.seed = result.seed
     this.sink.event(t, result.value)

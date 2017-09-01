@@ -15,5 +15,4 @@ import { mergeMapConcurrently } from './mergeConcurrently'
  * @param {Stream} stream
  * @returns {Stream} new stream containing all events from each stream returned by f
  */
-export const concatMap = (f, stream) =>
-  mergeMapConcurrently(f, 1, stream)
+export const concatMap = (f, stream) => mergeMapConcurrently(f, 1, stream)

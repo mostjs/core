@@ -12,7 +12,7 @@ import { reduce } from '@most/prelude'
  * @returns {Stream} stream containing events from two streams in time order.
  * If two events are simultaneous they will be merged in arbitrary order.
  */
-export function merge (stream1, stream2) {
+export function merge(stream1, stream2) {
   return mergeArray([stream1, stream2])
 }
 
@@ -23,9 +23,9 @@ export function merge (stream1, stream2) {
  * arbitrary order.
  */
 export const mergeArray = streams =>
-  streams.length === 0 ? empty()
-    : streams.length === 1 ? streams[0]
-    : mergeStreams(streams)
+  streams.length === 0
+    ? empty()
+    : streams.length === 1 ? streams[0] : mergeStreams(streams)
 
 /**
  * This implements fusion/flattening for merge.  It will
@@ -36,18 +36,17 @@ export const mergeArray = streams =>
  * any nested Merge sources, in effect "flattening" nested
  * merge operations into a single merge.
  */
-const mergeStreams = streams =>
-  new Merge(reduce(appendSources, [], streams))
+const mergeStreams = streams => new Merge(reduce(appendSources, [], streams))
 
 const appendSources = (sources, stream) =>
   sources.concat(stream instanceof Merge ? stream.sources : stream)
 
 class Merge {
-  constructor (sources) {
+  constructor(sources) {
     this.sources = sources
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     const l = this.sources.length
     const disposables = new Array(l)
     const sinks = new Array(l)
@@ -64,13 +63,13 @@ class Merge {
 }
 
 class MergeSink extends Pipe {
-  constructor (disposables, sinks, sink) {
+  constructor(disposables, sinks, sink) {
     super(sink)
     this.disposables = disposables
     this.activeCount = sinks.length
   }
 
-  event (t, indexValue) {
+  event(t, indexValue) {
     if (!indexValue.active) {
       this._dispose(t, indexValue.index)
       return
@@ -78,7 +77,7 @@ class MergeSink extends Pipe {
     this.sink.event(t, indexValue.value)
   }
 
-  _dispose (t, index) {
+  _dispose(t, index) {
     tryDispose(t, this.disposables[index], this.sink)
     if (--this.activeCount === 0) {
       this.sink.end(t)

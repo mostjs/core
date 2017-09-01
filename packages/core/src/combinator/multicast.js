@@ -6,22 +6,22 @@ export const multicast = stream =>
   stream instanceof Multicast ? stream : new Multicast(stream)
 
 class Multicast {
-  constructor (source) {
+  constructor(source) {
     this.source = new MulticastSource(source)
   }
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return this.source.run(sink, scheduler)
   }
 }
 
 export class MulticastSource {
-  constructor (source) {
+  constructor(source) {
     this.source = source
     this.sinks = []
     this.disposable = disposeNone()
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     const n = this.add(sink)
     if (n === 1) {
       this.disposable = this.source.run(this, scheduler)
@@ -29,18 +29,18 @@ export class MulticastSource {
     return disposeOnce(new MulticastDisposable(this, sink))
   }
 
-  dispose () {
+  dispose() {
     const disposable = this.disposable
     this.disposable = disposeNone()
     return disposable.dispose()
   }
 
-  add (sink) {
+  add(sink) {
     this.sinks = append(sink, this.sinks)
     return this.sinks.length
   }
 
-  remove (sink) {
+  remove(sink) {
     const i = findIndex(sink, this.sinks)
     // istanbul ignore next
     if (i >= 0) {
@@ -50,7 +50,7 @@ export class MulticastSource {
     return this.sinks.length
   }
 
-  event (time, value) {
+  event(time, value) {
     const s = this.sinks
     if (s.length === 1) {
       return s[0].event(time, value)
@@ -60,14 +60,14 @@ export class MulticastSource {
     }
   }
 
-  end (time) {
+  end(time) {
     const s = this.sinks
     for (let i = 0; i < s.length; ++i) {
       tryEnd(time, s[i])
     }
   }
 
-  error (time, err) {
+  error(time, err) {
     const s = this.sinks
     for (let i = 0; i < s.length; ++i) {
       s[i].error(time, err)
@@ -76,12 +76,12 @@ export class MulticastSource {
 }
 
 export class MulticastDisposable {
-  constructor (source, sink) {
+  constructor(source, sink) {
     this.source = source
     this.sink = sink
   }
 
-  dispose () {
+  dispose() {
     if (this.source.remove(this.sink) === 0) {
       this.source.dispose()
     }

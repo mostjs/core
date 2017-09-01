@@ -15,32 +15,34 @@ const other = { value: 'other' }
 
 const toPair = (z, x) => ({ value: x, seed: z })
 
-describe('loop', function () {
-  it('should call stepper with seed, value', function () {
+describe('loop', function() {
+  it('should call stepper with seed, value', function() {
     const a = ['a', 'b', 'c', 'd']
 
     const s = loop((z, x) => toPair(z + 1, x + z), 0, makeEventsFromArray(1, a))
 
-    return collectEventsFor(a.length, s)
-      .then(events => {
-        eq(a.length, events.length)
-        eq([
+    return collectEventsFor(a.length, s).then(events => {
+      eq(a.length, events.length)
+      eq(
+        [
           { time: 0, value: 'a0' },
           { time: 1, value: 'b1' },
           { time: 2, value: 'c2' },
           { time: 3, value: 'd3' }
-        ], events)
-      })
+        ],
+        events
+      )
+    })
   })
 
-  it('should propagate errors', function () {
+  it('should propagate errors', function() {
     const error = new Error()
     const s = loop(toPair, other, throwError(error))
 
     return collectEventsFor(1, s).catch(is(error))
   })
 
-  it('should dispose', function () {
+  it('should dispose', function() {
     const dispose = spy()
 
     const stream = new FakeDisposeSource(dispose, now(sentinel))

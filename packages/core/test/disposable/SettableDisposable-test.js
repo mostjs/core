@@ -5,7 +5,7 @@ import { default as SettableDisposable } from '../../src/disposable/SettableDisp
 
 const testDisposable = () => ({
   disposed: false,
-  dispose () {
+  dispose() {
     this.disposed = true
   }
 })

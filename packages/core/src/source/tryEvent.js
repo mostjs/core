@@ -2,7 +2,7 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-export function tryEvent (t, x, sink) {
+export function tryEvent(t, x, sink) {
   try {
     sink.event(t, x)
   } catch (e) {
@@ -10,7 +10,7 @@ export function tryEvent (t, x, sink) {
   }
 }
 
-export function tryEnd (t, sink) {
+export function tryEnd(t, sink) {
   try {
     sink.end(t)
   } catch (e) {

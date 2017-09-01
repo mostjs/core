@@ -12,9 +12,11 @@ import { delay } from '@most/scheduler'
  * @returns {Stream}
  */
 export const throttle = (period, stream) =>
-  stream instanceof Map ? commuteMapThrottle(period, stream)
-    : stream instanceof Throttle ? fuseThrottle(period, stream)
-    : new Throttle(period, stream)
+  stream instanceof Map
+    ? commuteMapThrottle(period, stream)
+    : stream instanceof Throttle
+      ? fuseThrottle(period, stream)
+      : new Throttle(period, stream)
 
 const commuteMapThrottle = (period, mapStream) =>
   Map.create(mapStream.f, throttle(period, mapStream.source))
@@ -23,24 +25,24 @@ const fuseThrottle = (period, throttleStream) =>
   new Throttle(Math.max(period, throttleStream.period), throttleStream.source)
 
 class Throttle {
-  constructor (period, source) {
+  constructor(period, source) {
     this.period = period
     this.source = source
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return this.source.run(new ThrottleSink(this.period, sink), scheduler)
   }
 }
 
 class ThrottleSink extends Pipe {
-  constructor (period, sink) {
+  constructor(period, sink) {
     super(sink)
     this.time = 0
     this.period = period
   }
 
-  event (t, x) {
+  event(t, x) {
     if (t >= this.time) {
       this.time = t + this.period
       this.sink.event(t, x)
@@ -54,22 +56,21 @@ class ThrottleSink extends Pipe {
  * @param {Stream} stream stream to debounce
  * @returns {Stream} new debounced stream
  */
-export const debounce = (period, stream) =>
-  new Debounce(period, stream)
+export const debounce = (period, stream) => new Debounce(period, stream)
 
 class Debounce {
-  constructor (dt, source) {
+  constructor(dt, source) {
     this.dt = dt
     this.source = source
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return new DebounceSink(this.dt, this.source, sink, scheduler)
   }
 }
 
 class DebounceSink {
-  constructor (dt, source, sink, scheduler) {
+  constructor(dt, source, sink, scheduler) {
     this.dt = dt
     this.sink = sink
     this.scheduler = scheduler
@@ -79,13 +80,17 @@ class DebounceSink {
     this.disposable = source.run(this, scheduler)
   }
 
-  event (t, x) {
+  event(t, x) {
     this._clearTimer()
     this.value = x
-    this.timer = delay(this.dt, propagateEventTask(x, this.sink), this.scheduler)
+    this.timer = delay(
+      this.dt,
+      propagateEventTask(x, this.sink),
+      this.scheduler
+    )
   }
 
-  end (t) {
+  end(t) {
     if (this._clearTimer()) {
       this.sink.event(t, this.value)
       this.value = undefined
@@ -93,17 +98,17 @@ class DebounceSink {
     this.sink.end(t)
   }
 
-  error (t, x) {
+  error(t, x) {
     this._clearTimer()
     this.sink.error(t, x)
   }
 
-  dispose () {
+  dispose() {
     this._clearTimer()
     this.disposable.dispose()
   }
 
-  _clearTimer () {
+  _clearTimer() {
     if (this.timer === null) {
       return false
     }

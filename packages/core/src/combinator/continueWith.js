@@ -6,22 +6,21 @@ import Pipe from '../sink/Pipe'
 import { runWithLocalTime } from '../scheduler/runWithLocalTime'
 import { disposeOnce, tryDispose } from '@most/disposable'
 
-export const continueWith = (f, stream) =>
-  new ContinueWith(f, stream)
+export const continueWith = (f, stream) => new ContinueWith(f, stream)
 
 class ContinueWith {
-  constructor (f, source) {
+  constructor(f, source) {
     this.f = f
     this.source = source
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return new ContinueWithSink(this.f, this.source, sink, scheduler)
   }
 }
 
 class ContinueWithSink extends Pipe {
-  constructor (f, source, sink, scheduler) {
+  constructor(f, source, sink, scheduler) {
     super(sink)
     this.f = f
     this.scheduler = scheduler
@@ -29,14 +28,14 @@ class ContinueWithSink extends Pipe {
     this.disposable = disposeOnce(source.run(this, scheduler))
   }
 
-  event (t, x) {
+  event(t, x) {
     if (!this.active) {
       return
     }
     this.sink.event(t, x)
   }
 
-  end (t) {
+  end(t) {
     if (!this.active) {
       return
     }
@@ -46,7 +45,7 @@ class ContinueWithSink extends Pipe {
     this._startNext(t, this.sink)
   }
 
-  _startNext (t, sink) {
+  _startNext(t, sink) {
     try {
       this.disposable = this._continue(this.f, t, sink)
     } catch (e) {
@@ -54,11 +53,11 @@ class ContinueWithSink extends Pipe {
     }
   }
 
-  _continue (f, t, sink) {
+  _continue(f, t, sink) {
     return runWithLocalTime(t, f(), sink, this.scheduler)
   }
 
-  dispose () {
+  dispose() {
     this.active = false
     return this.disposable.dispose()
   }

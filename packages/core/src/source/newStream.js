@@ -3,7 +3,7 @@
 export const newStream = run => new Stream(run)
 
 class Stream {
-  constructor (run) {
+  constructor(run) {
     this.run = run
   }
 }

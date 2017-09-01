@@ -2,11 +2,11 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-export function defer (task) {
+export function defer(task) {
   return Promise.resolve(task).then(runTask)
 }
 
-export function runTask (task) {
+export function runTask(task) {
   try {
     return task.run()
   } catch (e) {

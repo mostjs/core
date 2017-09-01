@@ -23,17 +23,17 @@ export const awaitPromises = stream => new Await(stream)
 export const fromPromise = compose(awaitPromises, now)
 
 class Await {
-  constructor (source) {
+  constructor(source) {
     this.source = source
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return this.source.run(new AwaitSink(sink, scheduler), scheduler)
   }
 }
 
 class AwaitSink {
-  constructor (sink, scheduler) {
+  constructor(sink, scheduler) {
     this.sink = sink
     this.scheduler = scheduler
     this.queue = Promise.resolve()
@@ -44,23 +44,22 @@ class AwaitSink {
     this._errorBound = e => this.sink.error(currentTime(this.scheduler), e)
   }
 
-  event (t, promise) {
-    this.queue = this.queue.then(() => this._event(promise))
+  event(t, promise) {
+    this.queue = this.queue
+      .then(() => this._event(promise))
       .catch(this._errorBound)
   }
 
-  end (t) {
-    this.queue = this.queue.then(this._endBound)
-      .catch(this._errorBound)
+  end(t) {
+    this.queue = this.queue.then(this._endBound).catch(this._errorBound)
   }
 
-  error (t, e) {
+  error(t, e) {
     // Don't resolve error values, propagate directly
-    this.queue = this.queue.then(() => this._errorBound(e))
-      .catch(fatal)
+    this.queue = this.queue.then(() => this._errorBound(e)).catch(fatal)
   }
 
-  _event (promise) {
+  _event(promise) {
     return promise.then(this._eventBound)
   }
 }

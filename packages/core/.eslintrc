@@ -1,4 +1,8 @@
 {
   "parser": "babel-eslint",
-  "extends": "@most/eslint-config-most"
+  "extends": "standard",
+  "rules": {
+    "import/first": "off",
+    "no-mixed-operators": "off"
+  }
 }

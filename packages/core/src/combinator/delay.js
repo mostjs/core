@@ -5,7 +5,10 @@
 import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
 import { cancelAllTasks, delay as scheduleDelay } from '@most/scheduler'
-import { propagateEndTask, propagateEventTask } from '../scheduler/PropagateTask'
+import {
+  propagateEndTask,
+  propagateEventTask
+} from '../scheduler/PropagateTask'
 
 /**
  * @param {Number} delayTime milliseconds to delay each item
@@ -16,33 +19,33 @@ export const delay = (delayTime, stream) =>
   delayTime <= 0 ? stream : new Delay(delayTime, stream)
 
 class Delay {
-  constructor (dt, source) {
+  constructor(dt, source) {
     this.dt = dt
     this.source = source
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     const delaySink = new DelaySink(this.dt, sink, scheduler)
     return disposeBoth(delaySink, this.source.run(delaySink, scheduler))
   }
 }
 
 class DelaySink extends Pipe {
-  constructor (dt, sink, scheduler) {
+  constructor(dt, sink, scheduler) {
     super(sink)
     this.dt = dt
     this.scheduler = scheduler
   }
 
-  dispose () {
+  dispose() {
     cancelAllTasks(task => task.sink === this.sink, this.scheduler)
   }
 
-  event (t, x) {
+  event(t, x) {
     scheduleDelay(this.dt, propagateEventTask(x, this.sink), this.scheduler)
   }
 
-  end (t) {
+  end(t) {
     scheduleDelay(this.dt, propagateEndTask(this.sink), this.scheduler)
   }
 }

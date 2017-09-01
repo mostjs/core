@@ -15,7 +15,7 @@ import invoke from '../invoke'
  * @returns {Stream} stream containing the result of applying f to the most recent
  *  event of each input stream, whenever a new event arrives on any stream.
  */
-export function combine (f, stream1, stream2) {
+export function combine(f, stream1, stream2) {
   return combineArray(f, [stream1, stream2])
 }
 
@@ -27,17 +27,17 @@ export function combine (f, stream1, stream2) {
 *  event of each input stream, whenever a new event arrives on any stream.
 */
 export const combineArray = (f, streams) =>
-  streams.length === 0 ? empty()
-    : streams.length === 1 ? map(f, streams[0])
-    : new Combine(f, streams)
+  streams.length === 0
+    ? empty()
+    : streams.length === 1 ? map(f, streams[0]) : new Combine(f, streams)
 
 class Combine {
-  constructor (f, sources) {
+  constructor(f, sources) {
     this.f = f
     this.sources = sources
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     const l = this.sources.length
     const disposables = new Array(l)
     const sinks = new Array(l)
@@ -54,7 +54,7 @@ class Combine {
 }
 
 class CombineSink extends Pipe {
-  constructor (disposables, sinks, sink, f) {
+  constructor(disposables, sinks, sink, f) {
     super(sink)
     this.disposables = disposables
     this.sinks = sinks
@@ -67,7 +67,7 @@ class CombineSink extends Pipe {
     this.activeCount = sinks.length
   }
 
-  event (t, indexedValue) {
+  event(t, indexedValue) {
     if (!indexedValue.active) {
       this._dispose(t, indexedValue.index)
       return
@@ -82,7 +82,7 @@ class CombineSink extends Pipe {
     }
   }
 
-  _updateReady (index) {
+  _updateReady(index) {
     if (this.awaiting > 0) {
       if (!this.hasValue[index]) {
         this.hasValue[index] = true
@@ -92,7 +92,7 @@ class CombineSink extends Pipe {
     return this.awaiting
   }
 
-  _dispose (t, index) {
+  _dispose(t, index) {
     tryDispose(t, this.disposables[index], this.sink)
     if (--this.activeCount === 0) {
       this.sink.end(t)

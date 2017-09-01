@@ -4,13 +4,13 @@
 
 import { defer } from '../task'
 
-export default function DeferredSink (sink) {
+export default function DeferredSink(sink) {
   this.sink = sink
   this.events = []
   this.active = true
 }
 
-DeferredSink.prototype.event = function (t, x) {
+DeferredSink.prototype.event = function(t, x) {
   if (!this.active) {
     return
   }
@@ -22,7 +22,7 @@ DeferredSink.prototype.event = function (t, x) {
   this.events.push({ time: t, value: x })
 }
 
-DeferredSink.prototype.end = function (t, x) {
+DeferredSink.prototype.end = function(t, x) {
   if (!this.active) {
     return
   }
@@ -30,22 +30,22 @@ DeferredSink.prototype.end = function (t, x) {
   this._end(new EndTask(t, x, this.sink))
 }
 
-DeferredSink.prototype.error = function (t, e) {
+DeferredSink.prototype.error = function(t, e) {
   this._end(new ErrorTask(t, e, this.sink))
 }
 
-DeferredSink.prototype._end = function (task) {
+DeferredSink.prototype._end = function(task) {
   this.active = false
   defer(task)
 }
 
-function PropagateAllTask (sink, time, events) {
+function PropagateAllTask(sink, time, events) {
   this.sink = sink
   this.events = events
   this.time = time
 }
 
-PropagateAllTask.prototype.run = function () {
+PropagateAllTask.prototype.run = function() {
   var events = this.events
   var sink = this.sink
   var event
@@ -59,34 +59,34 @@ PropagateAllTask.prototype.run = function () {
   events.length = 0
 }
 
-PropagateAllTask.prototype.error = function (e) {
+PropagateAllTask.prototype.error = function(e) {
   this.sink.error(this.time, e)
 }
 
-function EndTask (t, x, sink) {
+function EndTask(t, x, sink) {
   this.time = t
   this.value = x
   this.sink = sink
 }
 
-EndTask.prototype.run = function () {
+EndTask.prototype.run = function() {
   this.sink.end(this.time, this.value)
 }
 
-EndTask.prototype.error = function (e) {
+EndTask.prototype.error = function(e) {
   this.sink.error(this.time, e)
 }
 
-function ErrorTask (t, e, sink) {
+function ErrorTask(t, e, sink) {
   this.time = t
   this.value = e
   this.sink = sink
 }
 
-ErrorTask.prototype.run = function () {
+ErrorTask.prototype.run = function() {
   this.sink.error(this.time, this.value)
 }
 
-ErrorTask.prototype.error = function (e) {
+ErrorTask.prototype.error = function(e) {
   throw e
 }

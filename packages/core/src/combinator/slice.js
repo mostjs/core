@@ -12,16 +12,14 @@ import SettableDisposable from '../disposable/SettableDisposable'
  * @param {Stream} stream
  * @returns {Stream} new stream containing only up to the first n items from stream
  */
-export const take = (n, stream) =>
-  slice(0, n, stream)
+export const take = (n, stream) => slice(0, n, stream)
 
 /**
  * @param {number} n
  * @param {Stream} stream
  * @returns {Stream} new stream with the first n items removed
  */
-export const skip = (n, stream) =>
-  slice(n, Infinity, stream)
+export const skip = (n, stream) => slice(n, Infinity, stream)
 
 /**
  * Slice a stream by index. Negative start/end indexes are not supported
@@ -34,29 +32,36 @@ export const slice = (start, end, stream) =>
   end <= start ? empty() : sliceSource(start, end, stream)
 
 const sliceSource = (start, end, stream) =>
-  stream instanceof Map ? commuteMapSlice(start, end, stream)
-    : stream instanceof Slice ? fuseSlice(start, end, stream)
-    : new Slice(start, end, stream)
+  stream instanceof Map
+    ? commuteMapSlice(start, end, stream)
+    : stream instanceof Slice
+      ? fuseSlice(start, end, stream)
+      : new Slice(start, end, stream)
 
 const commuteMapSlice = (start, end, mapStream) =>
   Map.create(mapStream.f, sliceSource(start, end, mapStream.source))
 
-function fuseSlice (start, end, sliceStream) {
+function fuseSlice(start, end, sliceStream) {
   const fusedStart = start + sliceStream.min
   const fusedEnd = Math.min(end + sliceStream.min, sliceStream.max)
   return new Slice(fusedStart, fusedEnd, sliceStream.source)
 }
 
 class Slice {
-  constructor (min, max, source) {
+  constructor(min, max, source) {
     this.source = source
     this.min = min
     this.max = max
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     const disposable = new SettableDisposable()
-    const sliceSink = new SliceSink(this.min, this.max - this.min, sink, disposable)
+    const sliceSink = new SliceSink(
+      this.min,
+      this.max - this.min,
+      sink,
+      disposable
+    )
 
     disposable.setDisposable(this.source.run(sliceSink, scheduler))
 
@@ -65,14 +70,14 @@ class Slice {
 }
 
 class SliceSink extends Pipe {
-  constructor (skip, take, sink, disposable) {
+  constructor(skip, take, sink, disposable) {
     super(sink)
     this.skip = skip
     this.take = take
     this.disposable = disposable
   }
 
-  event (t, x) {
+  event(t, x) {
     /* eslint complexity: [1, 4] */
     if (this.skip > 0) {
       this.skip -= 1
@@ -92,16 +97,15 @@ class SliceSink extends Pipe {
   }
 }
 
-export const takeWhile = (p, stream) =>
-  new TakeWhile(p, stream)
+export const takeWhile = (p, stream) => new TakeWhile(p, stream)
 
 class TakeWhile {
-  constructor (p, source) {
+  constructor(p, source) {
     this.p = p
     this.source = source
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     const disposable = new SettableDisposable()
     const takeWhileSink = new TakeWhileSink(this.p, sink, disposable)
 
@@ -112,14 +116,14 @@ class TakeWhile {
 }
 
 class TakeWhileSink extends Pipe {
-  constructor (p, sink, disposable) {
+  constructor(p, sink, disposable) {
     super(sink)
     this.p = p
     this.active = true
     this.disposable = disposable
   }
 
-  event (t, x) {
+  event(t, x) {
     if (!this.active) {
       return
     }
@@ -136,28 +140,27 @@ class TakeWhileSink extends Pipe {
   }
 }
 
-export const skipWhile = (p, stream) =>
-  new SkipWhile(p, stream)
+export const skipWhile = (p, stream) => new SkipWhile(p, stream)
 
 class SkipWhile {
-  constructor (p, source) {
+  constructor(p, source) {
     this.p = p
     this.source = source
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return this.source.run(new SkipWhileSink(this.p, sink), scheduler)
   }
 }
 
 class SkipWhileSink extends Pipe {
-  constructor (p, sink) {
+  constructor(p, sink) {
     super(sink)
     this.p = p
     this.skipping = true
   }
 
-  event (t, x) {
+  event(t, x) {
     if (this.skipping) {
       const p = this.p
       this.skipping = p(x)
@@ -170,28 +173,27 @@ class SkipWhileSink extends Pipe {
   }
 }
 
-export const skipAfter = (p, stream) =>
-  new SkipAfter(p, stream)
+export const skipAfter = (p, stream) => new SkipAfter(p, stream)
 
 class SkipAfter {
-  constructor (p, source) {
+  constructor(p, source) {
     this.p = p
     this.source = source
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return this.source.run(new SkipAfterSink(this.p, sink), scheduler)
   }
 }
 
 class SkipAfterSink extends Pipe {
-  constructor (p, sink) {
+  constructor(p, sink) {
     super(sink)
     this.p = p
     this.skipping = false
   }
 
-  event (t, x) {
+  event(t, x) {
     if (this.skipping) {
       return
     }

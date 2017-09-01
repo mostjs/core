@@ -11,8 +11,7 @@ import Pipe from '../sink/Pipe'
  * @param {Stream} stream stream to map
  * @returns {Stream} stream containing items transformed by f
  */
-export const map = (f, stream) =>
-  Map.create(f, stream)
+export const map = (f, stream) => Map.create(f, stream)
 
 /**
 * Replace each value in the stream with x
@@ -20,8 +19,7 @@ export const map = (f, stream) =>
 * @param {Stream} stream
 * @returns {Stream} stream containing items replaced with x
 */
-export const constant = (x, stream) =>
-  map(() => x, stream)
+export const constant = (x, stream) => map(() => x, stream)
 
 /**
 * Perform a side effect for each item in the stream
@@ -30,30 +28,28 @@ export const constant = (x, stream) =>
 * @param {Stream} stream stream to tap
 * @returns {Stream} new stream containing the same items as this stream
 */
-export const tap = (f, stream) =>
-  new Tap(f, stream)
+export const tap = (f, stream) => new Tap(f, stream)
 
 class Tap {
-  constructor (f, source) {
+  constructor(f, source) {
     this.source = source
     this.f = f
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return this.source.run(new TapSink(this.f, sink), scheduler)
   }
 }
 
 class TapSink extends Pipe {
-  constructor (f, sink) {
+  constructor(f, sink) {
     super(sink)
     this.f = f
   }
 
-  event (t, x) {
+  event(t, x) {
     const f = this.f
     f(x)
     this.sink.event(t, x)
   }
 }
-

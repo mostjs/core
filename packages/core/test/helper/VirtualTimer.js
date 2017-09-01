@@ -2,11 +2,11 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-/*global setTimeout, clearTimeout*/
+/* global setTimeout, clearTimeout */
 
 export default VirtualTimer
 
-function VirtualTimer () {
+function VirtualTimer() {
   this._now = this._targetNow = 0
   this._time = Infinity
   this._task = void 0
@@ -16,11 +16,11 @@ function VirtualTimer () {
   this._key = {}
 }
 
-VirtualTimer.prototype.now = function () {
+VirtualTimer.prototype.now = function() {
   return this._now
 }
 
-VirtualTimer.prototype.setTimer = function (f, dt) {
+VirtualTimer.prototype.setTimer = function(f, dt) {
   if (this._task !== void 0) {
     throw new Error('VirtualTimer: Only supports one in-flight timer')
   }
@@ -33,7 +33,7 @@ VirtualTimer.prototype.setTimer = function (f, dt) {
   return this._key
 }
 
-VirtualTimer.prototype.clearTimer = function (t) {
+VirtualTimer.prototype.clearTimer = function(t) {
   if (t !== this._key) {
     return
   }
@@ -43,7 +43,7 @@ VirtualTimer.prototype.clearTimer = function (t) {
   this._task = void 0
 }
 
-VirtualTimer.prototype.tick = function (dt) {
+VirtualTimer.prototype.tick = function(dt) {
   if (dt <= 0) {
     return
   }
@@ -52,7 +52,7 @@ VirtualTimer.prototype.tick = function (dt) {
   this._run()
 }
 
-VirtualTimer.prototype._run = function () {
+VirtualTimer.prototype._run = function() {
   if (this._running) {
     return
   }
@@ -62,16 +62,16 @@ VirtualTimer.prototype._run = function () {
   this._step()
 }
 
-VirtualTimer.prototype._step = function () {
+VirtualTimer.prototype._step = function() {
   this._timer = setTimeout(stepTimer, 0, this)
 }
 
-VirtualTimer.prototype._cancel = function () {
+VirtualTimer.prototype._cancel = function() {
   clearTimeout(this._timer)
   this._timer = null
 }
 
-function stepTimer (vt) {
+function stepTimer(vt) {
   if (vt._now >= vt._targetNow) {
     vt._now = vt._targetNow
     vt._time = Infinity

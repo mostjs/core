@@ -2,10 +2,10 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-export default function fatalError (e) {
+export default function fatalError(e) {
   setTimeout(rethrow, 0, e)
 }
 
-function rethrow (e) {
+function rethrow(e) {
   throw e
 }

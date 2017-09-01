@@ -2,19 +2,19 @@
 /** @author Brian Cavalier */
 
 export default class Pipe {
-  constructor (sink) {
+  constructor(sink) {
     this.sink = sink
   }
 
-  event (t, x) {
+  event(t, x) {
     return this.sink.event(t, x)
   }
 
-  end (t) {
+  end(t) {
     return this.sink.end(t)
   }
 
-  error (t, e) {
+  error(t, e) {
     return this.sink.error(t, e)
   }
 }

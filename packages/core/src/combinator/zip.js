@@ -18,7 +18,7 @@ import Queue from '../Queue'
  * @returns {Stream} new stream with items at corresponding indices combined
  *  using f
  */
-export function zip (f, stream1, stream2) {
+export function zip(f, stream1, stream2) {
   return zipArray(f, [stream1, stream2])
 }
 
@@ -32,17 +32,17 @@ export function zip (f, stream1, stream2) {
 *  using f
 */
 export const zipArray = (f, streams) =>
-  streams.length === 0 ? empty()
-    : streams.length === 1 ? map(f, streams[0])
-    : new Zip(f, streams)
+  streams.length === 0
+    ? empty()
+    : streams.length === 1 ? map(f, streams[0]) : new Zip(f, streams)
 
 class Zip {
-  constructor (f, sources) {
+  constructor(f, sources) {
     this.f = f
     this.sources = sources
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     const l = this.sources.length
     const disposables = new Array(l)
     const sinks = new Array(l)
@@ -61,14 +61,14 @@ class Zip {
 }
 
 class ZipSink extends Pipe {
-  constructor (f, buffers, sinks, sink) {
+  constructor(f, buffers, sinks, sink) {
     super(sink)
     this.f = f
     this.sinks = sinks
     this.buffers = buffers
   }
 
-  event (t, indexedValue) {
+  event(t, indexedValue) {
     /* eslint complexity: [1, 5] */
     if (!indexedValue.active) {
       this._dispose(t, indexedValue.index)
@@ -93,7 +93,7 @@ class ZipSink extends Pipe {
     }
   }
 
-  _dispose (t, index) {
+  _dispose(t, index) {
     const buffer = this.buffers[index]
     if (buffer.isEmpty()) {
       this.sink.end(t)
@@ -106,7 +106,7 @@ const emitZipped = (f, t, buffers, sink) =>
 
 const head = buffer => buffer.shift()
 
-function ended (buffers, sinks) {
+function ended(buffers, sinks) {
   for (let i = 0, l = buffers.length; i < l; ++i) {
     if (buffers[i].isEmpty() && !sinks[i].active) {
       return true
@@ -115,7 +115,7 @@ function ended (buffers, sinks) {
   return false
 }
 
-function ready (buffers) {
+function ready(buffers) {
   for (let i = 0, l = buffers.length; i < l; ++i) {
     if (buffers[i].isEmpty()) {
       return false

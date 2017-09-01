@@ -8,12 +8,13 @@ import FilterMap from './FilterMap'
 import { compose } from '@most/prelude'
 
 export default class Map {
-  constructor (f, source) {
+  constructor(f, source) {
     this.f = f
     this.source = source
   }
 
-  run (sink, scheduler) { // eslint-disable-line no-extend-native
+  run(sink, scheduler) {
+    // eslint-disable-line no-extend-native
     return this.source.run(new MapSink(this.f, sink), scheduler)
   }
 
@@ -24,7 +25,7 @@ export default class Map {
    * @param {{run:function}} source source to map
    * @returns {Map|FilterMap} mapped source, possibly fused
    */
-  static create (f, source) {
+  static create(f, source) {
     if (source instanceof Map) {
       return new Map(compose(f, source.f), source.source)
     }
@@ -38,14 +39,13 @@ export default class Map {
 }
 
 class MapSink extends Pipe {
-  constructor (f, sink) {
+  constructor(f, sink) {
     super(sink)
     this.f = f
   }
 
-  event (t, x) {
+  event(t, x) {
     const f = this.f
     this.sink.event(t, f(x))
   }
 }
-

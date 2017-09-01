@@ -5,14 +5,14 @@
 import Sink from './Pipe'
 
 export default class IndexSink extends Sink {
-  constructor (i, sink) {
+  constructor(i, sink) {
     super(sink)
     this.index = i
     this.active = true
     this.value = undefined
   }
 
-  event (t, x) {
+  event(t, x) {
     if (!this.active) {
       return
     }
@@ -20,7 +20,7 @@ export default class IndexSink extends Sink {
     this.sink.event(t, this)
   }
 
-  end (t) {
+  end(t) {
     if (!this.active) {
       return
     }

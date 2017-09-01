@@ -14,75 +14,82 @@ import { schedulerRelativeTo, currentTime } from '@most/scheduler'
 export const switchLatest = stream => new Switch(stream)
 
 class Switch {
-  constructor (source) {
+  constructor(source) {
     this.source = source
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     const switchSink = new SwitchSink(sink, scheduler)
     return disposeBoth(switchSink, this.source.run(switchSink, scheduler))
   }
 }
 
 class SwitchSink {
-  constructor (sink, scheduler) {
+  constructor(sink, scheduler) {
     this.sink = sink
     this.scheduler = scheduler
     this.current = null
     this.ended = false
   }
 
-  event (t, stream) {
+  event(t, stream) {
     this._disposeCurrent(t)
-    this.current = new Segment(stream, t, Infinity, this, this.sink, this.scheduler)
+    this.current = new Segment(
+      stream,
+      t,
+      Infinity,
+      this,
+      this.sink,
+      this.scheduler
+    )
   }
 
-  end (t) {
+  end(t) {
     this.ended = true
     this._checkEnd(t)
   }
 
-  error (t, e) {
+  error(t, e) {
     this.ended = true
     this.sink.error(t, e)
   }
 
-  dispose () {
+  dispose() {
     return this._disposeCurrent(currentTime(this.scheduler))
   }
 
-  _disposeCurrent (t) {
+  _disposeCurrent(t) {
     if (this.current !== null) {
       return this.current._dispose(t)
     }
   }
 
-  _disposeInner (t, inner) {
+  _disposeInner(t, inner) {
     inner._dispose(t)
     if (inner === this.current) {
       this.current = null
     }
   }
 
-  _checkEnd (t) {
+  _checkEnd(t) {
     if (this.ended && this.current === null) {
       this.sink.end(t)
     }
   }
 
-  _endInner (t, inner) {
+  _endInner(t, inner) {
     this._disposeInner(t, inner)
     this._checkEnd(t)
   }
 
-  _errorInner (t, e, inner) {
+  _errorInner(t, e, inner) {
     this._disposeInner(t, inner)
     this.sink.error(t, e)
   }
 }
 
 class Segment {
-  constructor (source, min, max, outer, sink, scheduler) {
+  constructor(source, min, max, outer, sink, scheduler) {
     this.min = min
     this.max = max
     this.outer = outer
@@ -90,22 +97,22 @@ class Segment {
     this.disposable = source.run(this, schedulerRelativeTo(min, scheduler))
   }
 
-  event (t, x) {
+  event(t, x) {
     const time = Math.max(0, t + this.min)
     if (time < this.max) {
       this.sink.event(time, x)
     }
   }
 
-  end (t) {
+  end(t) {
     this.outer._endInner(t + this.min, this)
   }
 
-  error (t, e) {
+  error(t, e) {
     this.outer._errorInner(t + this.min, e, this)
   }
 
-  _dispose (t) {
+  _dispose(t) {
     tryDispose(t + this.min, this.disposable, this.sink)
   }
 }

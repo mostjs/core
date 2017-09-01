@@ -11,16 +11,14 @@ import Filter from '../fusion/Filter'
  * @param {Stream} stream stream to filter
  * @returns {Stream} stream containing only items for which predicate returns truthy
  */
-export const filter = (p, stream) =>
-  Filter.create(p, stream)
+export const filter = (p, stream) => Filter.create(p, stream)
 
 /**
  * Skip repeated events, using === to detect duplicates
  * @param {Stream} stream stream from which to omit repeated events
  * @returns {Stream} stream without repeated events
  */
-export const skipRepeats = stream =>
-  skipRepeatsWith(same, stream)
+export const skipRepeats = stream => skipRepeatsWith(same, stream)
 
 /**
  * Skip repeated events using the provided equals function to detect duplicates
@@ -32,25 +30,25 @@ export const skipRepeatsWith = (equals, stream) =>
   new SkipRepeats(equals, stream)
 
 class SkipRepeats {
-  constructor (equals, source) {
+  constructor(equals, source) {
     this.equals = equals
     this.source = source
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return this.source.run(new SkipRepeatsSink(this.equals, sink), scheduler)
   }
 }
 
 class SkipRepeatsSink extends Pipe {
-  constructor (equals, sink) {
+  constructor(equals, sink) {
     super(sink)
     this.equals = equals
     this.value = void 0
     this.init = true
   }
 
-  event (t, x) {
+  event(t, x) {
     if (this.init) {
       this.init = false
       this.value = x
@@ -62,6 +60,6 @@ class SkipRepeatsSink extends Pipe {
   }
 }
 
-function same (a, b) {
+function same(a, b) {
   return a === b
 }

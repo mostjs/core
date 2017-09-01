@@ -3,26 +3,35 @@
 /** @author John Hann */
 
 import { newScheduler, newTimeline, currentTime, delay } from '@most/scheduler'
-import { propagateEventTask, propagateEndTask } from '../../src/scheduler/PropagateTask'
+import {
+  propagateEventTask,
+  propagateEndTask
+} from '../../src/scheduler/PropagateTask'
 import VirtualTimer from './VirtualTimer'
 import { runEffects } from '../../src/runEffects'
 import { tap } from '../../src/combinator/transform'
 import { disposeWith, disposeNone } from '@most/disposable'
 
-export function newEnv () {
+export function newEnv() {
   const timer = new VirtualTimer()
-  return { tick: n => timer.tick(n), scheduler: newScheduler(timer, newTimeline()) }
+  return {
+    tick: n => timer.tick(n),
+    scheduler: newScheduler(timer, newTimeline())
+  }
 }
 
-export function ticks (dt) {
+export function ticks(dt) {
   const { tick, scheduler } = newEnv()
   tick(dt)
   return scheduler
 }
 
-export function collectEvents (stream, scheduler) {
+export function collectEvents(stream, scheduler) {
   const into = []
-  const s = tap(x => into.push({ time: currentTime(scheduler), value: x }), stream)
+  const s = tap(
+    x => into.push({ time: currentTime(scheduler), value: x }),
+    stream
+  )
   return runEffects(s, scheduler).then(() => into)
 }
 
@@ -40,11 +49,11 @@ export const atTime = (time, value) => atTimes([{ time, value }])
 export const atTimes = array => new AtTimes(array)
 
 class AtTimes {
-  constructor (array) {
+  constructor(array) {
     this.events = array
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return this.events.length === 0
       ? disposeNone()
       : runEvents(this.events, sink, scheduler)
@@ -58,7 +67,11 @@ const runEvents = (events, sink, scheduler) => {
 }
 
 const appendEvent = (sink, scheduler) => (s, event) => {
-  const task = delay(event.time, propagateEventTask(event.value, sink), scheduler)
+  const task = delay(
+    event.time,
+    propagateEventTask(event.value, sink),
+    scheduler
+  )
   return { tasks: s.tasks.concat(task), time: Math.max(s.time, event.time) }
 }
 

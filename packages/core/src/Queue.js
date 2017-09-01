@@ -4,13 +4,13 @@
 
 // Based on https://github.com/petkaantonov/deque
 
-export default function Queue (capPow2) {
+export default function Queue(capPow2) {
   this._capacity = capPow2 || 32
   this._length = 0
   this._head = 0
 }
 
-Queue.prototype.push = function (x) {
+Queue.prototype.push = function(x) {
   var len = this._length
   this._checkCapacity(len + 1)
 
@@ -19,7 +19,7 @@ Queue.prototype.push = function (x) {
   this._length = len + 1
 }
 
-Queue.prototype.shift = function () {
+Queue.prototype.shift = function() {
   var head = this._head
   var x = this[head]
 
@@ -29,21 +29,21 @@ Queue.prototype.shift = function () {
   return x
 }
 
-Queue.prototype.isEmpty = function () {
+Queue.prototype.isEmpty = function() {
   return this._length === 0
 }
 
-Queue.prototype.length = function () {
+Queue.prototype.length = function() {
   return this._length
 }
 
-Queue.prototype._checkCapacity = function (size) {
+Queue.prototype._checkCapacity = function(size) {
   if (this._capacity < size) {
     this._ensureCapacity(this._capacity << 1)
   }
 }
 
-Queue.prototype._ensureCapacity = function (capacity) {
+Queue.prototype._ensureCapacity = function(capacity) {
   var oldCapacity = this._capacity
   this._capacity = capacity
 
@@ -54,7 +54,7 @@ Queue.prototype._ensureCapacity = function (capacity) {
   }
 }
 
-function copy (src, srcIndex, dst, dstIndex, len) {
+function copy(src, srcIndex, dst, dstIndex, len) {
   for (var j = 0; j < len; ++j) {
     dst[j + dstIndex] = src[j + srcIndex]
     src[j + srcIndex] = void 0

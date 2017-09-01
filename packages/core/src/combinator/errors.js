@@ -16,55 +16,53 @@ import { runWithLocalTime } from '../scheduler/runWithLocalTime'
  * @param {Stream} stream
  * @returns {Stream} new stream which will recover from an error by calling f
  */
-export const recoverWith = (f, stream) =>
-  new RecoverWith(f, stream)
+export const recoverWith = (f, stream) => new RecoverWith(f, stream)
 
 /**
  * Create a stream containing only an error
  * @param {*} e error value, preferably an Error or Error subtype
  * @returns {Stream} new stream containing only an error
  */
-export const throwError = e =>
-  new ErrorStream(e)
+export const throwError = e => new ErrorStream(e)
 
 class ErrorStream {
-  constructor (e) {
+  constructor(e) {
     this.value = e
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return asap(propagateErrorTask(this.value, sink), scheduler)
   }
 }
 
 class RecoverWith {
-  constructor (f, source) {
+  constructor(f, source) {
     this.f = f
     this.source = source
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     return new RecoverWithSink(this.f, this.source, sink, scheduler)
   }
 }
 
 class RecoverWithSink {
-  constructor (f, source, sink, scheduler) {
+  constructor(f, source, sink, scheduler) {
     this.f = f
     this.sink = new SafeSink(sink)
     this.scheduler = scheduler
     this.disposable = source.run(this, scheduler)
   }
 
-  event (t, x) {
+  event(t, x) {
     tryEvent(t, x, this.sink)
   }
 
-  end (t) {
+  end(t) {
     tryEnd(t, this.sink)
   }
 
-  error (t, e) {
+  error(t, e) {
     const nextSink = this.sink.disable()
 
     tryDispose(t, this.disposable, this.sink)
@@ -72,7 +70,7 @@ class RecoverWithSink {
     this._startNext(t, e, nextSink)
   }
 
-  _startNext (t, x, sink) {
+  _startNext(t, x, sink) {
     try {
       this.disposable = this._continue(this.f, t, x, sink)
     } catch (e) {
@@ -80,11 +78,11 @@ class RecoverWithSink {
     }
   }
 
-  _continue (f, t, x, sink) {
+  _continue(f, t, x, sink) {
     return runWithLocalTime(t, f(x), sink, this.scheduler)
   }
 
-  dispose () {
+  dispose() {
     return this.disposable.dispose()
   }
 }

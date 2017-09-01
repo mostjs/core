@@ -15,31 +15,33 @@ import { propagateEventTask } from '../scheduler/PropagateTask'
  * @param {Stream} stream stream to scan
  * @returns {Stream} new stream containing successive reduce results
  */
-export const scan = (f, initial, stream) =>
-  new Scan(f, initial, stream)
+export const scan = (f, initial, stream) => new Scan(f, initial, stream)
 
 class Scan {
-  constructor (f, z, source) {
+  constructor(f, z, source) {
     this.source = source
     this.f = f
     this.value = z
   }
 
-  run (sink, scheduler) {
+  run(sink, scheduler) {
     const d1 = asap(propagateEventTask(this.value, sink), scheduler)
-    const d2 = this.source.run(new ScanSink(this.f, this.value, sink), scheduler)
+    const d2 = this.source.run(
+      new ScanSink(this.f, this.value, sink),
+      scheduler
+    )
     return disposeBoth(d1, d2)
   }
 }
 
 class ScanSink extends Pipe {
-  constructor (f, z, sink) {
+  constructor(f, z, sink) {
     super(sink)
     this.f = f
     this.value = z
   }
 
-  event (t, x) {
+  event(t, x) {
     const f = this.f
     this.value = f(this.value, x)
     this.sink.event(t, this.value)

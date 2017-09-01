@@ -1,4 +1,8 @@
-import { MulticastDisposable, MulticastSource, multicast } from '../../src/combinator/multicast'
+import {
+  MulticastDisposable,
+  MulticastSource,
+  multicast
+} from '../../src/combinator/multicast'
 import { assert, eq } from '@briancavalier/assert'
 import { collectEvents, makeEvents, ticks } from '../helper/testEnv'
 import { describe, it } from 'mocha'
@@ -51,15 +55,15 @@ describe('multicast', () => {
   })
 })
 
-const sentinel = { value: sentinel }
+const sentinel = { value: 'sentinel' }
 
 describe('MulticastSource', () => {
   it('should call producer on first observer', () => {
     const eventSpy = spy()
-    const s = new MulticastSource({run: () => {}})
+    const s = new MulticastSource({ run: () => {} })
     const scheduler = ticks(1)
 
-    s.run({event: eventSpy}, scheduler)
+    s.run({ event: eventSpy }, scheduler)
     s.event(sentinel)
 
     eq(true, eventSpy.calledOnce)
@@ -67,7 +71,7 @@ describe('MulticastSource', () => {
 
   it('should call producer ONLY on the first observer', () => {
     const sourceSpy = spy()
-    const s = new MulticastSource({run: sourceSpy})
+    const s = new MulticastSource({ run: sourceSpy })
     const scheduler = ticks(1)
 
     return Promise.all([
@@ -87,15 +91,17 @@ describe('MulticastSource', () => {
     return Promise.all([
       collectEvents(s, scheduler),
       collectEvents(s, scheduler)
-    ]).then(eq([
-      [{ time: 0, value: 0 }, { time: 1, value: 1 }],
-      [{ time: 0, value: 0 }, { time: 1, value: 1 }]
-    ]))
+    ]).then(
+      eq([
+        [{ time: 0, value: 0 }, { time: 1, value: 1 }],
+        [{ time: 0, value: 0 }, { time: 1, value: 1 }]
+      ])
+    )
   })
 
   it('should propagate errors', () => {
     const fakeSource = {
-      run () {}
+      run() {}
     }
     const scheduler = ticks(1)
 
@@ -129,8 +135,12 @@ describe('MulticastSource', () => {
     const scheduler = ticks(2)
 
     const p1 = runEffects(s, scheduler)
-    const p2 = runEffects(map(() => { throw error }, s), scheduler)
-        .catch(e => e)
+    const p2 = runEffects(
+      map(() => {
+        throw error
+      }, s),
+      scheduler
+    ).catch(e => e)
 
     return Promise.all([p1, p2]).then(([a, b]) => {
       eq(undefined, a)
@@ -140,10 +150,15 @@ describe('MulticastSource', () => {
 
   it('should call dispose if all observers disconnect', () => {
     const disposer = spy()
-    const s = new MulticastSource(FakeDisposeStream.from(disposer, now(sentinel)))
+    const s = new MulticastSource(
+      FakeDisposeStream.from(disposer, now(sentinel))
+    )
     const scheduler = ticks(1)
 
-    return Promise.all([runEffects(s, scheduler), runEffects(s, scheduler)]).then(() => {
+    return Promise.all([
+      runEffects(s, scheduler),
+      runEffects(s, scheduler)
+    ]).then(() => {
       eq(true, disposer.calledOnce)
     })
   })
@@ -153,12 +168,12 @@ describe('MulticastDisposable', () => {
   it('should dispose when sinks reaches zero', () => {
     const expectedSink = {}
     const source = {
-      remove (sink) {
+      remove(sink) {
         eq(expectedSink, sink)
         return 0
       },
 
-      dispose () {}
+      dispose() {}
     }
 
     const disposed = spy(source, 'dispose')
@@ -175,12 +190,12 @@ describe('MulticastDisposable', () => {
   it('should not dispose when sinks > 0', () => {
     const expectedSink = {}
     const source = {
-      remove (sink) {
+      remove(sink) {
         eq(expectedSink, sink)
         return 1
       },
 
-      dispose () {}
+      dispose() {}
     }
 
     const disposed = spy(source, 'dispose')

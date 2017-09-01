@@ -16,49 +16,49 @@ import FakeDisposeStream from '../helper/FakeDisposeStream'
 
 const sentinel = { value: 'sentinel' }
 
-describe('chain', function () {
-  it('should satisfy associativity', function () {
+describe('chain', function() {
+  it('should satisfy associativity', function() {
     // m.chain(f).chain(g) ~= m.chain(function(x) { return f(x).chain(g); })
     const f = x => now(x + 'f')
     const g = x => now(x + 'g')
 
     const m = now('m')
 
-    return assertSame(
-      chain(x => chain(g, f(x)), m),
-      chain(g, chain(f, m))
-    )
+    return assertSame(chain(x => chain(g, f(x)), m), chain(g, chain(f, m)))
   })
 
-  it('should preserve time order', function () {
+  it('should preserve time order', function() {
     const s = chain(x => delay(x, now(x)), makeEventsFromArray(0, [2, 1]))
-    const expected = [ { time: 1, value: 1 }, { time: 2, value: 2 } ]
+    const expected = [{ time: 1, value: 1 }, { time: 2, value: 2 }]
 
-    return collectEventsFor(3, s)
-      .then(eq(expected))
+    return collectEventsFor(3, s).then(eq(expected))
   })
 })
 
-describe('join', function () {
-  it('should merge items from all inner streams', function () {
+describe('join', function() {
+  it('should merge items from all inner streams', function() {
     const a = [1, 2, 3]
     const b = [4, 5, 6]
-    const streamsToMerge = makeEventsFromArray(1, [makeEventsFromArray(2, b), makeEventsFromArray(2, a)])
+    const streamsToMerge = makeEventsFromArray(1, [
+      makeEventsFromArray(2, b),
+      makeEventsFromArray(2, a)
+    ])
 
     const s = join(streamsToMerge)
 
-    return collectEventsFor(5, s)
-      .then(eq([
+    return collectEventsFor(5, s).then(
+      eq([
         { time: 0, value: 4 },
         { time: 1, value: 1 },
         { time: 2, value: 5 },
         { time: 3, value: 2 },
         { time: 4, value: 6 },
         { time: 5, value: 3 }
-      ]))
+      ])
+    )
   })
 
-  it('should dispose outer stream', function () {
+  it('should dispose outer stream', function() {
     const dispose = spy()
     const inner = now(sentinel)
     const outer = now(inner)
@@ -68,7 +68,7 @@ describe('join', function () {
     return drain(s).then(() => assert(dispose.calledOnce))
   })
 
-  it('should dispose inner stream', function () {
+  it('should dispose inner stream', function() {
     const dispose = spy()
     const inner = new FakeDisposeStream(dispose, now(sentinel))
 
@@ -77,12 +77,12 @@ describe('join', function () {
     return drain(s).then(() => assert(dispose.calledOnce))
   })
 
-  it('should dispose inner stream immediately', function () {
+  it('should dispose inner stream immediately', function() {
     const s = now(startWith(1, never()))
     return drain(take(1, join(s))).then(() => assert(true))
   })
 
-  it('should dispose all inner streams', function () {
+  it('should dispose all inner streams', function() {
     const values = [1, 2, 3]
     const spies = values.map(() => spy())
 
@@ -90,8 +90,8 @@ describe('join', function () {
 
     const s = join(makeEventsFromArray(1, inners))
 
-    return collectEventsFor(3, s)
-      .then(() =>
-        spies.forEach(spy => assert(spy.calledOnce)))
+    return collectEventsFor(3, s).then(() =>
+      spies.forEach(spy => assert(spy.calledOnce))
+    )
   })
 })

@@ -10,7 +10,10 @@ export { periodic } from './source/periodic'
 
 export { newStream } from './source/newStream'
 
-import { zipArrayValues as _zipArrayValues, withArrayValues as _withArrayValues } from './combinator/withArrayValues'
+import {
+  zipArrayValues as _zipArrayValues,
+  withArrayValues as _withArrayValues
+} from './combinator/withArrayValues'
 export const zipArrayValues = curry3(_zipArrayValues)
 export const withArrayValues = curry2(_withArrayValues)
 
@@ -43,7 +46,11 @@ export const startWith = curry2(_startWith)
 // -----------------------------------------------------------------------
 // Transforming
 
-import { map as _map, constant as _constant, tap as _tap } from './combinator/transform'
+import {
+  map as _map,
+  constant as _constant,
+  tap as _tap
+} from './combinator/transform'
 import { ap as _ap } from './combinator/applicative'
 
 export const map = curry2(_map)
@@ -67,7 +74,10 @@ export const concatMap = curry2(_concatMap)
 // -----------------------------------------------------------------------
 // Concurrent merging
 
-import { mergeConcurrently as _mergeConcurrently, mergeMapConcurrently as _mergeMapConcurrently } from './combinator/mergeConcurrently'
+import {
+  mergeConcurrently as _mergeConcurrently,
+  mergeMapConcurrently as _mergeMapConcurrently
+} from './combinator/mergeConcurrently'
 
 export const mergeConcurrently = curry2(_mergeConcurrently)
 export const mergeMapConcurrently = curry3(_mergeMapConcurrently)
@@ -83,7 +93,10 @@ export { mergeArray }
 // -----------------------------------------------------------------------
 // Combining
 
-import { combine as _combine, combineArray as _combineArray } from './combinator/combine'
+import {
+  combine as _combine,
+  combineArray as _combineArray
+} from './combinator/combine'
 
 export const combine = curry3(_combine)
 export const combineArray = curry2(_combineArray)
@@ -111,7 +124,11 @@ export { switchLatest } from './combinator/switch'
 // -----------------------------------------------------------------------
 // Filtering
 
-import { filter as _filter, skipRepeats, skipRepeatsWith as _skipRepeatsWith } from './combinator/filter'
+import {
+  filter as _filter,
+  skipRepeats,
+  skipRepeatsWith as _skipRepeatsWith
+} from './combinator/filter'
 
 export const filter = curry2(_filter)
 export { skipRepeats }
@@ -120,7 +137,14 @@ export const skipRepeatsWith = curry2(_skipRepeatsWith)
 // -----------------------------------------------------------------------
 // Slicing
 
-import { take as _take, skip as _skip, slice as _slice, takeWhile as _takeWhile, skipWhile as _skipWhile, skipAfter as _skipAfter } from './combinator/slice'
+import {
+  take as _take,
+  skip as _skip,
+  slice as _slice,
+  takeWhile as _takeWhile,
+  skipWhile as _skipWhile,
+  skipAfter as _skipAfter
+} from './combinator/slice'
 
 export const take = curry2(_take)
 export const skip = curry2(_skip)
@@ -132,7 +156,11 @@ export const skipAfter = curry2(_skipAfter)
 // -----------------------------------------------------------------------
 // Time slicing
 
-import { until as _until, since as _since, during as _during } from './combinator/timeslice'
+import {
+  until as _until,
+  since as _since,
+  during as _during
+} from './combinator/timeslice'
 
 export const until = curry2(_until)
 export const since = curry2(_since)
@@ -148,7 +176,10 @@ export const delay = curry2(_delay)
 // -----------------------------------------------------------------------
 // Rate limiting
 
-import { throttle as _throttle, debounce as _debounce } from './combinator/limit'
+import {
+  throttle as _throttle,
+  debounce as _debounce
+} from './combinator/limit'
 
 export const throttle = curry2(_throttle)
 export const debounce = curry2(_debounce)

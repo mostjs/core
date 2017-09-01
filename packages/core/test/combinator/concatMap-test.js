@@ -11,7 +11,13 @@ import { drain } from '../helper/observe'
 import { now } from '../../src/source/now'
 import { never } from '../../src/source/never'
 
-import { atTimes, collectEvents, collectEventsFor, makeEventsFromArray, ticks } from '../helper/testEnv'
+import {
+  atTimes,
+  collectEvents,
+  collectEventsFor,
+  makeEventsFromArray,
+  ticks
+} from '../helper/testEnv'
 import FakeDisposeSource from '../helper/FakeDisposeStream'
 import { currentTime } from '@most/scheduler'
 
@@ -19,8 +25,8 @@ const sentinel = { value: 'sentinel' }
 
 const identity = x => x
 
-describe('concatMap', function () {
-  it('should satisfy associativity', function () {
+describe('concatMap', function() {
+  it('should satisfy associativity', function() {
     // m.concatMap(f).concatMap(g) ~= m.concatMap(function(x) { return f(x).concatMap(g); })
     const f = x => now(x + 'f')
     const g = x => now(x + 'g')
@@ -33,7 +39,7 @@ describe('concatMap', function () {
     )
   })
 
-  it('should concatenate', function () {
+  it('should concatenate', function() {
     const s1 = [{ time: 2, value: 2 }, { time: 3, value: 3 }]
     const s2 = [{ time: 1, value: 1 }]
     const s3 = [{ time: 0, value: 0 }]
@@ -46,36 +52,37 @@ describe('concatMap', function () {
       { time: 4, value: 0 }
     ]
 
-    return collectEventsFor(5, s)
-      .then(eq(expected))
+    return collectEventsFor(5, s).then(eq(expected))
   })
 
-  it('should map lazily', function () {
+  it('should map lazily', function() {
     const s1 = atTimes([{ time: 0, value: 0 }, { time: 1, value: 1 }])
 
     const scheduler = ticks(4)
-    const s = concatMap.concatMap(x => atTimes([{ time: 2, value: currentTime(scheduler) }]), s1)
+    const s = concatMap.concatMap(
+      x => atTimes([{ time: 2, value: currentTime(scheduler) }]),
+      s1
+    )
 
-    const expected = [
-      { time: 2, value: 0 },
-      { time: 4, value: 2 }
-    ]
+    const expected = [{ time: 2, value: 0 }, { time: 4, value: 2 }]
 
-    return collectEvents(s, scheduler)
-      .then(eq(expected))
+    return collectEvents(s, scheduler).then(eq(expected))
   })
 
-  it('should dispose outer stream', function () {
+  it('should dispose outer stream', function() {
     const dispose = spy()
     const inner = now(sentinel)
     const outer = now(inner)
 
-    const s = concatMap.concatMap(identity, new FakeDisposeSource(dispose, outer))
+    const s = concatMap.concatMap(
+      identity,
+      new FakeDisposeSource(dispose, outer)
+    )
 
     return drain(s).then(() => assert(dispose.called))
   })
 
-  it('should dispose inner stream', function () {
+  it('should dispose inner stream', function() {
     const dispose = spy()
     const inner = new FakeDisposeSource(dispose, now(sentinel))
 
@@ -84,13 +91,13 @@ describe('concatMap', function () {
     return drain(s).then(() => assert(dispose.called))
   })
 
-  it('should dispose inner stream immediately', function () {
+  it('should dispose inner stream immediately', function() {
     const s = now(startWith(1, never()))
 
     return drain(take(1, concatMap.concatMap(identity, s)))
   })
 
-  it('should dispose all inner streams', function () {
+  it('should dispose all inner streams', function() {
     const values = [1, 2, 3]
     const spies = values.map(() => spy())
 
@@ -99,6 +106,7 @@ describe('concatMap', function () {
     const s = concatMap.concatMap(identity, makeEventsFromArray(1, inners))
 
     return collectEventsFor(3, s).then(() =>
-      spies.forEach(spy => assert(spy.calledOnce)))
+      spies.forEach(spy => assert(spy.calledOnce))
+    )
   })
 })

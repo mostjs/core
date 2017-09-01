@@ -13,8 +13,7 @@ describe('throwError', () => {
   it('should create a Stream containing only an error', () => {
     return observe(() => {
       throw other
-    }, throwError(sentinel))
-      .catch(eq(sentinel))
+    }, throwError(sentinel)).catch(eq(sentinel))
   })
 })
 
@@ -29,12 +28,11 @@ describe('recoverWith', () => {
       throw new Error()
     }, now(other))
 
-    return observe(eq(sentinel),
-      recoverWith(() => now(sentinel), s))
+    return observe(eq(sentinel), recoverWith(() => now(sentinel), s))
   })
 
   it('should not recover from errors after recoverWith', () => {
-    const s = recoverWith(function (e) {
+    const s = recoverWith(function(e) {
       throw other
     }, now(123))
 
@@ -53,7 +51,9 @@ describe('recoverWith', () => {
 
   it('when f throws, should propagate error', () => {
     const error = new Error()
-    const s = recoverWith(x => { throw error }, throwError(new Error()))
+    const s = recoverWith(x => {
+      throw error
+    }, throwError(new Error()))
     return drain(s).then(fail, is(error))
   })
 })

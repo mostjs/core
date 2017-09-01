@@ -5,7 +5,7 @@ import { disposeNone } from '@most/disposable'
 export const never = () => NEVER
 
 class Never {
-  run () {
+  run() {
     return disposeNone()
   }
 }

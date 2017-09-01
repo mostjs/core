@@ -15,6 +15,6 @@ import { apply } from '@most/prelude'
  * @param {Stream} xs stream of values to which to apply all the latest f
  * @returns {Stream} stream containing all the applications of fs to xs
  */
-export function ap (fs, xs) {
+export function ap(fs, xs) {
   return combine(apply, fs, xs)
 }

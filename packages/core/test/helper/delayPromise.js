@@ -1,8 +1,8 @@
 export default delayPromise
 
-function delayPromise (ms, x) {
-  return new Promise(function (resolve) {
-    setTimeout(function () {
+function delayPromise(ms, x) {
+  return new Promise(function(resolve) {
+    setTimeout(function() {
       resolve(x)
     }, ms)
   })

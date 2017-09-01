@@ -1,6 +1,6 @@
 export default Iteration
 
-function Iteration (done, value) {
+function Iteration(done, value) {
   this.done = done
   this.value = value
 }
