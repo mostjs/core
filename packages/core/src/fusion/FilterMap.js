@@ -29,4 +29,3 @@ class FilterMapSink extends Pipe {
     p(x) && this.sink.event(t, f(x))
   }
 }
-

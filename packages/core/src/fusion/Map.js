@@ -48,4 +48,3 @@ class MapSink extends Pipe {
     this.sink.event(t, f(x))
   }
 }
-
