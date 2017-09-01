@@ -1,4 +1,5 @@
 /** @license MIT License (c) copyright 2016 original author or authors */
+/* eslint-disable import/first */
 import { curry2, curry3 } from '@most/prelude'
 
 export { empty } from './source/empty'

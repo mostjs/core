@@ -51,7 +51,7 @@ describe('multicast', () => {
   })
 })
 
-const sentinel = { value: sentinel }
+const sentinel = { value: 'sentinel' }
 
 describe('MulticastSource', () => {
   it('should call producer on first observer', () => {
