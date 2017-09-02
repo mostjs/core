@@ -189,6 +189,28 @@ runEffects
 
 Activate an event :ref:`Stream` and consume all its events.
 
+.. _runStream:
+
+runStream
+`````````
+
+.. code-block:: haskell
+
+  runStream :: Sink a -> Scheduler -> Stream a -> void
+
+Run a :ref:`Stream`, sending all events to the provided :ref:`Sink`.  The Stream's :ref:`Time` values come from the provided :ref:`Scheduler`.
+
+.. _runStreamWithLocalTime:
+
+runStreamWithLocalTime
+``````````````````````
+
+.. code-block:: haskell
+
+  runStreamWithLocalTime :: Sink a -> Scheduler -> Time -> Stream a -> void
+
+Run a :ref:`Stream`, sending all events to the provided :ref:`Sink`.  The Stream will have localized :ref:`Time` values, whose origin (i.e. time 0) is at the specified Time on the provided :ref:`Scheduler`.
+
 Construction
 ^^^^^^^^^^^^
 

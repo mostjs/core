@@ -1,10 +1,11 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 
+import { curry2 } from '@most/prelude'
 import SettableDisposable from './disposable/SettableDisposable'
 
-export const runEffects = (stream, scheduler) =>
+export const runEffects = curry2((stream, scheduler) =>
   new Promise((resolve, reject) =>
-    runStream(stream, scheduler, resolve, reject))
+    runStream(stream, scheduler, resolve, reject)))
 
 function runStream (stream, scheduler, resolve, reject) {
   const disposable = new SettableDisposable()
