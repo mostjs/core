@@ -2,7 +2,7 @@
 
 import { defer } from './task'
 
-/*global setTimeout, clearTimeout*/
+/* global setTimeout, clearTimeout */
 
 export default class ClockTimer {
   constructor (clock) {
