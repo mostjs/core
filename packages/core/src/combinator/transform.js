@@ -56,4 +56,3 @@ class TapSink extends Pipe {
     this.sink.event(t, x)
   }
 }
-

@@ -1,6 +1,6 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 
-/*global performance, process*/
+/* global performance, process */
 
 export class RelativeClock {
   constructor (clock, origin) {
