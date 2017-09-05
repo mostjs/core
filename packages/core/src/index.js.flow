@@ -197,15 +197,15 @@ declare export class MulticastSource <A> {
   dispose(): void;
 }
 
-export type PropagateTask<A> = Task & {
+export type PropagateTask<A, B> = Task & {
   value: A,
-  sink: Sink<A>,
+  sink: Sink<B>,
   active: boolean
 }
 
-export type PropagateTaskRun<A> = (time: Time, value: A, sink: Sink<A>) => any
+export type PropagateTaskRun<A, B> = (time: Time, value: A, sink: Sink<B>) => any
 
-declare export function propagateTask<A> (run: PropagateTaskRun<A>, value: A, sink: Sink<A>): PropagateTask<A>
-declare export function propagateEventTask<A> (value: A, sink: Sink<A>): PropagateTask<A>
-declare export function propagateErrorTask<E: Error> (e: E, sink: Sink<any>): PropagateTask<any>
-declare export function propagateEndTask (sink: Sink<any>): PropagateTask<void>
+declare export function propagateTask<A, B> (run: PropagateTaskRun<A, B>, value: A, sink: Sink<B>): PropagateTask<A, B>
+declare export function propagateEventTask<A> (value: A, sink: Sink<A>): PropagateTask<A, A>
+declare export function propagateErrorTask<E: Error> (e: E, sink: Sink<any>): PropagateTask<any, any>
+declare export function propagateEndTask (sink: Sink<any>): PropagateTask<void, void>
