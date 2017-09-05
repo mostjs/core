@@ -1,0 +1,3 @@
+## Almost there...
+
+Documentation for Most.js can be found at [mostcore.readthedocs.io](http://mostcore.readthedocs.io).
