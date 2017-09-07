@@ -8,12 +8,16 @@ _  /  / / / /_/ /____/ /_  /
 
 # Monadic Event Stream
 
-[![Build Status](https://travis-ci.org/mostjs/core.svg?branch=master)](https://travis-ci.org/cujojs/most)
+[![Build Status](https://travis-ci.org/mostjs/core.svg?branch=master)](https://travis-ci.org/mostjs/core)
 [![Join the chat at https://gitter.im/cujojs/most](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cujojs/most?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-The high-performance reactive event stream core that powers [Most](https://github.com/cujojs/most).
+High-performance reactive event stream programming that powers [Most](https://github.com/cujojs/most).
 
-Specifically, `@most/core` features Most's battle-tested, high-performance architecture with a lean, functions-only, *curried* API in a *tree-shakeable* package.
+Specifically, `@most/core` features Most's battle-tested, high-performance architecture in a leaner, functions-only, *curried* API in a *tree-shakeable* package.
+
+* [API docs](https://mostcore.readthedocs.io)
+* [Get it](#get-it)
+* [Simple example](#simple-example)
 
 ## Get it
 
