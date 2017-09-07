@@ -209,7 +209,7 @@ runStreamWithLocalTime
 
   runStreamWithLocalTime :: Sink a -> Scheduler -> Time -> Stream a -> void
 
-Run a :ref:`Stream`, sending all events to the provided :ref:`Sink`.  The Stream will have localized :ref:`Time` values, whose origin (i.e. time 0) is at the specified Time on the provided :ref:`Scheduler`.
+Run a :ref:`Stream`, sending all events to the provided :ref:`Sink`.  The Stream will have localized :ref:`Time` values, whose origin (i.e., time 0) is at the specified Time on the provided :ref:`Scheduler`.
 
 Construction
 ^^^^^^^^^^^^
