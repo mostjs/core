@@ -17,61 +17,10 @@ Specifically, `@most/core` features Most's battle-tested, high-performance archi
 
 * [API docs](https://mostcore.readthedocs.io)
 * [Get it](#get-it)
-* [Simple example](#simple-example)
+* Examples (*coming soon*)
 
 ## Get it
 
 ```
 npm install --save @most/core
-```
-
-## Simple example
-
-Here's a simple program that displays the result of adding two inputs.  The result is reactive and updates whenever *either* input changes.
-
-First, the HTML fragment for the inputs and a place to display the live result:
-
-```html
-<form>
-	<input class="x"> + <input class="y"> = <span class="result"></span>
-</form>
-```
-
-Using `@most/core` to make it reactive:
-
-```es6
-import { map, tap, combine, runEffects } from '@most/core'
-import { newDefaultScheduler } from '@most/scheduler'
-import { input } from '@most/dom-event'
-
-const xInput = document.querySelector('input.x')
-const yInput = document.querySelector('input.y')
-const resultNode = document.querySelector('.result')
-
-const add = (x, y) => x + y
-
-const toNumber = e => Number(e.target.value)
-
-const renderResult = result => {
-  resultNode.textContent = result
-}
-
-// x represents the current value of xInput,
-// updated on 'input' events
-const x = map(toNumber, input(xInput))
-
-// y represents the current value of yInput,
-// updated on 'input' events
-const y = map(toNumber, input(yInput))
-
-// result is the live current value of adding x and y
-// also updated on 'input' events from either
-// xInput or yInput
-const result = combine(add, x, y)
-
-// Side effect to update the DOM
-const update = tap(renderResult, result)
-
-// Observe the result, causing the DOM to be updated
-runEffects(update, newDefaultScheduler())
 ```
