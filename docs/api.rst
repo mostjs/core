@@ -224,7 +224,7 @@ empty
 
   empty :: () -> Stream *
 
-Create a stream containing no events, which ends immediately.
+Create a stream containing no events, which ends immediately. ::
 
   empty(): |
 
@@ -237,7 +237,7 @@ never
 
   never :: () -> Stream *
 
-Create a stream containing no events, which never ends.
+Create a stream containing no events, which never ends. ::
 
   never(): ---->
 
@@ -250,7 +250,7 @@ now
 
   now :: a -> Stream a
 
-Create a stream containing a single event at time 0.
+Create a stream containing a single event at time 0. ::
 
   now(x): x|
 
@@ -263,7 +263,7 @@ at
 
   at :: Time -> a -> Stream a
 
-Create a stream containing a single event at a specific time.
+Create a stream containing a single event at a specific time. ::
 
   at(3, x): --x|
 
@@ -279,7 +279,7 @@ throwError
 Create a stream that fails at time 0 with the provided Error.
 
 This can be useful for functions that need to return a stream and also need 
-to propagate an error.
+to propagate an error. ::
 
   throwError(X): X
 
@@ -302,7 +302,7 @@ Prepend an event at time 0.
 
 Note that ``startWith`` *does not* delay other events.  If ``stream`` already 
 contains an event at time 0, then ``startWith`` simply adds another event at 
-time 0—the two will be simultaneous, but ordered.  For example::
+time 0—the two will be simultaneous, but ordered. For example::
 
   stream:                a-b-c-d->
   startWith(x, stream): xa-b-c-d->
@@ -318,7 +318,7 @@ continueWith
 
   continueWith :: (() -> Stream a) -> Stream a -> Stream a
 
-Replace the end of a stream with another stream.
+Replace the end of a stream with another stream. ::
 
   s:                  -a-b-c-d|
   f(): 		                    -1-2-3-4-5->
@@ -335,7 +335,7 @@ map
 
   map :: (a -> b) -> Stream a -> Stream b
 
-Apply a function to each event value.
+Apply a function to each event value. ::
 
   stream:        -a-b-c-d->
   stream.map(f): -f(a)-f(b)-f(c)-f(d)->
@@ -353,7 +353,7 @@ constant
 
   constant :: a -> Stream * -> Stream a
 
-Replace each event value with x.
+Replace each event value with x. ::
 
   stream:              -a-b-c-d->
   constant(x, stream): -x-x-x-x->
@@ -412,7 +412,7 @@ scan
 
   scan :: (b -> a -> b) -> b -> Stream a -> Stream b
 
-Incrementally accumulate results, starting with the provided initial value.
+Incrementally accumulate results, starting with the provided initial value. ::
 
   stream:                           -1-2-3->
   scan((x, y) => x + y, 0, stream): 01-3-6->
@@ -461,7 +461,7 @@ zipArrayValues
 
   zipArrayValues :: ((a, b) -> c) -> [a] -> Stream b -> Stream c
 
-Apply a function to the latest event and the array value at the respective index.
+Apply a function to the latest event and the array value at the respective index. ::
 
   stream:                             --10---10---10---10---10--->
   array:                              [ 1, 2, 3 ]
@@ -479,7 +479,7 @@ withArrayValues
 
   withArrayValues :: [a] -> Stream b -> Stream a
 
-Replace each event value with the array value at the respective index.
+Replace each event value with the array value at the respective index. ::
 
   array:                          [ 1, 2, 3 ]
   stream:                         --x--x--x--x--x-->
@@ -501,7 +501,7 @@ switchLatest
   switchLatest :: Stream (Stream a) -> Stream a
 
 Given a higher-order stream, return a new stream that adopts the behavior of
-(i.e., emits the events of) the most recent inner stream.
+(i.e., emits the events of) the most recent inner stream. ::
 
   s:                    -a-b-c-d-e-f->
   t:                    -1-2-3-4-5-6->
@@ -518,7 +518,7 @@ join
   join :: Stream (Stream a) -> Stream a
 
 Given a higher-order stream, return a new stream that merges all the inner 
-streams as they arrive.
+streams as they arrive. ::
 
   s:             ---a---b---c---d-->
   t:             -1--2--3--4--5--6->
@@ -535,7 +535,7 @@ chain
   chain :: (a -> Stream b) -> Stream a -> Stream b
 
 Transform each event in ``stream`` into a new stream, and then merge each into 
-the resulting stream. Note that ``f`` must return a stream.
+the resulting stream. Note that ``f`` must return a stream. ::
 
   stream:            -a----b----c|
   f(a):               1--2--3|
@@ -556,7 +556,7 @@ Transform each event in ``stream`` into a new stream, and then concatenate each 
 end of the resulting stream. Note that ``f`` must return a stream.
 
 The mapping function ``f`` is applied lazily. That is, ``f`` is called only once 
-it is time to concatenate a new stream.
+it is time to concatenate a new stream. ::
 
   stream:                -a----b----c|
   f(a):                   1--2--3|
@@ -580,7 +580,7 @@ mergeConcurrently
 Given a higher-order stream, return a new stream that merges inner streams as
 they arrive up to the specified concurrency. Once concurrency number of streams
 are being merged, newly arriving streams will be merged after an existing one
-ends.
+ends. ::
 
   s:                            --a--b--c--d--e-->
   t:                            --x------y|
@@ -608,7 +608,7 @@ mergeMapConcurently
 Lazily apply a function ``f`` to each event in a stream, merging them into the
 resulting stream at the specified concurrency. Once concurrency number of streams
 are being merged, newly arriving streams will be merged after an existing one
-ends.
+ends. ::
 
   stream:                             --ab--c----d----->
   f(a):                               -1-2-3|
@@ -638,7 +638,7 @@ merge
 
   merge :: Stream a -> Stream a -> Stream a
 
-Create a new stream containing events from two streams.
+Create a new stream containing events from two streams. ::
 
   s1:            -a--b----c--->
   s2:            --w---x-y--z->
@@ -659,7 +659,7 @@ mergeArray
   mergeArray :: [ (Stream a) ] -> Stream a
 
 Array form of :ref:`merge`. Create a new stream containing all events from all 
-streams in the array.
+streams in the array. ::
 
   s1:                       -a--b----c---->
   s2:                       --w---x-y--z-->
@@ -676,7 +676,7 @@ combine
   combine :: (a -> b -> c) -> Stream a -> Stream b -> Stream c
 
 Apply a function to the most recent event from each stream when a new event 
-arrives on any stream.
+arrives on any stream. ::
 
   s1:                   -0--1----2--->
   s2:                   --3---4-5--6->
@@ -695,7 +695,7 @@ combineArray
   combineArray :: ((a, b, ...) -> z) -> [ Stream a, Stream b, ... ] -> Stream z
 
 Array form of :ref:`combine`. Apply a function to the most recent event from all 
-streams when a new event arrives on any stream.
+streams when a new event arrives on any stream. ::
 
   s1:                               -0--1----2->
   s2:                               --3---4-5-->
@@ -711,7 +711,7 @@ zip
 
   zip :: (a -> b -> c) -> Stream a -> Stream b -> Stream c
 
-Apply a function to corresponding pairs of events from the inputs streams.
+Apply a function to corresponding pairs of events from the inputs streams. ::
 
   s1:               -1--2--3--4->
   s2:               -1---2---3---4->
@@ -734,7 +734,7 @@ zipArray
   zipArray :: ((a, b, ...) -> z) -> [ Stream a, Stream b, ... ] -> Stream z
 
 Array form of :ref:`zip`. Apply a function to corresponding events from all 
-the inputs streams.
+the inputs streams. ::
 
   s1:                           -1-2-3---->
   s2:                           -1--2--3-->
@@ -750,7 +750,7 @@ sample
 
 For each event in a sampler stream, apply a function to combine it with the most 
 recent event in another stream. The resulting stream will contain the same 
-number of events as the sampler stream.
+number of events as the sampler stream. ::
 
   s1:                       -1--2--3--4--5->
   sampler:                  -1-----2-----3->
@@ -774,7 +774,7 @@ filter
 
   filter :: (a -> bool) -> Stream a -> Stream a
 
-Retain only events for which a predicate is truthy.
+Retain only events for which a predicate is truthy. ::
 
   stream:               -1-2-3-4->
   filter(even, stream): ---2---4->
@@ -788,13 +788,13 @@ skipRepeats
 
   skipRepeats :: Stream a -> Stream a
 
-Remove adjacent repeated events.
+Remove adjacent repeated events. ::
 
   stream:              -1-2-2-3-4-4-5->
   skipRepeats(stream): -1-2---3-4---5->
 
 Note that ``===`` is used to identify repeated items. To use a different 
-comparison, use :ref:`skipRepeatsWith`
+comparison, use :ref:`skipRepeatsWith`.
 
 .. _skipRepeatsWith:
 
@@ -806,7 +806,7 @@ skipRepeatsWith
   skipRepeatsWith :: ((a, a) -> bool) -> Stream a -> Stream a
 
 Remove adjacent repeated events, using the provided equality function to compare 
-adjacent events.
+adjacent events. ::
 
   stream:                                    -a-b-B-c-D-d-e->
   skipRepeatsWith(equalsIgnoreCase, stream): -a-b---c-D---e->
@@ -827,7 +827,7 @@ slice
   slice :: int -> int -> Stream a -> Stream a
 
 Keep only events in a range, where *start <= index < end*, and *index* is the 
-ordinal index of an event in ``stream``.
+ordinal index of an event in ``stream``. ::
 
   stream:              -a-b-c-d-e-f->
   slice(1, 4, stream): ---b-c-d|
@@ -846,7 +846,7 @@ take
 
   take :: int -> Stream a -> Stream a
 
-Keep at most the first *n* events from ``stream``.
+Keep at most the first *n* events from ``stream``. ::
 
   stream:          -a-b-c-d-e-f->
   take(3, stream): -a-b-c|
@@ -866,7 +866,7 @@ skip
 
   skip :: int -> Stream a -> Stream a
 
-Discard the first *n* events from ``stream``.
+Discard the first *n* events from ``stream``. ::
 
   stream:          -a-b-c-d-e-f->
   skip(3, stream): -------d-e-f->
@@ -888,7 +888,7 @@ takeWhile
 
   takeWhile :: (a -> bool) -> Stream a -> Stream a
 
-Keep all events until predicate returns ``false``, and discard the rest.
+Keep all events until predicate returns ``false``, and discard the rest. ::
 
   stream:                  -2-4-5-6-8->
   takeWhile(even, stream): -2-4-|
@@ -902,7 +902,7 @@ skipWhile
 
   skipWhile :: (a -> bool) -> Stream a -> Stream a
 
-Discard all events until predicate returns ``false``, and keep the rest.
+Discard all events until predicate returns ``false``, and keep the rest. ::
 
   stream:                  -2-4-5-6-8->
   skipWhile(even, stream): -----5-6-8->
@@ -916,7 +916,7 @@ skipAfter
 
   skipAfter :: (a -> bool) -> Stream a -> Stream a
 
-Discard all events after the first event for which predicate returns ``true``.
+Discard all events after the first event for which predicate returns ``true``. ::
 
   stream:                  -1-2-3-4-5-6-8->
   skipAfter(even, stream): -1-2|
@@ -930,7 +930,7 @@ until
 
   until :: Stream * -> Stream a -> Stream a
 
-Keep all events in one stream until the first event occurs in another.
+Keep all events in one stream until the first event occurs in another. ::
 
   stream:                   -a-b-c-d-e-f->
   endSignal:                ------z->
@@ -953,7 +953,7 @@ since
 
   since :: Stream * -> Stream a -> Stream a
 
-Discard all events in one stream until the first event occurs in another.
+Discard all events in one stream until the first event occurs in another. ::
 
   stream:                     -a-b-c-d-e-f->
   startSignal:                ------z->
@@ -976,7 +976,7 @@ during
 
   during :: Stream (Stream *) -> Stream a -> Stream a
 
-Keep events that occur during a time window defined by a higher-order stream.
+Keep events that occur during a time window defined by a higher-order stream. ::
 
   stream:                     -a-b-c-d-e-f-g->
   timeWindow:                 -----s
@@ -1006,7 +1006,7 @@ delay
 
   delay :: int -> Stream a -> Stream a
 
-Timeshift a stream by *n* milliseconds.
+Timeshift a stream by *n* milliseconds. ::
 
   stream:           -a-b-c-d->
   delay(1, stream): --a-b-c-d->
@@ -1024,7 +1024,7 @@ throttle
 
   throttle :: int -> Stream a -> Stream a
 
-Limit the rate of events to at most one per *n* milliseconds.::
+Limit the rate of events to at most one per *n* milliseconds. ::
 
   stream:               abcd----abcd---->
   throttle(2, stream):  a-c-----a-c----->
@@ -1041,7 +1041,7 @@ debounce
 
   debounce :: int -> Stream a -> Stream a
 
-Wait for a burst of events to subside and keep only the last event in the burst.
+Wait for a burst of events to subside and keep only the last event in the burst. ::
 
   stream:              abcd----abcd---->
   debounce(2, stream): -----d-------d-->
@@ -1078,7 +1078,7 @@ fromPromise
 
   fromPromise :: Promise a -> Stream a
 
-Create a stream containing a promise's value.
+Create a stream containing a promise's value. ::
 
   promise:              ----a
   fromPromise(promise): ----a|
@@ -1095,7 +1095,7 @@ awaitPromises
 
   awaitPromises :: Stream (Promise a) -> Stream a
 
-Turn a stream of promises into a stream containing the promises' values.
+Turn a stream of promises into a stream containing the promises' values. ::
 
   promise p:             ---1
   promise q:             ------2
@@ -1137,7 +1137,7 @@ recoverWith
 
   recoverWith :: (Error -> Stream a) -> Stream a -> Stream a
 
-Recover from a stream failure by calling a function to create a new stream.
+Recover from a stream failure by calling a function to create a new stream. ::
 
   s:                 -a-b-c-X
   f(X):                     d-e-f->
