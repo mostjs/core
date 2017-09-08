@@ -295,7 +295,7 @@ startWith
 
   startWith :: a -> Stream a -> Stream a
 
-Prepend an event at time 0.
+Prepend an event at time 0. ::
 
   stream:               --a-b-c-d->
   startWith(x, stream): x-a-b-c-d->
