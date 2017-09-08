@@ -5,13 +5,13 @@
 import { defer } from '../task'
 
 export default class DeferredSink {
-  constructor(sink) {
+  constructor (sink) {
     this.sink = sink
     this.events = []
     this.active = true
   }
 
-  event(t, x) {
+  event (t, x) {
     if (!this.active) {
       return
     }
@@ -23,7 +23,7 @@ export default class DeferredSink {
     this.events.push({ time: t, value: x })
   }
 
-  end(t, x) {
+  end (t, x) {
     if (!this.active) {
       return
     }
@@ -31,27 +31,27 @@ export default class DeferredSink {
     this._end(new EndTask(t, x, this.sink))
   }
 
-  error(t, e) {
+  error (t, e) {
     this._end(new ErrorTask(t, e, this.sink))
   }
 
-  _end(task) {
+  _end (task) {
     this.active = false
     defer(task)
   }
 }
 
 class PropagateAllTask {
-  constructor(sink, time, events) {
+  constructor (sink, time, events) {
     this.sink = sink
     this.events = events
     this.time = time
   }
 
-  run() {
-    const events = this.events;
-    const sink = this.sink;
-    let event;
+  run () {
+    const events = this.events
+    const sink = this.sink
+    let event
 
     for (let i = 0, l = events.length; i < l; ++i) {
       event = events[i]
@@ -62,39 +62,39 @@ class PropagateAllTask {
     events.length = 0
   }
 
-  error(e) {
+  error (e) {
     this.sink.error(this.time, e)
   }
 }
 
 class EndTask {
-  constructor(t, x, sink) {
+  constructor (t, x, sink) {
     this.time = t
     this.value = x
     this.sink = sink
   }
 
-  run() {
+  run () {
     this.sink.end(this.time, this.value)
   }
 
-  error(e) {
+  error (e) {
     this.sink.error(this.time, e)
   }
 }
 
 class ErrorTask {
-  constructor(t, e, sink) {
+  constructor (t, e, sink) {
     this.time = t
     this.value = e
     this.sink = sink
   }
 
-  run() {
+  run () {
     this.sink.error(this.time, this.value)
   }
 
-  error(e) {
+  error (e) {
     throw e
   }
 }

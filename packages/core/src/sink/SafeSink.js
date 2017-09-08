@@ -3,19 +3,19 @@
 /** @author John Hann */
 
 export default class SafeSink {
-  constructor(sink) {
+  constructor (sink) {
     this.sink = sink
     this.active = true
   }
 
-  event(t, x) {
+  event (t, x) {
     if (!this.active) {
       return
     }
     this.sink.event(t, x)
   }
 
-  end(t, x) {
+  end (t, x) {
     if (!this.active) {
       return
     }
@@ -23,12 +23,12 @@ export default class SafeSink {
     this.sink.end(t, x)
   }
 
-  error(t, e) {
+  error (t, e) {
     this.disable()
     this.sink.error(t, e)
   }
 
-  disable() {
+  disable () {
     this.active = false
     return this.sink
   }
