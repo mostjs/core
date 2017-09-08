@@ -2,32 +2,34 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-export default function SafeSink (sink) {
-  this.sink = sink
-  this.active = true
-}
-
-SafeSink.prototype.event = function (t, x) {
-  if (!this.active) {
-    return
+export default class SafeSink {
+  constructor(sink) {
+    this.sink = sink
+    this.active = true
   }
-  this.sink.event(t, x)
-}
 
-SafeSink.prototype.end = function (t, x) {
-  if (!this.active) {
-    return
+  event(t, x) {
+    if (!this.active) {
+      return
+    }
+    this.sink.event(t, x)
   }
-  this.disable()
-  this.sink.end(t, x)
-}
 
-SafeSink.prototype.error = function (t, e) {
-  this.disable()
-  this.sink.error(t, e)
-}
+  end(t, x) {
+    if (!this.active) {
+      return
+    }
+    this.disable()
+    this.sink.end(t, x)
+  }
 
-SafeSink.prototype.disable = function () {
-  this.active = false
-  return this.sink
+  error(t, e) {
+    this.disable()
+    this.sink.error(t, e)
+  }
+
+  disable() {
+    this.active = false
+    return this.sink
+  }
 }

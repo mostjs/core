@@ -4,89 +4,97 @@
 
 import { defer } from '../task'
 
-export default function DeferredSink (sink) {
-  this.sink = sink
-  this.events = []
-  this.active = true
-}
-
-DeferredSink.prototype.event = function (t, x) {
-  if (!this.active) {
-    return
+export default class DeferredSink {
+  constructor(sink) {
+    this.sink = sink
+    this.events = []
+    this.active = true
   }
 
-  if (this.events.length === 0) {
-    defer(new PropagateAllTask(this.sink, t, this.events))
+  event(t, x) {
+    if (!this.active) {
+      return
+    }
+
+    if (this.events.length === 0) {
+      defer(new PropagateAllTask(this.sink, t, this.events))
+    }
+
+    this.events.push({ time: t, value: x })
   }
 
-  this.events.push({ time: t, value: x })
-}
+  end(t, x) {
+    if (!this.active) {
+      return
+    }
 
-DeferredSink.prototype.end = function (t, x) {
-  if (!this.active) {
-    return
+    this._end(new EndTask(t, x, this.sink))
   }
 
-  this._end(new EndTask(t, x, this.sink))
-}
-
-DeferredSink.prototype.error = function (t, e) {
-  this._end(new ErrorTask(t, e, this.sink))
-}
-
-DeferredSink.prototype._end = function (task) {
-  this.active = false
-  defer(task)
-}
-
-function PropagateAllTask (sink, time, events) {
-  this.sink = sink
-  this.events = events
-  this.time = time
-}
-
-PropagateAllTask.prototype.run = function () {
-  var events = this.events
-  var sink = this.sink
-  var event
-
-  for (var i = 0, l = events.length; i < l; ++i) {
-    event = events[i]
-    this.time = event.time
-    sink.event(event.time, event.value)
+  error(t, e) {
+    this._end(new ErrorTask(t, e, this.sink))
   }
 
-  events.length = 0
+  _end(task) {
+    this.active = false
+    defer(task)
+  }
 }
 
-PropagateAllTask.prototype.error = function (e) {
-  this.sink.error(this.time, e)
+class PropagateAllTask {
+  constructor(sink, time, events) {
+    this.sink = sink
+    this.events = events
+    this.time = time
+  }
+
+  run() {
+    const events = this.events;
+    const sink = this.sink;
+    let event;
+
+    for (let i = 0, l = events.length; i < l; ++i) {
+      event = events[i]
+      this.time = event.time
+      sink.event(event.time, event.value)
+    }
+
+    events.length = 0
+  }
+
+  error(e) {
+    this.sink.error(this.time, e)
+  }
 }
 
-function EndTask (t, x, sink) {
-  this.time = t
-  this.value = x
-  this.sink = sink
+class EndTask {
+  constructor(t, x, sink) {
+    this.time = t
+    this.value = x
+    this.sink = sink
+  }
+
+  run() {
+    this.sink.end(this.time, this.value)
+  }
+
+  error(e) {
+    this.sink.error(this.time, e)
+  }
 }
 
-EndTask.prototype.run = function () {
-  this.sink.end(this.time, this.value)
-}
+class ErrorTask {
+  constructor(t, e, sink) {
+    this.time = t
+    this.value = e
+    this.sink = sink
+  }
 
-EndTask.prototype.error = function (e) {
-  this.sink.error(this.time, e)
-}
+  run() {
+    this.sink.error(this.time, this.value)
+  }
 
-function ErrorTask (t, e, sink) {
-  this.time = t
-  this.value = e
-  this.sink = sink
-}
-
-ErrorTask.prototype.run = function () {
-  this.sink.error(this.time, this.value)
-}
-
-ErrorTask.prototype.error = function (e) {
-  throw e
+  error(e) {
+    throw e
+  }
 }
