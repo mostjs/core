@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import { runEffects } from '../../src/runEffects'
-import defaultScheduler from '../../src/scheduler/defaultScheduler'
+import { newDefaultScheduler } from '@most/scheduler'
 import { tap } from '../../src/combinator/transform'
 
 /**
@@ -24,4 +24,4 @@ export const observe = (f, stream) =>
  *  an error, or rejects if the stream ends with an error.
  */
 export const drain = stream =>
-  runEffects(stream, defaultScheduler)
+  runEffects(stream, newDefaultScheduler())

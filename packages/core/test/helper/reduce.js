@@ -4,7 +4,7 @@
 
 import Pipe from '../../src/sink/Pipe'
 import { runEffects } from '../../src/runEffects'
-import defaultScheduler from '../../src/scheduler/defaultScheduler'
+import { newDefaultScheduler } from '@most/scheduler'
 
 /**
 * Reduce a stream to produce a single result.  Note that reducing an infinite
@@ -16,7 +16,7 @@ import defaultScheduler from '../../src/scheduler/defaultScheduler'
 * @returns {Promise} promise for the file result of the reduce
 */
 export const reduce = (f, initial, stream) =>
-  runEffects(new Reduce(f, initial, stream), defaultScheduler)
+  runEffects(new Reduce(f, initial, stream), newDefaultScheduler())
 
 class Reduce {
   constructor (f, z, source) {
