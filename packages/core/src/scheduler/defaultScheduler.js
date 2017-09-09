@@ -4,6 +4,6 @@
 
 import { newDefaultScheduler } from '@most/scheduler'
 
-var defaultScheduler = newDefaultScheduler()
+const defaultScheduler = newDefaultScheduler()
 
 export default defaultScheduler
