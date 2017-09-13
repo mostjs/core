@@ -1,0 +1,3 @@
+## Almost there...
+
+Documentation for @most/core can be found at [mostcore.readthedocs.io](https://mostcore.readthedocs.io).
