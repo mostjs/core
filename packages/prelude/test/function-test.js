@@ -3,12 +3,26 @@
 import {describe, it} from 'mocha'
 import assert from 'assert'
 
-import { id, compose, apply, curry2, curry3, curry4 } from '../src/function'
+import { id, compose, pipe, apply, curry2, curry3, curry4 } from '../src/function'
 
 describe('id', () => {
   it('id(x) === x', () => {
     const x = {}
     assert.strictEqual(id(x), x)
+  })
+})
+
+describe('pipe', () => {
+  it('pipe(f, g)(x) === f(g(x))', () => {
+    const fx = 'fx'
+    const gx = 'gx'
+    const x = 'x'
+
+    const f = x => x + fx
+    const g = x => x + gx
+    const h = pipe(f, g)
+
+    assert.strictEqual(g(f(x)), h(x))
   })
 })
 

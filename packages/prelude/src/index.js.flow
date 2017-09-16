@@ -30,6 +30,8 @@ declare export function isArrayLike(x: any): boolean
 
 declare export function id<A>(A): A
 
+declare export function pipe <A, B, C>(f: (a: A) => B, g: (b: B) => C): (x: A) => C
+
 declare export function compose<A, B, C>(f: (B) => C, g: (A) => B): (A) => C
 
 declare export function apply<A, B>(f: (A) => B, A): B
