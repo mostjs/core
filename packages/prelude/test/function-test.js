@@ -13,7 +13,7 @@ describe('id', () => {
 })
 
 describe('pipe', () => {
-  it('pipe(f, g)(x) === f(g(x))', () => {
+  it('pipe(f, g)(x) === g(f(x))', () => {
     const fx = 'fx'
     const gx = 'gx'
     const x = 'x'
@@ -28,9 +28,9 @@ describe('pipe', () => {
 
 describe('compose', () => {
   it('compose(f, g)(x) === f(g(x))', () => {
-    const fx = '' + Math.random()
-    const gx = '' + Math.random()
-    const x = '' + Math.random()
+    const fx = 'fx'
+    const gx = 'gx'
+    const x = 'x'
 
     const f = x => x + fx
     const g = x => x + gx

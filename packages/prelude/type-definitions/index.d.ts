@@ -27,7 +27,7 @@ export function isArrayLike(x: any): boolean;
 
 export function id<A>(x: A): A;
 
-export function pipe <A, B, C>(f: (a: A) => B, g: (b: B) => C): (x: A) => C
+export function pipe <A, B, C>(f: (a: A) => B, g: (b: B) => C): (x: A) => C;
 
 export function compose<A, B, C>(f: (val: B) => C, g: (val: A) => B): (val: A) => C;
 
