@@ -1,11 +1,11 @@
 {
-  "name": "@most/core",
+  "name": "@most/test",
   "version": "0.13.0",
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
-  "typings": "type-definitions/most.d.ts",
-  "main": "dist/mostCore.js",
-  "module": "dist/mostCore.es.js",
-  "jsnext:main": "dist/mostCore.es.js",
+  "typings": "type-definitions/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
   "files": [
     "type-definitions",
     "dist"
@@ -15,10 +15,9 @@
     "test:unit": "nyc --reporter=text-summary mocha -r buba/register --reporter dot --recursive 'test/**/*-test.js'",
     "test:lint": "standard --fix 'src/**/*.js' 'test/**/*.js' --verbose | snazzy",
     "test:flow": "flow check",
-    "build": "npm run build:dist && npm run build:min && npm run build:flow",
+    "build": "npm run build:dist && npm run build:min",
     "build:dist": "rollup -c",
-    "build:min": "uglifyjs dist/mostCore.js -m -o dist/mostCore.min.js",
-    "build:flow": "cpy src/index.js.flow dist --rename=mostCore.js.flow && cpy src/index.js.flow dist --rename=mostCore.es.js.flow",
+    "build:min": "uglifyjs dist/index.js -m -o dist/index.min.js",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -49,22 +48,13 @@
     "rollup": "^0.43.0",
     "rollup-plugin-buble": "^0.15.0",
     "rollup-plugin-node-resolve": "^2.0.0",
-    "sinon": "^1.17.7",
     "snazzy": "^7.0.0",
     "standard": "^10.0.3",
     "uglify-js": "^2.7.5"
   },
   "dependencies": {
-    "@most/disposable": "^0.13.0",
-    "@most/prelude": "^1.6.4",
+    "@most/core": "^0.13.0",
     "@most/scheduler": "^0.13.0",
-    "@most/test": "^0.13.0",
     "@most/types": "^0.11.1"
-  },
-  "standard": {
-    "ignore": [
-      "test/perf",
-      "test/flow"
-    ]
   }
 }

@@ -1,0 +1,15 @@
+[ignore]
+.*/node_modules/conventional-changelog-core/.*
+
+[include]
+../../node_modules
+test/
+src/
+
+[libs]
+
+[options]
+include_warnings=true
+
+[lints]
+all=warn
