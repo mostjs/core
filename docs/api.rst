@@ -1064,6 +1064,25 @@ Recover from a stream failure by calling a function to create a new :ref:`Stream
 
 When ``s`` fails with an error, ``f`` will be called with the error. ``f`` must return a new :ref:`Stream` to replace the error.
 
+Sharing Streams
+^^^^^^^^^^^^^^^
+
+.. _multicast:
+
+multicast
+`````````
+
+.. code-block:: haskell
+
+  multicast :: Stream a -> Stream a
+
+Returns a :ref:`Stream` equivalent to the original but which can be shared more efficiently among multiple consumers. ::
+
+  stream:             -a-b-c-d->
+  multicast(stream):  -a-b-c-d->
+
+Multicast allows you to build up a stream of maps, filters, and other transformations, and then share it efficiently with multiple observers.
+
 Tasks
 ^^^^^
 
