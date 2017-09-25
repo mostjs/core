@@ -3,7 +3,7 @@
 import {describe, it} from 'mocha'
 import assert from 'assert'
 
-import { id, compose, apply, curry2, curry3, curry4 } from '../src/function'
+import { id, compose, pipe, apply, curry2, curry3, curry4 } from '../src/function'
 
 describe('id', () => {
   it('id(x) === x', () => {
@@ -12,11 +12,25 @@ describe('id', () => {
   })
 })
 
+describe('pipe', () => {
+  it('pipe(f, g)(x) === g(f(x))', () => {
+    const fx = 'fx'
+    const gx = 'gx'
+    const x = 'x'
+
+    const f = x => x + fx
+    const g = x => x + gx
+    const h = pipe(f, g)
+
+    assert.strictEqual(g(f(x)), h(x))
+  })
+})
+
 describe('compose', () => {
   it('compose(f, g)(x) === f(g(x))', () => {
-    const fx = '' + Math.random()
-    const gx = '' + Math.random()
-    const x = '' + Math.random()
+    const fx = 'fx'
+    const gx = 'gx'
+    const x = 'x'
 
     const f = x => x + fx
     const g = x => x + gx

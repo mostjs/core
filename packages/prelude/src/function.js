@@ -3,6 +3,9 @@
 // id :: a -> a
 export const id = x => x
 
+// pipe :: (a -> b) -> (b -> c) -> (a -> c)
+export const pipe = (f, g) => x => g(f(x))
+
 // compose :: (b -> c) -> (a -> b) -> (a -> c)
 export const compose = (f, g) => x => f(g(x))
 
