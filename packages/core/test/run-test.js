@@ -2,12 +2,12 @@
 import { describe, it } from 'mocha'
 import { eq, fail } from '@briancavalier/assert'
 
-import { runStream } from '../src/runStream'
+import { run } from '../src/run'
 import { at } from '../src/source/at'
 
 import { ticks } from './helper/testEnv'
 
-describe('runStream', () => {
+describe('run', () => {
   it('should run a stream', done => {
     // This could be tested with a spy that verifies
     // stream.run was called with the same arguments
@@ -38,6 +38,6 @@ describe('runStream', () => {
     }
 
     const s = at(expectedTime, expectedValue)
-    runStream(sink, ticks(expectedTime), s)
+    run(sink, ticks(expectedTime), s)
   })
 })
