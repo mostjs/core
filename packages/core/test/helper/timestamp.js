@@ -4,7 +4,7 @@ export const timestamp = stream =>
   new Timestamp(stream)
 
 class Timestamp {
-  constructor(stream) {
+  constructor (stream) {
     this.stream = stream
   }
 
@@ -14,10 +14,6 @@ class Timestamp {
 }
 
 class TimestampSink extends Pipe {
-  constructor (sink) {
-    super(sink)
-  }
-
   event (time, value) {
     this.sink.event(time, { time, value })
   }
