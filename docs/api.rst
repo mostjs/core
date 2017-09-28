@@ -963,9 +963,9 @@ withLocalTime
 
 .. code-block:: haskell
 
-  withLocalTime :: Offset -> Stream a -> Stream a
+  withLocalTime :: Time -> Stream a -> Stream a
 
-Create a Stream with localized :ref:`Time` values, whose origin (i.e., time 0) is at the specified Time on the :ref:`Scheduler` used to the Stream is observed with :ref:`runEffects` or :ref:`run`.
+Create a Stream with localized :ref:`Time` values, whose origin (i.e., time 0) is at the specified Time on the :ref:`Scheduler` provided when the Stream is observed with :ref:`runEffects` or :ref:`run`.
 
 When implementing custom higher-order :ref:`Stream` combinators, such as :ref:`chain`, you should use ``withLocalTime`` to localize "inner" Streams before running them.
 
