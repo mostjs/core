@@ -189,6 +189,17 @@ runEffects
 
 Activate an event :ref:`Stream` and consume all its events.
 
+.. _runStream:
+
+run
+```
+
+.. code-block:: haskell
+
+  run :: Sink a -> Scheduler -> Stream a -> void
+
+Run a :ref:`Stream`, sending all events to the provided :ref:`Sink`.  The Stream's :ref:`Time` values come from the provided :ref:`Scheduler`.
+
 Construction
 ^^^^^^^^^^^^
 
@@ -553,7 +564,7 @@ To control concurrency, ``mergeConcurrently`` must maintain an internal queue of
 .. _mergeMapConcurrently:
 
 mergeMapConcurrently
-```````````````````
+````````````````````
 
 .. code-block:: haskell
 
@@ -925,6 +936,9 @@ This is similar to :ref:`slice`, but uses time rather than indices to "slice" th
   // 3. discard all subsequent events.
   during(timeWindow, stream)
 
+Dealing with time
+`````````````````
+
 .. _delay:
 
 delay
@@ -941,6 +955,22 @@ Timeshift a :ref:`Stream` by *n* milliseconds. ::
   delay(5, stream): ------a-b-c-d->
 
 Delaying a :ref:`Stream` timeshifts all the events by the same amount. It doesn't change the time *between* events.
+
+.. _withLocalTime:
+
+withLocalTime
+`````````````
+
+.. code-block:: haskell
+
+  withLocalTime :: Time -> Stream a -> Stream a
+
+Create a Stream with localized :ref:`Time` values, whose origin (i.e., time 0) is at the specified Time on the :ref:`Scheduler` provided when the Stream is observed with :ref:`runEffects` or :ref:`run`.
+
+When implementing custom higher-order :ref:`Stream` combinators, such as :ref:`chain`, you should use ``withLocalTime`` to localize "inner" Streams before running them.
+
+Rate limiting
+`````````````
 
 .. _throttle:
 

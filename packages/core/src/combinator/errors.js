@@ -7,7 +7,8 @@ import { tryDispose } from '@most/disposable'
 import { asap } from '@most/scheduler'
 import { tryEvent, tryEnd } from '../source/tryEvent'
 import { propagateErrorTask } from '../scheduler/PropagateTask'
-import { runWithLocalTime } from '../scheduler/runWithLocalTime'
+import { run } from '../run'
+import { withLocalTime } from './withLocalTime'
 
 /**
  * If stream encounters an error, recover and continue with items from stream
@@ -81,7 +82,7 @@ class RecoverWithSink {
   }
 
   _continue (f, t, x, sink) {
-    return runWithLocalTime(t, f(x), sink, this.scheduler)
+    return run(sink, this.scheduler, withLocalTime(t, f(x)))
   }
 
   dispose () {

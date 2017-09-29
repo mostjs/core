@@ -19,8 +19,16 @@ export const withArrayValues = curry2(_withArrayValues)
 // Observing
 
 import { runEffects as _runEffects } from './runEffects'
+import { run as _run } from './run'
 
 export const runEffects = curry2(_runEffects)
+export const run = curry3(_run)
+
+// -------------------------------------------------------
+
+import { withLocalTime as _withLocalTime } from './combinator/withLocalTime'
+
+export const withLocalTime = curry2(_withLocalTime)
 
 // -------------------------------------------------------
 

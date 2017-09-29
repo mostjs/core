@@ -1,15 +1,24 @@
-/** @license MIT License (c) copyright 2010-2017 original author or authors */
-
 import RelativeSink from '../sink/RelativeSink'
 import { schedulerRelativeTo } from '@most/scheduler'
 
-// Run a stream with its own localized clock
+// Create a stream with its own local clock
 // This transforms time from the provided scheduler's clock to a stream-local
 // clock (which starts at 0), and then *back* to the scheduler's clock before
-// propagating events to sink.  IOW, stream.run will see local times, and sink
-// will see scheduler times.
-export const runWithLocalTime = (origin, stream, sink, scheduler) =>
-  stream.run(relativeSink(origin, sink), schedulerRelativeTo(origin, scheduler))
+// propagating events to sink.  In other words, upstream sources will see local times,
+// and downstream sinks will see non-local (original) times.
+export const withLocalTime = (origin, stream) =>
+  new WithLocalTime(origin, stream)
+
+class WithLocalTime {
+  constructor (origin, source) {
+    this.origin = origin
+    this.source = source
+  }
+
+  run (sink, scheduler) {
+    return this.source.run(relativeSink(this.origin, sink), schedulerRelativeTo(this.origin, scheduler))
+  }
+}
 
 // Accumulate offsets instead of nesting RelativeSinks, which can happen
 // with higher-order stream and combinators like continueWith when they're

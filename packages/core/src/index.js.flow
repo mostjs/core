@@ -7,6 +7,12 @@ export type SeedValue <S, A> = {
 }
 
 declare export function runEffects <A> (s: Stream<A>, scheduler: Scheduler): Promise<void>
+declare export function runEffects <A> (s: Stream<A>): (scheduler: Scheduler) => Promise<void>
+
+declare export function run <A> (sink: Sink<A>, scheduler: Scheduler, s: Stream<A>): Disposable
+declare export function run <A> (sink: Sink<A>): (scheduler: Scheduler, s: Stream<A>) => Disposable
+declare export function run <A> (sink: Sink<A>, scheduler: Scheduler): (s: Stream<A>) => Disposable
+declare export function run <A> (sink: Sink<A>): (scheduler: Scheduler) => (s: Stream<A>) => Disposable
 
 declare export function empty (): Stream<any>
 declare export function never (): Stream<any>
@@ -158,6 +164,9 @@ declare export function since <A> (since: Stream<any>, s: Stream<A>): Stream<A>
 declare export function since <A> (since: Stream<any>): (s: Stream<A>) => Stream<A>
 
 declare export function during <A> (since: Stream<Stream<any>>, s: Stream<A>): Stream<A>
+
+declare export function withLocalTime <A> (origin: Time, s: Stream<A>): Stream<A>
+declare export function withLocalTime <A> (origin: Time): (s: Stream<A>) => Stream<A>
 
 declare export function delay <A> (delay: Delay, s: Stream<A>): Stream<A>
 declare export function delay <A> (delay: Delay): (s: Stream<A>) => Stream<A>
