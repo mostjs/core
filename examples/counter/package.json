@@ -4,8 +4,8 @@
   "description": "most/core counter",
   "main": "index.js",
   "scripts": {
-    "lint": "standard main.js",
-    "build": "rollup -c",
+    "lint": "standard --fix src/index.js",
+    "build": "npm run lint && rollup -c",
     "watch": "rollup --watch -c"
   },
   "author": "",
