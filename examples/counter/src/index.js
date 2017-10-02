@@ -1,5 +1,5 @@
 // @flow
-import { map, scan, merge, tap, runEffects } from '@most/core'
+import { constant, scan, merge, tap, runEffects } from '@most/core'
 import { newDefaultScheduler } from '@most/scheduler'
 import { click } from '@most/dom-event'
 
@@ -10,8 +10,8 @@ const incButton = qs('[name=inc]')
 const decButton = qs('[name=dec]')
 const value = qs('.value')
 
-const inc = map(_ => 1, click(incButton))
-const dec = map(_ => -1, click(decButton))
+const inc = constant(1, click(incButton))
+const dec = constant(-1, click(decButton))
 
 const counter = scan((total, delta) => total + delta, 0, merge(inc, dec))
 
