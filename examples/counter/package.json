@@ -2,7 +2,7 @@
   "name": "counter",
   "version": "1.0.0",
   "description": "most/core counter",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "lint": "standard --fix src/*.js",
     "build": "npm run lint && rollup -c",
