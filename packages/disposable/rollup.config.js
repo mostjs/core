@@ -1,20 +1,19 @@
 import buble from 'rollup-plugin-buble'
-import nodeResolve from 'rollup-plugin-node-resolve'
 
 export default {
   entry: 'src/index.js',
   plugins: [
-    buble(),
-    nodeResolve({
-      jsnext: true
-    })
+    buble()
   ],
   targets: [
     {
       dest: 'dist/index.js',
       format: 'umd',
       moduleName: 'mostDisposable',
-      sourceMap: true
+      sourceMap: true,
+      globals: {
+        '@most/prelude': 'mostPrelude'
+      }
     },
     {
       dest: 'dist/index.es.js',
