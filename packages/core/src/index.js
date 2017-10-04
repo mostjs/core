@@ -11,9 +11,9 @@ export { periodic } from './source/periodic'
 
 export { newStream } from './source/newStream'
 
-import { zipArrayValues as _zipArrayValues, withArrayValues as _withArrayValues } from './combinator/withArrayValues'
-export const zipArrayValues = curry3(_zipArrayValues)
-export const withArrayValues = curry2(_withArrayValues)
+import { zipItems as _zipItems, withItems as _withItems } from './combinator/zipItems'
+export const zipItems = curry3(_zipItems)
+export const withItems = curry2(_withItems)
 
 // -----------------------------------------------------------------------
 // Observing
@@ -100,9 +100,10 @@ export const combineArray = curry2(_combineArray)
 // -----------------------------------------------------------------------
 // Sampling
 
-import { sample as _sample } from './combinator/sample'
+import { sample as _sample, snapshot as _snapshot } from './combinator/snapshot'
 
-export const sample = curry3(_sample)
+export const sample = curry2(_sample)
+export const snapshot = curry3(_snapshot)
 
 // -----------------------------------------------------------------------
 // Zipping

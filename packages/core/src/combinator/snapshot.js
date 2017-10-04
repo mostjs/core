@@ -1,12 +1,15 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
+/** @license MIT License (c) copyright 2010 original author or authors */
 
 import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
 
-export const sample = (f, sampler, stream) =>
-  new Sample(f, sampler, stream)
+export const sample = (values, stream) =>
+  snapshot((_, x) => x, values, stream)
 
-export class Sample {
+export const snapshot = (f, values, stream) =>
+  new Snapshot(f, stream, values)
+
+export class Snapshot {
   constructor (f, sampler, stream) {
     this.source = stream
     this.sampler = sampler
@@ -14,31 +17,31 @@ export class Sample {
   }
 
   run (sink, scheduler) {
-    const sampleSink = new SampleSink(this.f, this.source, sink)
-    const sourceDisposable = this.source.run(sampleSink.hold, scheduler)
+    const sampleSink = new SnapshotSink(this.f, this.source, sink)
+    const sourceDisposable = this.source.run(sampleSink.latest, scheduler)
     const samplerDisposable = this.sampler.run(sampleSink, scheduler)
 
     return disposeBoth(samplerDisposable, sourceDisposable)
   }
 }
 
-export class SampleSink extends Pipe {
+export class SnapshotSink extends Pipe {
   constructor (f, source, sink) {
     super(sink)
     this.source = source
     this.f = f
-    this.hold = new SampleHold(this)
+    this.latest = new LatestValueSink(this)
   }
 
   event (t, x) {
-    if (this.hold.hasValue) {
+    if (this.latest.hasValue) {
       const f = this.f
-      this.sink.event(t, f(x, this.hold.value))
+      this.sink.event(t, f(this.latest.value, x))
     }
   }
 }
 
-export class SampleHold extends Pipe {
+export class LatestValueSink extends Pipe {
   constructor (sink) {
     super(sink)
     this.hasValue = false
