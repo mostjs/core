@@ -1,9 +1,12 @@
-import buble from 'rollup-plugin-buble'
+import babel from 'rollup-plugin-babel'
 
 export default {
   entry: 'src/index.js',
   plugins: [
-    buble()
+    babel({
+      exclude: 'node_modules/**',
+      plugins: ['external-helpers']
+    })
   ],
   external: [
     '@most/prelude'

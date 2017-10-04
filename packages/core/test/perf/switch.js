@@ -1,4 +1,4 @@
-require('buba/register')
+require('babel-register')
 const Benchmark = require('benchmark');
 const {fromArray, map, switchLatest} = require('.././index');
 const {reduce} = require('.././combinator/reduce')

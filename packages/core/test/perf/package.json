@@ -20,9 +20,9 @@
   },
   "dependencies": {
     "@reactivex/rxjs": "^5.0.1",
+    "babel-register": "^6.26.0",
     "baconjs": "^0.7.89",
     "benchmark": "github:bestiejs/benchmark.js#master",
-    "buba": "^4.0.1",
     "highland": "^2.10.1",
     "kefir": "^3.6.1",
     "rx": "^4.1.0",
