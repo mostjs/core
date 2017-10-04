@@ -5,6 +5,9 @@ export default {
   plugins: [
     buble()
   ],
+  external: [
+    '@most/prelude'
+  ],
   targets: [
     {
       dest: 'dist/index.js',

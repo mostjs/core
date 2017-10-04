@@ -5,6 +5,11 @@ export default {
   plugins: [
     buble()
   ],
+  external: [
+    '@most/scheduler',
+    '@most/disposable',
+    '@most/prelude'
+  ],
   targets: [
     {
       dest: 'dist/mostCore.js',
