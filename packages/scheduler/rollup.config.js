@@ -1,10 +1,12 @@
 import buble from 'rollup-plugin-buble'
+import babel from 'rollup-plugin-babel'
 import nodeResolve from 'rollup-plugin-node-resolve'
 
 export default {
   entry: 'src/index.js',
   plugins: [
     buble(),
+    babel(),
     nodeResolve({
       jsnext: true
     })
