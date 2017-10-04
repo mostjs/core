@@ -100,9 +100,10 @@ export const combineArray = curry2(_combineArray)
 // -----------------------------------------------------------------------
 // Sampling
 
-import { sample as _sample } from './combinator/sample'
+import { withLatestFrom as _withLatestFrom, zipLatestFrom as _zipLatestFrom } from './combinator/withLatestFrom'
 
-export const sample = curry3(_sample)
+export const withLatestFrom = curry2(_withLatestFrom)
+export const zipLatestFrom = curry3(_zipLatestFrom)
 
 // -----------------------------------------------------------------------
 // Zipping

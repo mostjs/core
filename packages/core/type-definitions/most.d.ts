@@ -16,7 +16,6 @@ export * from './combinator/merge';
 export * from './combinator/mergeConcurrently';
 export * from './combinator/multicast';
 export * from './combinator/promises';
-export * from './combinator/sample';
 export * from './combinator/scan';
 export * from './combinator/slice';
 export * from './combinator/startWith';
@@ -25,6 +24,7 @@ export * from './combinator/timeslice';
 export * from './combinator/transform';
 export * from './combinator/zip';
 export * from './combinator/withArrayValues';
+export * from './combinator/withLatestFrom';
 export * from './combinator/withLocalTime';
 
 export * from './source/never';
