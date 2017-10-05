@@ -36,11 +36,11 @@ Stream
     run :: Sink a -> Scheduler -> Disposable
   }
 
-A ``Stream`` represents a view of events over time. Its ``run`` method arranges events to be propagated to the provided :ref:`Sink` in the future. Each ``Stream`` has a local clock, defined by the provided :ref:`Scheduler`, which has methods for knowing the current time and scheduling future :ref:`Task`s.
+A ``Stream`` represents a view of events over time. Its ``run`` method arranges events to be propagated to the provided :ref:`Sink` in the future. Each ``Stream`` has a local clock, defined by the provided :ref:`Scheduler`, which has methods for knowing the current time and scheduling future :ref:`Tasks <Task>`.
 
-Some ``Stream``s, like :ref:`now`, are simple, while others, like :ref:`combine`, do sophisticated things such as combining multiple ``Stream``s or dealing with higher-order ``Stream``s.
+A ``Stream`` may be simple, like :ref:`now`, or may do sophisticated things such as :ref:`combining <combine>` multiple ``Stream`` s or deal with higher-order ``Stream`` s.
 
-Some ``Stream``s act as event producers, such as from DOM events. A producer ``Stream`` must never produce an event in the same call stack as its ``run`` method is called. It must begin producing items asynchronously. In some cases, this comes for free, such as DOM events. In other cases, it must be done explicitly using the provided ref:`Scheduler` to schedule asynchronous ref:`Task`s.
+A ``Stream`` may act as an event producer, such as a ``Stream`` that produces DOM events. A producer ``Stream`` must never produce an event in the same call stack as its ``run`` method is called. It must begin producing items asynchronously. In some cases, this comes for free, such as DOM events. In other cases, it must be done explicitly using the provided ref:`Scheduler` to schedule asynchronous :ref:`Tasks <Task>`.
 
 .. _Sink:
 
@@ -87,9 +87,9 @@ Scheduler
     cancelAll :: (ScheduledTask -> boolean) -> void
   }
 
-A ``Scheduler`` provides the central notion of time for the :ref:`Stream`s in an application.
+A ``Scheduler`` provides the central notion of time for the :ref:`Streams <Stream>` in an application.
 
-An application will typically create a single "root" ``Scheduler`` so that all :ref:`Stream`s share the same underlying time.
+An application will typically create a single "root" ``Scheduler`` so that all :ref:`Streams <Stream>` share the same underlying time.
 
 .. _Clock:
 
@@ -139,7 +139,7 @@ Timeline
     runTasks :: Time -> TaskRunner -> void
   }
 
-A ``Timeline`` represents a set of :ref:`ScheduledTask`s to be executed at particular times.
+A ``Timeline`` represents a set of :ref:`ScheduledTasks <ScheduledTask>` to be executed at particular times.
 
 .. _Task:
 
@@ -154,6 +154,8 @@ Task
   }
 
 A ``Task`` is any unit of work that can be scheduled for execution with a :ref:`Scheduler`.
+
+.. _ScheduledTask:
 
 ScheduledTask
 ^^^^^^^^^^^^^
@@ -189,7 +191,7 @@ runEffects
 
 Activate an event :ref:`Stream` and consume all its events.
 
-.. _runStream:
+.. _run:
 
 run
 ```
@@ -255,6 +257,21 @@ Create a :ref:`Stream` containing a single event at a specific time. ::
 
   at(3, x): --x|
 
+.. _periodic:
+
+periodic
+````````
+
+.. code-block:: haskell
+
+  periodic :: Period -> Stream void
+
+Create an infinite :ref:`Stream` containing events that occur at a specified period. ::
+
+  periodic(3): .--.--.--.-->
+
+The first event occurs at time 0, and the event values are ``undefined``.
+
 .. _throwError:
 
 throwError
@@ -264,9 +281,7 @@ throwError
 
   throwError :: Error -> Stream void
 
-Create a :ref:`Stream` that fails at time 0 with the provided ``Error``.
-
-This can be useful for functions that need to return a :ref:`Stream` and also need to propagate an error. ::
+Create a :ref:`Stream` that fails at time 0 with the provided ``Error``.  This can be useful for functions that need to return a :ref:`Stream` and also need to propagate an error. ::
 
   throwError(X): X
 
@@ -492,7 +507,7 @@ join
 
   join :: Stream (Stream a) -> Stream a
 
-Given a higher-order :ref:`Stream`, return a new :ref:`Stream` that merges all the inner :ref:`Stream`s as they arrive. ::
+Given a higher-order :ref:`Stream`, return a new :ref:`Stream` that merges all the inner :ref:`Streams <Stream>` as they arrive. ::
 
   s:             ---a---b---c---d-->
   t:             -1--2--3--4--5--6->
@@ -547,7 +562,7 @@ mergeConcurrently
 
   mergeConcurrently :: int -> Stream (Stream a) -> Stream a
 
-Given a higher-order :ref:`Stream`, return a new :ref:`Stream` that merges inner :ref:`Stream`s as they arrive up to the specified concurrency. Once concurrency number of :ref:`Stream`s are being merged, newly arriving :ref:`Stream`s will be merged after an existing one ends. ::
+Given a higher-order :ref:`Stream`, return a new :ref:`Stream` that merges inner :ref:`Streams <Stream>` as they arrive up to the specified concurrency. Once concurrency number of :ref:`Streams <Stream>` are being merged, newly arriving :ref:`Streams <Stream>` will be merged after an existing one ends. ::
 
   s:                            --a--b--c--d--e-->
   t:                            --x------y|
@@ -559,7 +574,7 @@ Note that ``u`` is only merged after ``t`` ends because of the concurrency level
 
 Note also that ``mergeConcurrently(Infinity, stream)`` is equivalent to ``join(stream)``.
 
-To control concurrency, ``mergeConcurrently`` must maintain an internal queue of newly arrived :ref:`Stream`s. If new :ref:`Stream`s arrive faster than the concurrency level allows them to be merged, the internal queue will grow infinitely.
+To control concurrency, ``mergeConcurrently`` must maintain an internal queue of newly arrived :ref:`Streams <Stream>`. If new :ref:`Streams <Stream>` arrive faster than the concurrency level allows them to be merged, the internal queue will grow infinitely.
 
 .. _mergeMapConcurrently:
 
@@ -570,7 +585,7 @@ mergeMapConcurrently
 
   mergeMapConcurrently :: (a -> Stream b) -> int -> Stream a -> Stream b
 
-Lazily apply a function ``f`` to each event in a :ref:`Stream`, merging them into the resulting :ref:`Stream` at the specified concurrency. Once concurrency number of :ref:`Stream`s are being merged, newly arriving :ref:`Stream`s will be merged after an existing one ends. ::
+Lazily apply a function ``f`` to each event in a :ref:`Stream`, merging them into the resulting :ref:`Stream` at the specified concurrency. Once concurrency number of :ref:`Streams <Stream>` are being merged, newly arriving :ref:`Streams <Stream>` will be merged after an existing one ends. ::
 
   stream:                             --ab--c----d----->
   f(a):                               -1-2-3|
@@ -583,7 +598,7 @@ Note that ``f(c)`` is only merged after ``f(a)`` ends.
 
 Also note that ``f`` will not get called with ``d`` until either ``f(b)`` or ``f(c)`` ends.
 
-To control concurrency, ``mergeMapConcurrently`` must maintain an internal queue of newly arrived :ref:`Stream`s. If new :ref:`Stream`s arrive faster than the concurrency level allows them to be merged, the internal queue will grow infinitely.
+To control concurrency, ``mergeMapConcurrently`` must maintain an internal queue of newly arrived :ref:`Streams <Stream>`. If new :ref:`Streams <Stream>` arrive faster than the concurrency level allows them to be merged, the internal queue will grow infinitely.
 
 Merging
 ^^^^^^^
@@ -597,13 +612,13 @@ merge
 
   merge :: Stream a -> Stream a -> Stream a
 
-Create a new :ref:`Stream` containing events from two :ref:`Stream`s. ::
+Create a new :ref:`Stream` containing events from two :ref:`Streams <Stream>`. ::
 
   s1:            -a--b----c--->
   s2:            --w---x-y--z->
   merge(s1, s2): -aw-b-x-yc-z->
 
-Merging creates a new :ref:`Stream` containing all events from the two original :ref:`Stream`s without affecting the time of the events. You can think of the events from the input :ref:`Stream`s simply being interleaved into the new, merged :ref:`Stream`. A merged :ref:`Stream` ends when all of its input :ref:`Stream`s have ended.
+Merging creates a new :ref:`Stream` containing all events from the two original :ref:`Streams <Stream>` without affecting the time of the events. You can think of the events from the input :ref:`Streams <Stream>` simply being interleaved into the new, merged :ref:`Stream`. A merged :ref:`Stream` ends when all of its input :ref:`Streams <Stream>` have ended.
 
 .. _mergeArray:
 
@@ -614,7 +629,7 @@ mergeArray
 
   mergeArray :: [ (Stream a) ] -> Stream a
 
-Array form of :ref:`merge`. Create a new :ref:`Stream` containing all events from all :ref:`Stream`s in the array. ::
+Array form of :ref:`merge`. Create a new :ref:`Stream` containing all events from all :ref:`Streams <Stream>` in the array. ::
 
   s1:                       -a--b----c---->
   s2:                       --w---x-y--z-->
@@ -636,7 +651,7 @@ Apply a function to the most recent event from each :ref:`Stream` when a new eve
   s2:                   --3---4-5--6->
   combine(add, s1, s2): --3-4-5-67-8->
 
-Note that ``combine`` waits for at least one event to arrive on all input :ref:`Stream`s before it produces any events.
+Note that ``combine`` waits for at least one event to arrive on all input :ref:`Streams <Stream>` before it produces any events.
 
 .. _combineArray:
 
@@ -647,7 +662,7 @@ combineArray
 
   combineArray :: ((a, b, ...) -> z) -> [ Stream a, Stream b, ... ] -> Stream z
 
-Array form of :ref:`combine`. Apply a function to the most recent event from all :ref:`Stream`s when a new event arrives on any :ref:`Stream`. ::
+Array form of :ref:`combine`. Apply a function to the most recent event from all :ref:`Streams <Stream>` when a new event arrives on any :ref:`Stream`. ::
 
   s1:                               -0--1----2->
   s2:                               --3---4-5-->
@@ -663,7 +678,7 @@ zip
 
   zip :: (a -> b -> c) -> Stream a -> Stream b -> Stream c
 
-Apply a function to corresponding pairs of events from the inputs :ref:`Stream`s. ::
+Apply a function to corresponding pairs of events from the inputs :ref:`Streams <Stream>`. ::
 
   s1:               -1--2--3--4->
   s2:               -1---2---3---4->
@@ -671,7 +686,7 @@ Apply a function to corresponding pairs of events from the inputs :ref:`Stream`s
 
 Zipping correlates by *index*-corresponding events from two input streams. Note that zipping a "fast" :ref:`Stream` and a "slow" :ref:`Stream` will cause buffering. Events from the fast :ref:`Stream` must be buffered in memory until an event at the corresponding index arrives on the slow :ref:`Stream`.
 
-A zipped :ref:`Stream` ends when any one of its input :ref:`Stream`s ends.
+A zipped :ref:`Stream` ends when any one of its input :ref:`Streams <Stream>` ends.
 
 .. _zipArray:
 
@@ -682,7 +697,7 @@ zipArray
 
   zipArray :: ((a, b, ...) -> z) -> [ Stream a, Stream b, ... ] -> Stream z
 
-Array form of :ref:`zip`. Apply a function to corresponding events from all the inputs :ref:`Stream`s. ::
+Array form of :ref:`zip`. Apply a function to corresponding events from all the inputs :ref:`Streams <Stream>`. ::
 
   s1:                           -1-2-3---->
   s2:                           -1--2--3-->
@@ -946,7 +961,7 @@ delay
 
 .. code-block:: haskell
 
-  delay :: int -> Stream a -> Stream a
+  delay :: Delay -> Stream a -> Stream a
 
 Timeshift a :ref:`Stream` by *n* milliseconds. ::
 
@@ -1116,7 +1131,7 @@ Multicast allows you to build up a stream of maps, filters, and other transforma
 Tasks
 ^^^^^
 
-Helper functions for creating :ref:`Task`s to propagate events.
+Helper functions for creating :ref:`Tasks <Task>` to propagate events.
 
 .. _propagateTask:
 
@@ -1246,7 +1261,7 @@ cancelAllTasks
 
   cancelAllTasks :: (ScheduledTask -> boolean) -> Scheduler -> void
 
-Cancel all future scheduled executions of all :ref:`ScheduledTask`s for which the provided predicate is ``true``.
+Cancel all future scheduled executions of all :ref:`ScheduledTasks <ScheduledTask>` for which the provided predicate is ``true``.
 
 Creating a Scheduler
 ^^^^^^^^^^^^^^^^^^^^
@@ -1260,7 +1275,7 @@ newScheduler
 
   newScheduler :: Timer -> Timeline -> Scheduler
 
-Create a new :ref:`Scheduler` that uses the provided :ref:`Timer` and :ref:`Timeline` for scheduling :ref:`Task`s.
+Create a new :ref:`Scheduler` that uses the provided :ref:`Timer` and :ref:`Timeline` for scheduling :ref:`Tasks <Task>`.
 
 .. _newDefaultScheduler:
 
@@ -1429,7 +1444,7 @@ disposeBoth
 
   disposeBoth :: Disposable -> Disposable -> Disposable
 
-Combine two :ref:`Disposable`s into a single :ref:`Disposable` which will dispose of both.
+Combine two :ref:`Disposables <Disposable>` into a single :ref:`Disposable` which will dispose of both.
 
 .. _disposeAll:
 
@@ -1440,7 +1455,7 @@ disposeAll
 
   disposeAll :: [Disposable] -> Disposable
 
-Combine an array of :ref:`Disposable`s into a single :ref:`Disposable` which will dispose of all the :ref:`Disposable`s in the array.
+Combine an array of :ref:`Disposables <Disposable>` into a single :ref:`Disposable` which will dispose of all the :ref:`Disposables <Disposable>` in the array.
 
 .. _Disposing Disposables:
 
