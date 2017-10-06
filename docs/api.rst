@@ -268,7 +268,7 @@ periodic
 
 Create an infinite :ref:`Stream` containing events that occur at a specified period. ::
 
-  periodic(3): .--.--.--.-->
+  periodic(3): x--x--x--x-->
 
 The first event occurs at time 0, and the event values are ``undefined``.
 
@@ -281,7 +281,7 @@ throwError
 
   throwError :: Error -> Stream void
 
-Create a :ref:`Stream` that fails at time 0 with the provided ``Error``.  This can be useful for functions that need to return a :ref:`Stream` and also need to propagate an error. ::
+Create a :ref:`Stream` that fails with the provided ``Error`` at time 0.  This can be useful for functions that need to return a :ref:`Stream` and also need to propagate an error. ::
 
   throwError(X): X
 

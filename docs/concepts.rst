@@ -32,7 +32,7 @@ An event stream may be finite.  A finite event stream will produce an *end signa
 Failed Event Streams
 ^^^^^^^^^^^^^^^^^^^^
 
-An event stream may fail.  For example, when an event stream represents a resource, such as a websocket, and the resource fails or closes unexpectedly, the event stream *cannot* produce more events.  When an event stream fails, it will produce a *error signal* to indicate that it cannot produce more events.  The error signal includes a *reason* (an ``Error`` object) describing the failure.
+An event stream may fail.  For example, when an event stream represents a resource, such as a WebSocket, and the resource fails or closes unexpectedly, the event stream *cannot* produce more events.  When an event stream fails, it will produce an *error signal* to indicate that it cannot produce more events.  The error signal includes a *reason* (an ``Error`` object) describing the failure.
 
 A failed event stream will attempt to free any underlying resources.
 
@@ -43,9 +43,9 @@ The :ref:`recoverWith` operation allows you to handle an event stream failure.
 Stream Failure vs. Application Errors
 `````````````````````````````````````
 
-Stream failures are different from *application errors*.  A stream failure indicates that an event stream *cannot* produce more events.  Application errors may or may not indicate an event stream failure.  For example, an event stream representing messages arriving on a websocket *fails* if the websocket is disconnected unexpectedly due to a wifi drop.  In contrast, an application error may occur in application logic that receives a websocket message and can't process because the message application state has changed.
+Stream failures are different from *application errors*.  A stream failure indicates that an event stream *cannot* produce more events.  Application errors may or may not indicate an event stream failure.  For example, an event stream representing messages arriving on a WebSocket *fails* if the WebSocket is disconnected unexpectedly due to a wifi drop.  In contrast, an application error may occur in application logic that receives a WebSocket message and can't process because the message application state has changed.
 
-Application error handling is outside the scope of these docs, as it is applications-specific.  However, there are some general strategies for dealing with application errors with event streams:
+Application error handling is outside the scope of these docs, as it is application-specific.  However, there are some general strategies for dealing with application errors with event streams:
 
 * Use try/catch, `Promise catch() <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch>`_ to handle the application error and transform it into:
 
