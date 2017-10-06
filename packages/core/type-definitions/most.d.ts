@@ -22,10 +22,10 @@ export * from './combinator/startWith';
 export * from './combinator/switch';
 export * from './combinator/timeslice';
 export * from './combinator/transform';
-export * from './combinator/zip';
-export * from './combinator/withArrayValues';
-export * from './combinator/withLatestFrom';
 export * from './combinator/withLocalTime';
+export * from './combinator/zip';
+export * from './combinator/zipArrayValues';
+export * from './combinator/zipLatestFrom';
 
 export * from './source/never';
 export * from './source/empty';

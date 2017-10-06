@@ -1,9 +1,9 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
+/** @license MIT License (c) copyright 2010 original author or authors */
 
 import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
 
-export const withLatestFrom = (values, stream) =>
+export const pickLatestFrom = (values, stream) =>
   zipLatestFrom((_, x) => x, values, stream)
 
 export const zipLatestFrom = (f, values, stream) =>

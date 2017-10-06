@@ -1,9 +1,9 @@
-/** @license MIT License (c) copyright 2010-2017 original author or authors */
+/** @license MIT License (c) copyright 2017 original author or authors */
 
 import { empty } from '../source/empty'
 import Pipe from '../sink/Pipe'
 
-export const withArrayValues = (array, stream) =>
+export const pickArrayValues = (array, stream) =>
   zipArrayValues(keepLeft, array, stream)
 
 export const zipArrayValues = (f, array, stream) =>

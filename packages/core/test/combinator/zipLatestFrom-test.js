@@ -1,12 +1,11 @@
-/** @license MIT License (c) copyright 2016 original author or authors */
-
+// @flow
 import { describe, it } from 'mocha'
 import { is, eq } from '@briancavalier/assert'
 
 import { throwError } from '../../src/combinator/errors'
 import { now } from '../../src/source/now'
 import { never } from '../../src/source/never'
-import { zipLatestFrom } from '../../src/combinator/withLatestFrom'
+import { zipLatestFrom } from '../../src/combinator/zipLatestFrom'
 
 import { makeEvents, ticks, collectEvents } from '../helper/testEnv'
 
