@@ -1,6 +1,6 @@
 {
   "name": "@most/disposable",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
   "typings": "type-definitions/index.d.ts",
   "main": "dist/index.js",
