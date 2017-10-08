@@ -9,17 +9,17 @@ import { collectEventsFor, makeEvents } from '../helper/testEnv'
 
 describe('zipItems', () => {
   describe('zipItems', () => {
-    it('should be empty for empty array', () => {
+    it('should be empty given no items', () => {
       const s = zipItems(fail, [], makeEvents(1, 1))
       return collectEventsFor(1, s).then(eq([]))
     })
 
-    it('should be empty for empty stream', () => {
+    it('should be empty given empty stream', () => {
       const s = zipItems(fail, [1, 2, 3], empty())
       return collectEventsFor(1, s).then(eq([]))
     })
 
-    it('should contain zipped values when more events than values', () => {
+    it('should contain zipped items given more events than items', () => {
       const a = ['a', 'b', 'c']
       const n = a.length + 1
       const s = zipItems((a, b) => a + String(b), a, makeEvents(1, n))
@@ -32,7 +32,7 @@ describe('zipItems', () => {
         ]))
     })
 
-    it('should contain zipped values when more values than events', () => {
+    it('should contain zipped items given more values than items', () => {
       const a = ['a', 'b', 'c']
       const n = a.length - 1
       const s = zipItems((a, b) => a + String(b), a, makeEvents(1, n))
@@ -46,17 +46,17 @@ describe('zipItems', () => {
   })
 
   describe('withItems', () => {
-    it('should be empty for empty array', () => {
+    it('should be empty given no items', () => {
       const s = withItems([], makeEvents(1, 1))
       return collectEventsFor(1, s).then(eq([]))
     })
 
-    it('should be empty for empty stream', () => {
+    it('should be empty given empty stream', () => {
       const s = withItems([1, 2, 3], empty())
       return collectEventsFor(1, s).then(eq([]))
     })
 
-    it('should contain array values when more events than values', () => {
+    it('should contain items given more events than items', () => {
       const a = ['a', 'b', 'c']
       const n = a.length + 1
       const s = withItems(a, makeEvents(1, n))
@@ -69,7 +69,7 @@ describe('zipItems', () => {
         ]))
     })
 
-    it('should contain array values when more values than events', () => {
+    it('should contain items given more items than events', () => {
       const a = ['a', 'b', 'c']
       const n = a.length - 1
       const s = withItems(a, makeEvents(1, n))
