@@ -77,10 +77,13 @@ declare export function merge <A> (s1: Stream<A>, s2: Stream<A>): Stream<A>
 declare export function merge <A> (s1: Stream<A>): (s2: Stream<A>) => Stream<A>
 declare export function mergeArray <A> (ss: Array<Stream<A>>): Stream<A>
 
-declare export function sample <A, B, C> (f: (A, B) => C, sampler: Stream<A>, sampled: Stream<B>): Stream<C>
-declare export function sample <A, B, C> (f: (A, B) => C): (sampler: Stream<A>, sampled: Stream<B>) => Stream<C>
-declare export function sample <A, B, C> (f: (A, B) => C, sampler: Stream<A>): (sampled: Stream<B>) => Stream<C>
-declare export function sample <A, B, C> (f: (A, B) => C): (sampler: Stream<A>) => (sampled: Stream<B>) => Stream<C>
+declare export function pickLatestFrom <A> (values: Stream<A>, stream: Stream<any>): Stream<A>
+declare export function pickLatestFrom <A> (values: Stream<A>): (stream: Stream<any>) => Stream<A>
+
+declare export function zipLatestFrom <A, B, C> (f: (A, B) => C, values: Stream<A>, stream: Stream<B>): Stream<C>
+declare export function zipLatestFrom <A, B, C> (f: (A, B) => C): (values: Stream<A>, stream: Stream<B>) => Stream<C>
+declare export function zipLatestFrom <A, B, C> (f: (A, B) => C, values: Stream<A>): (stream: Stream<B>) => Stream<C>
+declare export function zipLatestFrom <A, B, C> (f: (A, B) => C): (values: Stream<A>) => (stream: Stream<B>) => Stream<C>
 
 declare export function combine <A, B, Z> (f: (A, B) => Z, sa: Stream<A>, sb: Stream<B>): Stream<Z>
 declare export function combine <A, B, Z> (f: (A, B) => Z): (sa: Stream<A>, sb: Stream<B>) => Stream<Z>

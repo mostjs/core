@@ -1,12 +1,15 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
+/** @license MIT License (c) copyright 2010 original author or authors */
 
 import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
 
-export const sample = (f, sampler, stream) =>
-  new Sample(f, sampler, stream)
+export const pickLatestFrom = (values, stream) =>
+  zipLatestFrom((_, x) => x, values, stream)
 
-export class Sample {
+export const zipLatestFrom = (f, values, stream) =>
+  new ZipLatestFrom(f, stream, values)
+
+export class ZipLatestFrom {
   constructor (f, sampler, stream) {
     this.source = stream
     this.sampler = sampler
@@ -14,7 +17,7 @@ export class Sample {
   }
 
   run (sink, scheduler) {
-    const sampleSink = new SampleSink(this.f, this.source, sink)
+    const sampleSink = new ZipLatestSink(this.f, this.source, sink)
     const sourceDisposable = this.source.run(sampleSink.hold, scheduler)
     const samplerDisposable = this.sampler.run(sampleSink, scheduler)
 
@@ -22,7 +25,7 @@ export class Sample {
   }
 }
 
-export class SampleSink extends Pipe {
+export class ZipLatestSink extends Pipe {
   constructor (f, source, sink) {
     super(sink)
     this.source = source
@@ -33,7 +36,7 @@ export class SampleSink extends Pipe {
   event (t, x) {
     if (this.hold.hasValue) {
       const f = this.f
-      this.sink.event(t, f(x, this.hold.value))
+      this.sink.event(t, f(this.hold.value, x))
     }
   }
 }
