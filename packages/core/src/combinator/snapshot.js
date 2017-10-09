@@ -7,13 +7,13 @@ export const sample = (values, sampler) =>
   snapshot((_, x) => x, values, sampler)
 
 export const snapshot = (f, values, sampler) =>
-  new Snapshot(f, sampler, values)
+  new Snapshot(f, values, sampler)
 
 export class Snapshot {
-  constructor (f, sampler, values) {
+  constructor (f, values, sampler) {
+    this.f = f
     this.values = values
     this.sampler = sampler
-    this.f = f
   }
 
   run (sink, scheduler) {
