@@ -430,37 +430,37 @@ It allows you to maintain and update a "state" (a.k.a. feedback, a.k.a. seed for
   	return { seed: values, value: avg }
   }, [], stream)
 
-.. _zipArrayValues:
+.. _zipItems:
 
-zipArrayValues
-``````````````
+zipItems
+````````
 
 .. code-block:: haskell
 
-  zipArrayValues :: ((a, b) -> c) -> [a] -> Stream b -> Stream c
+  zipItems :: ((a, b) -> c) -> [a] -> Stream b -> Stream c
 
 Apply a function to the latest event and the array value at the respective index. ::
 
-  stream:                             --10---10---10---10---10--->
   array:                              [ 1, 2, 3 ]
-  zipArrayValues(add, array, stream): --11---12---13|
+  stream:                             --10---10---10---10---10--->
+  zipItems(add, array, stream): --11---12---13|
 
 The resulting :ref:`Stream` will contain the same number of events as the input :ref:`Stream`, or ``array.length`` events, whichever is less.
 
-.. _withArrayValues:
+.. _withItems:
 
-withArrayValues
-```````````````
+withItems
+`````````
 
 .. code-block:: haskell
 
-  withArrayValues :: [a] -> Stream b -> Stream a
+  withItems :: [a] -> Stream b -> Stream a
 
-Replace each event value with the array value at the respective index. ::
+Replace each event value with the array item at the respective index. ::
 
-  array:                          [ 1, 2, 3 ]
-  stream:                         --x--x--x--x--x-->
-  withArrayValues(array, stream): --1--2--3|
+  array:                    [ 1, 2, 3 ]
+  stream:                   --x--x--x--x--x-->
+  withItems(array, stream): --1--2--3|
 
 The resulting :ref:`Stream` will contain the same number of events as the input :ref:`Stream`, or ``array.length`` events, whichever is less.
 
@@ -689,24 +689,43 @@ Array form of :ref:`zip`. Apply a function to corresponding events from all the 
   s3:                           --1--2--3->
   zipArray(add3, [s1, s2, s3]): --3--6--9->
 
+_sample
+
 sample
 ``````
 
 .. code-block:: haskell
 
-  sample :: ((a, b) -> c) -> Stream a -> Stream b -> Stream c
+  sample :: Stream a -> Stream b -> Stream a
 
-For each event in a sampler :ref:`Stream`, apply a function to combine it with the most recent event in another :ref:`Stream`. The resulting :ref:`Stream` will contain the same number of events as the sampler :ref:`Stream`. ::
+For each event in a sampler :ref:`Stream`, replace the event value with the latest value in another :ref:`Stream`.  The resulting :ref:`Stream` will contain the same number of events as the sampler :ref:`Stream`. ::
 
-  s1:                       -1--2--3--4--5->
-  sampler:                  -1-----2-----3->
-  sample(sum, sampler, s1): -2-----5-----8->
+  values:                  -1--2--3--4--5->
+  sampler:                 -1-----2-----3->
+  sample(values, sampler): -1-----3-----5->
 
-  s1:                       -1-----2-----3->
-  sampler:                  -1--2--3--4--5->
-  sample(sum, sampler, s1): -2--3--5--6--8->
+  values:                  -1-----2-----3->
+  sampler:                 -1--2--3--4--5->
+  sample(values, sampler): -1--1--2--2--3->
 
-Note that ``sample`` produces a value only when an event arrives on the sampler.
+snapshot
+````````
+
+.. code-block:: haskell
+
+  snapshot :: ((a, b) -> c) -> Stream a -> Stream b -> Stream c
+
+For each event in a sampler :ref:`Stream`, apply a function to combine its value with the most recent event value in another :ref:`Stream`. The resulting :ref:`Stream` will contain the same number of events as the sampler :ref:`Stream`. ::
+
+  values:                         -1--2--3--4--5->
+  sampler:                        -1-----2-----3->
+  snapshot(sum, values, sampler): -2-----5-----8->
+
+  values:                         -1-----2-----3->
+  sampler:                        -1--2--3--4--5->
+  snapshot(sum, values, sampler): -2--3--5--6--8->
+
+In contrast to :ref:`combine`, ``snapshot`` produces a value only when an event arrives on the sampler.
 
 Filtering
 ^^^^^^^^^

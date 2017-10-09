@@ -3,32 +3,31 @@
 import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
 
-export const sample = (values, stream) =>
-  snapshot((_, x) => x, values, stream)
+export const sample = (values, sampler) =>
+  snapshot((_, x) => x, values, sampler)
 
-export const snapshot = (f, values, stream) =>
-  new Snapshot(f, stream, values)
+export const snapshot = (f, values, sampler) =>
+  new Snapshot(f, sampler, values)
 
 export class Snapshot {
-  constructor (f, sampler, stream) {
-    this.source = stream
+  constructor (f, sampler, values) {
+    this.values = values
     this.sampler = sampler
     this.f = f
   }
 
   run (sink, scheduler) {
-    const sampleSink = new SnapshotSink(this.f, this.source, sink)
-    const sourceDisposable = this.source.run(sampleSink.latest, scheduler)
+    const sampleSink = new SnapshotSink(this.f, sink)
+    const valuesDisposable = this.values.run(sampleSink.latest, scheduler)
     const samplerDisposable = this.sampler.run(sampleSink, scheduler)
 
-    return disposeBoth(samplerDisposable, sourceDisposable)
+    return disposeBoth(samplerDisposable, valuesDisposable)
   }
 }
 
 export class SnapshotSink extends Pipe {
-  constructor (f, source, sink) {
+  constructor (f, sink) {
     super(sink)
-    this.source = source
     this.f = f
     this.latest = new LatestValueSink(this)
   }
