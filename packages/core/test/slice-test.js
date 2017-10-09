@@ -3,6 +3,7 @@ import { eq, is, assert } from '@briancavalier/assert'
 
 import { slice, take, skip, takeWhile, skipWhile, skipAfter } from '../src/combinator/slice'
 import { map } from '../src/combinator/transform'
+import { now } from '../src/source/now'
 import { empty } from '../src/source/empty'
 import { default as Map } from '../src/fusion/Map'
 
@@ -11,14 +12,27 @@ import { assertSame } from './helper/stream-helper'
 
 describe('slice', function () {
   describe('fusion', function () {
+    it('should return empty given empty', () => {
+      is(empty(), slice(0, 1, empty()))
+    })
+
+    it('should return empty given zero-length slice', () => {
+      const i = Math.floor(Math.random() * 1000)
+      is(empty(), slice(i, i, now(i)))
+    })
+
+    it('should return empty when fusion leads to zero-length slice', () => {
+      is(empty(), slice(1, 2, slice(1, 2, now(''))))
+    })
+
     it('should narrow when second slice is smaller', function () {
-      const s = slice(1, 5, slice(1, 10, makeEvents(1, 1)))
+      const s = slice(1, 5, slice(1, 10, now('')))
       eq(2, s.min)
       eq(6, s.max)
     })
 
     it('should narrow when second slice is larger', function () {
-      const s = slice(1, 10, slice(1, 5, makeEvents(1, 1)))
+      const s = slice(1, 10, slice(1, 5, now('')))
       eq(2, s.min)
       eq(5, s.max)
     })
