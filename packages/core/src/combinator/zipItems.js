@@ -1,6 +1,7 @@
 /** @license MIT License (c) copyright 2017 original author or authors */
 
 import { empty } from '../source/empty'
+import { take } from './slice'
 import Pipe from '../sink/Pipe'
 
 export const withItems = (items, stream) =>
@@ -9,7 +10,7 @@ export const withItems = (items, stream) =>
 export const zipItems = (f, items, stream) =>
   items.length === 0 || stream === empty()
     ? empty()
-    : new ZipItems(f, items, stream)
+    : new ZipItems(f, items, take(items.length, stream))
 
 const keepLeft = (a, _) => a
 
@@ -36,10 +37,6 @@ class ZipItemsSink extends Pipe {
   event (t, b) {
     const f = this.f
     this.sink.event(t, f(this.items[this.index], b))
-
     this.index += 1
-    if (this.index >= this.items.length) {
-      this.sink.end(t)
-    }
   }
 }
