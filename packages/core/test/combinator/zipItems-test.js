@@ -3,7 +3,11 @@ import { describe, it } from 'mocha'
 import { eq, fail } from '@briancavalier/assert'
 
 import { zipItems, withItems } from '../../src/combinator/zipItems'
+import { map } from '../../src/combinator/transform'
+import { scan } from '../../src/combinator/scan'
+import { switchLatest } from '../../src/combinator/switch'
 import { empty } from '../../src/source/empty'
+import { periodic } from '../../src/source/periodic'
 
 import { collectEventsFor, makeEvents } from '../helper/testEnv'
 
@@ -79,6 +83,29 @@ describe('zipItems', () => {
           { time: 0, value: 'a' },
           { time: 1, value: 'b' }
         ]))
+    })
+
+    describe('given https://www.webpackbin.com/bins/-KvrqudMj6C-0H494Itg', () => {
+      it('should contain expected number of items', () => {
+        // Regression test based on
+        // https://www.webpackbin.com/bins/-KvrqudMj6C-0H494Itg
+        const a1 = [1, 2]
+        const a2 = [10, 20, 30]
+        const expectedCount = (a1.length * a2.length) + 1
+
+        const t1 = 2
+        const t2 = t1 / 2
+
+        const s1 = withItems(a1, periodic(t1))
+        const s2 = withItems(a2, periodic(t2))
+
+        const add = (x, y) => x + y
+
+        const scanned = switchLatest(map(a => scan(add, a, s2), s1))
+
+        return collectEventsFor(t1 * a1.length, scanned)
+          .then(events => eq(expectedCount, events.length))
+      })
     })
   })
 })
