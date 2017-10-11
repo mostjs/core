@@ -1,9 +1,7 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
-/** @author Brian Cavalier */
-/** @author John Hann */
+/** @license MIT License (c) copyright 2010 original author or authors */
 
 import Pipe from '../sink/Pipe'
-import { empty } from '../source/empty'
+import { empty, isCanonicalEmpty } from '../source/empty'
 import Map from '../fusion/Map'
 import SettableDisposable from '../disposable/SettableDisposable'
 
@@ -31,7 +29,9 @@ export const skip = (n, stream) =>
  * @returns {Stream} stream containing items where start <= index < end
  */
 export const slice = (start, end, stream) =>
-  end <= start ? empty() : sliceSource(start, end, stream)
+  end <= start || isCanonicalEmpty(stream)
+    ? empty()
+    : sliceSource(start, end, stream)
 
 const sliceSource = (start, end, stream) =>
   stream instanceof Map ? commuteMapSlice(start, end, stream)
@@ -39,12 +39,12 @@ const sliceSource = (start, end, stream) =>
     : new Slice(start, end, stream)
 
 const commuteMapSlice = (start, end, mapStream) =>
-  Map.create(mapStream.f, sliceSource(start, end, mapStream.source))
+  Map.create(mapStream.f, slice(start, end, mapStream.source))
 
 function fuseSlice (start, end, sliceStream) {
   const fusedStart = start + sliceStream.min
   const fusedEnd = Math.min(end + sliceStream.min, sliceStream.max)
-  return new Slice(fusedStart, fusedEnd, sliceStream.source)
+  return slice(fusedStart, fusedEnd, sliceStream.source)
 }
 
 class Slice {
