@@ -8,7 +8,7 @@ export const withItems = (items, stream) =>
   zipItems(keepLeft, items, stream)
 
 export const zipItems = (f, items, stream) =>
-  isCanonicalEmpty(stream) ? stream : new ZipItems(f, items, take(items.length, stream))
+  isCanonicalEmpty(stream) ? stream : take(items.length, new ZipItems(f, items, stream))
 
 const keepLeft = (a, _) => a
 
