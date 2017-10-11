@@ -1,7 +1,7 @@
 /** @license MIT License (c) copyright 2010 original author or authors */
 
 import Pipe from '../sink/Pipe'
-import { empty } from '../source/empty'
+import { empty, isCanonicalEmpty } from '../source/empty'
 import Map from '../fusion/Map'
 import SettableDisposable from '../disposable/SettableDisposable'
 
@@ -29,7 +29,7 @@ export const skip = (n, stream) =>
  * @returns {Stream} stream containing items where start <= index < end
  */
 export const slice = (start, end, stream) =>
-  end <= start || stream === empty()
+  end <= start || isCanonicalEmpty(stream)
     ? empty()
     : sliceSource(start, end, stream)
 
