@@ -1,14 +1,16 @@
 /** @license MIT License (c) copyright 2017 original author or authors */
 
 import Pipe from '../sink/Pipe'
-import { isCanonicalEmpty } from '../source/empty'
+import { empty, isCanonicalEmpty } from '../source/empty'
 import { take } from './slice'
 
 export const withItems = (items, stream) =>
   zipItems(keepLeft, items, stream)
 
 export const zipItems = (f, items, stream) =>
-  isCanonicalEmpty(stream) ? stream : take(items.length, new ZipItems(f, items, stream))
+  isCanonicalEmpty(stream) || items.length === 0
+    ? empty()
+    : new ZipItems(f, items, take(items.length, stream))
 
 const keepLeft = (a, _) => a
 
