@@ -47,7 +47,7 @@ Stream failures are different from *application errors*.  A stream failure indic
 
 Application error handling is outside the scope of these docs, as it is application-specific.  However, there are some general strategies for dealing with application errors with event streams:
 
-* Use try/catch, or `Promise catch() <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch>`_ to handle the application error and transform it into:
+* Use try/catch or `Promise catch() <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch>`_ to handle the application error and transform it into:
 
   * a useful event value
   * a sentinel event value that can be :ref:`filtered <filter>`
