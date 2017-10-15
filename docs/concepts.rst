@@ -43,11 +43,15 @@ The :ref:`recoverWith` operation allows you to handle an event stream failure.
 Stream Failure vs. Application Errors
 `````````````````````````````````````
 
-Stream failures are different from *application errors*.  A stream failure indicates that an event stream *cannot* produce more events.  Application errors may or may not indicate an event stream failure.  For example, an event stream representing messages arriving on a WebSocket *fails* if the WebSocket is disconnected unexpectedly due to a wifi drop.  In contrast, an application error may occur in application logic that receives a WebSocket message and can't process because the message application state has changed.
+Stream failures are different from *application errors*.  A stream failure indicates that an event stream *cannot* produce more events.  An application error may or may not indicate an event stream failure.
+
+For example, an event stream of messages from a WebSocket *fails* if the WebSocket is disconnected unexpectedly because of a dropped network connection.
+
+In contrast, an application error may occur in the application logic when it receives a WebSocket message that it can't process because the application state has changed.  The application must deal with this particular state conflict in an application-specific way, but the WebSocket event stream has *not* failed.
 
 Application error handling is outside the scope of these docs, as it is application-specific.  However, there are some general strategies for dealing with application errors with event streams:
 
-* Use try/catch, `Promise catch() <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch>`_ to handle the application error and transform it into:
+* Use try/catch or `Promise catch() <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch>`_ to handle the application error and transform it into:
 
   * a useful event value
   * a sentinel event value that can be :ref:`filtered <filter>`
