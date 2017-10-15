@@ -45,7 +45,7 @@ Stream Failure vs. Application Errors
 
 Stream failures are different from *application errors*.  A stream failure indicates that an event stream *cannot* produce more events.  An application error may or may not indicate an event stream failure.
 
-For example, an event stream of WebSocket messages *fails* if the WebSocket is disconnected unexpectedly because of a dropped network connection.
+For example, an event stream of messages from a WebSocket *fails* if the WebSocket is disconnected unexpectedly because of a dropped network connection.
 
 In contrast, an application error may occur in the application logic when it receives a WebSocket message that it can't process because the application state has changed.  The application must deal with this particular state conflict in an application-specific way, but the WebSocket event stream has *not* failed.
 
