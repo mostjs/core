@@ -123,13 +123,13 @@ declare export function zipArray <A, B, C, D, E, F, Z> (f: (A, B, C, D, E, F) =>
 declare export function zipArray <Z> (f: (...rest: Array<any>) => Z, ss: Array<Stream<any>>): Stream<Z>
 declare export function zipArray <Z> (f: (...rest: Array<any>) => Z): (ss: Array<Stream<any>>) => Stream<Z>
 
-declare export function withArrayValues <A> (a: Array<A>, s: Stream<any>): Stream<A>
-declare export function withArrayValues <A> (a: Array<A>): (s: Stream<any>) => Stream<A>
+declare export function withItems <A> (a: Array<A>, s: Stream<any>): Stream<A>
+declare export function withItems <A> (a: Array<A>): (s: Stream<any>) => Stream<A>
 
-declare export function zipArrayValues <A, B, C> (f: (A, B) => C, a: Array<A>, s: Stream<B>): Stream<C>
-declare export function zipArrayValues <A, B, C> (f: (A, B) => C): (a: Array<A>, s: Stream<B>) => Stream<C>
-declare export function zipArrayValues <A, B, C> (f: (A, B) => C, a: Array<A>): (s: Stream<B>) => Stream<C>
-declare export function zipArrayValues <A, B, C> (f: (A, B) => C): (a: Array<A>) => (s: Stream<B>) => Stream<C>
+declare export function zipItems <A, B, C> (f: (A, B) => C, a: Array<A>, s: Stream<B>): Stream<C>
+declare export function zipItems <A, B, C> (f: (A, B) => C): (a: Array<A>, s: Stream<B>) => Stream<C>
+declare export function zipItems <A, B, C> (f: (A, B) => C, a: Array<A>): (s: Stream<B>) => Stream<C>
+declare export function zipItems <A, B, C> (f: (A, B) => C): (a: Array<A>) => (s: Stream<B>) => Stream<C>
 
 declare export function filter <A> (p: (A) => boolean, s: Stream<A>): Stream<A>
 declare export function filter <A> (p: (A) => boolean): (s: Stream<A>) => Stream<A>
