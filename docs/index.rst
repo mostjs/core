@@ -17,6 +17,7 @@ It features an ultra-high performance, low overhead architecture, and a small bu
    :maxdepth: 2
    :caption: Contents:
 
+   faq
    notation
    concepts
    api
