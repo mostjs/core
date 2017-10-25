@@ -1,6 +1,6 @@
 {
   "name": "@most/core",
-  "version": "0.15.0",
+  "version": "1.0.0-beta.0",
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
   "typings": "type-definitions/most.d.ts",
   "main": "dist/mostCore.js",
@@ -54,10 +54,10 @@
     "uglify-js": "^2.7.5"
   },
   "dependencies": {
-    "@most/disposable": "^0.13.1",
+    "@most/disposable": "^1.0.0-beta.0",
     "@most/prelude": "^1.6.4",
-    "@most/scheduler": "^0.13.1",
-    "@most/types": "^0.11.1"
+    "@most/scheduler": "^1.0.0-beta.0",
+    "@most/types": "^1.0.0-beta.0"
   },
   "standard": {
     "ignore": [
