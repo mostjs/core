@@ -59,14 +59,14 @@ Application error handling is outside the scope of these docs, as it is applicat
 
 * Use :ref:`throwError` to transform the application error into a stream failure
 
-Source and sink chains
-----------------------
+Streams and Sinks
+-----------------
 
-Applying combinators to a stream composes a *source chain* that defines the behavior of the stream.  When an observer begins observing a stream, a :ref:`run <Stream>` message is sent "backwards" through the chain, to the ultimate producer--the one that will produce events in the first place.
+Applying an operation to a stream derives a *new stream* with *new events*. There is *no alteration* to the original stream (*the origin*). Multiple operations compose a *chain of streams*. When a stream is observed, a :ref:`run <Stream>` message is sent “backwards” through the chain to the origin.
 
-As it travels, that message composes a :ref:`Sink` chain analogous to the source chain.  When the messages reaches the producer, it begins producing events.  With the exception of a few combinators (such as :ref:`delay`), events propagate *synchronously* "forward" through the sink chain.
+As the message travels, it composes a :ref:`Sink` chain analogous to the stream chain. Finally, the origin begins to produce its events when the message reaches it. With the exception of a few combinators (such as :ref:`delay`), events propagate *synchronously* “forward” through the sink chain.
 
-**Note**: a producer must not *begin* producing events synchronously.  It must schedule the *start* of its production, using the :ref:`Scheduler` passed to its :ref:`run <Stream>` method.  However, once it does begin, it may then produce events synchronously.
+**Note**: a stream must not *begin* producing events synchronously. It must schedule the *start* of its production by using the :ref:`Scheduler` passed to its :ref:`run <Stream>` method. Once it has started, it may then produce events synchronously.
 
 Event propagation
 -----------------
