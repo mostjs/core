@@ -17,10 +17,12 @@ Specifically, `@most/core` features Most's battle-tested, high-performance archi
 
 * [API docs](https://mostcore.readthedocs.io)
 * [Get it](#get-it)
-* Examples (*coming soon*)
+* [Examples](examples)
 
 ## Get it
 
 ```
-npm install --save @most/core
+npm install --save @most/core @most/scheduler
+
+yarn add @most/core @most/scheduler
 ```
