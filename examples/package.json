@@ -10,7 +10,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@most/core": "^0.14.0",
+    "@most/core": "^0.15.0",
     "@most/dom-event": "^2.0.0",
     "@most/scheduler": "^0.13.1"
   },
