@@ -1,24 +1,23 @@
 {
-  "name": "counter",
+  "name": "examples",
   "version": "1.0.0",
-  "description": "most/core counter",
-  "main": "dist/index.js",
+  "description": "most/core examples",
   "scripts": {
-    "lint": "standard --fix src/*.js",
-    "build": "npm run lint && rollup -c",
-    "watch": "rollup --watch -c"
+    "lint": "standard --fix '{counter,add-inputs}/src/*.js'",
+    "build:counter": "npm run lint && rollup -c -i counter/src/index.js -o counter/dist/index.js",
+    "build:add-inputs": "npm run lint && rollup -c -i add-inputs/src/index.js -o add-inputs/dist/index.js"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@most/core": "^0.14.0",
+    "@most/core": "^0.15.0",
     "@most/dom-event": "^2.0.0",
     "@most/scheduler": "^0.13.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.1",
     "eslint-plugin-flowtype": "^2.37.0",
-    "flow-bin": "^0.56.0",
+    "flow-bin": "^0.57.3",
     "rollup": "^0.50.0",
     "rollup-plugin-flow": "^1.1.1",
     "rollup-plugin-node-resolve": "^3.0.0",
