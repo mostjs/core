@@ -13,7 +13,7 @@ Use ``@most/core`` to build programs that transform, filter, coordinate, and *re
 When *shouldn't* you use it?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``@most/core`` is not a good choice for use cases that aren't characterized by reacting to events as they happen.  For example, it isn't intended for Array data processing, time series data analysis and processing, or for streaming chunked data with flow control (also known as "back pressure").
+``@most/core`` is not a good choice for use cases that aren't characterized by reacting to events as they happen.  For example, it isn't intended for Array processing, time series analysis and processing, or for streaming chunked data with flow control (also known as "back pressure").
 
 .. toctree::
    :maxdepth: 2
