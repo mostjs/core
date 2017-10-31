@@ -1,6 +1,7 @@
 /** @license MIT License (c) copyright 2010-2016 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
+import { disposeAll } from '@most/disposable'
 
 /**
  * Doubly linked list
@@ -57,20 +58,16 @@ export default class LinkedList {
    *  or rejects if an error occurs while disposing
    */
   dispose () {
-    if (this.isEmpty()) {
-      return Promise.resolve()
-    }
-
-    const promises = []
+    const disposables = []
     let x = this.head
     this.head = null
     this.length = 0
 
     while (x !== null) {
-      promises.push(x.dispose())
+      disposables.push(x)
       x = x.next
     }
 
-    return Promise.all(promises)
+    return disposeAll(disposables).dispose()
   }
 }
