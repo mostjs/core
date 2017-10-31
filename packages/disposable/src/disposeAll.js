@@ -15,26 +15,39 @@ class DisposeAll {
   }
 
   dispose () {
-    throwIfErrors(disposeCollectErrors(this.disposables))
+    return throwIfErrors(disposeCollectErrors(this.disposables))
   }
 }
 
 // Dispose all, safely collecting errors into an array
 const disposeCollectErrors = disposables =>
-  reduce(appendIfError, [], disposables)
+  reduce((errors, d) => {
+    if (typeof errors.then === 'function') {
+      return errors.then((errors) => appendIfError(errors, d))
+    }
+    return appendIfError(errors, d)
+  }, [], disposables)
 
 // Call dispose and if throws, append thrown error to errors
 const appendIfError = (errors, d) => {
   try {
-    d.dispose()
+    const result = d.dispose()
+    if (result && typeof result.then === 'function') {
+      return result.then(() => Promise.resolve(errors), (e) => {
+        return Promise.resolve([...errors, e])
+      })
+    }
   } catch (e) {
-    errors.push(e)
+    return [...errors, e]
   }
   return errors
 }
 
 // Throw DisposeAllError if errors is non-empty
 const throwIfErrors = errors => {
+  if (typeof errors.then === 'function') {
+    return errors
+  }
   if (errors.length > 0) {
     throw new DisposeAllError(`${errors.length} errors`, errors)
   }
