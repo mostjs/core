@@ -7,7 +7,7 @@ import { propagateEventTask, propagateEndTask } from '../../src/scheduler/Propag
 import VirtualTimer from './VirtualTimer'
 import { runEffects } from '../../src/runEffects'
 import { tap } from '../../src/combinator/transform'
-import { disposeWith, disposeNone } from '@most/disposable'
+import { disposeWith, disposeNone, disposeAll } from '@most/disposable'
 
 export function newEnv () {
   const timer = new VirtualTimer()
@@ -62,6 +62,4 @@ const appendEvent = (sink, scheduler) => (s, event) => {
   return { tasks: s.tasks.concat(task), time: Math.max(s.time, event.time) }
 }
 
-const cancelAll = tasks => Promise.all(tasks.map(cancelOne))
-
-const cancelOne = task => task.dispose()
+const cancelAll = tasks => disposeAll(tasks).dispose()

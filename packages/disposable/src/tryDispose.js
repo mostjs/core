@@ -5,7 +5,12 @@ import { curry3 } from '@most/prelude'
 // the error to sink.error with the provided Time value
 export const tryDispose = curry3((t, disposable, sink) => {
   try {
-    disposable.dispose()
+    const result = disposable.dispose()
+    if (result && typeof result.catch === 'function') {
+      return result.catch((e) => {
+        sink.error(t, e)
+      })
+    }
   } catch (e) {
     sink.error(t, e)
   }

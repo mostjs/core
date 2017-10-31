@@ -83,7 +83,7 @@ export class MulticastDisposable {
 
   dispose () {
     if (this.source.remove(this.sink) === 0) {
-      this.source.dispose()
+      return this.source.dispose()
     }
   }
 }

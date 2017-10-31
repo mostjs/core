@@ -9,13 +9,15 @@ class DisposeOnce {
   constructor (disposable) {
     this.disposed = false
     this.disposable = disposable
+    this.result = null
   }
 
   dispose () {
     if (!this.disposed) {
       this.disposed = true
-      this.disposable.dispose()
+      this.result = this.disposable.dispose()
       this.disposable = undefined
     }
+    return this.result
   }
 }
