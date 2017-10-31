@@ -106,6 +106,6 @@ class Segment {
   }
 
   _dispose (t) {
-    tryDispose(t + this.min, this.disposable, this.sink)
+    return tryDispose(t + this.min, this.disposable, this.sink)
   }
 }

@@ -18,6 +18,6 @@ class DisposeWith {
   }
 
   dispose () {
-    this._dispose(this._resource)
+    return this._dispose(this._resource)
   }
 }
