@@ -2,7 +2,7 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { disposeOnce, tryDispose } from '@most/disposable'
+import { disposeOnce, tryDispose, disposeBoth } from '@most/disposable'
 import LinkedList from '../LinkedList'
 import { id as identity } from '@most/prelude'
 import { schedulerRelativeTo } from '@most/scheduler'
@@ -34,6 +34,7 @@ class Outer {
     this.pending = []
     this.current = new LinkedList()
     this.disposable = disposeOnce(source.run(this, scheduler))
+    this.disposer = disposeBoth(this.disposable, this.current)
     this.active = true
   }
 
@@ -77,8 +78,7 @@ class Outer {
   dispose () {
     this.active = false
     this.pending.length = 0
-    this.disposable.dispose()
-    this.current.dispose()
+    return this.disposer.dispose()
   }
 
   _endInner (t, inner) {
