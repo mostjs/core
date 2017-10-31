@@ -5,7 +5,7 @@ import { newStream } from '../src/source/newStream'
 
 describe('newStream', () => {
   it('should create new stream from RunStream function', () => {
-    const run = (sink, scheduler) => ({ dispose: () => Promise.resolve() })
+    const run = (sink, scheduler) => ({ dispose: () => {} })
     const s = newStream(run)
 
     is(run, s.run)
