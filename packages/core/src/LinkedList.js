@@ -1,6 +1,4 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
-/** @author Brian Cavalier */
-/** @author John Hann */
+/** @license MIT License (c) copyright 2010 original author or authors */
 
 /**
  * Doubly linked list
@@ -53,24 +51,20 @@ export default class LinkedList {
 
   /**
    * Dispose all nodes
-   * @returns {Promise} promise that fulfills when all nodes have been disposed,
-   *  or rejects if an error occurs while disposing
+   * @returns {void}
    */
   dispose () {
     if (this.isEmpty()) {
-      return Promise.resolve()
+      return
     }
 
-    const promises = []
-    let x = this.head
+    let head = this.head
     this.head = null
     this.length = 0
 
-    while (x !== null) {
-      promises.push(x.dispose())
-      x = x.next
+    while (head !== null) {
+      head.dispose()
+      head = head.next
     }
-
-    return Promise.all(promises)
   }
 }
