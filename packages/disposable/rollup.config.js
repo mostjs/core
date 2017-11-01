@@ -1,27 +1,28 @@
 import buble from 'rollup-plugin-buble'
+import pkg from './package.json'
 
 export default {
-  entry: 'src/index.js',
+  input: 'src/index.js',
   plugins: [
     buble()
   ],
   external: [
     '@most/prelude'
   ],
-  targets: [
+  output: [
     {
-      dest: 'dist/index.js',
+      file: pkg.main,
       format: 'umd',
-      moduleName: 'mostDisposable',
-      sourceMap: true,
+      name: 'mostDisposable',
+      sourcemap: true,
       globals: {
         '@most/prelude': 'mostPrelude'
       }
     },
     {
-      dest: 'dist/index.es.js',
+      file: pkg.module,
       format: 'es',
-      sourceMap: true
+      sourcemap: true
     }
   ]
 }
