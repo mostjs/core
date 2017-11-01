@@ -1,7 +1,8 @@
 import buble from 'rollup-plugin-buble'
+import pkg from './package.json'
 
 export default {
-  entry: 'src/index.js',
+  input: 'src/index.js',
   plugins: [
     buble()
   ],
@@ -10,12 +11,12 @@ export default {
     '@most/disposable',
     '@most/prelude'
   ],
-  targets: [
+  output: [
     {
-      dest: 'dist/mostCore.js',
+      file: pkg.main,
       format: 'umd',
-      moduleName: 'mostCore',
-      sourceMap: true,
+      name: 'mostCore',
+      sourcemap: true,
       globals: {
         '@most/scheduler': 'mostScheduler',
         '@most/disposable': 'mostDisposable',
@@ -23,9 +24,9 @@ export default {
       }
     },
     {
-      dest: 'dist/mostCore.es.js',
+      file: pkg.module,
       format: 'es',
-      sourceMap: true
+      sourcemap: true
     }
   ]
 }

@@ -5,7 +5,6 @@
   "typings": "index.d.ts",
   "main": "index.js",
   "module": "index.js",
-  "jsnext:main": "index.js",
   "files": [
     "*"
   ],
@@ -31,6 +30,6 @@
   "author": "brian@hovercraftstudios.com",
   "license": "MIT",
   "devDependencies": {
-    "flow-bin": "^0.53.1"
+    "flow-bin": "^0.57.3"
   }
 }
