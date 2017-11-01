@@ -48,8 +48,7 @@
     "rollup-plugin-buble": "^0.16.0",
     "sinon": "^1.17.7",
     "snazzy": "^7.0.0",
-    "standard": "^10.0.3",
-    "uglify-js": "^2.7.5"
+    "standard": "^10.0.3"
   },
   "dependencies": {
     "@most/disposable": "^1.0.0-beta.0",
