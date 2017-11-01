@@ -6,7 +6,7 @@ export default {
   plugins: [
     buble()
   ],
-  targets: [
+  output: [
     {
       file: pkg.main,
       format: 'umd',

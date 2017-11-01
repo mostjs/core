@@ -9,7 +9,7 @@ export default {
   external: [
     '@most/prelude'
   ],
-  targets: [
+  output: [
     {
       file: pkg.main,
       format: 'umd',

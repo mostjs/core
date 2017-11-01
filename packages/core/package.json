@@ -14,10 +14,9 @@
     "test:unit": "nyc --reporter=text-summary mocha -r buba/register --reporter dot --recursive 'test/**/*-test.js'",
     "test:lint": "standard --fix 'src/**/*.js' 'test/**/*.js' --verbose | snazzy",
     "test:flow": "flow check",
-    "build": "npm run build:dist && npm run build:min && npm run build:flow",
+    "build": "npm run build:dist && npm run build:flow",
     "build:dist": "rollup -c",
-    "build:min": "uglifyjs dist/mostCore.js -m -o dist/mostCore.min.js",
-    "build:flow": "cpy src/index.js.flow dist --rename=mostCore.js.flow && cpy src/index.js.flow dist --rename=mostCore.es.js.flow",
+    "build:flow": "cpy src/index.js.flow dist",
     "prepare": "npm run build"
   },
   "repository": {

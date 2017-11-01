@@ -16,7 +16,7 @@
     "test:flow": "flow check",
     "build": "npm run build:dist && npm run build:flow",
     "build:dist": "rollup -c",
-    "build:flow": "cpy src/index.js.flow dist --rename=index.js.flow && cpy src/index.js.flow dist --rename=index.es.js.flow",
+    "build:flow": "cpy src/index.js.flow dist",
     "prepare": "npm run build"
   },
   "repository": {
