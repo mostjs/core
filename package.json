@@ -16,6 +16,7 @@
   "author": "brian@hovercraftstudios.com",
   "license": "MIT",
   "devDependencies": {
-    "lerna": "^2.1.2"
+    "lerna": "^2.1.2",
+    "lerna-changelog": "^0.7.0"
   }
 }
