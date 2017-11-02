@@ -5,10 +5,14 @@
 
 It features an ultra-high performance, low overhead architecture, and a small but powerful set of operations for merging, filtering, and transforming event streams.
 
+.. _when should you use it:
+
 When should you use it?
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Use ``@most/core`` to build programs that transform, filter, coordinate, and *react to* :ref:`events` *as they happen*.  For example, it can be a good choice for building interactive user interfaces.
+``@most/core`` is a good choice for building programs that transform, filter, coordinate, and *react to* :ref:`events` *as they happen*.  For example, it can be a good choice for building interactive user interfaces.
+
+.. _when shouldnt you use it:
 
 When *shouldn't* you use it?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
