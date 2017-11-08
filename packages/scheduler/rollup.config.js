@@ -13,7 +13,7 @@ export default {
     {
       file: pkg.main,
       format: 'umd',
-      name: 'mostCore',
+      name: 'mostScheduler',
       sourcemap: true,
       globals: {
         '@most/prelude': 'mostPrelude'
