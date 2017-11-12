@@ -1011,7 +1011,7 @@ delay
 
   delay :: Delay -> Stream a -> Stream a
 
-Timeshift a :ref:`Stream` by the specify :ref:`Delay <Delay-type>`. ::
+Timeshift a :ref:`Stream` by the specified :ref:`Delay <Delay-type>`. ::
 
   stream:           -a-b-c-d->
   delay(1, stream): --a-b-c-d->
