@@ -11,19 +11,48 @@ API
 Time
 ^^^^
 
+All time-related types use units defined by a :ref:`Clock`. The default :ref:`Scheduler` :ref:`Clock` uses milliseconds as its units: :ref:`Time`, :ref:`Delay <Delay-type>`, :ref:`Period`, and :ref:`Offset` will all be millisecond values.
+
 .. code-block:: haskell
 
   type Time = number
 
-Time is a monotonic number. It represents the current time according to a :ref:`Scheduler`. The default :ref:`Scheduler` uses ``performance.now`` in browsers and ``process.hrtime`` (transformed to a `number`) in Node.
+Time is a monotonic number. It represents the current time according to a :ref:`Clock`. When using a default :ref:`Scheduler <newDefaultScheduler>`, the units will be milliseconds.
+
+.. _Delay-type:
+
+Delay
+`````
 
 .. code-block:: haskell
 
   type Delay = number
+
+A ``Delay`` represents a duration from "now". When using a default :ref:`Scheduler <newDefaultScheduler>`, the units will be milliseconds.
+
+.. _Period:
+
+Period
+``````
+
+.. code-block:: haskell
+
   type Period = number
+
+A ``Period`` represents a regular interval. When using a default :ref:`Scheduler <newDefaultScheduler>`, the units will be milliseconds.
+
+.. _Offset:
+
+Offset
+``````
+
+.. code-block:: haskell
+
   type Offset = number
 
-``Delay``, ``Period``, and ``Offset`` are semantic time-related types. They're all numbers but are intended to provide helpful semantics for working with :ref:`Task` and  :ref:`Scheduler` methods.
+An ``Offset`` represents the relationship of one :ref:`Clock` to another.  When using a default :ref:`Scheduler <newDefaultScheduler>`, the units will be milliseconds.
+
+**NOTE**: Typically, you will not need to be concerned with the :ref:`Offset` type.
 
 .. _Stream:
 
@@ -102,7 +131,7 @@ Clock
     now :: () -> Time
   }
 
-A ``Clock`` represents a source of the current time.
+A ``Clock`` represents a source of the current time.  The default :ref:`Clock` uses milliseconds as its units: :ref:`Time`, :ref:`Delay-type`, :ref:`Period`, and :ref:`Offset` will all be millisecond values.
 
 .. _Timer:
 
@@ -266,7 +295,7 @@ periodic
 
   periodic :: Period -> Stream void
 
-Create an infinite :ref:`Stream` containing events that occur at a specified period. ::
+Create an infinite :ref:`Stream` containing events that occur at a specified :ref:`Period`. ::
 
   periodic(3): x--x--x--x-->
 
@@ -982,7 +1011,7 @@ delay
 
   delay :: Delay -> Stream a -> Stream a
 
-Timeshift a :ref:`Stream` by *n* milliseconds. ::
+Timeshift a :ref:`Stream` by the specify :ref:`Delay <Delay-type>`. ::
 
   stream:           -a-b-c-d->
   delay(1, stream): --a-b-c-d->
@@ -1242,7 +1271,7 @@ delay
 
   delay :: Delay -> Task -> Scheduler -> ScheduledTask
 
-Schedule a :ref:`Task` to execute after a specified millisecond ``Delay``.
+Schedule a :ref:`Task` to execute after a specified :ref:`Delay <Delay-type>`.
 
 .. _Scheduler-periodic:
 
@@ -1253,7 +1282,7 @@ periodic
 
   periodic :: Period -> Task -> Scheduler -> ScheduledTask
 
-Schedule a :ref:`Task` to execute periodically with the specified ``Period``.
+Schedule a :ref:`Task` to execute periodically with the specified :ref:`Period`.
 
 .. _Canceling Tasks:
 
@@ -1316,7 +1345,7 @@ schedulerRelativeTo
 
   schedulerRelativeTo :: Offset -> Scheduler -> Scheduler
 
-Create a new :ref:`Scheduler` with origin (i.e., zero time) at the specified :ref:`Offset <Time>` with the provided :ref:`Scheduler`.
+Create a new :ref:`Scheduler` with origin (i.e., zero time) at the specified :ref:`Offset` with the provided :ref:`Scheduler`.
 
 When implementing higher-order :ref:`Stream` combinators, this function can be used to create a :ref:`Scheduler` with local time for each "inner" :ref:`Stream`.
 
