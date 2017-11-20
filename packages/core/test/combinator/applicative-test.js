@@ -1,8 +1,10 @@
 import { describe, it } from 'mocha'
+import { assert } from '@briancavalier/assert'
 
 import { assertSame } from '../helper/stream-helper'
 import { ap } from '../../src/combinator/applicative'
 import { now } from '../../src/source/now'
+import { empty, isCanonicalEmpty } from '../../src/source/empty'
 
 const sentinel = { value: 'sentinel' }
 
@@ -43,5 +45,17 @@ describe('ap', function () {
       ap(u, now(y)),
       ap(now(f => f(y)), u)
     )
+  })
+
+  describe('given a canonical empty stream', function () {
+    it('should return a canonical empty stream', function () {
+      // Fixture setup
+      const emptyStream = empty()
+      const arbitraryStreamOfFunctions = now(_ => _)
+      // Exercise system
+      const sut = ap(arbitraryStreamOfFunctions, emptyStream)
+      // Verify outcome
+      assert(isCanonicalEmpty(sut))
+    })
   })
 })

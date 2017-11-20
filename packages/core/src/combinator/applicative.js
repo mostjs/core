@@ -4,6 +4,7 @@
 
 import { combine } from './combine'
 import { apply } from '@most/prelude'
+import { isCanonicalEmpty } from '../source/empty'
 
 /**
  * Assume fs is a stream containing functions, and apply the latest function
@@ -16,5 +17,9 @@ import { apply } from '@most/prelude'
  * @returns {Stream} stream containing all the applications of fs to xs
  */
 export function ap (fs, xs) {
+  if (isCanonicalEmpty(xs)) {
+    return xs
+  }
+
   return combine(apply, fs, xs)
 }
