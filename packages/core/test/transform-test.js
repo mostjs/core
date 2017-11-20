@@ -29,7 +29,7 @@ describe('map', function () {
   })
 
   describe('given a canonical empty stream', function () {
-    it('should return the same canonical empty stream', function () {
+    it('should return a canonical empty stream', function () {
       // Fixture setup
       const emptyStream = empty()
       // Exercise system
