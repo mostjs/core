@@ -1,10 +1,10 @@
 import { describe, it } from 'mocha'
-import { eq } from '@briancavalier/assert'
+import { eq, assert } from '@briancavalier/assert'
 
 import { assertSame } from './helper/stream-helper'
 import { map, tap, constant } from '../src/combinator/transform'
 import { now } from '../src/source/now'
-import { empty } from '../src/source/empty'
+import { empty, isCanonicalEmpty } from '../src/source/empty'
 
 import { collectEventsFor } from './helper/testEnv'
 
@@ -32,11 +32,10 @@ describe('map', function () {
     it('should return the same canonical empty stream', function () {
       // Fixture setup
       const emptyStream = empty()
-      const expectedResult = emptyStream
       // Exercise system
       const sut = map(_ => _, emptyStream)
       // Verify outcome
-      assertSame(expectedResult, sut)
+      assert(isCanonicalEmpty(sut))
     })
   })
 })
