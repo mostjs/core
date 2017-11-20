@@ -1,9 +1,10 @@
 import { describe, it } from 'mocha'
-import { eq } from '@briancavalier/assert'
+import { eq, assert } from '@briancavalier/assert'
 
 import { filter, skipRepeats, skipRepeatsWith } from '../src/combinator/filter'
 
 import { collectEventsFor, makeEventsFromArray } from './helper/testEnv'
+import { empty, isCanonicalEmpty } from '../src/source/empty'
 
 const sentinel = { value: 'sentinel' }
 const other = { value: 'other' }
@@ -19,6 +20,17 @@ describe('filter', function () {
         { time: 0, value: sentinel },
         { time: 2, value: sentinel }
       ]))
+  })
+
+  describe('given a canonical empty stream', function () {
+    it('should return a canonical empty stream', function () {
+      // Fixture setup
+      const emptyStream = empty()
+      // Exercise system
+      const sut = filter(_ => _, emptyStream)
+      // Verify outcome
+      assert(isCanonicalEmpty(sut))
+    })
   })
 })
 
