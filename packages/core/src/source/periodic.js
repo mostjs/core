@@ -7,7 +7,7 @@ import { periodic as schedulePeriodic } from '@most/scheduler'
 
 /**
  * Create a stream of events that occur at a regular period
- * @param {Number} period periodicity of events in millis
+ * @param {Number} period periodicity of events
  * @returns {Stream} new stream of periodic events, the event value is undefined
  */
 export const periodic = period =>
