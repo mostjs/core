@@ -6,6 +6,7 @@ import Pipe from '../sink/Pipe'
 import Filter from './Filter'
 import FilterMap from './FilterMap'
 import { compose } from '@most/prelude'
+import { isCanonicalEmpty } from '../source/empty'
 
 export default class Map {
   constructor (f, source) {
@@ -25,6 +26,10 @@ export default class Map {
    * @returns {Map|FilterMap} mapped source, possibly fused
    */
   static create (f, source) {
+    if (isCanonicalEmpty(source)) {
+      return source
+    }
+
     if (source instanceof Map) {
       return new Map(compose(f, source.f), source.source)
     }

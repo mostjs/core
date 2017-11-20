@@ -4,6 +4,7 @@ import { eq } from '@briancavalier/assert'
 import { assertSame } from './helper/stream-helper'
 import { map, tap, constant } from '../src/combinator/transform'
 import { now } from '../src/source/now'
+import { empty } from '../src/source/empty'
 
 import { collectEventsFor } from './helper/testEnv'
 
@@ -25,6 +26,18 @@ describe('map', function () {
       map(x => f(g(x)), u),
       map(f, map(g, u))
     )
+  })
+
+  describe('given a canonical empty stream', function () {
+    it('should return the same canonical empty stream', function () {
+      // Fixture setup
+      const emptyStream = empty()
+      const expectedResult = emptyStream
+      // Exercise system
+      const sut = map(_ => _, emptyStream)
+      // Verify outcome
+      assertSame(expectedResult, sut)
+    })
   })
 })
 
