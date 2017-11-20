@@ -295,11 +295,9 @@ periodic
 
   periodic :: Period -> Stream void
 
-Create an infinite :ref:`Stream` containing events that occur at a specified :ref:`Period`. ::
+Create an infinite :ref:`Stream` containing events that occur at a specified :ref:`Period`.  The first event occurs at time 0, and the event values are ``undefined``. ::
 
   periodic(3): x--x--x--x-->
-
-The first event occurs at time 0, and the event values are ``undefined``.
 
 .. _throwError:
 
