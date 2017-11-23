@@ -4,7 +4,7 @@ import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
 
 export const sample = (values, sampler) =>
-  snapshot((_, x) => x, values, sampler)
+  snapshot((x, _) => x, values, sampler)
 
 export const snapshot = (f, values, sampler) =>
   new Snapshot(f, values, sampler)
