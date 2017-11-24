@@ -14,6 +14,16 @@ import { makeEvents, ticks, collectEvents } from '../helper/testEnv'
 const rint = n => Math.ceil(n * Math.random())
 
 describe('snapshot', () => {
+  it('given canonical empty sampler, should return canonical empty', () => {
+    const s = snapshot(Array, makeEvents(1, 3), empty())
+    assert(isCanonicalEmpty(s))
+  })
+
+  it('given canonical empty values, should return canonical empty', () => {
+    const s = snapshot(Array, empty(), makeEvents(1, 3))
+    assert(isCanonicalEmpty(s))
+  })
+
   it('should pass in the sampler value', () => {
     const streamValue = Math.random()
     const referenceValue = Math.random()
