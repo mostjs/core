@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import { map } from './transform'
-import { empty } from '../source/empty'
+import { empty, isNotCanonicalEmpty } from '../source/empty'
 import Pipe from '../sink/Pipe'
 import IndexSink from '../sink/IndexSink'
 import { disposeAll } from '@most/disposable'
@@ -32,6 +32,9 @@ export function zip (f, stream1, stream2) {
 *  using f
 */
 export const zipArray = (f, streams) =>
+  zipStreams(f, streams.filter(isNotCanonicalEmpty))
+
+const zipStreams = (f, streams) =>
   streams.length === 0 ? empty()
     : streams.length === 1 ? map(f, streams[0])
     : new Zip(f, streams)

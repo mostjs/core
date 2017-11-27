@@ -8,6 +8,9 @@ export const empty = () => EMPTY
 export const isCanonicalEmpty = stream =>
   stream === EMPTY
 
+export const isNotCanonicalEmpty = stream =>
+  !isCanonicalEmpty(stream)
+
 class Empty {
   run (sink, scheduler) {
     return asap(propagateEndTask(sink), scheduler)
