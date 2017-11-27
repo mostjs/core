@@ -7,12 +7,12 @@ import { empty, isCanonicalEmpty } from '../../src/source/empty'
 import { collectEventsFor, makeEvents } from '../helper/testEnv'
 
 describe('empty', () => {
-  describe('isEmpty', () => {
-    it('should return true given empty()', () => {
+  describe('isCanonicalEmpty', () => {
+    it('given empty(), should return true', () => {
       assert(isCanonicalEmpty(empty()))
     })
 
-    it('should return false given non-empty()', () => {
+    it('given non-empty(), should return false', () => {
       assert(!isCanonicalEmpty(makeEvents(1, 0)))
     })
   })

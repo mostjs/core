@@ -1,9 +1,7 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
-/** @author Brian Cavalier */
-/** @author John Hann */
+/** @license MIT License (c) copyright 2010 original author or authors */
 
 import { map } from './transform'
-import { empty } from '../source/empty'
+import { empty, isCanonicalEmpty } from '../source/empty'
 import Pipe from '../sink/Pipe'
 import IndexSink from '../sink/IndexSink'
 import { disposeAll } from '@most/disposable'
@@ -32,7 +30,7 @@ export function zip (f, stream1, stream2) {
 *  using f
 */
 export const zipArray = (f, streams) =>
-  streams.length === 0 ? empty()
+  streams.length === 0 || streams.some(isCanonicalEmpty) ? empty()
     : streams.length === 1 ? map(f, streams[0])
     : new Zip(f, streams)
 
