@@ -2,12 +2,15 @@
 
 import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
+import { empty, isCanonicalEmpty } from '../source/empty'
 
 export const sample = (values, sampler) =>
   snapshot((x, _) => x, values, sampler)
 
 export const snapshot = (f, values, sampler) =>
-  new Snapshot(f, values, sampler)
+  isCanonicalEmpty(sampler) || isCanonicalEmpty(values)
+    ? empty()
+    : new Snapshot(f, values, sampler)
 
 export class Snapshot {
   constructor (f, values, sampler) {

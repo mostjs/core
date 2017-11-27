@@ -1,18 +1,29 @@
 // @flow
 import { describe, it } from 'mocha'
-import { is, eq } from '@briancavalier/assert'
+import { assert, is, eq } from '@briancavalier/assert'
 
 import { throwError } from '../../src/combinator/errors'
 import { at } from '../../src/source/at'
 import { now } from '../../src/source/now'
+import { empty, isCanonicalEmpty } from '../../src/source/empty'
 import { never } from '../../src/source/never'
-import { snapshot } from '../../src/combinator/snapshot'
+import { snapshot, sample } from '../../src/combinator/snapshot'
 
 import { makeEvents, ticks, collectEvents } from '../helper/testEnv'
 
 const rint = n => Math.ceil(n * Math.random())
 
 describe('snapshot', () => {
+  it('given canonical empty sampler, should return canonical empty', () => {
+    const s = snapshot(Array, makeEvents(1, 3), empty())
+    assert(isCanonicalEmpty(s))
+  })
+
+  it('given canonical empty values, should return canonical empty', () => {
+    const s = snapshot(Array, empty(), makeEvents(1, 3))
+    assert(isCanonicalEmpty(s))
+  })
+
   it('should pass in the sampler value', () => {
     const streamValue = Math.random()
     const referenceValue = Math.random()
@@ -59,5 +70,30 @@ describe('snapshot', () => {
 
     return collectEvents(s, ticks(1))
       .catch(is(error))
+  })
+})
+
+describe('sample', () => {
+  it('given canonical empty sampler, should return canonical empty', () => {
+    const s = sample(makeEvents(1, 3), empty())
+    assert(isCanonicalEmpty(s))
+  })
+
+  it('given canonical empty values, should return canonical empty', () => {
+    const s = sample(empty(), makeEvents(1, 3))
+    assert(isCanonicalEmpty(s))
+  })
+
+  it('use event values from values and event times from sampler', () => {
+    const s = sample(makeEvents(2, 5), makeEvents(1, 5))
+
+    return collectEvents(s, ticks(5))
+      .then(eq([
+        { time: 0, value: 0 },
+        { time: 1, value: 0 },
+        { time: 2, value: 1 },
+        { time: 3, value: 1 },
+        { time: 4, value: 2 }
+      ]))
   })
 })
