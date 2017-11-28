@@ -5,6 +5,7 @@ import { spy } from 'sinon'
 import { loop } from '../../src/combinator/loop'
 import { throwError } from '../../src/combinator/errors'
 import { now } from '../../src/source/now'
+import { empty, isCanonicalEmpty } from '../../src/source/empty'
 
 import FakeDisposeSource from '../helper/FakeDisposeStream'
 
@@ -16,6 +17,11 @@ const other = { value: 'other' }
 const toPair = (z, x) => ({ value: x, seed: z })
 
 describe('loop', function () {
+  it('given canonical empty, should return canonical empty', () => {
+    const s = loop((seed, value) => ({ seed, value }), 1, empty())
+    assert(isCanonicalEmpty(s))
+  })
+
   it('should call stepper with seed, value', function () {
     const a = ['a', 'b', 'c', 'd']
 

@@ -1,8 +1,7 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
-/** @author Brian Cavalier */
-/** @author John Hann */
+/** @license MIT License (c) copyright 2010 original author or authors */
 
 import Pipe from '../sink/Pipe'
+import { empty, isCanonicalEmpty } from '../source/empty'
 
 /**
  * Generalized feedback loop. Call a stepper function for each event. The stepper
@@ -16,7 +15,8 @@ import Pipe from '../sink/Pipe'
  * returned by the stepper
  */
 export const loop = (stepper, seed, stream) =>
-  new Loop(stepper, seed, stream)
+  isCanonicalEmpty(stream) ? empty()
+    : new Loop(stepper, seed, stream)
 
 class Loop {
   constructor (stepper, seed, source) {
