@@ -8,8 +8,8 @@ export const empty = () => EMPTY
 export const isCanonicalEmpty = stream =>
   stream === EMPTY
 
-export const isNotCanonicalEmpty = stream =>
-  !isCanonicalEmpty(stream)
+export const containsCanonicalEmpty = streams =>
+  streams.some(isCanonicalEmpty)
 
 class Empty {
   run (sink, scheduler) {
