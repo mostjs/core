@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import { eq, assert, throws } from '@briancavalier/assert'
 import { spy } from 'sinon'
-import { disposeAll, disposeBoth, DisposeAllError } from '../src/disposeAll'
+import { disposeAll, disposeBoth } from '../src/disposeAll'
 
 const noop = () => {}
 
@@ -31,7 +31,7 @@ describe('disposeAll', () => {
 
     it('should dispose all and aggregate errors', function () {
       const errors = [new Error(), new Error()]
-      const errorDisposables = errors.map(e => disposableSpy(rethrow(e)))
+      const errorDisposables = errors.map(e => disposableSpy(rethrow(e))
 
       const disposables = disposableSpies()
         .concat(errorDisposables)
@@ -39,7 +39,6 @@ describe('disposeAll', () => {
 
       const error = throws(() => disposeAll(disposables).dispose())
 
-      assert(error instanceof DisposeAllError)
       eq(error.errors, errors)
     })
   })
@@ -60,7 +59,6 @@ describe('disposeAll', () => {
       const d = disposeBoth(errorDisposables[0], errorDisposables[1])
       const error = throws(() => d.dispose())
 
-      assert(error instanceof DisposeAllError)
       eq(errors, error.errors)
     })
 
@@ -70,7 +68,6 @@ describe('disposeAll', () => {
       const d = disposeBoth(disposableSpy(rethrow(e)), disposableSpy(noop))
       const error = throws(() => d.dispose())
 
-      assert(error instanceof DisposeAllError)
       eq([e], error.errors)
     })
 
@@ -80,7 +77,6 @@ describe('disposeAll', () => {
       const d = disposeBoth(disposableSpy(noop), disposableSpy(rethrow(e)))
       const error = throws(() => d.dispose())
 
-      assert(error instanceof DisposeAllError)
       eq([e], error.errors)
     })
   })

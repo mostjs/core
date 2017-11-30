@@ -33,30 +33,13 @@ const appendIfError = (errors, d) => {
   return errors
 }
 
-// Throw DisposeAllError if errors is non-empty
+// Throw aggregate Error if errors is non-empty
 const throwIfErrors = errors => {
   if (errors.length > 0) {
-    throw new DisposeAllError(`${errors.length} errors`, errors)
-  }
-}
-
-// Aggregate Error type for DisposeAll
-export class DisposeAllError extends Error {
-  constructor (message, errors) {
-    super(message)
-    this.message = message
-    this.name = this.constructor.name
-    this.errors = errors
-
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor)
-    }
-
-    this.stack = `${this.stack}${formatErrorStacks(this.errors)}`
-  }
-
-  toString () {
-    return this.stack
+    const e = new Error(`${errors.length} errors`)
+    e.errors = errors
+    e.stack = formatErrorStacks(errors)
+    throw e
   }
 }
 
