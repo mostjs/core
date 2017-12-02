@@ -9,9 +9,6 @@ module.exports = {
     }]
   ],
   plugins: [
-    ['transform-builtin-extend', {
-      globals: ['Error']
-    }],
     'annotate-pure-calls'
   ]
 }
