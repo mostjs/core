@@ -1,13 +1,33 @@
 import { describe, it } from 'mocha'
-import { eq } from '@briancavalier/assert'
+import { assert, is, eq } from '@briancavalier/assert'
 
 import { now } from '../../src/source/now'
+import { empty, isCanonicalEmpty } from '../../src/source/empty'
 import { delay } from '../../src/combinator/delay'
 import { merge, mergeArray } from '../../src/combinator/merge'
 
 import { makeEventsFromArray, collectEventsFor } from '../helper/testEnv'
 
 describe('merge', function () {
+  it('given one canonical empty, should return other stream', () => {
+    const s = now(0)
+    is(s, merge(s, empty()))
+  })
+
+  it('given one canonical empty, should return other stream', () => {
+    const s = now(1)
+    is(s, merge(empty(), s))
+  })
+
+  it('given both canonical empty, should return canonical empty', () => {
+    assert(isCanonicalEmpty(merge(empty(), empty())))
+  })
+
+  it('should recursively return canonical empty', () => {
+    const s = merge(empty(), merge(empty(), empty()))
+    assert(isCanonicalEmpty(s))
+  })
+
   it('should include items from all inputs', function () {
     return testMerge(merge)
   })
@@ -27,6 +47,24 @@ describe('merge', function () {
 })
 
 describe('mergeArray', function () {
+  it('given empty array, should return canonical empty', () => {
+    assert(isCanonicalEmpty(mergeArray([])))
+  })
+
+  it('given array containing only canonical empty, should return canonical empty', () => {
+    assert(isCanonicalEmpty(mergeArray([empty(), empty(), empty()])))
+  })
+
+  it('should recursively return canonical empty', () => {
+    const s = mergeArray([empty(), mergeArray([empty(), empty()])])
+    assert(isCanonicalEmpty(s))
+  })
+
+  it('given array containing 1 non-canonical empty stream, should return that stream', () => {
+    const s = now(1)
+    is(s, mergeArray([empty(), s, empty()]))
+  })
+
   it('should include items from all inputs', function () {
     return testMerge((s1, s2) => mergeArray([s1, s2]))
   })

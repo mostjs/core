@@ -4,7 +4,7 @@
 
 import Pipe from '../sink/Pipe'
 import IndexSink from '../sink/IndexSink'
-import { empty } from '../source/empty'
+import { empty, isCanonicalEmpty } from '../source/empty'
 import { disposeAll, tryDispose } from '@most/disposable'
 import { reduce } from '@most/prelude'
 
@@ -23,9 +23,7 @@ export function merge (stream1, stream2) {
  * arbitrary order.
  */
 export const mergeArray = streams =>
-  streams.length === 0 ? empty()
-    : streams.length === 1 ? streams[0]
-    : mergeStreams(streams)
+  mergeStreams(withoutCanonicalEmpty(streams))
 
 /**
  * This implements fusion/flattening for merge.  It will
@@ -37,7 +35,15 @@ export const mergeArray = streams =>
  * merge operations into a single merge.
  */
 const mergeStreams = streams =>
-  new Merge(reduce(appendSources, [], streams))
+  streams.length === 0 ? empty()
+    : streams.length === 1 ? streams[0]
+    : new Merge(reduce(appendSources, [], streams))
+
+const withoutCanonicalEmpty = streams =>
+  streams.filter(isNotCanonicalEmpty)
+
+const isNotCanonicalEmpty = stream =>
+  !isCanonicalEmpty(stream)
 
 const appendSources = (sources, stream) =>
   sources.concat(stream instanceof Merge ? stream.sources : stream)
