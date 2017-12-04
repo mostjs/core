@@ -1,9 +1,7 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
-/** @author Brian Cavalier */
-/** @author John Hann */
+/** @license MIT License (c) copyright 2010 original author or authors */
 
 import { map } from './transform'
-import { empty } from '../source/empty'
+import { empty, containsCanonicalEmpty } from '../source/empty'
 import Pipe from '../sink/Pipe'
 import IndexSink from '../sink/IndexSink'
 import { disposeAll, tryDispose } from '@most/disposable'
@@ -15,9 +13,8 @@ import invoke from '../invoke'
  * @returns {Stream} stream containing the result of applying f to the most recent
  *  event of each input stream, whenever a new event arrives on any stream.
  */
-export function combine (f, stream1, stream2) {
-  return combineArray(f, [stream1, stream2])
-}
+export const combine = (f, stream1, stream2) =>
+  combineArray(f, [stream1, stream2])
 
 /**
 * Combine latest events from all input streams
@@ -27,7 +24,7 @@ export function combine (f, stream1, stream2) {
 *  event of each input stream, whenever a new event arrives on any stream.
 */
 export const combineArray = (f, streams) =>
-  streams.length === 0 ? empty()
+  streams.length === 0 || containsCanonicalEmpty(streams) ? empty()
     : streams.length === 1 ? map(f, streams[0])
     : new Combine(f, streams)
 
