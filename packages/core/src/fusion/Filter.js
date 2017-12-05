@@ -3,6 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
+import { isCanonicalEmpty } from '../source/empty'
 
 export default class Filter {
   constructor (p, source) {
@@ -21,6 +22,10 @@ export default class Filter {
    * @returns {Filter} filtered source
    */
   static create (p, source) {
+    if (isCanonicalEmpty(source)) {
+      return source
+    }
+
     if (source instanceof Filter) {
       return new Filter(and(source.p, p), source.source)
     }
