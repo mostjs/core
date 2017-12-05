@@ -5,6 +5,7 @@ import { assertSame } from '../helper/stream-helper'
 import { ap } from '../../src/combinator/applicative'
 import { now } from '../../src/source/now'
 import { empty, isCanonicalEmpty } from '../../src/source/empty'
+import { id } from '@most/prelude'
 
 const sentinel = { value: 'sentinel' }
 
@@ -47,13 +48,25 @@ describe('ap', function () {
     )
   })
 
-  describe('given a canonical empty stream', function () {
+  describe('given a canonical empty stream of values', function () {
     it('should return a canonical empty stream', function () {
       // Fixture setup
-      const emptyStream = empty()
-      const arbitraryStreamOfFunctions = now(_ => _)
+      const arbitraryStreamOfFunctions = now(id)
+      const emptyStreamOfValues = empty()
       // Exercise system
-      const sut = ap(arbitraryStreamOfFunctions, emptyStream)
+      const sut = ap(arbitraryStreamOfFunctions, emptyStreamOfValues)
+      // Verify outcome
+      assert(isCanonicalEmpty(sut))
+    })
+  })
+
+  describe('given a canonical empty stream of functions', function () {
+    it('should return a canonical empty stream', function () {
+      // Fixture setup
+      const emptyStreamOfFunctions = empty()
+      const arbitraryStreamOfValues = now(1)
+      // Exercise system
+      const sut = ap(emptyStreamOfFunctions, arbitraryStreamOfValues)
       // Verify outcome
       assert(isCanonicalEmpty(sut))
     })
