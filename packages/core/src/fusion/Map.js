@@ -6,7 +6,7 @@ import Pipe from '../sink/Pipe'
 import Filter from './Filter'
 import FilterMap from './FilterMap'
 import { compose } from '@most/prelude'
-import { isCanonicalEmpty } from '../source/empty'
+import { isCanonicalEmpty, empty } from '../source/empty'
 
 export default class Map {
   constructor (f, source) {
@@ -27,7 +27,7 @@ export default class Map {
    */
   static create (f, source) {
     if (isCanonicalEmpty(source)) {
-      return source
+      return empty()
     }
 
     if (source instanceof Map) {
