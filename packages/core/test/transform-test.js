@@ -7,6 +7,7 @@ import { now } from '../src/source/now'
 import { empty, isCanonicalEmpty } from '../src/source/empty'
 
 import { collectEventsFor } from './helper/testEnv'
+import { id } from '@most/prelude'
 
 describe('map', function () {
   it('should satisfy identity', function () {
@@ -33,7 +34,7 @@ describe('map', function () {
       // Fixture setup
       const emptyStream = empty()
       // Exercise system
-      const sut = map(_ => _, emptyStream)
+      const sut = map(id, emptyStream)
       // Verify outcome
       assert(isCanonicalEmpty(sut))
     })
