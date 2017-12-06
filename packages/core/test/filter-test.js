@@ -35,6 +35,11 @@ describe('filter', function () {
 })
 
 describe('skipRepeats', function () {
+  it('given canonical empty stream, should return canonical empty', () => {
+    const s = skipRepeats(empty())
+    assert(isCanonicalEmpty(s))
+  })
+
   it('should return a stream with repeated events removed', function () {
     const a = [1, 2, 2, 3, 4, 4]
     const s = skipRepeats(makeEventsFromArray(1, a))
@@ -50,6 +55,11 @@ describe('skipRepeats', function () {
 })
 
 describe('skipRepeatsWith', function () {
+  it('given canonical empty stream, should return canonical empty', () => {
+    const s = (_ => false, empty())
+    assert(isCanonicalEmpty(s))
+  })
+
   it('should use provided comparator to remove repeated events', function () {
     const compare = (a, b) => a.toLowerCase() === b.toLowerCase()
     const a = ['a', 'b', 'B', 'c', 'D', 'd']

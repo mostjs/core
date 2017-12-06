@@ -4,6 +4,7 @@
 
 import Pipe from '../sink/Pipe'
 import Filter from '../fusion/Filter'
+import { empty, isCanonicalEmpty } from '../source/empty'
 
 /**
  * Retain only items matching a predicate
@@ -29,7 +30,8 @@ export const skipRepeats = stream =>
  * @returns {Stream} stream without repeated events
  */
 export const skipRepeatsWith = (equals, stream) =>
-  new SkipRepeats(equals, stream)
+  isCanonicalEmpty(stream) ? empty()
+    : new SkipRepeats(equals, stream)
 
 class SkipRepeats {
   constructor (equals, source) {
