@@ -6,6 +6,7 @@ import SafeSink from '../sink/SafeSink'
 import { tryDispose } from '@most/disposable'
 import { asap } from '@most/scheduler'
 import { tryEvent, tryEnd } from '../source/tryEvent'
+import { empty, isCanonicalEmpty } from '../source/empty'
 import { propagateErrorTask } from '../scheduler/PropagateTask'
 import { run } from '../run'
 import { withLocalTime } from './withLocalTime'
@@ -18,7 +19,8 @@ import { withLocalTime } from './withLocalTime'
  * @returns {Stream} new stream which will recover from an error by calling f
  */
 export const recoverWith = (f, stream) =>
-  new RecoverWith(f, stream)
+  isCanonicalEmpty(stream) ? empty()
+    : new RecoverWith(f, stream)
 
 /**
  * Create a stream containing only an error
