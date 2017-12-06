@@ -1,10 +1,11 @@
 import { describe, it } from 'mocha'
-import { fail, is, eq } from '@briancavalier/assert'
+import { assert, fail, is, eq } from '@briancavalier/assert'
 
 import { throwError, recoverWith } from '../../src/combinator/errors'
 import { map } from '../../src/combinator/transform'
 import { observe, drain } from '../helper/observe'
 import { now } from '../../src/source/now'
+import { empty, isCanonicalEmpty } from '../../src/source/empty'
 
 const sentinel = { value: 'sentinel' }
 const other = { value: 'other' }
@@ -19,6 +20,11 @@ describe('throwError', () => {
 })
 
 describe('recoverWith', () => {
+  it('given canonical empty stream, should return canonical empty', () => {
+    const s = recoverWith(throwError, empty())
+    assert(isCanonicalEmpty(s))
+  })
+
   it('when an error is thrown should continue with returned stream', () => {
     const s = recoverWith(() => now(sentinel), throwError(other))
     return observe(eq(sentinel), s)
