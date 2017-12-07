@@ -40,25 +40,24 @@ const throwIfErrors = errors => {
   }
 }
 
-// Aggregate Error type for DisposeAll
-export class DisposeAllError extends Error {
-  constructor (message, errors) {
-    super(message)
+export const DisposeAllError = (Error => {
+  function DisposeAllError (message, errors) {
+    Error.call(this, message)
     this.message = message
-    this.name = this.constructor.name
+    this.name = DisposeAllError.name
     this.errors = errors
 
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor)
+      Error.captureStackTrace(this, DisposeAllError)
     }
 
     this.stack = `${this.stack}${formatErrorStacks(this.errors)}`
   }
 
-  toString () {
-    return this.stack
-  }
-}
+  DisposeAllError.prototype = Object.create(Error.prototype)
+
+  return DisposeAllError
+})(Error)
 
 const formatErrorStacks = errors =>
   reduce(formatErrorStack, '', errors)
