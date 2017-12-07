@@ -10,9 +10,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@most/core": "^1.0.0",
+    "@most/core": "file:../packages/core",
     "@most/dom-event": "^2.0.0",
-    "@most/scheduler": "^1.0.0"
+    "@most/scheduler": "file:../packages/scheduler"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.2",
