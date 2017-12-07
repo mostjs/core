@@ -1,6 +1,6 @@
 {
   "name": "@most/prelude",
-  "version": "1.6.4",
+  "version": "1.7.0",
   "description": "prelude",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
