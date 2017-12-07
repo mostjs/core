@@ -21,7 +21,9 @@
     "rollup": "^0.50.0",
     "rollup-plugin-flow": "^1.1.1",
     "rollup-plugin-node-resolve": "^3.0.0",
-    "standard": "^10.0.3"
+    "standard": "^10.0.3",
+    "uglifyjs-webpack-plugin": "^1.1.2",
+    "webpack": "^3.10.0"
   },
   "standard": {
     "parser": "babel-eslint",
