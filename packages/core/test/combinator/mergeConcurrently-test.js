@@ -1,11 +1,12 @@
 import { describe, it } from 'mocha'
-import { fail, is, eq } from '@briancavalier/assert'
+import { assert, fail, is, eq } from '@briancavalier/assert'
 
 import { mergeMapConcurrently, mergeConcurrently } from '../../src/combinator/mergeConcurrently'
 import { periodic } from '../../src/source/periodic'
 import { take } from '../../src/combinator/slice'
 import { constant } from '../../src/combinator/transform'
 import { now } from '../../src/source/now'
+import { empty, isCanonicalEmpty } from '../../src/source/empty'
 import { collectEventsFor, makeEventsFromArray } from '../helper/testEnv'
 
 const sentinel = { value: 'sentinel' }
@@ -13,6 +14,11 @@ const sentinel = { value: 'sentinel' }
 const periodicConstant = (ms, x) => constant(x, periodic(ms))
 
 describe('mergeConcurrently', () => {
+  it('given canonical empty stream, should return canonical empty', () => {
+    const s = mergeConcurrently(Math.floor(Math.random() * 10), empty())
+    assert(isCanonicalEmpty(s))
+  })
+
   it('should be identity for 1 stream', () => {
     const s = mergeConcurrently(1, now(periodicConstant(1, sentinel)))
     const n = 3
@@ -73,6 +79,11 @@ describe('mergeConcurrently', () => {
 })
 
 describe('mergeMapConcurrently', () => {
+  it('given canonical empty stream, should return canonical empty', () => {
+    const s = mergeMapConcurrently(_ => _, Math.floor(Math.random() * 10), empty())
+    assert(isCanonicalEmpty(s))
+  })
+
   it('when mapping function throws, it should catch and propagate error', () => {
     const error = new Error()
     const s = mergeMapConcurrently(x => { throw error }, 1, now(0))

@@ -1,9 +1,8 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
-/** @author Brian Cavalier */
-/** @author John Hann */
+/** @license MIT License (c) copyright 2010 original author or authors */
 
 import { disposeOnce, tryDispose } from '@most/disposable'
 import LinkedList from '../LinkedList'
+import { empty, isCanonicalEmpty } from '../source/empty'
 import { id as identity } from '@most/prelude'
 import { schedulerRelativeTo } from '@most/scheduler'
 
@@ -11,7 +10,8 @@ export const mergeConcurrently = (concurrency, stream) =>
   mergeMapConcurrently(identity, concurrency, stream)
 
 export const mergeMapConcurrently = (f, concurrency, stream) =>
-  new MergeConcurrently(f, concurrency, stream)
+  isCanonicalEmpty(stream) ? empty()
+    : new MergeConcurrently(f, concurrency, stream)
 
 class MergeConcurrently {
   constructor (f, concurrency, source) {
