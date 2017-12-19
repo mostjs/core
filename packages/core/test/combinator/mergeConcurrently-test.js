@@ -1,5 +1,6 @@
 import { describe, it } from 'mocha'
 import { assert, fail, is, eq } from '@briancavalier/assert'
+import { id } from '@most/prelude'
 
 import { mergeMapConcurrently, mergeConcurrently } from '../../src/combinator/mergeConcurrently'
 import { periodic } from '../../src/source/periodic'
@@ -80,7 +81,7 @@ describe('mergeConcurrently', () => {
 
 describe('mergeMapConcurrently', () => {
   it('given canonical empty stream, should return canonical empty', () => {
-    const s = mergeMapConcurrently(_ => _, Math.floor(Math.random() * 10), empty())
+    const s = mergeMapConcurrently(id, Math.floor(Math.random() * 10), empty())
     assert(isCanonicalEmpty(s))
   })
 
