@@ -13,16 +13,16 @@ import { assertSame } from './helper/stream-helper'
 describe('slice', function () {
   describe('fusion', function () {
     it('should return empty given empty', () => {
-      isCanonicalEmpty(slice(0, 1, empty()))
+      assert(isCanonicalEmpty(slice(0, 1, empty())))
     })
 
     it('should return empty given zero-length slice', () => {
       const i = Math.floor(Math.random() * 1000)
-      isCanonicalEmpty(slice(i, i, now(i)))
+      assert(isCanonicalEmpty(slice(i, i, now(i))))
     })
 
     it('should return empty when fusion leads to zero-length slice', () => {
-      isCanonicalEmpty(slice(1, 2, slice(1, 2, now(''))))
+      assert(isCanonicalEmpty(slice(1, 2, slice(1, 2, now('')))))
     })
 
     it('should narrow when second slice is smaller', function () {
