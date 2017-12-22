@@ -13,16 +13,16 @@ import { assertSame } from './helper/stream-helper'
 describe('slice', function () {
   describe('fusion', function () {
     it('should return empty given empty', () => {
-      is(empty(), slice(0, 1, empty()))
+      isCanonicalEmpty(slice(0, 1, empty()))
     })
 
     it('should return empty given zero-length slice', () => {
       const i = Math.floor(Math.random() * 1000)
-      is(empty(), slice(i, i, now(i)))
+      isCanonicalEmpty(slice(i, i, now(i)))
     })
 
     it('should return empty when fusion leads to zero-length slice', () => {
-      is(empty(), slice(1, 2, slice(1, 2, now(''))))
+      isCanonicalEmpty(slice(1, 2, slice(1, 2, now(''))))
     })
 
     it('should narrow when second slice is smaller', function () {
@@ -91,7 +91,7 @@ describe('slice', function () {
 
   describe('takeWhile', function () {
     it('given canonical empty stream, should return canonical empty', () => {
-      const s = takeWhile(_ => true, empty())
+      const s = takeWhile(Boolean, empty())
       assert(isCanonicalEmpty(s))
     })
 
@@ -109,7 +109,7 @@ describe('slice', function () {
 
   describe('skipWhile', function () {
     it('given canonical empty stream, should return canonical empty', () => {
-      const s = skipWhile(_ => false, empty())
+      const s = skipWhile(Boolean, empty())
       assert(isCanonicalEmpty(s))
     })
 
@@ -127,14 +127,8 @@ describe('slice', function () {
 
   describe('skipAfter', function () {
     it('given canonical empty stream, should return canonical empty', () => {
-      const s = skipAfter(_ => false, empty())
+      const s = skipAfter(Boolean, empty())
       assert(isCanonicalEmpty(s))
-    })
-
-    it('should be empty if source stream is empty', function () {
-      const s = skipAfter(_ => false, empty())
-
-      return collectEventsFor(10, s).then(eq([]))
     })
 
     it('should skip all elements after the first one for which the condition is true', function () {
