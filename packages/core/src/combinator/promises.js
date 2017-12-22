@@ -4,6 +4,7 @@
 
 import fatal from '../fatalError'
 import { now } from '../source/now'
+import { empty, isCanonicalEmpty } from '../source/empty'
 import { compose } from '@most/prelude'
 import { currentTime } from '@most/scheduler'
 
@@ -11,7 +12,8 @@ import { currentTime } from '@most/scheduler'
  * Turn a Stream<Promise<T>> into Stream<T> by awaiting each promise.
  * Event order is preserved. The stream will fail if any promise rejects.
  */
-export const awaitPromises = stream => new Await(stream)
+export const awaitPromises = stream =>
+  isCanonicalEmpty(stream) ? empty() : new Await(stream)
 
 /**
  * Create a stream containing only the promise's fulfillment
