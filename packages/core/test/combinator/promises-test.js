@@ -1,8 +1,9 @@
 import { describe, it } from 'mocha'
-import { is, eq } from '@briancavalier/assert'
+import { assert, is, eq } from '@briancavalier/assert'
 
 import { awaitPromises, fromPromise } from '../../src/combinator/promises'
 import { recoverWith } from '../../src/combinator/errors'
+import { empty, isCanonicalEmpty } from '../../src/source/empty'
 
 import { atTime, makeEventsFromArray, collectEventsFor } from '../helper/testEnv'
 
@@ -21,6 +22,11 @@ const rejected = e => {
 
 describe('promises', () => {
   describe('awaitPromises', function () {
+    it('given canonical empty stream, should return canonical empty', () => {
+      const s = awaitPromises(empty())
+      assert(isCanonicalEmpty(s))
+    })
+
     it('should await promises', function () {
       const s = awaitPromises(atTime(0, Promise.resolve(sentinel)))
 
