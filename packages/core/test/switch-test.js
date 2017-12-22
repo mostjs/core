@@ -1,18 +1,23 @@
 import { describe, it } from 'mocha'
-import { eq, fail } from '@briancavalier/assert'
+import { assert, eq, fail } from '@briancavalier/assert'
 
 import { switchLatest } from '../src/combinator/switch'
 import { take } from '../src/combinator/slice'
 import { constant, map, tap } from '../src/combinator/transform'
 import { periodic } from '../src/source/periodic'
-import { empty } from '../src/source/empty'
+import { empty, isCanonicalEmpty } from '../src/source/empty'
 import { now } from '../src/source/now'
 import { ticks, collectEventsFor, makeEvents, makeEventsFromArray } from './helper/testEnv'
 import { runEffects } from '../src/runEffects'
 
 describe('switch', () => {
+  it('given c anonical empty string, should return canonical empty', () => {
+    const s = switchLatest(empty())
+    assert(isCanonicalEmpty(s))
+  })
+
   describe('when input is empty', () => {
-    it('should return empty', function () {
+    it('should return empty', () => {
       return runEffects(tap(fail, switchLatest(empty())), ticks(1))
     })
   })

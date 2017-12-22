@@ -4,6 +4,7 @@
 
 import { disposeBoth, tryDispose } from '@most/disposable'
 import { schedulerRelativeTo, currentTime } from '@most/scheduler'
+import { empty, isCanonicalEmpty } from '../source/empty'
 
 /**
  * Given a stream of streams, return a new stream that adopts the behavior
@@ -11,7 +12,10 @@ import { schedulerRelativeTo, currentTime } from '@most/scheduler'
  * @param {Stream} stream of streams on which to switch
  * @returns {Stream} switching stream
  */
-export const switchLatest = stream => new Switch(stream)
+export const switchLatest = stream =>
+  isCanonicalEmpty(stream)
+    ? empty()
+    : new Switch(stream)
 
 class Switch {
   constructor (source) {
