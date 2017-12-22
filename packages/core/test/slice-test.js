@@ -4,7 +4,7 @@ import { eq, is, assert } from '@briancavalier/assert'
 import { slice, take, skip, takeWhile, skipWhile, skipAfter } from '../src/combinator/slice'
 import { map } from '../src/combinator/transform'
 import { now } from '../src/source/now'
-import { empty } from '../src/source/empty'
+import { empty, isCanonicalEmpty } from '../src/source/empty'
 import { default as Map } from '../src/fusion/Map'
 
 import { makeEventsFromArray, collectEventsFor, makeEvents } from './helper/testEnv'
@@ -13,16 +13,16 @@ import { assertSame } from './helper/stream-helper'
 describe('slice', function () {
   describe('fusion', function () {
     it('should return empty given empty', () => {
-      is(empty(), slice(0, 1, empty()))
+      assert(isCanonicalEmpty(slice(0, 1, empty())))
     })
 
     it('should return empty given zero-length slice', () => {
       const i = Math.floor(Math.random() * 1000)
-      is(empty(), slice(i, i, now(i)))
+      assert(isCanonicalEmpty(slice(i, i, now(i))))
     })
 
     it('should return empty when fusion leads to zero-length slice', () => {
-      is(empty(), slice(1, 2, slice(1, 2, now(''))))
+      assert(isCanonicalEmpty(slice(1, 2, slice(1, 2, now('')))))
     })
 
     it('should narrow when second slice is smaller', function () {
@@ -90,6 +90,11 @@ describe('slice', function () {
   })
 
   describe('takeWhile', function () {
+    it('given canonical empty stream, should return canonical empty', () => {
+      const s = takeWhile(Boolean, empty())
+      assert(isCanonicalEmpty(s))
+    })
+
     it('should take elements until condition becomes false', function () {
       const n = 2
       const p = x => x < n
@@ -103,6 +108,11 @@ describe('slice', function () {
   })
 
   describe('skipWhile', function () {
+    it('given canonical empty stream, should return canonical empty', () => {
+      const s = skipWhile(Boolean, empty())
+      assert(isCanonicalEmpty(s))
+    })
+
     it('should skip elements until condition becomes false', function () {
       const n = 4
       const p = x => x < 2
@@ -116,10 +126,9 @@ describe('slice', function () {
   })
 
   describe('skipAfter', function () {
-    it('should be empty if source stream is empty', function () {
-      const s = skipAfter(_ => false, empty())
-
-      return collectEventsFor(10, s).then(eq([]))
+    it('given canonical empty stream, should return canonical empty', () => {
+      const s = skipAfter(Boolean, empty())
+      assert(isCanonicalEmpty(s))
     })
 
     it('should skip all elements after the first one for which the condition is true', function () {

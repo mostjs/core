@@ -93,7 +93,8 @@ class SliceSink extends Pipe {
 }
 
 export const takeWhile = (p, stream) =>
-  new TakeWhile(p, stream)
+  isCanonicalEmpty(stream) ? empty()
+    : new TakeWhile(p, stream)
 
 class TakeWhile {
   constructor (p, source) {
@@ -137,7 +138,8 @@ class TakeWhileSink extends Pipe {
 }
 
 export const skipWhile = (p, stream) =>
-  new SkipWhile(p, stream)
+  isCanonicalEmpty(stream) ? empty()
+    : new SkipWhile(p, stream)
 
 class SkipWhile {
   constructor (p, source) {
@@ -171,7 +173,8 @@ class SkipWhileSink extends Pipe {
 }
 
 export const skipAfter = (p, stream) =>
-  new SkipAfter(p, stream)
+  isCanonicalEmpty(stream) ? empty()
+    : new SkipAfter(p, stream)
 
 class SkipAfter {
   constructor (p, source) {
