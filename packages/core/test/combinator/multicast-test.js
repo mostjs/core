@@ -6,6 +6,7 @@ import { map, tap } from '../../src/combinator/transform'
 
 import FakeDisposeStream from '../helper/FakeDisposeStream'
 import { now } from '../../src/source/now'
+import { empty, isCanonicalEmpty } from '../../src/source/empty'
 import { runEffects } from '../../src/runEffects'
 import { sinkSpy } from '../helper/sinkSpy'
 import { spy } from 'sinon'
@@ -14,6 +15,11 @@ describe('multicast', () => {
   it('should be identity for already-multicasted stream', () => {
     const s = multicast(now(1))
     eq(s, multicast(s))
+  })
+
+  it('given canonical empty stream, should return canonical empty', () => {
+    const s = multicast(empty())
+    assert(isCanonicalEmpty(s))
   })
 
   it('should call mapper function once when there are > 1 observer', () => {
