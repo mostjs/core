@@ -5,7 +5,7 @@ import { spy } from 'sinon'
 import { debounce, throttle } from '../src/combinator/limit'
 import { zip } from '../src/combinator/zip'
 import { map } from '../src/combinator/transform'
-import { empty } from '../src/source/empty'
+import { empty, isCanonicalEmpty } from '../src/source/empty'
 import { now } from '../src/source/now'
 import { default as Map } from '../src/fusion/Map'
 
@@ -16,6 +16,11 @@ import FakeDisposeSource from './helper/FakeDisposeStream'
 const sentinel = { value: 'sentinel' }
 
 describe('debounce', function () {
+  it('given canonical empty stream, should return canonical empty', () => {
+    const s = debounce(Math.floor(Math.random() * 10), empty())
+    assert(isCanonicalEmpty(s))
+  })
+
   describe('when events always occur less frequently than debounce period', function () {
     it('should be identity', function () {
       const n = 5
@@ -91,6 +96,11 @@ describe('debounce', function () {
 })
 
 describe('throttle', function () {
+  it('given canonical empty stream, should return canonical empty', () => {
+    const s = throttle(Math.floor(Math.random() * 10), empty())
+    assert(isCanonicalEmpty(s))
+  })
+
   describe('fusion', function () {
     it('should use max', function () {
       const s1 = throttle(2, throttle(1, atTimes([])))
