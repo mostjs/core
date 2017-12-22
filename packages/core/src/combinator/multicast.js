@@ -1,9 +1,12 @@
 import { append, findIndex, remove } from '@most/prelude'
 import { disposeNone, disposeOnce } from '@most/disposable'
 import { tryEnd, tryEvent } from '../source/tryEvent'
+import { isCanonicalEmpty } from '../source/empty'
 
 export const multicast = stream =>
-  stream instanceof Multicast ? stream : new Multicast(stream)
+  stream instanceof Multicast || isCanonicalEmpty(stream)
+    ? stream
+    : new Multicast(stream)
 
 class Multicast {
   constructor (source) {
