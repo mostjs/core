@@ -3,6 +3,7 @@
 import Pipe from '../sink/Pipe'
 import { propagateEventTask } from '../scheduler/PropagateTask'
 import Map from '../fusion/Map'
+import { empty, isCanonicalEmpty } from '../source/empty'
 import { delay } from '@most/scheduler'
 
 /**
@@ -12,7 +13,8 @@ import { delay } from '@most/scheduler'
  * @returns {Stream}
  */
 export const throttle = (period, stream) =>
-  stream instanceof Map ? commuteMapThrottle(period, stream)
+  isCanonicalEmpty(stream) ? empty()
+    : stream instanceof Map ? commuteMapThrottle(period, stream)
     : stream instanceof Throttle ? fuseThrottle(period, stream)
     : new Throttle(period, stream)
 
@@ -55,7 +57,8 @@ class ThrottleSink extends Pipe {
  * @returns {Stream} new debounced stream
  */
 export const debounce = (period, stream) =>
-  new Debounce(period, stream)
+  isCanonicalEmpty(stream) ? empty()
+    : new Debounce(period, stream)
 
 class Debounce {
   constructor (dt, source) {
