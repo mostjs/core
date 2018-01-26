@@ -1,7 +1,6 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 
 import Pipe from '../sink/Pipe'
-import { propagateEventTask } from '../scheduler/PropagateTask'
 import Map from '../fusion/Map'
 import { empty, isCanonicalEmpty } from '../source/empty'
 import { delay } from '@most/scheduler'
@@ -85,7 +84,12 @@ class DebounceSink {
   event (t, x) {
     this._clearTimer()
     this.value = x
-    this.timer = delay(this.dt, propagateEventTask(x, this.sink), this.scheduler)
+    this.timer = delay(this.dt, new DebounceTask(this, x), this.scheduler)
+  }
+
+  _event (t, x) {
+    this._clearTimer()
+    this.sink.event(t, x)
   }
 
   end (t) {
@@ -114,4 +118,21 @@ class DebounceSink {
     this.timer = null
     return true
   }
+}
+
+class DebounceTask {
+  constructor (debounce, value) {
+    this.debounce = debounce
+    this.value = value
+  }
+
+  run (t) {
+    this.debounce._event(t, this.value)
+  }
+
+  error (t, e) {
+    this.debounce.error(t, e)
+  }
+
+  dispose () {}
 }
