@@ -71,11 +71,12 @@ describe('debounce', function () {
 
   it('should not repeat last event when end is delayed', () => {
     // See https://github.com/cujojs/most/issues/514
-    var expected = Math.random()
-    var end = delay(5, now(null))
-    var debounced = debounce(1, until(end, startWith(expected, never())))
+    const expected = Math.random()
+    const endAtTicks = 5
+    const end = delay(endAtTicks, now(null))
+    const debounced = debounce(1, until(end, startWith(expected, never())))
 
-    return collectEventsFor(6, debounced)
+    return collectEventsFor(endAtTicks, debounced)
       .then(eq([{ time: 1, value: expected }]))
   })
 
