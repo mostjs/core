@@ -4,8 +4,12 @@ import { spy } from 'sinon'
 
 import { debounce, throttle } from '../src/combinator/limit'
 import { zip } from '../src/combinator/zip'
+import { startWith } from '../src/combinator/startWith'
+import { delay } from '../src/combinator/delay'
 import { map } from '../src/combinator/transform'
+import { until } from '../src/combinator/timeslice'
 import { empty, isCanonicalEmpty } from '../src/source/empty'
+import { never } from '../src/source/never'
 import { now } from '../src/source/now'
 import { default as Map } from '../src/fusion/Map'
 
@@ -63,6 +67,17 @@ describe('debounce', function () {
       return collectEventsFor(n, debounced)
         .then(eq([{ time: 9, value: expected }]))
     })
+  })
+
+  it('should not repeat last event when end is delayed', () => {
+    // See https://github.com/cujojs/most/issues/514
+    const expected = Math.random()
+    const endAtTicks = 5
+    const end = delay(endAtTicks, now(null))
+    const debounced = debounce(1, until(end, startWith(expected, never())))
+
+    return collectEventsFor(endAtTicks, debounced)
+      .then(eq([{ time: 1, value: expected }]))
   })
 
   it('should allow events that occur less frequently than debounce period', function () {
