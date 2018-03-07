@@ -422,7 +422,7 @@ Apply the latest function in a :ref:`Stream` of functions to the latest value of
 
   streamOfFunctions:              --f-----------g---------h--------->
   stream:                         -a-------b---------c---------d---->
-  ap(stream, streamOfFunctions.): --f(a)---f(b)-g(b)-g(c)-h(c)-h(d)->
+  ap(streamOfFunctions, stream): --f(a)---f(b)-g(b)-g(c)-h(c)-h(d)->
 
 In effect, ``ap`` applies a time-varying function to a time-varying value.
 
