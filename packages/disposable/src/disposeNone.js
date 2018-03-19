@@ -4,3 +4,6 @@ export const disposeNone = () => NONE
 const NONE = new (class DisposeNone {
   dispose () {}
 })()
+
+export const isDisposeNone = d =>
+  d === NONE

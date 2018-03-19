@@ -1,6 +1,7 @@
 import { describe, it } from 'mocha'
 import { eq, assert, throws } from '@briancavalier/assert'
 import { spy } from 'sinon'
+import { disposeNone, isDisposeNone } from '../src/disposeNone'
 import { disposeAll, disposeBoth, DisposeAllError } from '../src/disposeAll'
 
 const noop = () => {}
@@ -27,6 +28,22 @@ describe('disposeAll', () => {
       const disposables = disposableSpies()
       disposeAll(disposables).dispose()
       assertAllDisposed(disposables)
+    })
+
+    it('should fuse disposeNone', () => {
+      const d = disposeAll([disposeNone(), disposeNone()])
+      assert(isDisposeNone(d))
+    })
+
+    it('should fuse disposeAll', () => {
+      const d1 = disposableSpies()
+      const d2 = disposableSpies()
+
+      const d = disposeAll([disposeAll(d1), disposeAll(d2)])
+      eq(d1.length + d2.length, d.disposables.length)
+
+      d.dispose()
+      assertAllDisposed(d1.concat(d2))
     })
 
     it('should dispose all and aggregate errors', function () {
