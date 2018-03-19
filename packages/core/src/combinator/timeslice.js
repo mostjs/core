@@ -3,111 +3,102 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import { disposeAll } from '@most/disposable'
+import { disposeBoth } from '@most/disposable'
 import { join } from './chain'
+import { merge } from './merge'
+import { never } from '../source/never'
+
+const timeBounds = (min, minSignal, maxSignal) =>
+  ({ min, minSignal, maxSignal })
+
+const minBounds = (minSignal) =>
+  timeBounds(Infinity, minSignal, never())
+
+const maxBounds = (maxSignal) =>
+  timeBounds(0, never(), maxSignal)
+
+const mergeTimeBounds = (b1, b2) =>
+  ({
+    min: Math.max(b1.min, b2.min),
+    minSignal: merge(b1.minSignal, b2.minSignal),
+    maxSignal: merge(b1.maxSignal, b2.maxSignal)
+  })
+
+const runTimeBounds = (bounds, timesliceSink, scheduler) =>
+  disposeBoth(
+    bounds.minSignal.run(new UpdateMinSink(timesliceSink), scheduler),
+    bounds.maxSignal.run(new UpdateMaxSink(timesliceSink), scheduler)
+  )
 
 export const until = (signal, stream) =>
-  new Until(signal, stream)
+  timeslice(maxBounds(signal), stream)
 
 export const since = (signal, stream) =>
-  new Since(signal, stream)
+  timeslice(minBounds(signal), stream)
 
 export const during = (timeWindow, stream) =>
-  until(join(timeWindow), since(timeWindow, stream))
+  since(timeWindow, until(join(timeWindow), stream))
 
-class Until {
-  constructor (maxSignal, source) {
-    this.maxSignal = maxSignal
+const timeslice = (bounds, stream) =>
+  stream instanceof Timeslice
+    ? timeslice(mergeTimeBounds(bounds, stream.bounds), stream.source)
+    : new Timeslice(bounds, stream)
+
+class Timeslice {
+  constructor (bounds, source) {
+    this.bounds = bounds
     this.source = source
   }
 
   run (sink, scheduler) {
-    const min = new Bound(-Infinity, sink)
-    const max = new UpperBound(this.maxSignal, sink, scheduler)
-    const disposable = this.source.run(new TimeWindowSink(min, max, sink), scheduler)
+    const ts = new TimesliceSink(this.bounds.min, sink)
 
-    return disposeAll([min, max, disposable])
+    const boundsDisposable = runTimeBounds(this.bounds, ts, scheduler)
+    const d = this.source.run(ts, scheduler)
+
+    return disposeBoth(boundsDisposable, d)
   }
 }
 
-class Since {
-  constructor (minSignal, source) {
-    this.minSignal = minSignal
-    this.source = source
-  }
-
-  run (sink, scheduler) {
-    const min = new LowerBound(this.minSignal, sink, scheduler)
-    const max = new Bound(Infinity, sink)
-    const disposable = this.source.run(new TimeWindowSink(min, max, sink), scheduler)
-
-    return disposeAll([min, max, disposable])
-  }
-}
-
-class Bound extends Pipe {
-  constructor (value, sink) {
-    super(sink)
-    this.value = value
-  }
-
-  event () {}
-  end () {}
-
-  dispose () {}
-}
-
-class TimeWindowSink extends Pipe {
-  constructor (min, max, sink) {
+class TimesliceSink extends Pipe {
+  constructor (min, sink) {
     super(sink)
     this.min = min
-    this.max = max
+    this.max = Infinity
   }
 
   event (t, x) {
-    if (t >= this.min.value && t < this.max.value) {
+    if (t >= this.min && t < this.max) {
       this.sink.event(t, x)
     }
   }
-}
 
-class LowerBound extends Pipe {
-  constructor (signal, sink, scheduler) {
-    super(sink)
-    this.value = Infinity
-    this.disposable = signal.run(this, scheduler)
-  }
-
-  event (t /*, x */) {
-    if (t < this.value) {
-      this.value = t
+  _updateMin (t) {
+    if (this.min === Infinity) {
+      this.min = t
     }
   }
 
-  end () {}
-
-  dispose () {
-    return this.disposable.dispose()
-  }
-}
-
-class UpperBound extends Pipe {
-  constructor (signal, sink, scheduler) {
-    super(sink)
-    this.value = Infinity
-    this.disposable = signal.run(this, scheduler)
-  }
-
-  event (t, x) {
-    if (t < this.value) {
-      this.value = t
+  _updateMax (t) {
+    if (t < this.max) {
+      this.max = t
       this.sink.end(t)
     }
   }
+}
+
+class UpdateMinSink extends Pipe {
+  event (t, x) {
+    this.sink._updateMin(t)
+  }
 
   end () {}
+}
 
-  dispose () {
-    return this.disposable.dispose()
+class UpdateMaxSink extends Pipe {
+  event (t, x) {
+    this.sink._updateMax(t)
   }
+
+  end () {}
 }
