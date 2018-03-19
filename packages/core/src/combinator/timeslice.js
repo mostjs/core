@@ -37,7 +37,7 @@ export const since = (signal, stream) =>
   timeslice(minBounds(signal), stream)
 
 export const during = (timeWindow, stream) =>
-  since(timeWindow, until(join(timeWindow), stream))
+  until(join(timeWindow), since(timeWindow, stream))
 
 const timeslice = (bounds, stream) =>
   stream instanceof Timeslice
