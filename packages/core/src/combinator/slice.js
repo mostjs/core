@@ -1,9 +1,21 @@
+// @flow
 /** @license MIT License (c) copyright 2010 original author or authors */
 
 import Pipe from '../sink/Pipe'
 import { empty, isCanonicalEmpty } from '../source/empty'
 import Map from '../fusion/Map'
 import SettableDisposable from '../disposable/SettableDisposable'
+
+type Bounds = { min: number, max: number }
+
+const createBounds = (min: number, max: number): Bounds =>
+  ({ min, max })
+
+const mergeBounds = (b1: Bounds, b2: Bounds): Bounds =>
+  createBounds(b1.min + b2.min, Math.min(b1.max, b2.max))
+
+const isEmptyBounds = (b: Bounds): booelan =>
+  b.min >= b.max
 
 /**
  * @param {number} n
@@ -29,34 +41,32 @@ export const skip = (n, stream) =>
  * @returns {Stream} stream containing items where start <= index < end
  */
 export const slice = (start, end, stream) =>
-  end <= start || isCanonicalEmpty(stream)
-    ? empty()
-    : sliceSource(start, end, stream)
+  sliceBounds(createBounds(start, end), stream)
 
-const sliceSource = (start, end, stream) =>
-  stream instanceof Map ? commuteMapSlice(start, end, stream)
-    : stream instanceof Slice ? fuseSlice(start, end, stream)
-    : new Slice(start, end, stream)
+const sliceBounds = (bounds, stream) =>
+  isCanonicalEmpty(stream) || isEmptyBounds(bounds) ? empty()
+    : sliceSource(bounds, stream)
 
-const commuteMapSlice = (start, end, mapStream) =>
-  Map.create(mapStream.f, slice(start, end, mapStream.source))
+const sliceSource = (bounds, stream) =>
+  stream instanceof Map ? commuteMapSlice(bounds, stream)
+    : stream instanceof Slice ? fuseSlice(bounds, stream)
+    : new Slice(bounds, stream)
 
-function fuseSlice (start, end, sliceStream) {
-  const fusedStart = start + sliceStream.min
-  const fusedEnd = Math.min(end + sliceStream.min, sliceStream.max)
-  return slice(fusedStart, fusedEnd, sliceStream.source)
-}
+const commuteMapSlice = (bounds, mapStream) =>
+  Map.create(mapStream.f, sliceBounds(bounds, mapStream.source))
+
+const fuseSlice = (bounds, sliceStream) =>
+  sliceBounds(mergeBounds(bounds, sliceStream.bounds), sliceStream.source)
 
 class Slice {
-  constructor (min, max, source) {
+  constructor (bounds, source) {
     this.source = source
-    this.min = min
-    this.max = max
+    this.bounds = bounds
   }
 
   run (sink, scheduler) {
     const disposable = new SettableDisposable()
-    const sliceSink = new SliceSink(this.min, this.max - this.min, sink, disposable)
+    const sliceSink = new SliceSink(this.bounds, sink, disposable)
 
     disposable.setDisposable(this.source.run(sliceSink, scheduler))
 
@@ -65,10 +75,10 @@ class Slice {
 }
 
 class SliceSink extends Pipe {
-  constructor (skip, take, sink, disposable) {
+  constructor (bounds, sink, disposable) {
     super(sink)
-    this.skip = skip
-    this.take = take
+    this.skip = bounds.min
+    this.take = bounds.max - bounds.min
     this.disposable = disposable
   }
 

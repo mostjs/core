@@ -27,14 +27,12 @@ describe('slice', function () {
 
     it('should narrow when second slice is smaller', function () {
       const s = slice(1, 5, slice(1, 10, now('')))
-      eq(2, s.min)
-      eq(6, s.max)
+      eq({ min: 2, max: 5 }, s.bounds)
     })
 
     it('should narrow when second slice is larger', function () {
       const s = slice(1, 10, slice(1, 5, now('')))
-      eq(2, s.min)
-      eq(5, s.max)
+      eq({ min: 2, max: 5 }, s.bounds)
     })
 
     it('should commute map', function () {
