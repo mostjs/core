@@ -3,32 +3,35 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import { disposeBoth } from '@most/disposable'
+import { disposeAll } from '@most/disposable'
 import { join } from './chain'
-import { merge } from './merge'
-import { never } from '../source/never'
+import { skip, take } from './slice'
+import { mergeArray } from './merge'
 
-const timeBounds = (min, minSignal, maxSignal) =>
-  ({ min, minSignal, maxSignal })
+const timeBounds = (min, minSignals, maxSignals) =>
+  ({ min, minSignals, maxSignals })
 
-const minBounds = (minSignal) =>
-  timeBounds(Infinity, minSignal, never())
+const minBounds = minSignal =>
+  timeBounds(Infinity, [minSignal], [])
 
-const maxBounds = (maxSignal) =>
-  timeBounds(0, never(), maxSignal)
+const maxBounds = maxSignal =>
+  timeBounds(0, [], [maxSignal])
 
 const mergeTimeBounds = (b1, b2) =>
-  ({
-    min: Math.max(b1.min, b2.min),
-    minSignal: merge(b1.minSignal, b2.minSignal),
-    maxSignal: merge(b1.maxSignal, b2.maxSignal)
-  })
-
-const runTimeBounds = (bounds, timesliceSink, scheduler) =>
-  disposeBoth(
-    bounds.minSignal.run(new UpdateMinSink(timesliceSink), scheduler),
-    bounds.maxSignal.run(new UpdateMaxSink(timesliceSink), scheduler)
+  timeBounds(
+    Math.max(b1.min, b2.min),
+    b1.minSignals.concat(b2.minSignals),
+    b1.maxSignals.concat(b2.maxSignals)
   )
+
+const getMinSignal = ({ minSignals }) =>
+  skip(minSignals.length - 1, mergeArray(minSignals.map(first)))
+
+const getMaxSignal = ({ maxSignals }) =>
+  mergeArray(maxSignals)
+
+const first = stream =>
+  take(1, stream)
 
 export const until = (signal, stream) =>
   timeslice(maxBounds(signal), stream)
@@ -53,10 +56,11 @@ class Timeslice {
   run (sink, scheduler) {
     const ts = new TimesliceSink(this.bounds.min, sink)
 
-    const boundsDisposable = runTimeBounds(this.bounds, ts, scheduler)
+    const dmin = getMinSignal(this.bounds).run(new UpdateMinSink(ts), scheduler)
+    const dmax = getMaxSignal(this.bounds).run(new UpdateMaxSink(ts), scheduler)
     const d = this.source.run(ts, scheduler)
 
-    return disposeBoth(boundsDisposable, d)
+    return disposeAll([dmin, dmax, d])
   }
 }
 
