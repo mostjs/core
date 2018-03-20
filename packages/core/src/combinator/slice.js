@@ -66,7 +66,7 @@ class Slice {
 
   run (sink, scheduler) {
     const disposable = new SettableDisposable()
-    const sliceSink = new SliceSink(this.bounds, sink, disposable)
+    const sliceSink = new SliceSink(this.bounds.min, this.bounds.max - this.bounds.min, sink, disposable)
 
     disposable.setDisposable(this.source.run(sliceSink, scheduler))
 
@@ -75,10 +75,10 @@ class Slice {
 }
 
 class SliceSink extends Pipe {
-  constructor (bounds, sink, disposable) {
+  constructor (skip, take, sink, disposable) {
     super(sink)
-    this.skip = bounds.min
-    this.take = bounds.max - bounds.min
+    this.skip = skip
+    this.take = take
     this.disposable = disposable
   }
 
