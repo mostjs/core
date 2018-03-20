@@ -8,21 +8,26 @@ import { join } from './chain'
 import { skip, take } from './slice'
 import { mergeArray } from './merge'
 
-const timeBounds = (min, minSignals, maxSignals) =>
-  ({ min, minSignals, maxSignals })
+// Time bounds
+// TODO: Move to own module
+const timeBounds = (minSignals, maxSignals) =>
+  ({ minSignals, maxSignals })
 
 const minBounds = minSignal =>
-  timeBounds(Infinity, [minSignal], [])
+  timeBounds([minSignal], [])
 
 const maxBounds = maxSignal =>
-  timeBounds(0, [], [maxSignal])
+  timeBounds([], [maxSignal])
 
 const mergeTimeBounds = (b1, b2) =>
   timeBounds(
-    Math.max(b1.min, b2.min),
     b1.minSignals.concat(b2.minSignals),
     b1.maxSignals.concat(b2.maxSignals)
   )
+
+// Interpret time bounds
+const getStartingMin = ({ minSignals }) =>
+  minSignals.length === 0 ? Infinity : 0
 
 const getMinSignal = ({ minSignals }) =>
   skip(minSignals.length - 1, mergeArray(minSignals.map(first)))
@@ -54,7 +59,7 @@ class Timeslice {
   }
 
   run (sink, scheduler) {
-    const ts = new TimesliceSink(this.bounds.min, sink)
+    const ts = new TimesliceSink(getStartingMin(this.bounds), sink)
 
     const dmin = getMinSignal(this.bounds).run(new UpdateMinSink(ts), scheduler)
     const dmax = getMaxSignal(this.bounds).run(new UpdateMaxSink(ts), scheduler)
@@ -78,7 +83,7 @@ class TimesliceSink extends Pipe {
   }
 
   _updateMin (t) {
-    if (this.min === Infinity) {
+    if (t < this.min) {
       this.min = t
     }
   }
