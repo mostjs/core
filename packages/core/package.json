@@ -51,6 +51,7 @@
     "nyc": "^11.0.2",
     "rollup": "^0.50.0",
     "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-local-resolve": "^1.0.7",
     "sinon": "^1.17.7",
     "snazzy": "^7.0.0",
     "standard": "^10.0.3"
