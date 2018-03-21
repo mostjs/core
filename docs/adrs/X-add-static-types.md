@@ -1,4 +1,4 @@
-# ADR 1: Add Static Types
+# ADR X: Add Static Types
 
 Brian Cavalier (@briancavalier),
 David Chase (@davidchase),
