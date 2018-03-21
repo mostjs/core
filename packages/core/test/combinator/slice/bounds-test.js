@@ -10,45 +10,42 @@ import {
   newBounds
 } from '../../../src/combinator/slice/bounds'
 
-const rInt = () =>
-  Math.random() * Number.MAX_SAFE_INTEGER
+const rInt = (min = 0, max = Number.MAX_SAFE_INTEGER) =>
+  min + (Math.random() * (max - min))
 
 const genBound = () =>
   Math.random() >= 0 ? rInt() : -rInt()
 
-const testBounds = (gen, assert, n = 100) => {
-  for (let i = 0; i < n; ++i) {
-    assert(gen())
+const assertValidBounds = gen => {
+  for (let i = 0; i < 100; ++i) {
+    const b = gen(i)
+    assert(b.min >= 0 && b.max >= b.min)
   }
 }
-
-const assertValidBounds = b =>
-  assert(b.min >= 0 && b.max >= b.min)
 
 describe('slice/bounds', () => {
   describe('newBounds', () => {
     it('should create valid bounds', () => {
-      testBounds(() => newBounds(genBound(), genBound()), assertValidBounds)
+      assertValidBounds(() => newBounds(genBound(), genBound()))
     })
   })
 
   describe('minBounds', () => {
     it('should create valid bounds', () => {
-      testBounds(() => minBounds(genBound()), assertValidBounds)
+      assertValidBounds(() => minBounds(genBound()))
     })
   })
 
   describe('maxBounds', () => {
     it('should create valid bounds', () => {
-      testBounds(() => maxBounds(genBound()), assertValidBounds)
+      assertValidBounds(() => maxBounds(genBound()))
     })
   })
 
   describe('mergeBounds', () => {
     it('should create valid bounds', () => {
-      testBounds(
-        () => mergeBounds(newBounds(genBound(), genBound()), newBounds(genBound(), genBound())),
-        assertValidBounds
+      assertValidBounds(
+        () => mergeBounds(newBounds(genBound(), genBound()), newBounds(genBound(), genBound()))
       )
     })
   })
@@ -56,7 +53,7 @@ describe('slice/bounds', () => {
   describe('isNilBounds', () => {
     it('given min < max, should be false', () => {
       const min = rInt()
-      assert(!isNilBounds(newBounds(min, min + rInt())))
+      assert(!isNilBounds(newBounds(min, rInt(min))))
     })
     it('given min >= max, should be true', () => {
       const min = rInt()
@@ -69,10 +66,10 @@ describe('slice/bounds', () => {
       assert(isInfiniteBounds(newBounds(-rInt(), Infinity)))
     })
     it('given min > 0, should be false', () => {
-      assert(!isInfiniteBounds(newBounds(1 + rInt(), Infinity)))
+      assert(!isInfiniteBounds(newBounds(rInt(1), Infinity)))
     })
     it('given max < Infinity, should be false', () => {
-      assert(!isInfiniteBounds(newBounds(0, 1 + rInt())))
+      assert(!isInfiniteBounds(newBounds(0, rInt(1))))
     })
   })
 })
