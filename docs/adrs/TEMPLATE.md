@@ -7,7 +7,7 @@ Frederik Krautwald (@Frikki),
 
 ## Status
 
-**Proposed** | ~~Accepted~~ | ~~Deprecated~~ | ~~Superceded~~
+**Proposed** | ~~Accepted~~ | ~~Deprecated~~ | ~~Superseded~~
 
 ## Context
 
