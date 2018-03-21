@@ -1,4 +1,4 @@
-# ADR 1: External Tooling
+# ADR [n]: [Title]
 
 Brian Cavalier (@briancavalier),
 David Chase (@davidchase),
