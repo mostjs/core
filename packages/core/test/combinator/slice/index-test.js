@@ -1,14 +1,14 @@
 import { describe, it } from 'mocha'
 import { eq, is, assert } from '@briancavalier/assert'
 
-import { slice, take, skip, takeWhile, skipWhile, skipAfter } from '../src/combinator/slice'
-import { map } from '../src/combinator/transform'
-import { now } from '../src/source/now'
-import { empty, isCanonicalEmpty } from '../src/source/empty'
-import { default as Map } from '../src/fusion/Map'
+import { slice, take, skip, takeWhile, skipWhile, skipAfter } from '../../../src/combinator/slice'
+import { map } from '../../../src/combinator/transform'
+import { now } from '../../../src/source/now'
+import { empty, isCanonicalEmpty } from '../../../src/source/empty'
+import { default as Map } from '../../../src/fusion/Map'
 
-import { makeEventsFromArray, collectEventsFor, makeEvents } from './helper/testEnv'
-import { assertSame } from './helper/stream-helper'
+import { makeEventsFromArray, collectEventsFor, makeEvents } from '../../helper/testEnv'
+import { assertSame } from '../../helper/stream-helper'
 
 describe('slice', function () {
   describe('fusion', function () {
@@ -60,6 +60,11 @@ describe('slice', function () {
           { time: 5, value: 5 },
           { time: 6, value: 6 }
         ]))
+    })
+
+    it('given infinite bounds, should be identity', () => {
+      const s = makeEvents(1, 3)
+      is(s, slice(0, Infinity, s))
     })
   })
 
