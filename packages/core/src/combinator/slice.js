@@ -1,4 +1,3 @@
-// @flow
 /** @license MIT License (c) copyright 2010 original author or authors */
 
 import Pipe from '../sink/Pipe'
@@ -6,16 +5,17 @@ import { empty, isCanonicalEmpty } from '../source/empty'
 import Map from '../fusion/Map'
 import SettableDisposable from '../disposable/SettableDisposable'
 
-type Bounds = { min: number, max: number }
-
-const createBounds = (min: number, max: number): Bounds =>
+const createBounds = (min, max) =>
   ({ min, max })
 
-const mergeBounds = (b1: Bounds, b2: Bounds): Bounds =>
+const mergeBounds = (b1, b2) =>
   createBounds(b1.min + b2.min, Math.min(b1.max, b2.max))
 
-const isEmptyBounds = (b: Bounds): booelan =>
+const isEmptyBounds = b =>
   b.min >= b.max
+
+const isInfinite = b =>
+  b.min <= 0 && b.max === Infinity
 
 /**
  * @param {number} n
@@ -44,13 +44,16 @@ export const slice = (start, end, stream) =>
   sliceBounds(createBounds(start, end), stream)
 
 const sliceBounds = (bounds, stream) =>
-  isCanonicalEmpty(stream) || isEmptyBounds(bounds) ? empty()
-    : sliceSource(bounds, stream)
-
-const sliceSource = (bounds, stream) =>
-  stream instanceof Map ? commuteMapSlice(bounds, stream)
+  isSliceEmpty(bounds, stream) ? empty()
+    : stream instanceof Map ? commuteMapSlice(bounds, stream)
     : stream instanceof Slice ? fuseSlice(bounds, stream)
-    : new Slice(bounds, stream)
+    : createSlice(bounds, stream)
+
+const isSliceEmpty = (bounds, stream) =>
+  isCanonicalEmpty(stream) || isEmptyBounds(bounds)
+
+const createSlice = (bounds, stream) =>
+  isInfinite(bounds) ? stream : new Slice(bounds, stream)
 
 const commuteMapSlice = (bounds, mapStream) =>
   Map.create(mapStream.f, sliceBounds(bounds, mapStream.source))
