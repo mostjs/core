@@ -1,13 +1,21 @@
-/** @license MIT License (c) copyright 2010-2017 original author or authors */
-import { reduce, curry2 } from '@most/prelude'
+/** @license MIT License (c) copyright 2010 original author or authors */
+import { append, reduce, curry2 } from '@most/prelude'
+import { disposeNone, isDisposeNone } from './disposeNone'
 
 // Aggregate a list of disposables into a DisposeAll
-export const disposeAll = ds =>
-  new DisposeAll(ds)
+export const disposeAll = ds => {
+  const merged = reduce(merge, [], ds)
+  return merged.length === 0 ? disposeNone() : new DisposeAll(merged)
+}
 
 // Convenience to aggregate 2 disposables
 export const disposeBoth = curry2((d1, d2) =>
   disposeAll([d1, d2]))
+
+const merge = (ds, d) =>
+  isDisposeNone(d) ? ds
+    : d instanceof DisposeAll ? ds.concat(d.disposables)
+    : append(d, ds)
 
 class DisposeAll {
   constructor (disposables) {
