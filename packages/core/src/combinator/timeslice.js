@@ -25,10 +25,10 @@ const mergeTimeBounds = (b1, b2) =>
   timeBounds(b1.min.concat(b2.min), b1.max.concat(b2.max))
 
 // Interpret time bounds
-const getStartingMin = ({ min }) =>
+const initialMin = ({ min }) =>
   min.length === 0 ? 0 : Infinity
 
-const getSignals = ({ min, max }) =>
+const streamBounds = ({ min, max }) =>
   ({ min: last(mergeArray(map(first, min))), max: first(mergeArray(max)) })
 
 export const until = (signal, stream) =>
@@ -52,8 +52,8 @@ class Timeslice {
   }
 
   run (sink, scheduler) {
-    const ts = new TimesliceSink(getStartingMin(this.bounds), sink)
-    const { min, max } = getSignals(this.bounds)
+    const ts = new TimesliceSink(initialMin(this.bounds), sink)
+    const { min, max } = streamBounds(this.bounds)
 
     const dmin = min.run(new UpdateMinSink(ts), scheduler)
     const dmax = max.run(new UpdateMaxSink(ts), scheduler)
