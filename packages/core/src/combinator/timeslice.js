@@ -4,8 +4,9 @@
 
 import Pipe from '../sink/Pipe'
 import { disposeAll } from '@most/disposable'
+import { empty, isCanonicalEmpty } from '../source/empty'
 import { join } from './chain'
-import { skip, take } from './slice'
+import { take } from './slice'
 import { mergeArray } from './merge'
 
 // Time bounds
@@ -27,16 +28,13 @@ const mergeTimeBounds = (b1, b2) =>
 
 // Interpret time bounds
 const getStartingMin = ({ minSignals }) =>
-  minSignals.length === 0 ? Infinity : 0
+  minSignals.length === 0 ? 0 : Infinity
 
 const getMinSignal = ({ minSignals }) =>
-  skip(minSignals.length - 1, mergeArray(minSignals.map(first)))
+  last(mergeArray(minSignals.map(first)))
 
 const getMaxSignal = ({ maxSignals }) =>
   mergeArray(maxSignals)
-
-const first = stream =>
-  take(1, stream)
 
 export const until = (signal, stream) =>
   timeslice(maxBounds(signal), stream)
@@ -82,13 +80,7 @@ class TimesliceSink extends Pipe {
     }
   }
 
-  _updateMin (t) {
-    if (t < this.min) {
-      this.min = t
-    }
-  }
-
-  _updateMax (t) {
+  end (t) {
     if (t < this.max) {
       this.max = t
       this.sink.end(t)
@@ -98,7 +90,7 @@ class TimesliceSink extends Pipe {
 
 class UpdateMinSink extends Pipe {
   event (t, x) {
-    this.sink._updateMin(t)
+    this.sink.min = Math.min(this.sink.min, t)
   }
 
   end () {}
@@ -106,8 +98,45 @@ class UpdateMinSink extends Pipe {
 
 class UpdateMaxSink extends Pipe {
   event (t, x) {
-    this.sink._updateMax(t)
+    this.sink.end(t)
   }
 
   end () {}
+}
+
+const first = stream =>
+  take(1, stream)
+
+const last = stream =>
+  isCanonicalEmpty(stream) ? empty()
+    : new Last(stream)
+
+class Last {
+  constructor (source) {
+    this.source = source
+  }
+
+  run (sink, scheduler) {
+    return this.source.run(new LastSink(sink), scheduler)
+  }
+}
+
+class LastSink extends Pipe {
+  constructor (sink) {
+    super(sink)
+    this.has = false
+    this.value = undefined
+  }
+
+  event (t, x) {
+    this.has = true
+    this.value = x
+  }
+
+  end (t) {
+    if (this.has) {
+      this.sink.event(t, this.value)
+    }
+    this.sink.end(t)
+  }
 }

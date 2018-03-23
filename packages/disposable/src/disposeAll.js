@@ -8,11 +8,6 @@ export const disposeAll = ds => {
   return merged.length === 0 ? disposeNone() : new DisposeAll(merged)
 }
 
-const merge = (ds, d) =>
-  isDisposeNone(d) ? ds
-    : d instanceof DisposeAll ? ds.concat(d.disposables)
-    : append(d, ds)
-
 // Convenience to aggregate 2 disposables
 export const disposeBoth = curry2((d1, d2) =>
   disposeAll([d1, d2]))
