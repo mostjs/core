@@ -4,6 +4,7 @@
 
 import Pipe from '../sink/Pipe'
 import { disposeAll } from '@most/disposable'
+import { map } from '@most/prelude'
 import { empty, isCanonicalEmpty } from '../source/empty'
 import { join } from './chain'
 import { take } from './slice'
@@ -11,30 +12,24 @@ import { mergeArray } from './merge'
 
 // Time bounds
 // TODO: Move to own module
-const timeBounds = (minSignals, maxSignals) =>
-  ({ minSignals, maxSignals })
+const timeBounds = (min, max) =>
+  ({ min, max })
 
-const minBounds = minSignal =>
-  timeBounds([minSignal], [])
+const minBounds = min =>
+  timeBounds([min], [])
 
-const maxBounds = maxSignal =>
-  timeBounds([], [maxSignal])
+const maxBounds = max =>
+  timeBounds([], [max])
 
 const mergeTimeBounds = (b1, b2) =>
-  timeBounds(
-    b1.minSignals.concat(b2.minSignals),
-    b1.maxSignals.concat(b2.maxSignals)
-  )
+  timeBounds(b1.min.concat(b2.min), b1.max.concat(b2.max))
 
 // Interpret time bounds
-const getStartingMin = ({ minSignals }) =>
-  minSignals.length === 0 ? 0 : Infinity
+const getStartingMin = ({ min }) =>
+  min.length === 0 ? 0 : Infinity
 
-const getMinSignal = ({ minSignals }) =>
-  last(mergeArray(minSignals.map(first)))
-
-const getMaxSignal = ({ maxSignals }) =>
-  mergeArray(maxSignals)
+const getSignals = ({ min, max }) =>
+  ({ min: last(mergeArray(map(first, min))), max: first(mergeArray(max)) })
 
 export const until = (signal, stream) =>
   timeslice(maxBounds(signal), stream)
@@ -58,9 +53,10 @@ class Timeslice {
 
   run (sink, scheduler) {
     const ts = new TimesliceSink(getStartingMin(this.bounds), sink)
+    const { min, max } = getSignals(this.bounds)
 
-    const dmin = getMinSignal(this.bounds).run(new UpdateMinSink(ts), scheduler)
-    const dmax = getMaxSignal(this.bounds).run(new UpdateMaxSink(ts), scheduler)
+    const dmin = min.run(new UpdateMinSink(ts), scheduler)
+    const dmax = max.run(new UpdateMaxSink(ts), scheduler)
     const d = this.source.run(ts, scheduler)
 
     return disposeAll([dmin, dmax, d])
