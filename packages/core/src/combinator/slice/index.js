@@ -1,5 +1,5 @@
 import { empty, isCanonicalEmpty } from '../../source/empty'
-import { maxBounds, minBounds, newBounds, isNilBounds, isInfiniteBounds, mergeBounds } from './bounds'
+import { maxBounds, minBounds, boundsFrom, isNilBounds, isInfiniteBounds, mergeBounds } from './bounds'
 import Map from '../../fusion/Map'
 import Pipe from '../../sink/Pipe'
 import SettableDisposable from '../../disposable/SettableDisposable'
@@ -28,7 +28,7 @@ export const skip = (n, stream) =>
  * @returns {Stream} stream containing items where start <= index < end
  */
 export const slice = (start, end, stream) =>
-  sliceBounds(newBounds(start, end), stream)
+  sliceBounds(boundsFrom(start, end), stream)
 
 const sliceBounds = (bounds, stream) =>
   isSliceEmpty(bounds, stream) ? empty()
