@@ -2,6 +2,7 @@ import { describe, it } from 'mocha'
 import { eq, is, assert } from '@briancavalier/assert'
 
 import { slice, take, skip, takeWhile, skipWhile, skipAfter } from '../../../src/combinator/slice'
+import { boundsFrom } from '../../../src/combinator/slice/bounds'
 import { map } from '../../../src/combinator/transform'
 import { now } from '../../../src/source/now'
 import { empty, isCanonicalEmpty } from '../../../src/source/empty'
@@ -27,12 +28,12 @@ describe('slice', function () {
 
     it('should narrow when second slice is smaller', function () {
       const s = slice(1, 5, slice(1, 10, now('')))
-      eq({ min: 2, max: 5 }, s.bounds)
+      eq(boundsFrom(2, 5), s.bounds)
     })
 
     it('should narrow when second slice is larger', function () {
       const s = slice(1, 10, slice(1, 5, now('')))
-      eq({ min: 2, max: 5 }, s.bounds)
+      eq(boundsFrom(2, 6), s.bounds)
     })
 
     it('should commute map', function () {

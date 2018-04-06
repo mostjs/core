@@ -1,4 +1,5 @@
-import { assert } from '@briancavalier/assert'
+// @flow
+import { assert, eq } from '@briancavalier/assert'
 import { describe, it } from 'mocha'
 
 import {
@@ -13,12 +14,11 @@ import {
 const rInt = (min = 0, max = Number.MAX_SAFE_INTEGER) =>
   Math.floor(min + (Math.random() * (max - min)))
 
-const rBounds = () =>
-  Math.random() >= 0.5 ? rInt() : -rInt()
+const rBound = () => rInt(-Number.MAX_SAFE_INTEGER)
 
 const assertValidBounds = gen => {
   for (let i = 0; i < 100; ++i) {
-    const b = gen(i)
+    const b = gen()
     assert(b.min >= 0 && b.max >= b.min)
   }
 }
@@ -26,27 +26,39 @@ const assertValidBounds = gen => {
 describe('slice/bounds', () => {
   describe('boundsFrom', () => {
     it('should create valid bounds', () => {
-      assertValidBounds(() => boundsFrom(rBounds(), rBounds()))
+      assertValidBounds(() => boundsFrom(rBound(), rBound()))
     })
   })
 
   describe('minBounds', () => {
     it('should create valid bounds', () => {
-      assertValidBounds(() => minBounds(rBounds()))
+      assertValidBounds(() => minBounds(rBound()))
     })
   })
 
   describe('maxBounds', () => {
     it('should create valid bounds', () => {
-      assertValidBounds(() => maxBounds(rBounds()))
+      assertValidBounds(() => maxBounds(rBound()))
     })
   })
 
   describe('mergeBounds', () => {
     it('should create valid bounds', () => {
       assertValidBounds(
-        () => mergeBounds(boundsFrom(rBounds(), rBounds()), boundsFrom(rBounds(), rBounds()))
+        () => mergeBounds(boundsFrom(rBound(), rBound()), boundsFrom(rBound(), rBound()))
       )
+    })
+    it('should accumulate min and keep lower max, relative to previously accumulated min', () => {
+      const b1 = boundsFrom(2, 10)
+      const b2 = boundsFrom(1, 5)
+      const b = mergeBounds(b1, b2)
+      eq(boundsFrom(3, 7), b)
+    })
+    it('should accumulate min and keep lower max, relative to previously accumulated min', () => {
+      const b1 = boundsFrom(2, 5)
+      const b2 = boundsFrom(1, 10)
+      const b = mergeBounds(b1, b2)
+      eq(boundsFrom(3, 5), b)
     })
   })
 
