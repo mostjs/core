@@ -1,9 +1,8 @@
-/** @license MIT License (c) copyright 2010 original author or authors */
-
-import Pipe from '../sink/Pipe'
-import { empty, isCanonicalEmpty } from '../source/empty'
-import Map from '../fusion/Map'
-import SettableDisposable from '../disposable/SettableDisposable'
+import { empty, isCanonicalEmpty } from '../../source/empty'
+import { maxBounds, minBounds, boundsFrom, isNilBounds, isInfiniteBounds, mergeBounds } from './bounds'
+import Map from '../../fusion/Map'
+import Pipe from '../../sink/Pipe'
+import SettableDisposable from '../../disposable/SettableDisposable'
 
 /**
  * @param {number} n
@@ -11,7 +10,7 @@ import SettableDisposable from '../disposable/SettableDisposable'
  * @returns {Stream} new stream containing only up to the first n items from stream
  */
 export const take = (n, stream) =>
-  slice(0, n, stream)
+  sliceBounds(maxBounds(n), stream)
 
 /**
  * @param {number} n
@@ -19,7 +18,7 @@ export const take = (n, stream) =>
  * @returns {Stream} new stream with the first n items removed
  */
 export const skip = (n, stream) =>
-  slice(n, Infinity, stream)
+  sliceBounds(minBounds(n), stream)
 
 /**
  * Slice a stream by index. Negative start/end indexes are not supported
@@ -29,34 +28,35 @@ export const skip = (n, stream) =>
  * @returns {Stream} stream containing items where start <= index < end
  */
 export const slice = (start, end, stream) =>
-  end <= start || isCanonicalEmpty(stream)
-    ? empty()
-    : sliceSource(start, end, stream)
+  sliceBounds(boundsFrom(start, end), stream)
 
-const sliceSource = (start, end, stream) =>
-  stream instanceof Map ? commuteMapSlice(start, end, stream)
-    : stream instanceof Slice ? fuseSlice(start, end, stream)
-    : new Slice(start, end, stream)
+const sliceBounds = (bounds, stream) =>
+  isSliceEmpty(bounds, stream) ? empty()
+    : stream instanceof Map ? commuteMapSlice(bounds, stream)
+    : stream instanceof Slice ? fuseSlice(bounds, stream)
+    : createSlice(bounds, stream)
 
-const commuteMapSlice = (start, end, mapStream) =>
-  Map.create(mapStream.f, slice(start, end, mapStream.source))
+const isSliceEmpty = (bounds, stream) =>
+  isCanonicalEmpty(stream) || isNilBounds(bounds)
 
-function fuseSlice (start, end, sliceStream) {
-  const fusedStart = start + sliceStream.min
-  const fusedEnd = Math.min(end + sliceStream.min, sliceStream.max)
-  return slice(fusedStart, fusedEnd, sliceStream.source)
-}
+const createSlice = (bounds, stream) =>
+  isInfiniteBounds(bounds) ? stream : new Slice(bounds, stream)
+
+const commuteMapSlice = (bounds, mapStream) =>
+  Map.create(mapStream.f, sliceBounds(bounds, mapStream.source))
+
+const fuseSlice = (bounds, sliceStream) =>
+  sliceBounds(mergeBounds(bounds, sliceStream.bounds), sliceStream.source)
 
 class Slice {
-  constructor (min, max, source) {
+  constructor (bounds, source) {
     this.source = source
-    this.min = min
-    this.max = max
+    this.bounds = bounds
   }
 
   run (sink, scheduler) {
     const disposable = new SettableDisposable()
-    const sliceSink = new SliceSink(this.min, this.max - this.min, sink, disposable)
+    const sliceSink = new SliceSink(this.bounds.min, this.bounds.max - this.bounds.min, sink, disposable)
 
     disposable.setDisposable(this.source.run(sliceSink, scheduler))
 

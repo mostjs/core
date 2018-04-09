@@ -1,9 +1,11 @@
 import babel from 'rollup-plugin-babel'
+import localResolve from 'rollup-plugin-local-resolve'
 import pkg from './package.json'
 
 export default {
   input: 'src/index.js',
   plugins: [
+    localResolve(),
     babel({
       exclude: 'node_modules/**',
       plugins: ['external-helpers']
