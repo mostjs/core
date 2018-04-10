@@ -69,7 +69,7 @@ A ``Stream`` represents a view of events over time. Its ``run`` method arranges 
 
 A ``Stream`` may be simple, like :ref:`now`, or may do sophisticated things such as :ref:`combining <combine>` multiple ``Stream`` s or deal with higher-order ``Stream`` s.
 
-A ``Stream`` may act as an event producer, such as a ``Stream`` that produces DOM events. A producer ``Stream`` must never produce an event in the same call stack as its ``run`` method is called. It must begin producing items asynchronously. In some cases, this comes for free, such as DOM events. In other cases, it must be done explicitly using the provided ref:`Scheduler` to schedule asynchronous :ref:`Tasks <Task>`.
+A ``Stream`` may act as an event producer, such as a ``Stream`` that produces DOM events. A producer ``Stream`` must never produce an event in the same call stack as its ``run`` method is called. It must begin producing items asynchronously. In some cases, this comes for free, such as DOM events. In other cases, it must be done explicitly using the provided :ref:`Scheduler` to schedule asynchronous :ref:`Tasks <Task>`.
 
 .. _Sink:
 
