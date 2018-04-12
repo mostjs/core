@@ -150,6 +150,19 @@ Timer
 
 A ``Timer`` abstracts platform time, typically relying on a :ref:`Clock`, and timer scheduling, typically using ``setTimeout``.
 
+.. _VirtualTimer:
+
+VirtualTimer
+^^^^^
+
+.. code-block:: haskell
+
+  type VirtualTimer = {
+    tick :: (Offset) -> void
+  }
+
+A ``VirtualTimer`` is a :ref:`Timer` with a tick function for progressing the Timer's time.
+
 .. _Timeline:
 
 Timeline
@@ -1371,6 +1384,24 @@ newClockTimer
   newClockTimer :: Clock -> Timer
 
 Create a new :ref:`Timer` that uses the provided :ref:`Clock` as a source of the current :ref:`Time`.
+
+.. _newVirtualTimer:
+
+newVirtualTimer
+`````````````
+
+.. code-block:: haskell
+
+  newVirtualTimer :: () -> VirtualTimer
+
+Create a new :ref:`VirtualTimer` that you can progress its time manually. Used mainly for testing.
+
+.. code-block:: javascript
+
+  const timer = newVirtualTimer()
+  console.log(timer.now()) // 0
+  timer.tick(10);
+  console.log(timer.now()) // 10
 
 .. _newTimeline:
 

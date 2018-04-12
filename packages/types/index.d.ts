@@ -74,3 +74,7 @@ export interface ScheduledTask {
   error(err: Error): void;
   dispose(): void;
 }
+
+export interface VirtualTimer extends Timer {
+  tick(dt: Offset): void;
+}

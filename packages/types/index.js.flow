@@ -78,3 +78,7 @@ export type ScheduledTask = Disposable & {
   run (): void,
   error (Error): void,
 }
+
+export type VirtualTimer = Timer & {
+  tick (Offset): void
+}

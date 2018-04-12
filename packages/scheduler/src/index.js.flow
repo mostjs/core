@@ -1,5 +1,5 @@
 // @flow
-import type { Scheduler, Task, ScheduledTask, Timeline, Timer, Clock, Time, Delay, Period, Offset } from '@most/types'
+import type { Scheduler, Task, ScheduledTask, Timeline, Timer, Clock, Time, Delay, Period, Offset, VirtualTimer } from '@most/types'
 
 declare export function newScheduler (timer: Timer, timeline: Timeline): Scheduler
 declare export function newScheduler (timer: Timer): (timeline: Timeline) => Scheduler
@@ -10,6 +10,7 @@ declare export function schedulerRelativeTo (offset: Offset, scheduler: Schedule
 declare export function schedulerRelativeTo (offset: Offset): (scheduler: Scheduler) => Scheduler
 
 declare export function newClockTimer (clock: Clock): Timer
+declare export function newVirtualTimer (): VirtualTimer
 declare export function newTimeline (): Timeline
 
 declare export function newPlatformClock (): Clock
