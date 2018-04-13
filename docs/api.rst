@@ -157,7 +157,7 @@ VirtualTimer
 
 .. code-block:: haskell
 
-  type VirtualTimer = {
+  type VirtualTimer = Timer & {
     tick :: (Offset) -> void
   }
 
@@ -1401,7 +1401,7 @@ Create a new :ref:`VirtualTimer` that you can progress its time manually. Used m
   const timer = newVirtualTimer()
   console.log(timer.now()) // 0
   timer.tick(10);
-  console.log(timer.now()) // 10
+  setTimeout(() => console.log(timer.now()), 0) // 10
 
 .. _newTimeline:
 
