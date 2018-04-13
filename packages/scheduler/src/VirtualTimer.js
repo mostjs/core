@@ -1,25 +1,25 @@
 /** @license MIT License (c) copyright 2010-2018 original author or authors */
 
 export default function newVirtualTimer () {
-  let nows = 0
-  let targetNow = 0
+  let currentTime = 0
+  let targetTime = 0
   let task
   let timer = null
   let running = false
   const key = {}
 
   function stepTimer () {
-    if (nows >= targetNow) {
-      nows = targetNow
+    if (currentTime >= targetTime) {
+      currentTime = targetTime
       running = false
       return
     }
-    if (task !== undefined && targetNow >= task.time) {
-      nows = task.time
+    if (task !== undefined && targetTime >= task.time) {
+      currentTime = task.time
     } else {
-      nows = targetNow
+      currentTime = targetTime
     }
-    if (task !== undefined && nows === task.time) {
+    if (task !== undefined && currentTime === task.time) {
       const fn = task.fn
       task = undefined
       if (typeof fn === 'function') {
@@ -30,12 +30,12 @@ export default function newVirtualTimer () {
   }
 
   return {
-    now: () => nows,
+    now: () => currentTime,
     setTimer: function (fn, dt) {
       if (task !== undefined) {
         throw new Error('VirtualTimer: Only supports one in-flight timer')
       }
-      task = {fn, time: nows + Math.max(0, dt)}
+      task = {fn, time: currentTime + Math.max(0, dt)}
       return key
     },
     clearTimer: function (t) {
@@ -49,7 +49,7 @@ export default function newVirtualTimer () {
       if (dt <= 0) {
         return
       }
-      targetNow = nows + dt
+      targetTime = currentTime + dt
       if (running) {
         return
       }

@@ -28,10 +28,7 @@ describe('VirtualTimer', () => {
     const timer = newVirtualTimer()
     const dt = 234
     return new Promise((resolve, reject) => {
-      timer.setTimer(() => {
-        console.log('triggered')
-        reject(new AssertionError('Timer triggered when it should not'))
-      }, dt + 1)
+      timer.setTimer(() => reject(new AssertionError('Timer triggered when it should not')), dt + 1)
       timer.tick(dt)
       setTimeout(resolve(), 0)
     })
@@ -41,10 +38,7 @@ describe('VirtualTimer', () => {
     const timer = newVirtualTimer()
     const dt = 234
     return new Promise((resolve, reject) => {
-      timer.setTimer(() => {
-        console.log('triggered')
-        reject(new AssertionError('Timer triggered when it should not'))
-      }, dt + 1)
+      timer.setTimer(() => reject(new AssertionError('Timer triggered when it should not')), dt + 1)
       setTimeout(resolve(), 0)
     })
   })
@@ -52,7 +46,8 @@ describe('VirtualTimer', () => {
   it('should push current time to requested value if timer is set after that time', () => {
     const timer = newVirtualTimer()
     const dt = 243
-    const taskTime = dt + 10
+    const arbitraryExcessTime = 10
+    const taskTime = dt + arbitraryExcessTime
     return new Promise(resolve => {
       timer.setTimer(() => undefined, taskTime)
       timer.tick(dt)
