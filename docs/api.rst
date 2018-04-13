@@ -153,7 +153,7 @@ A ``Timer`` abstracts platform time, typically relying on a :ref:`Clock`, and ti
 .. _VirtualTimer:
 
 VirtualTimer
-^^^^^
+^^^^^^^^^^^^
 
 .. code-block:: haskell
 
@@ -1388,7 +1388,7 @@ Create a new :ref:`Timer` that uses the provided :ref:`Clock` as a source of the
 .. _newVirtualTimer:
 
 newVirtualTimer
-`````````````
+```````````````
 
 .. code-block:: haskell
 
