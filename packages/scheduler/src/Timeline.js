@@ -57,7 +57,7 @@ export default class Timeline {
   }
 }
 
-function runReadyTasks (runTask, events, tasks) { // eslint-disable-line complexity
+function runReadyTasks (runTask, events, tasks) {
   for (let i = 0; i < events.length; ++i) {
     const task = events[i]
 
@@ -128,7 +128,7 @@ function removeAllFrom (f, timeslot) {
   timeslot.events = removeAll(f, timeslot.events)
 }
 
-function binarySearch (t, sortedArray) { // eslint-disable-line complexity
+function binarySearch (t, sortedArray) {
   let lo = 0
   let hi = sortedArray.length
   let mid, y

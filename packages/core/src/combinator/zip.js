@@ -67,7 +67,6 @@ class ZipSink extends Pipe {
   }
 
   event (t, indexedValue) {
-    /* eslint complexity: [1, 5] */
     if (!indexedValue.active) {
       this._dispose(t, indexedValue.index)
       return

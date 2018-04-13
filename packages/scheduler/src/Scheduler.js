@@ -57,7 +57,7 @@ export default class Scheduler {
     this._timer = null
   }
 
-  _scheduleNextRun () { // eslint-disable-line complexity
+  _scheduleNextRun () {
     if (this.timeline.isEmpty()) {
       return
     }
