@@ -161,7 +161,7 @@ VirtualTimer
     tick :: (Offset) -> void
   }
 
-A ``VirtualTimer`` is a :ref:`Timer` with a tick function for progressing the Timer's time.
+A ``VirtualTimer`` is a :ref:`Timer` with a tick function for progressing its time.
 
 .. _Timeline:
 
@@ -1394,7 +1394,7 @@ newVirtualTimer
 
   newVirtualTimer :: () -> VirtualTimer
 
-Create a new :ref:`VirtualTimer` that you can progress its time manually. Used mainly for testing.
+Create a new :ref:`VirtualTimer`. You progress its time manually, i.e., its time doesn’t progress automatically. Use it for example for testing.
 
 .. code-block:: javascript
 
