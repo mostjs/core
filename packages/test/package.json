@@ -1,0 +1,69 @@
+{
+  "name": "@most/test",
+  "version": "0.1.0",
+  "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
+  "typings": "type-definitions/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "files": [
+    "type-definitions",
+    "dist"
+  ],
+  "scripts": {
+    "test": "npm run test:lint && npm run test:unit && npm run test:flow",
+    "test:unit": "cross-env NODE_ENV=test nyc --reporter=text-summary mocha -r babel-register --reporter dot --recursive 'test/**/*-test.js'",
+    "test:lint": "standard --fix 'src/**/*.js' 'test/**/*.js' --verbose | snazzy",
+    "test:flow": "flow check",
+    "build": "npm run build:dist && npm run build:flow",
+    "build:dist": "rollup -c",
+    "build:flow": "cpy src/index.js.flow dist",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mostjs/core"
+  },
+  "keywords": [
+    "reactive",
+    "reactive programming",
+    "events",
+    "event stream",
+    "promise",
+    "promises",
+    "monad",
+    "monadic",
+    "functional",
+    "async"
+  ],
+  "author": "brian@hovercraftstudios.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@briancavalier/assert": "^3.2.0",
+    "babel-core": "^6.26.0",
+    "babel-plugin-annotate-pure-calls": "^0.2.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-register": "^6.26.0",
+    "cpy-cli": "^1.0.1",
+    "cross-env": "^5.0.5",
+    "flow-bin": "^0.57.3",
+    "mocha": "^3.4.2",
+    "nyc": "^11.0.2",
+    "rollup": "^0.50.0",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-local-resolve": "^1.0.7",
+    "sinon": "^1.17.7",
+    "snazzy": "^7.0.0",
+    "standard": "^10.0.3"
+  },
+  "dependencies": {
+    "@most/disposable": "^1.1.0",
+    "@most/prelude": "^1.7.0",
+    "@most/scheduler": "^1.1.0",
+    "@most/types": "^1.0.0",
+    "@most/core": "^1.0.0"
+  },
+  "standard": {
+    "ignore": []
+  }
+}
