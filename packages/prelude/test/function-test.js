@@ -3,7 +3,7 @@
 import {describe, it} from 'mocha'
 import assert from 'assert'
 
-import { id, compose, apply, curry2, curry3, curry4 } from '../src/function'
+import { id, compose, apply, curry2, curry3, curry4, noop, bind } from '../src/function'
 
 describe('id', () => {
   it('id(x) === x', () => {
@@ -136,5 +136,26 @@ describe('curry4', () => {
     assert.strictEqual(expected, curry4(f)(a, b, c)(d))
     assert.strictEqual(expected, curry4(f)(a)(b, c, d))
     assert.strictEqual(expected, curry4(f)(a, b, c, d))
+  })
+})
+
+describe('noop', () => {
+  it('should return undefined when called with no args', () => {
+    assert.strictEqual(undefined, noop())
+  })
+
+  it('should return undefined when called with args', () => {
+    assert.strictEqual(undefined, noop('test'))
+  })
+})
+
+describe('bind', () => {
+  it('should bind a function to passed object', () => {
+    const obj = {
+      test: function () {
+        assert.strictEqual(this, obj)
+      }
+    }
+    bind(obj.test, obj)()
   })
 })
