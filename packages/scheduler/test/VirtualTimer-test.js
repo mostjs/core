@@ -10,11 +10,6 @@ describe('VirtualTimer', () => {
     eq(0, timer.now())
   })
 
-  it('should expose a tick function', () => {
-    const timer = newVirtualTimer()
-    eq('function', typeof timer.tick)
-  })
-
   it('should trigger timer upon ticking', () => {
     const timer = newVirtualTimer()
     const dt = 234

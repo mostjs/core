@@ -1400,7 +1400,7 @@ Create a new :ref:`VirtualTimer`. You progress its time manually, i.e., its time
 
   const timer = newVirtualTimer()
   console.log(timer.now()) // 0
-  timer.tick(10);
+  timer.tick(10)
   setTimeout(() => console.log(timer.now()), 0) // 10
 
 .. _newTimeline:

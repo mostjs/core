@@ -1,4 +1,4 @@
-/** @license MIT License (c) copyright 2010-2018 original author or authors */
+/** @license MIT License (c) copyright 2010 original author or authors */
 
 export default function newVirtualTimer () {
   let currentTime = 0
