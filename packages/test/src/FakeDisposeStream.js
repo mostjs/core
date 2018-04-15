@@ -1,5 +1,7 @@
 /** @license MIT License (c) copyright 2018 original author or authors */
 
+// @flow
+
 import { disposeWith, disposeBoth } from '@most/disposable'
 import { curry2 } from '@most/prelude'
 

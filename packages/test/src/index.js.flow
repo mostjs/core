@@ -1,0 +1,59 @@
+// @flow
+import type { Time, Timer, Offset, Sink, Stream } from '@most/types'
+
+export type SinkSpy<A> = Sink<A> & {
+  eventCalled(): number,
+  eventTime(): Time,
+  eventValue(): A,
+  endCalled(): number,
+  endTime(): Time,
+  errorCalled(): number,
+  errorTime(): Time,
+  errorValue(): Error
+}
+
+export type TimeStampedEvent<A> = {
+  time: Time,
+  value: A
+}
+
+declare export function newSinkSpy<A>(
+  eventCb: (time: Time, value: A) => any,
+  endCb: (time: Time) => any,
+  errorCb: (time: Time, error: Error) => any
+): SinkSpy<A>;
+declare export function newSinkSpy<A>(
+  eventCb: (time: Time, value: A) => any
+): (endCb: (time: Time) => any, errorCb: (time: Time, error: Error) => any) => SinkSpy<A>;
+declare export function newSinkSpy<A>(
+  eventCb: (time: Time, value: A) => any,
+  endCb: (time: Time) => any
+): (errorCb: (time: Time, error: Error) => any) => SinkSpy<A>;
+declare export function newSinkSpy<A>(
+  eventCb: (time: Time, value: A) => any
+): (endCb: (time: Time) => any) => (errorCb: (time: Time, error: Error) => any) => SinkSpy<A>;
+
+declare export function newEventErrorSinkSpy<A>(e: Error): SinkSpy<A>;
+declare export function newEndErrorSinkSpy<A>(e: Error): SinkSpy<A>;
+
+declare export function newFakeDisposeStream<A>(disposer: () => any, source: Stream<A>): Stream<A>;
+declare export function newFakeDisposeStream<A>(disposer: () => any): (source: Stream<A>) => Stream<A>;
+
+// declare export function assertSame<A>(s1: Stream<A>, s2: Stream<A>): Promise<void>;
+// declare export function assertSame<A>(s1: Stream<A>): (s2: Stream<A>) => Promise<void>;
+
+// declare export function expectArray<A>(array: Array<A>, s: Stream<A>): Promise<void>;
+// declare export function expectArray<A>(array: Array<A>): (s: Stream<A>) => Promise<void>;
+
+declare export function collectEvents<A>(stream: Stream<A>): Promise<Array<TimeStampedEvent<A>>>;
+
+declare export function collectEventsFor<A>(nticks: Time, stream: Stream<A>): Promise<Array<TimeStampedEvent<A>>>;
+declare export function collectEventsFor<A>(nticks: Time): (stream: Stream<A>) => Promise<Array<TimeStampedEvent<A>>>;
+
+declare export function atTimes<A>(array: Array<TimeStampedEvent<A>>): Stream<A>;
+
+declare export function makeEventsFromArray<A>(dt: Offset, a: Array<A>): Stream<A>;
+declare export function makeEventsFromArray<A>(dt: Offset): (a: Array<A>) => Stream<A>;
+
+declare export function makeEvents(dt: Offset, n: number): Stream<number>;
+declare export function makeEvents(dt: Offset): (n: number) => Stream<number>;

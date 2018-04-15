@@ -1,6 +1,6 @@
 /** @license MIT License (c) copyright 2018 original author or authors */
 
-export default function newVirtualTimer () {
+export function newVirtualTimer () {
   let currentTime = 0
   let targetTime = 0
   let task
@@ -29,7 +29,7 @@ export default function newVirtualTimer () {
     timer = setTimeout(stepTimer, 0)
   }
 
-  return {
+  const virtualTimer = {
     now: () => currentTime,
     setTimer: function (fn, dt) {
       if (task !== undefined) {
@@ -47,14 +47,17 @@ export default function newVirtualTimer () {
     },
     tick: function (dt) {
       if (dt <= 0) {
-        return
+        return virtualTimer
       }
       targetTime = currentTime + dt
       if (running) {
-        return
+        return virtualTimer
       }
       running = true
       timer = setTimeout(stepTimer, 0)
+      return virtualTimer
     }
   }
+
+  return virtualTimer
 }
