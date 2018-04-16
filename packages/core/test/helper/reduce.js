@@ -2,8 +2,8 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import Pipe from '../../src/sink/Pipe'
 import { runEffects } from '../../src/runEffects'
+import { tap } from '../../src/combinator/transform'
 import { newDefaultScheduler } from '@most/scheduler'
 
 /**
@@ -13,37 +13,10 @@ import { newDefaultScheduler } from '@most/scheduler'
 * @param {function(result:*, x:*):*} f reducer function
 * @param {*} initial initial value
 * @param {Stream} stream to reduce
-* @returns {Promise} promise for the file result of the reduce
+* @returns {Promise} promise for the final result of the reduce
 */
-export const reduce = (f, initial, stream) =>
-  runEffects(new Reduce(f, initial, stream), newDefaultScheduler())
-
-class Reduce {
-  constructor (f, z, source) {
-    this.source = source
-    this.f = f
-    this.value = z
-  }
-
-  run (sink, scheduler) {
-    return this.source.run(new ReduceSink(this.f, this.value, sink), scheduler)
-  }
-}
-
-class ReduceSink extends Pipe {
-  constructor (f, z, sink) {
-    super(sink)
-    this.f = f
-    this.value = z
-  }
-
-  event (t, x) {
-    const f = this.f
-    this.value = f(this.value, x)
-    this.sink.event(t, this.value)
-  }
-
-  end (t) {
-    this.sink.end(t, this.value)
-  }
+export function reduce (f, initial, stream) {
+  let result = initial
+  const source = tap(x => { result = x }, stream)
+  return runEffects(source, newDefaultScheduler()).then(() => result)
 }
