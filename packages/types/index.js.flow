@@ -14,10 +14,14 @@ export type Stream<A> = {
   run (Sink<A>, Scheduler): Disposable
 }
 
+declare export function sinkEventCallback<A>(time?: Time, value?: A): mixed
+declare export function sinkEndCallback(time?: Time): mixed
+declare export function sinkErrorCallback(time?: Time, error?: Error): mixed
+
 export type Sink<A> = {
-  event (Time, A): void,
-  end (Time): void,
-  error (Time, Error): void,
+  event: sinkEventCallback<A>,
+  end: sinkEndCallback,
+  error: sinkErrorCallback,
 }
 
 // Interface of a resource that can be disposed

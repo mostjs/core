@@ -79,9 +79,9 @@ Sink
 .. code-block:: haskell
 
   type Sink a = {
-    event :: Time -> a -> void
-    error :: Time -> Error -> void
-    end :: Time -> void
+    event :: Time -> a -> mixed
+    error :: Time -> Error -> mixed
+    end :: Time -> mixed
   }
 
 A ``Sink`` receives events—typically it does something with them, such as transforming or filtering them—and then propagates them to another ``Sink``.
