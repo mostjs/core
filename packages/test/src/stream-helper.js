@@ -2,16 +2,23 @@
 
 // @flow
 
+import type { Stream } from '@most/types'
+import type { TimeStampedEvents } from './collectors'
 import { eq } from '@briancavalier/assert'
-import {curry2} from '@most/prelude'
-import {apply} from './helpers'
-import {collectEvents} from './collectors'
+import { collectEvents } from './collectors'
 
-export const assertSame = curry2((s1, s2) => Promise
-  .all([
-    collectEvents(s1),
-    collectEvents(s2)
-  ])
-  .then(apply(eq)))
+export function assertSame<A> (s1: Stream<A>, s2: Stream<A>): Promise<boolean> {
+  return Promise
+    .all([
+      collectEvents(s1),
+      collectEvents(s2)
+    ])
+    .then(function ([result1, result2]) {
+      eq(result1, result2)
+      return true
+    })
+}
 
-export const expectArray = curry2((array, s) => collectEvents(s).then(eq(array)))
+export function expectArray<A> (array: TimeStampedEvents<A>, s: Stream<A>): Promise<void> {
+  return collectEvents(s).then((results) => { eq(array, results) })
+}

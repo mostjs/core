@@ -1,3 +1,7 @@
+/** @license MIT License (c) copyright 2018 original author or authors */
+
+// @flow
+
 import { describe, it } from 'mocha'
 
 import { makeEventsFromArray } from '../src/streamMockers'

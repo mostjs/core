@@ -1,39 +1,39 @@
 /** @license MIT License (c) copyright 2018 original author or authors */
 
+// @flow
+
+import type { TimeStampedEvents } from './collectors'
+import type { Stream, Sink, Offset } from '@most/types'
 import { delay } from '@most/scheduler'
 import { propagateEventTask, propagateEndTask } from '@most/core'
 import { disposeWith, disposeNone } from '@most/disposable'
-import { curry2, curry4 } from '@most/prelude'
-
-const appendEvent = curry4(function (sink, scheduler, {tasks, time}, event) {
-  const task = delay(event.time, propagateEventTask(event.value, sink), scheduler)
-  return {tasks: tasks.concat(task), time: Math.max(time, event.time)}
-})
 
 const cancelAll = (tasks) => {
   Promise.all(tasks.map((task) => task.dispose()))
 }
 
-function runEvents (events, sink, scheduler) {
-  const {tasks, time} = events.reduce(appendEvent(sink, scheduler), {tasks: [], time: 0})
+function runEvents<A> (events: TimeStampedEvents<A>, sink: Sink<A>, scheduler) {
+  function appendEvent ({tasks, time}, event) {
+    const task = delay(event.time, propagateEventTask(event.value, sink), scheduler)
+    return {tasks: tasks.concat(task), time: Math.max(time, event.time)}
+  }
+
+  const {tasks, time} = events.reduce(appendEvent, {tasks: [], time: 0})
   const end = delay(time, propagateEndTask(sink), scheduler)
   return disposeWith(cancelAll, tasks.concat(end))
 }
 
-function atTimes (array) {
+export function atTimes<A> (events: TimeStampedEvents<A>): Stream<A> {
   return {
-    run: (sink, scheduler) => array.length === 0
+    run: (sink, scheduler) => events.length === 0
       ? disposeNone()
-      : runEvents(array, sink, scheduler)
+      : runEvents(events, sink, scheduler)
   }
 }
 
-const makeEventsFromArray = curry2((dt, a) => atTimes(a.map((value, i) => ({time: i * dt, value}))))
-
-const makeEvents = curry2((dt, n) => makeEventsFromArray(dt, Array.from(Array(n), (_, i) => i)))
-
-export {
-  makeEvents,
-  makeEventsFromArray,
-  atTimes
+export function makeEventsFromArray<A> (dt: Offset, a: Array<A>): Stream<A> {
+  return atTimes(a.map((value, i) => ({ time: i * dt, value })))
 }
+
+export const makeEvents = (dt: Offset, n: number): Stream<number> =>
+  makeEventsFromArray(dt, Array.from(Array(n), (_: void, i) => i))

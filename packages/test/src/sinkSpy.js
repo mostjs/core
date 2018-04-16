@@ -1,11 +1,30 @@
 /** @license MIT License (c) copyright 2018 original author or authors */
 
-import { noop } from './helpers'
+// @flow
 
-export function newSinkSpy (eventCb = noop, endCb = noop, errorCb = noop) {
+import type { Sink, Time } from '@most/types'
+
+const noop = () => undefined
+
+export type SinkSpy<A> = Sink<A> & {
+  eventCalled(): number,
+  eventTime(): Time,
+  eventValue(): A,
+  endCalled(): number,
+  endTime(): Time,
+  errorCalled(): number,
+  errorTime(): Time,
+  errorValue(): Error
+}
+
+export function newSinkSpy<A> (
+  eventCb: (time: Time, value: A) => void = noop,
+  endCb: (time: Time) => void = noop,
+  errorCb: (time: Time, error: Error) => void = noop
+): SinkSpy<A> {
   let eventCalled = 0
   let eventTime = NaN
-  let eventValue
+  let eventValue: A
   let endCalled = 0
   let endTime = NaN
   let errorCalled = 0
@@ -17,7 +36,7 @@ export function newSinkSpy (eventCb = noop, endCb = noop, errorCb = noop) {
       eventCalled = eventCalled + 1
       eventTime = time
       eventValue = value
-      return eventCb(time, value)
+      eventCb(time, value)
     },
     eventCalled: () => eventCalled,
     eventTime: () => eventTime,
@@ -25,7 +44,7 @@ export function newSinkSpy (eventCb = noop, endCb = noop, errorCb = noop) {
     end: function (time) {
       endCalled = endCalled + 1
       endTime = time
-      return endCb(time)
+      endCb(time)
     },
     endCalled: () => endCalled,
     endTime: () => endTime,
@@ -33,7 +52,7 @@ export function newSinkSpy (eventCb = noop, endCb = noop, errorCb = noop) {
       errorCalled += 1
       errorTime = time
       errorValue = error
-      return error(time, error)
+      errorCb(time, error)
     },
     errorCalled: () => errorCalled,
     errorTime: () => errorTime,
@@ -41,6 +60,10 @@ export function newSinkSpy (eventCb = noop, endCb = noop, errorCb = noop) {
   }
 }
 
-export const newEventErrorSinkSpy = e => newSinkSpy(() => { throw e })
+export function newEndErrorSinkSpy (e: Error) {
+  return (newSinkSpy(noop, () => { throw e }): SinkSpy<void>)
+}
 
-export const newEndErrorSinkSpy = e => newSinkSpy(undefined, () => { throw e })
+export function newEventErrorSinkSpy (e: Error) {
+  return (newSinkSpy(() => { throw e }): SinkSpy<void>)
+}

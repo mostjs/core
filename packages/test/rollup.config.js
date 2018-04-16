@@ -14,8 +14,8 @@ export default {
   external: [
     '@most/scheduler',
     '@most/disposable',
-    '@most/prelude',
-    '@most/core'
+    '@most/core',
+    '@briancavalier/assert'
   ],
   output: [
     {
@@ -26,8 +26,8 @@ export default {
       globals: {
         '@most/scheduler': 'mostScheduler',
         '@most/disposable': 'mostDisposable',
-        '@most/prelude': 'mostPrelude',
-        '@most/core': 'mostCore'
+        '@most/core': 'mostCore',
+        '@briancavalier/assert': 'assert'
       }
     },
     {

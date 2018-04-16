@@ -1,7 +1,6 @@
 import { Scheduler, Time, Offset, Sink, Stream } from '@most/types';
 
-export function newFakeDisposeStream(disposer: () => any, source: Stream): Stream;
-export function newFakeDisposeStream(disposer: () => any): (source: Stream) => Stream;
+export function newFakeDisposeStream<T> (disposer: () => any, source: Stream<T>): Stream<T>;
 
 export interface SinkSpy<A> extends Sink<A> {
   eventCalled(): number,
@@ -19,40 +18,18 @@ export interface TimeStampedEvent<A> {
   value: A
 };
 
-export function newSinkSpy<A>(
-  eventCb: (time: Time, value: A) => any,
-  endCb: (time: Time) => any,
-  errorCb: (time: Time, error: Error) => any
-): SinkSpy<A>;
-export function newSinkSpy<A>(
-  eventCb: (time: Time, value: A) => any
-): (endCb: (time: Time) => any, errorCb: (time: Time, error: Error) => any) => SinkSpy<A>;
-export function newSinkSpy<A>(
-  eventCb: (time: Time, value: A) => any,
-  endCb: (time: Time) => any
-): (errorCb: (time: Time, error: Error) => any) => SinkSpy<A>;
-export function newSinkSpy<A>(
-  eventCb: (time: Time, value: A) => any
-): (endCb: (time: Time) => any) => (errorCb: (time: Time, error: Error) => any) => SinkSpy<A>;
+export type TimeStampedEvents<A> = Array<TimeStampedEvent<A>>;
 
-export function newEventErrorSinkSpy(e: Error): SinkSpy;
-export function newEndErrorSinkSpy(e: Error): SinkSpy;
+export function newSinkSpy<A>(eventCb: (time: Time, value: A) => any, endCb: (time: Time) => any, errorCb: (time: Time, error: Error) => any): SinkSpy<A>;
+export function newEventErrorSinkSpy<A>(e: Error): SinkSpy<A>;
+export function newEndErrorSinkSpy<A>(e: Error): SinkSpy<A>;
 
-// export function assertSame(s1: Stream<A>, s2: Stream<A>): Promise;
-// export function assertSame(s1: Stream<A>): (s2: Stream<A>) => Promise;
+export function assertSame<A>(s1: Stream<A>, s2: Stream<A>): Promise<boolean>;
+export function expectArray<A>(array: TimeStampedEvents<A>, s: Stream<A>): Promise<boolean>;
 
-// export function expectArray(array: Array<A>, s: Stream<A>): Promise;
-// export function expectArray(array: Array<A>): (s: Stream<A>) => Promise;
+export function collectEvents<A>(stream: Stream<A>): Promise<TimeStampedEvents<A>>;
+export function collectEventsFor<A>(nticks: Time, stream: Stream<A>): Promise<TimeStampedEvents<A>>;
 
-export function collectEvents<A>(stream: Stream<A>): Promise<Array<TimeStampedEvent<A>>>;
-
-export function collectEventsFor(nticks: Time, stream: Stream): Promise;
-export function collectEventsFor(nticks: Time): (stream: Stream) => Promise;
-
-export function atTimes(array: Array): Stream;
-
-export function makeEventsFromArray(dt: Offset, a: Array): Stream;
-export function makeEventsFromArray(dt: Offset): (a: Array) => Stream;
-
-export function makeEvents(dt: Offset, n: number): Stream;
-export function makeEvents(dt: Offset): (n: number) => Stream;
+export function atTimes<A>(array: TimeStampedEvents<A>): Stream<A>;
+export function makeEventsFromArray<A>(dt: Offset, a: Array<A>): Stream<A>;
+export function makeEvents(dt: Offset, n: number): Stream<number>;

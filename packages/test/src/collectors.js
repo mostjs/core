@@ -1,19 +1,27 @@
 /** @license MIT License (c) copyright 2018 original author or authors */
 
+// @flow
+
+import type { Stream, Offset, Time } from '@most/types'
 import { newScheduler, newTimeline } from '@most/scheduler'
 import { run } from '@most/core'
-import { curry2 } from '@most/prelude'
 import { newVirtualTimer } from './VirtualTimer'
 
-export const collectEventsFor = curry2((nticks, stream) =>
-  new Promise(function (resolve, reject) {
-    const collectedEvents = []
+export type TimeStampedEvent<A> = {
+  time: Time,
+  value: A
+}
+
+export type TimeStampedEvents<A> = Array<TimeStampedEvent<A>>
+
+export function collectEventsFor<A> (nticks: Offset, stream: Stream<A>): Promise<TimeStampedEvents<A>> {
+  return new Promise(function (resolve, reject) {
+    const collectedEvents: TimeStampedEvents<A> = []
     run(
       {
         event: function (time, value) {
           if (time > nticks) {
-            resolve(collectedEvents)
-            return
+            return resolve(collectedEvents)
           }
           collectedEvents.push({time, value})
         },
@@ -24,11 +32,11 @@ export const collectEventsFor = curry2((nticks, stream) =>
       stream
     )
   })
-)
+}
 
-export const collectEvents = (stream) =>
-  new Promise(function (resolve, reject) {
-    const collectedEvents = []
+export function collectEvents<A> (stream: Stream<A>): Promise<TimeStampedEvents<A>> {
+  return new Promise(function (resolve, reject) {
+    const collectedEvents: TimeStampedEvents<A> = []
     const virtualTimer = newVirtualTimer()
     let timer
     const tickTheTime = function () {
@@ -54,3 +62,4 @@ export const collectEvents = (stream) =>
     )
     timer = setTimeout(tickTheTime, 0)
   })
+}

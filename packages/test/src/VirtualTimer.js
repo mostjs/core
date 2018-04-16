@@ -1,12 +1,19 @@
 /** @license MIT License (c) copyright 2018 original author or authors */
 
-export function newVirtualTimer () {
+// @flow
+import type { Timer, Offset, Handle } from '@most/types'
+
+export type VirtualTimer = Timer & {
+  tick(dt: Offset): VirtualTimer
+}
+
+export function newVirtualTimer () : VirtualTimer {
   let currentTime = 0
   let targetTime = 0
   let task
-  let timer = null
+  let timer
   let running = false
-  const key = {}
+  const key: Handle = {}
 
   function stepTimer () {
     if (currentTime >= targetTime) {
@@ -20,7 +27,7 @@ export function newVirtualTimer () {
       currentTime = targetTime
     }
     if (task !== undefined && currentTime === task.time) {
-      const fn = task.fn
+      const fn: () => void = task.fn
       task = undefined
       if (typeof fn === 'function') {
         fn()
@@ -31,14 +38,14 @@ export function newVirtualTimer () {
 
   const virtualTimer = {
     now: () => currentTime,
-    setTimer: function (fn, dt) {
+    setTimer: function (fn: () => void, dt) {
       if (task !== undefined) {
         throw new Error('VirtualTimer: Only supports one in-flight timer')
       }
       task = {fn, time: currentTime + Math.max(0, dt)}
       return key
     },
-    clearTimer: function (t) {
+    clearTimer: function (t: Handle) {
       if (t !== key) {
         return
       }
