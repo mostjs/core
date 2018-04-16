@@ -12,10 +12,14 @@ export interface Stream<A> {
   run (sink: Sink<A>, scheduler: Scheduler): Disposable;
 }
 
+export type sinkEventCallback<A> = (time?: Time, value?: A) => mixed
+export type sinkEndCallback = (time?: Time) => mixed
+export type sinkErrorCallback = (time?: Time, error?: Error) => mixed
+
 export interface Sink<A> {
-  event(time: Time, value: A): void;
-  end(time: Time): void;
-  error(time: Time, err: Error): void;
+  event: sinkEventCallback<A>;
+  end: sinkEndCallback;
+  error: sinkErrorCallback;
 }
 
 // Interface of a resource that can be disposed
