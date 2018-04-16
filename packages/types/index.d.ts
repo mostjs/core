@@ -12,9 +12,9 @@ export interface Stream<A> {
   run (sink: Sink<A>, scheduler: Scheduler): Disposable;
 }
 
-export type sinkEventCallback<A> = (time?: Time, value?: A) => mixed
-export type sinkEndCallback = (time?: Time) => mixed
-export type sinkErrorCallback = (time?: Time, error?: Error) => mixed
+export type sinkEventCallback<A> = (time?: Time, value?: A) => any
+export type sinkEndCallback = (time?: Time) => any
+export type sinkErrorCallback = (time?: Time, error?: Error) => any
 
 export interface Sink<A> {
   event: sinkEventCallback<A>;
