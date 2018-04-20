@@ -1,7 +1,7 @@
 /** @license MIT License (c) copyright 2018 original author or authors */
 
 // @flow
-
+/* eslint-disable import/first */
 import { curry2, curry3 } from '@most/prelude'
 
 import { collectEventsFor as _collectEventsFor } from './collectors'
