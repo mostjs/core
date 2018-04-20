@@ -16,7 +16,7 @@
     "test:flow": "flow check",
     "build": "npm run build:dist && npm run build:flow",
     "build:dist": "rollup -c",
-    "build:flow": "node bundle-flow.js",
+    "build:flow": "cpy src/index.js.flow dist/",
     "prepare": "npm run build",
     "flow": "flow"
   },
@@ -47,7 +47,7 @@
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-preset-env": "^1.6.0",
     "babel-register": "^6.26.0",
-    "cpy": "^6.0.0",
+    "cpy-cli": "^1.0.1",
     "cross-env": "^5.0.5",
     "eslint-plugin-flowtype": "^2.46.2",
     "flow-bin": "^0.70.0",
@@ -63,7 +63,8 @@
     "@most/core": "^1.0.0",
     "@most/disposable": "^1.1.0",
     "@most/scheduler": "^1.1.0",
-    "@most/types": "^1.0.0"
+    "@most/types": "^1.0.0",
+    "@most/prelude": "^1.7.0"
   },
   "standard": {
     "parser": "babel-eslint",

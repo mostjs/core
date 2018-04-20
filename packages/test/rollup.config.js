@@ -15,6 +15,7 @@ export default {
     '@most/scheduler',
     '@most/disposable',
     '@most/core',
+    '@most/prelude',
     '@briancavalier/assert'
   ],
   output: [
@@ -27,6 +28,7 @@ export default {
         '@most/scheduler': 'mostScheduler',
         '@most/disposable': 'mostDisposable',
         '@most/core': 'mostCore',
+        '@most/prelude': 'mostPrelude',
         '@briancavalier/assert': 'assert'
       }
     },
