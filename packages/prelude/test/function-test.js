@@ -3,7 +3,7 @@
 import {describe, it} from 'mocha'
 import assert from 'assert'
 
-import { id, compose, apply, curry2, curry3, curry4 } from '../src/function'
+import { id, compose, apply, curry2, curry3, curry4, pipe } from '../src/function'
 
 describe('id', () => {
   it('id(x) === x', () => {
@@ -136,5 +136,18 @@ describe('curry4', () => {
     assert.strictEqual(expected, curry4(f)(a, b, c)(d))
     assert.strictEqual(expected, curry4(f)(a)(b, c, d))
     assert.strictEqual(expected, curry4(f)(a, b, c, d))
+  })
+})
+
+describe('pipe', () => {
+  it('should compose functions in the correct order', () => {
+    const inc = (x) => x + 1
+    const double = (x) => x * 2
+    const square = (x) => x * x
+    const f = pipe(square, inc, double)
+
+    const expected = 20
+
+    assert.strictEqual(expected, f(3))
   })
 })

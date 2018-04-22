@@ -1,5 +1,7 @@
 /** @license MIT License (c) copyright 2010-2016 original author or authors */
 
+import { reduce } from './array'
+
 // id :: a -> a
 export const id = x => x
 
@@ -47,3 +49,6 @@ export function curry4 (f) {
   }
   return curried
 }
+
+const _pipe = (f, g) => (...args) => g(f(...args))
+export const pipe = (...fns) => reduce(_pipe, fns[0], fns.slice(1))
