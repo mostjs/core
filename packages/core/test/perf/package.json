@@ -15,17 +15,19 @@
     "slice": "node ./slice.js",
     "skipRepeats": "node ./skipRepeats.js",
     "switch": "node ./switch.js",
-    "zip": "node ./zip.js",
+    "zip": "babel-node --presets env ./zip.js",
     "start": "npm run filter-map-reduce && npm run chain && npm run concatMap && npm run merge && npm run merge-nested && npm run zip && npm run scan && npm run slice && npm run skipRepeats && npm run switch"
   },
   "dependencies": {
-    "@reactivex/rxjs": "^5.0.1",
+    "@reactivex/rxjs": "^5.5.10",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "babel-register": "^6.26.0",
-    "baconjs": "^0.7.89",
-    "benchmark": "github:bestiejs/benchmark.js#master",
-    "highland": "^2.10.1",
-    "kefir": "^3.6.1",
+    "baconjs": "^2.0.7",
+    "benchmark": "^2.1.4",
+    "highland": "^2.13.0",
+    "kefir": "^3.8.3",
     "rx": "^4.1.0",
-    "xstream": "10.x"
+    "xstream": "^11.2.0"
   }
 }
