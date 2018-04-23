@@ -1,7 +1,7 @@
 require('babel-register')
 const Benchmark = require('benchmark');
-const {fromArray, concatMap} = require('.././index');
-const {reduce} = require('.././combinator/reduce')
+const {concatMap} = require('../../src/index');
+const {reduce} = require('../helper/reduce')
 const rx = require('rx');
 const rxjs = require('@reactivex/rxjs');
 const kefir = require('kefir');
@@ -10,6 +10,7 @@ const xs = require('xstream').default;
 
 const runners = require('./runners');
 const kefirFromArray = runners.kefirFromArray;
+const mostFromArray = runners.mostFromArray;
 const xstreamFlattenSequentially = require('xstream/extra/flattenSequentially').default;
 
 // flatMapping n streams, each containing m items.
@@ -45,7 +46,7 @@ const options = {
 
 suite
   .add('most', function(deferred) {
-    runners.runMost(deferred, reduce(sum, 0, concatMap(fromArray, fromArray(a))));
+    runners.runMost(deferred, reduce(sum, 0, concatMap(mostFromArray, mostFromArray(a))));
   }, options)
   .add('rx 4', function(deferred) {
     runners.runRx(deferred, rx.Observable.fromArray(a).concatMap(rx.Observable.fromArray).reduce(sum, 0));

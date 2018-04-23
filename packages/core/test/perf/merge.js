@@ -1,7 +1,7 @@
 require('babel-register')
 const Benchmark = require('benchmark');
-const {fromArray, mergeArray} = require('.././index');
-const {reduce} = require('.././combinator/reduce')
+const {mergeArray} = require('../../src/index');
+const {reduce} = require('../helper/reduce')
 const rx = require('rx');
 const rxjs = require('@reactivex/rxjs')
 const kefir = require('kefir');
@@ -11,6 +11,7 @@ const xs = require('xstream').default;
 
 const runners = require('./runners');
 const kefirFromArray = runners.kefirFromArray;
+const mostFromArray = runners.mostFromArray
 
 // Merging n streams, each containing m items.
 // Results in a single stream that merges in n x m items
@@ -45,7 +46,7 @@ const options = {
 
 suite
   .add('most', function(deferred) {
-    const streams = a.map(fromArray);
+    const streams = a.map(mostFromArray);
     runners.runMost(deferred, reduce(sum, 0, mergeArray(streams)));
   }, options)
   .add('rx 4', function(deferred) {

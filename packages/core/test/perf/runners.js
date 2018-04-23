@@ -73,20 +73,37 @@ function mostFromArray (a) {
 const PropagateTask = require('../../src/scheduler/PropagateTask').PropagateTask
 const asap = require('../../../scheduler').asap
 
-function FromArray (a) {
-  this.array = a
+class FromArray {
+  constructor (array) {
+    this.array = array
+  }
+  run (sink, scheduler) {
+    return asap(new FromArrayTask(this.array, sink), scheduler)
+  }
 }
 
-FromArray.prototype.run = function (sink, scheduler) {
-  return asap(new PropagateTask(runProducer, this.array, sink), scheduler)
-}
-
-function runProducer (t, array, sink) {
-  for (var i = 0, l = array.length; i < l; ++i) {
-    sink.event(t, array[i])
+class FromArrayTask {
+  constructor (array, sink) {
+    this.array = array
+    this.sink = sink
+    this.active = true
   }
 
-  sink.end(t)
+  run (t) {
+    for (var i = 0, l = this.array.length; i < l && this.active; ++i) {
+      this.sink.event(t, this.array[i])
+    }
+
+    this.active && this.sink.end(t)
+  }
+
+  error (t, e) {
+    this.sink.error(t, e)
+  }
+
+  dispose () {
+    this.active = false
+  }
 }
 
 function runMost(deferred, mostPromise) {
