@@ -88,7 +88,9 @@ export default class Queue {
         newArray.push(list[i])
       }
     } else {
-      for (i = this._head; i < this._tail; i++) newArray.push(list[i])
+      for (i = this._head; i < this._tail; i++) {
+        newArray.push(list[i])
+      }
     }
 
     return newArray
