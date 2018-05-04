@@ -3,7 +3,7 @@
 
 // These constants were extracted directly from denque's shift()
 // It's not clear exactly why the authors chose these particular
-// values, but given that denque's goals, it seems likely that
+// values, but given denque's stated goals, it seems likely that
 // they were chosen for speed/memory reasons.
 
 // Max value of _head at which Queue is willing to shink
