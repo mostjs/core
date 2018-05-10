@@ -1,7 +1,6 @@
-require('babel-register')
 const Benchmark = require('benchmark');
-const {fromArray, zip} = require('.././index');
-const {reduce} = require('.././combinator/reduce')
+const {zip} = require('../../src');
+const {reduce} = require('../helper/reduce')
 const rx = require('rx');
 const rxjs = require('@reactivex/rxjs');
 const kefir = require('kefir');
@@ -10,7 +9,7 @@ const highland = require('highland');
 
 const runners = require('./runners');
 const kefirFromArray = runners.kefirFromArray;
-
+const mostFromArray = runners.mostFromArray
 // Create 2 streams, each with n items, zip them by summing the
 // corresponding index pairs, then reduce the resulting stream by summing
 const n = runners.getIntArg(100000);
@@ -32,7 +31,7 @@ const options = {
 
 suite
   .add('most', function(deferred) {
-    runners.runMost(deferred, reduce(add, 0, zip(add, fromArray(b), fromArray(a))));
+    runners.runMost(deferred, reduce(add, 0, zip(add, mostFromArray(b), mostFromArray(a))));
   }, options)
   .add('rx 4', function(deferred) {
     runners.runRx(deferred, rx.Observable.fromArray(a).zip(rx.Observable.fromArray(b), add).reduce(add, 0));

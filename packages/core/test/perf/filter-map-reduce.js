@@ -1,7 +1,7 @@
 require('babel-register')
 const Benchmark = require('benchmark');
-const {map, filter, fromArray} = require('../../src/index');
-const {reduce} = require('../../test/helper/reduce')
+const {map, filter} = require('../../src/index');
+const {reduce} = require('../helper/reduce')
 const rx = require('rx');
 const rxjs = require('@reactivex/rxjs')
 const kefir = require('kefir');
@@ -11,6 +11,7 @@ const xs = require('xstream').default;
 
 const runners = require('./runners');
 const kefirFromArray = runners.kefirFromArray;
+const mostFromArray = runners.mostFromArray
 
 // Create a stream from an Array of n integers
 // filter out odds, map remaining evens by adding 1, then reduce by summing
@@ -30,7 +31,7 @@ const options = {
 
 suite
   .add('most', function(deferred) {
-    runners.runMost(deferred, reduce(sum, 0, map(add1, filter(even, fromArray(a)))));
+    runners.runMost(deferred, reduce(sum, 0, map(add1, filter(even, mostFromArray(a)))));
   }, options)
   .add('rx 4', function(deferred) {
     runners.runRx(deferred, rx.Observable.fromArray(a).filter(even).map(add1).reduce(sum, 0));

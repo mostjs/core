@@ -1,7 +1,7 @@
 require('babel-register')
 const Benchmark = require('benchmark');
-const {fromArray, merge: _merge} = require('.././index');
-const {reduce} = require('.././combinator/reduce')
+const {merge: _merge} = require('../../src/index');
+const {reduce} = require('../helper/reduce')
 const rx = require('rx');
 const rxjs = require('@reactivex/rxjs')
 const kefir = require('kefir');
@@ -11,6 +11,7 @@ const xs = require('xstream').default;
 
 const runners = require('./runners');
 const kefirFromArray = runners.kefirFromArray;
+const mostFromArray = runners.mostFromArray
 xs.prototype.merge = function (s) { return xs.merge(this, s) }
 
 // Merging n streams, each containing m items.
@@ -65,19 +66,19 @@ const options = {
 
 suite
   .add('most (depth 2)', function(deferred) {
-    const s = mergeMost(2, fromArray);
+    const s = mergeMost(2, mostFromArray);
     runners.runMost(deferred, reduce(sum, 0, s));
   }, options)
   .add('most (depth 5)', function(deferred) {
-    const s = mergeMost(5, fromArray);
+    const s = mergeMost(5, mostFromArray);
     runners.runMost(deferred, reduce(sum, 0, s));
   }, options)
   .add('most (depth 10)', function(deferred) {
-    const s = mergeMost(10, fromArray);
+    const s = mergeMost(10, mostFromArray);
     runners.runMost(deferred, reduce(sum, 0, s));
   }, options)
   .add('most (depth 100)', function(deferred) {
-    const s = mergeMost(100, fromArray);
+    const s = mergeMost(100, mostFromArray);
     runners.runMost(deferred, reduce(sum, 0, s));
   }, options)
   // .add('most (depth 1000)', function(deferred) {

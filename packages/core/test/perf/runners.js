@@ -3,6 +3,7 @@ kefir.DEPRECATION_WARNINGS = false;
 
 exports.runSuite       = runSuite;
 
+exports.mostFromArray  = mostFromArray;
 exports.runMost        = runMost;
 exports.runRx          = runRx;
 exports.runRx5         = runRx5;
@@ -63,6 +64,46 @@ function runSuite(suite) {
     .on('cycle', logResults)
     .on('complete', logComplete)
     .run();
+}
+
+function mostFromArray (a) {
+  return new FromArray(a)
+}
+
+const PropagateTask = require('../../src/scheduler/PropagateTask').PropagateTask
+const asap = require('../../../scheduler').asap
+
+class FromArray {
+  constructor (array) {
+    this.array = array
+  }
+  run (sink, scheduler) {
+    return asap(new FromArrayTask(this.array, sink), scheduler)
+  }
+}
+
+class FromArrayTask {
+  constructor (array, sink) {
+    this.array = array
+    this.sink = sink
+    this.active = true
+  }
+
+  run (t) {
+    for (var i = 0, l = this.array.length; i < l && this.active; ++i) {
+      this.sink.event(t, this.array[i])
+    }
+
+    this.active && this.sink.end(t)
+  }
+
+  error (t, e) {
+    this.sink.error(t, e)
+  }
+
+  dispose () {
+    this.active = false
+  }
 }
 
 function runMost(deferred, mostPromise) {

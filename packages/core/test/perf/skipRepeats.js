@@ -1,7 +1,7 @@
 require('babel-register')
 const Benchmark = require('benchmark');
-const {fromArray, skipRepeats} = require('.././index');
-const {reduce} = require('.././combinator/reduce')
+const {skipRepeats} = require('../../src/index');
+const {reduce} = require('../helper/reduce')
 const rx = require('rx');
 const rxjs = require('@reactivex/rxjs');
 const kefir = require('kefir');
@@ -11,6 +11,7 @@ const xs = require('xstream').default;
 
 const runners = require('./runners');
 const kefirFromArray = runners.kefirFromArray;
+const mostFromArray = runners.mostFromArray
 const xstreamDropRepeats = require('xstream/extra/dropRepeats').default;
 
 // Create a stream from an Array of n integers
@@ -31,7 +32,7 @@ const options = {
 
 suite
   .add('most', function(deferred) {
-    runners.runMost(deferred, reduce(sum, 0, skipRepeats(fromArray(a))));
+    runners.runMost(deferred, reduce(sum, 0, skipRepeats(mostFromArray(a))));
   }, options)
   .add('rx 4', function(deferred) {
     runners.runRx(deferred, rx.Observable.fromArray(a).distinctUntilChanged().reduce(sum, 0));

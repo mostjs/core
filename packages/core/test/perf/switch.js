@@ -1,7 +1,7 @@
 require('babel-register')
 const Benchmark = require('benchmark');
-const {fromArray, map, switchLatest} = require('.././index');
-const {reduce} = require('.././combinator/reduce')
+const {map, switchLatest} = require('../../src/index');
+const {reduce} = require('../helper/reduce')
 const rx = require('rx');
 const rxjs = require('@reactivex/rxjs')
 const kefir = require('kefir');
@@ -12,6 +12,7 @@ const xs = require('xstream').default;
 
 const runners = require('./runners');
 const kefirFromArray = runners.kefirFromArray;
+const mostFromArray = runners.mostFromArray
 
 // Switching n streams, each containing m items.
 // Because this creates streams from arrays, it ends up
@@ -47,7 +48,7 @@ const options = {
 
 suite
   .add('most', function(deferred) {
-    runners.runMost(deferred, reduce(sum, 0, switchLatest(map(fromArray, fromArray(a)))));
+    runners.runMost(deferred, reduce(sum, 0, switchLatest(map(mostFromArray, mostFromArray(a)))));
   }, options)
   .add('rx 5', function(deferred) {
     runners.runRx5(deferred,
