@@ -73,8 +73,8 @@ declare export function continueWith <A> (f: (any) => Stream<A>): (s: Stream<A>)
 
 declare export function switchLatest <A> (s: Stream<Stream<A>>): Stream<A>
 
-declare export function merge <A> (s1: Stream<A>, s2: Stream<A>): Stream<A>
-declare export function merge <A> (s1: Stream<A>): (s2: Stream<A>) => Stream<A>
+declare export function merge <A, B> (s1: Stream<A>, s2: Stream<B>): Stream<A | B>
+declare export function merge <A, B> (s1: Stream<A>): (s2: Stream<B>) => Stream<A | B>
 declare export function mergeArray <A> (ss: Array<Stream<A>>): Stream<A>
 
 declare export function sample <A> (values: Stream<A>, sampler: Stream<any>): Stream<A>
