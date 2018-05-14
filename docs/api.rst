@@ -483,8 +483,8 @@ zipItems
 
 Apply a function to the latest event and the array value at the respective index. ::
 
-  array:                              [ 1, 2, 3 ]
-  stream:                             --10---10---10---10---10--->
+  array:                        [ 1, 2, 3 ]
+  stream:                       --10---10---10---10---10--->
   zipItems(add, array, stream): --11---12---13|
 
 The resulting :ref:`Stream` will contain the same number of events as the input :ref:`Stream`, or ``array.length`` events, whichever is less.
