@@ -1,6 +1,6 @@
 {
   "name": "@most/disposable",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
   "typings": "type-definitions/index.d.ts",
   "main": "dist/index.js",
@@ -56,7 +56,7 @@
     "standard": "^10.0.3"
   },
   "dependencies": {
-    "@most/prelude": "^1.7.0",
+    "@most/prelude": "^1.7.1",
     "@most/types": "^1.0.0"
   },
   "standard": {
