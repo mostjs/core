@@ -637,7 +637,7 @@ merge
 
 .. code-block:: haskell
 
-  merge :: Stream a -> Stream a -> Stream a
+  merge :: Stream a -> Stream b -> Stream (a | b)
 
 Create a new :ref:`Stream` containing events from two :ref:`Streams <Stream>`. ::
 
