@@ -72,7 +72,20 @@ Applying an operation to a stream derives a *new stream* with *new events*. Ther
 
 As the message travels, it composes a :ref:`Sink` chain analogous to the stream chain. Finally, the origin begins to produce its events when the message reaches it. With the exception of a few combinators (such as :ref:`delay`), events propagate *synchronously* “forward” through the sink chain.
 
-**Note**: a stream must not *begin* producing events synchronously. It must schedule the *start* of its production by using the :ref:`Scheduler` passed to its :ref:`run <Stream>` method. Once it has started, it may then produce events synchronously.
+Always async
+^^^^^^^^^^^^
+
+.. warning:: a :ref:`Stream` must not *begin* producing events synchronously. It must schedule the *start* of its production by using the :ref:`Scheduler` passed to its :ref:`run <Stream>` method. Once it has started, it may then produce events synchronously.
+
+Most's architecture requires that all :ref:`Streams <Stream>` must never propagate an event (i.e. call any method on the sink they were given) before their :ref:`run <Stream>` method returns.
+
+The reason for this guarantee is that some kinds of events must always be async, such example DOM events.  If some other kinds of events were allowed to be synchronous, it would create a serious problem: if some library returned a :ref:`Streams <Stream>` to your code, you could not know whether it will produce events synchronously or asynchronously, and whether its side effects will occur before or after :ref:`run <Stream>` returns.
+
+That "maybe sync, maybe async" behavior leads to race conditions and hard-to-debug problems that may only appear under very specific conditions which are hard to reproduce.
+
+It would mean that developers always have to think about the possibility of both sync and async events when writing any code that uses a :ref:`Stream`, and would make mostjs internals much more difficult to reason about.
+
+For those reasons, mostjs requires :ref:`run <Stream>` never to propagate an event synchronously.
 
 Event propagation
 -----------------
