@@ -5,7 +5,7 @@ import { delay } from '@most/scheduler'
 
 export const at = (t, x) => new At(t, x)
 
-class At {
+export class At {
   constructor (t, x) {
     this.time = t
     this.value = x

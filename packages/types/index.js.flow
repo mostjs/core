@@ -39,6 +39,7 @@ export type Scheduler = {
   scheduleTask (Offset, Delay, Period, Task): ScheduledTask,
   relative (Offset): Scheduler,
   cancel (ScheduledTask): void,
+  // @deprecated
   cancelAll ((ScheduledTask) => boolean): void
 }
 
@@ -62,6 +63,7 @@ export type TaskRunner = (ScheduledTask) => any
 export type Timeline = {
   add (ScheduledTask): void,
   remove (ScheduledTask): boolean,
+  // @deprecated
   removeAll ((ScheduledTask) => boolean): void,
   isEmpty (): boolean,
   nextArrival (): Time,

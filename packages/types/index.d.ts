@@ -37,6 +37,7 @@ export interface Scheduler {
   scheduleTask (offset: Offset, delay: Delay, period: Period, task: Task): ScheduledTask;
   relative(offset: Offset): Scheduler;
   cancel(task: ScheduledTask): void;
+  // @deprecated
   cancelAll(predicate: (task: ScheduledTask) => boolean): void;
 }
 
@@ -56,6 +57,7 @@ export type TaskRunner = (st: ScheduledTask) => any;
 export interface Timeline {
   add(scheduledTask: ScheduledTask): void;
   remove(scheduledTask: ScheduledTask): boolean;
+  // @deprecated
   removeAll(f: (scheduledTask: ScheduledTask) => boolean): void;
   isEmpty(): boolean;
   nextArrival(): Time;

@@ -113,6 +113,7 @@ Scheduler
     scheduleTask :: Offset -> Delay -> Period -> Task -> ScheduledTask
     relative :: Offset -> Scheduler
     cancel :: ScheduledTask -> void
+    -- deprecated
     cancelAll :: (ScheduledTask -> boolean) -> void
   }
 
@@ -162,6 +163,7 @@ Timeline
   type Timeline = {
     add :: ScheduledTask -> void,
     remove :: ScheduledTask -> boolean,
+    -- deprecated
     removeAll :: (ScheduledTask) -> boolean) -> void,
     isEmpty :: () -> boolean,
     nextArrival :: () -> Time,
@@ -1302,6 +1304,8 @@ Cancel all future scheduled executions of a :ref:`ScheduledTask`.
 
 cancelAllTasks
 ``````````````
+
+.. warning:: **Deprecated**: Instead of using cancelAllTasks, Scheduler callers should track the tasks they create (e.g. by storing them in an array or other data structure), and then canceling each explicitly using :ref:`cancelTask`.
 
 .. code-block:: haskell
 

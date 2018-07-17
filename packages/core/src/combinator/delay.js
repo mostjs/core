@@ -4,7 +4,7 @@
 
 import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
-import { cancelAllTasks, delay as scheduleDelay } from '@most/scheduler'
+import { cancelTask, delay as scheduleDelay } from '@most/scheduler'
 import { propagateEndTask, propagateEventTask } from '../scheduler/PropagateTask'
 
 /**
@@ -32,17 +32,18 @@ class DelaySink extends Pipe {
     super(sink)
     this.dt = dt
     this.scheduler = scheduler
+    this.tasks = []
   }
 
   dispose () {
-    cancelAllTasks(({ task }) => task.sink === this.sink, this.scheduler)
+    this.tasks.forEach(cancelTask)
   }
 
   event (t, x) {
-    scheduleDelay(this.dt, propagateEventTask(x, this.sink), this.scheduler)
+    this.tasks.push(scheduleDelay(this.dt, propagateEventTask(x, this.sink), this.scheduler))
   }
 
   end (t) {
-    scheduleDelay(this.dt, propagateEndTask(this.sink), this.scheduler)
+    this.tasks.push(scheduleDelay(this.dt, propagateEndTask(this.sink), this.scheduler))
   }
 }

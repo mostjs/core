@@ -145,6 +145,7 @@ function unsafeRemove (i, a, l) {
 
 // removeAll :: (a -> boolean) -> [a] -> [a]
 // remove all elements matching a predicate
+// @deprecated
 export function removeAll (f, a) {
   const l = a.length
   const b = new Array(l)
