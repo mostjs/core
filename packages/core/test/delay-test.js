@@ -6,7 +6,6 @@ import { now } from '../src/source/now'
 import { switchLatest } from '../src/combinator/switch'
 import { merge } from '../src/combinator/merge'
 import { map } from '../src/combinator/transform'
-// import { drain } from './helper/observe'
 
 import { collectEventsFor } from './helper/testEnv'
 
