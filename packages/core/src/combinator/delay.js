@@ -35,7 +35,7 @@ class DelaySink extends Pipe {
   }
 
   dispose () {
-    cancelAllTasks(task => task.sink === this.sink, this.scheduler)
+    cancelAllTasks(({ task }) => task.sink === this.sink, this.scheduler)
   }
 
   event (t, x) {
