@@ -3,7 +3,9 @@
   "private": true,
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
   "scripts": {
-    "postinstall": "lerna bootstrap --hoist",
+    "prepare": "npm run bootstrap && lerna run prepare",
+    "bootstrap": "lerna bootstrap --hoist",
+    "release": "lerna publish",
     "test": "lerna run test",
     "test:unit": "lerna run test:unit",
     "test:lint": "lerna run test:lint",
