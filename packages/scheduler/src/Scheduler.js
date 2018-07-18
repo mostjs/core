@@ -39,6 +39,7 @@ export default class Scheduler {
     }
   }
 
+  // @deprecated
   cancelAll (f) {
     this.timeline.removeAll(f)
     this._reschedule()

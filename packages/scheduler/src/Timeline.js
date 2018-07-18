@@ -33,6 +33,7 @@ export default class Timeline {
     return false
   }
 
+  // @deprecated
   removeAll (f) {
     for (let i = 0; i < this.tasks.length; ++i) {
       removeAllFrom(f, this.tasks[i])
@@ -124,6 +125,7 @@ function getTime (scheduledTask) {
   return Math.floor(scheduledTask.time)
 }
 
+// @deprecated
 function removeAllFrom (f, timeslot) {
   timeslot.events = removeAll(f, timeslot.events)
 }
