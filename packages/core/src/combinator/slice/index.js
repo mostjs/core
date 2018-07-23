@@ -73,7 +73,6 @@ class SliceSink extends Pipe {
   }
 
   event (t, x) {
-    /* eslint complexity: [1, 4] */
     if (this.skip > 0) {
       this.skip -= 1
       return

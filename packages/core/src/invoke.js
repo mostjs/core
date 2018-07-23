@@ -3,7 +3,6 @@
 /** @author John Hann */
 
 export default function invoke (f, args) {
-  /* eslint complexity: [2,7] */
   switch (args.length) {
     case 0: return f()
     case 1: return f(args[0])

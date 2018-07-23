@@ -14,7 +14,7 @@ export default class Map {
     this.source = source
   }
 
-  run (sink, scheduler) { // eslint-disable-line no-extend-native
+  run (sink, scheduler) {
     return this.source.run(new MapSink(this.f, sink), scheduler)
   }
 

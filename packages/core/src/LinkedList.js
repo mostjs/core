@@ -27,7 +27,7 @@ export default class LinkedList {
    * Remove the provided node from the list
    * @param {{prev:Object|null, next:Object|null, dispose:function}} x node to remove
    */
-  remove (x) { // eslint-disable-line  complexity
+  remove (x) {
     --this.length
     if (x === this.head) {
       this.head = this.head.next
