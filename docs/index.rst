@@ -24,6 +24,7 @@ When *shouldn't* you use it?
    :caption: Contents:
 
    faq
+   getting-started
    notation
    concepts
    api
