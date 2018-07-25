@@ -1305,7 +1305,7 @@ Cancel all future scheduled executions of a :ref:`ScheduledTask`.
 cancelAllTasks
 ``````````````
 
-.. warning:: **Deprecated**: Instead of using cancelAllTasks, Scheduler callers should track the tasks they create (e.g. by storing them in an array or other data structure), and then cancel each explicitly using :ref:`cancelTask`.
+.. warning:: **Deprecated**: Will be removed in 2.0.0.  Instead of using cancelAllTasks, Scheduler callers should track the tasks they create (e.g. by storing them in an array or other data structure), and then cancel each explicitly using :ref:`cancelTask`.
 
 .. code-block:: haskell
 

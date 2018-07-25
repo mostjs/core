@@ -24,6 +24,8 @@ export const cancelTask = scheduledTask =>
 
 // Cancel all ScheduledTasks for which a predicate
 // is true
-// @deprecated
-export const cancelAllTasks = curry2((predicate, scheduler) =>
-  scheduler.cancelAll(predicate))
+// @deprecated Will be removed in 2.0.0
+export const cancelAllTasks = curry2((predicate, scheduler) => {
+  console.warn(`DEPRECATED cancelAllTasks to be removed in 2.0.0`)
+  return scheduler.cancelAll(predicate)
+})
