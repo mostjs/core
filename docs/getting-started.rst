@@ -24,5 +24,5 @@ See the :doc:`upgrading-guide`.
 Examples
 --------
 
-1. `@most/core Examples repo <https://github.com/mostjs/examples>`_
-1. `TodoMVC <https://github.com/briancavalier/mostcore-todomvc>`_ with ``@most/core`` and React
+#. `@most/core Examples repo <https://github.com/mostjs/examples>`_
+#. `TodoMVC <https://github.com/briancavalier/mostcore-todomvc>`_ with ``@most/core`` and React
