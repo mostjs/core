@@ -1,7 +1,6 @@
 /** @license MIT License (c) copyright 2010 original author or authors */
 
-import { disposeOnce, tryDispose } from '@most/disposable'
-import LinkedList from '../LinkedList'
+import { disposeAll, disposeNone, disposeOnce, tryDispose } from '@most/disposable'
 import { empty, isCanonicalEmpty } from '../source/empty'
 import { id as identity } from '@most/prelude'
 import { schedulerRelativeTo } from '@most/scheduler'
@@ -32,7 +31,7 @@ class Outer {
     this.sink = sink
     this.scheduler = scheduler
     this.pending = []
-    this.current = new LinkedList()
+    this.current = []
     this.disposable = disposeOnce(source.run(this, scheduler))
     this.active = true
   }
@@ -60,7 +59,7 @@ class Outer {
   _initInner (t, x) {
     const innerSink = new Inner(t, this, this.sink)
     innerSink.disposable = mapAndRun(this.f, t, x, innerSink, this.scheduler)
-    this.current.add(innerSink)
+    this.current.push(innerSink)
   }
 
   end (t) {
@@ -78,11 +77,14 @@ class Outer {
     this.active = false
     this.pending.length = 0
     this.disposable.dispose()
-    this.current.dispose()
+    disposeAll(this.current).dispose()
   }
 
   _endInner (t, inner) {
-    this.current.remove(inner)
+    const i = this.current.indexOf(inner)
+    if (i >= 0) {
+      this.current.splice(i, 1)
+    }
     tryDispose(t, inner, this)
 
     if (this.pending.length === 0) {
@@ -93,7 +95,7 @@ class Outer {
   }
 
   _checkEnd (t) {
-    if (!this.active && this.current.isEmpty()) {
+    if (!this.active && this.current.length === 0) {
       this.sink.end(t)
     }
   }
@@ -104,11 +106,10 @@ const mapAndRun = (f, t, x, sink, scheduler) =>
 
 class Inner {
   constructor (time, outer, sink) {
-    this.prev = this.next = null
     this.time = time
     this.outer = outer
     this.sink = sink
-    this.disposable = void 0
+    this.disposable = disposeNone()
   }
 
   event (t, x) {
