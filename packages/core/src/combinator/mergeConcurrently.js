@@ -78,7 +78,6 @@ class Outer {
     this.pending.length = 0
     this.disposable.dispose()
     disposeAll(this.current).dispose()
-    // this.current.dispose()
   }
 
   _endInner (t, inner) {
@@ -86,7 +85,6 @@ class Outer {
     if (i >= 0) {
       this.current.splice(i, 1)
     }
-    // this.current.remove(inner)
     tryDispose(t, inner, this)
 
     if (this.pending.length === 0) {
