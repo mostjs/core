@@ -1143,7 +1143,7 @@ If a promise rejects, the :ref:`Stream` will be in an error state with the rejec
 
 **Forever pending promises**
 
-If a promise remains pending forever, the :ref:`Stream` will never produce any events beyond that promise. Use a promise timeout in such cases to ensure that all promises either fulfill or reject.  For example::
+If a promise remains pending forever, the :ref:`Stream` will never produce any events beyond that promise. Use a promise timeout or race in such cases to ensure that all promises either fulfill or reject.  For example::
 
   promise p:             ---1
   promise q:             ----------->
