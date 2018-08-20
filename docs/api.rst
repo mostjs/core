@@ -1118,7 +1118,9 @@ Turn a :ref:`Stream` of promises into a :ref:`Stream` containing the promises' v
   stream:                -p---q---r->
   awaitPromises(stream): ---1--2--3->
 
-Note that order is always preserved, regardless of promise fulfillment order.
+Note that event order is always preserved, regardless of promise fulfillment order.
+
+**Using fulfillment order**
 
 To create a :ref:`Stream` that merges promises in fulfillment order, use ``chain(fromPromise, stream)``. Note the difference::
 
@@ -1129,6 +1131,8 @@ To create a :ref:`Stream` that merges promises in fulfillment order, use ``chain
   chain(fromPromise, stream):   --1---3-2-->
   awaitPromises(stream):        --1-----23->
 
+**Rejected promises**
+
 If a promise rejects, the :ref:`Stream` will be in an error state with the rejected promise's reason as its error. See :ref:`recoverWith` for error recovery. For example::
 
   promise p:             ---1
@@ -1136,6 +1140,16 @@ If a promise rejects, the :ref:`Stream` will be in an error state with the rejec
   promise r:             -3
   stream:                -p---q---r->
   awaitPromises(stream): ---1--X
+
+**Forever pending promises**
+
+If a promise remains pending forever, the :ref:`Stream` will never produce any events beyond that promise. Use a promise timeout or race in such cases to ensure that all promises either fulfill or reject.  For example::
+
+  promise p:             ---1
+  promise q:             ----------->
+  promise r:             -3
+  stream:                -p---q---r->
+  awaitPromises(stream): ---1------->
 
 Handling Errors
 ^^^^^^^^^^^^^^^
