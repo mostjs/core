@@ -26,11 +26,5 @@
     "@most/disposable": "^1.2.1",
     "@most/scheduler": "^1.2.1",
     "@most/types": "^1.0.1"
-  },
-  "standard": {
-    "ignore": [
-      "test/perf",
-      "test/flow"
-    ]
   }
 }
