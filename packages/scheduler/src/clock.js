@@ -31,6 +31,9 @@ export const clockRelativeTo = clock =>
 export const newPerformanceClock = () =>
   clockRelativeTo(performance)
 
+// @deprecated will be removed in 2.0.0
+// Date.now is not monotonic, and performance.now is ubiquitous:
+// See https://caniuse.com/#search=performance.now
 export const newDateClock = () =>
   clockRelativeTo(Date)
 
