@@ -1439,6 +1439,8 @@ Create a new :ref:`Clock` using ``process.hrtime``.
 newDateClock
 ````````````
 
+.. warning:: **Deprecated**: Will be removed in 2.0.0.  ``Date.now`` is not monotonic, and has only been supported as a fallback for browsers that don't support ``performance.now``.
+
 .. code-block:: haskell
 
   newDateClock :: () -> Clock
