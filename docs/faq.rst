@@ -23,16 +23,16 @@ A: No. ``@most/core`` is focused on reactive event programming rather than chunk
 
 **Q: Are ``@most/core`` event streams the same as Node streams?**
 
-A: No. ``@most/core`` and Node streams are fairly different things, each of which happened to choose the name "stream" for one of its core concepts. They have a different primary goals, and thus different architectures and APIs.
+A: No. ``@most/core`` and Node streams are both based on the general concept of [stream processing](https://en.wikipedia.org/wiki/Stream_processing).  However, they differ in their specific goals, architectures, and APIs.
 
 ``@most/core`` :ref:`Event Streams`:
 
-* Deal with discrete events as as they happen, such as mouse clicks, where reactivity (timeliness) is a major factor
-* Provide an API of functions for filtering, transforming, merging, etc. discrete event streams
-* Add new functionality by writing new event sources and functions
+* Deal with discrete events as they happen, such as mouse clicks, where reactivity (timeliness) is a significant factor;
+* Provide an API of functions for filtering, transforming, merging, etc. discrete event streams; and
+* Add new functionality by writing new event sources and functions.
 
 In contrast, Node streams:
 
-* Deal primarily with chunked data IO (even though they have "object mode"), where flow control (aka "back pressure") is a major factor
-* Provide an API based around piping one stream through another
-* Add new functionality by writing new Readable, Writable, and Transform streams
+* Deal primarily with chunked data IO (even though they have "object mode"), where flow control (a.k.a. [back pressure](https://nodejs.org/en/docs/guides/backpressuring-in-streams/#too-much-data-too-quickly)) is a significant factor;
+* Provide an API based around piping one stream through another; and
+* Add new functionality by writing new Readable, Writable, and Transform streams.
