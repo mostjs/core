@@ -20,3 +20,19 @@ A: No. ``@most/core`` is focused on reactive event programming rather than Array
 **Q: I want to stream chunked data with flow control (also known as "back pressure"). Should I use ``@most/core`` for that?**
 
 A: No. ``@most/core`` is focused on reactive event programming rather than chunked/block data streaming :ref:`Read more here <when should you use it>`.
+
+**Q: Are ``@most/core`` event streams the same as Node streams?**
+
+A: No. ``@most/core`` and Node streams are both based on the general concept of [stream processing](https://en.wikipedia.org/wiki/Stream_processing).  However, they differ in their specific goals, architectures, and APIs.
+
+``@most/core`` :ref:`Event Streams`
+
+* deal with discrete events as they happen, such as mouse clicks, where reactivity (timeliness) is a significant factor;
+* provide an API of functions for filtering, transforming, merging, etc. discrete event streams; and
+* add new functionality by writing new event sources and functions.
+
+In contrast, Node streams
+
+* deal primarily with chunked data IO (even though they have "object mode"), where flow control (a.k.a. [back pressure](https://nodejs.org/en/docs/guides/backpressuring-in-streams/#too-much-data-too-quickly)) is a significant factor;
+* provide an API based around piping one stream through another; and
+* add new functionality by writing new Readable, Writable, and Transform streams.
