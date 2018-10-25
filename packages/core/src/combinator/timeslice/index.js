@@ -1,6 +1,4 @@
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
-/** @author Brian Cavalier */
-/** @author John Hann */
+/** @license MIT License (c) copyright 2010 original author or authors */
 
 import Pipe from '../sink/Pipe'
 import { disposeAll } from '@most/disposable'
@@ -9,27 +7,7 @@ import { empty, isCanonicalEmpty } from '../source/empty'
 import { join } from './chain'
 import { take } from './slice'
 import { mergeArray } from './merge'
-
-// Time bounds
-// TODO: Move to own module
-const timeBounds = (min, max) =>
-  ({ min, max })
-
-const minBounds = min =>
-  timeBounds([min], [])
-
-const maxBounds = max =>
-  timeBounds([], [max])
-
-const mergeTimeBounds = (b1, b2) =>
-  timeBounds(b1.min.concat(b2.min), b1.max.concat(b2.max))
-
-// Interpret time bounds
-const initialMin = ({ min }) =>
-  min.length === 0 ? 0 : Infinity
-
-const streamBounds = ({ min, max }) =>
-  ({ min: last(mergeArray(map(first, min))), max: first(mergeArray(max)) })
+import { minBounds, maxBounds, mergeTimeBounds } from './timeBounds'
 
 export const until = (signal, stream) =>
   timeslice(maxBounds(signal), stream)
@@ -44,6 +22,13 @@ const timeslice = (bounds, stream) =>
   stream instanceof Timeslice
     ? timeslice(mergeTimeBounds(bounds, stream.bounds), stream.source)
     : new Timeslice(bounds, stream)
+
+// Interpret time bounds
+const initialMin = ({ min }) =>
+  min.length === 0 ? 0 : Infinity
+
+const streamBounds = ({ min, max }) =>
+  ({ min: last(mergeArray(map(first, min))), max: first(mergeArray(max)) })
 
 class Timeslice {
   constructor (bounds, source) {
