@@ -26,6 +26,9 @@ export default class Timeline {
       const at = findIndex(st, this.tasks[i].events)
       if (at >= 0) {
         this.tasks[i].events.splice(at, 1)
+        if (this.tasks[i].events.length === 0) {
+          this.tasks.splice(i, 1)
+        }
         return true
       }
     }
