@@ -227,11 +227,15 @@ Activate an event :ref:`Stream` and consume all its events.
 run
 ```
 
+.. attention:: ``@most/core`` encourages a declarative approach.  Combinators like :ref:`until` allow you to declare which events you're interested in, and ``@most/core`` will manage acquiring and disposing resources automatically.  ``run`` is intended for use cases that cannot be handled declaratively, such as at integration points with other projects whose APIs may force an imperative approach.
+
 .. code-block:: haskell
 
-  run :: Sink a -> Scheduler -> Stream a -> void
+  run :: Sink a -> Scheduler -> Stream a -> Disposable
 
-Run a :ref:`Stream`, sending all events to the provided :ref:`Sink`.  The Stream's :ref:`Time` values come from the provided :ref:`Scheduler`.
+Run a :ref:`Stream`, sending all events to the provided :ref:`Sink`.  The Stream's :ref:`Time` values come from the provided :ref:`Scheduler`.  Returns a :ref:`Disposable` that can be used to dispose underlying resources imperatively.
+
+Declarative combinators like :ref:`until` still manage resources automatically when using ``run``.  The returned :ref:`Disposable` simply provides an `additional` way to trigger disposal manually.
 
 Construction
 ^^^^^^^^^^^^
