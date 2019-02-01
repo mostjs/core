@@ -19,6 +19,7 @@ export default class ScheduledTask {
   }
 
   dispose () {
+    this.active = false
     this.scheduler.cancel(this)
     return this.task.dispose()
   }

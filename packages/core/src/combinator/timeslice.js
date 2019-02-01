@@ -3,8 +3,9 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import { disposeAll } from '@most/disposable'
+import { disposeBoth } from '@most/disposable'
 import { join } from './chain'
+import SettableDisposable from '../disposable/SettableDisposable'
 
 export const until = (signal, stream) =>
   new Until(signal, stream)
@@ -22,11 +23,13 @@ class Until {
   }
 
   run (sink, scheduler) {
-    const min = new Bound(-Infinity, sink)
-    const max = new UpperBound(this.maxSignal, sink, scheduler)
-    const disposable = this.source.run(new TimeWindowSink(min, max, sink), scheduler)
+    const disposable = new SettableDisposable()
 
-    return disposeAll([min, max, disposable])
+    const d1 = this.source.run(sink, scheduler)
+    const d2 = this.maxSignal.run(new UntilSink(sink, disposable), scheduler)
+    disposable.setDisposable(disposeBoth(d1, d2))
+
+    return disposable
   }
 }
 
@@ -37,77 +40,55 @@ class Since {
   }
 
   run (sink, scheduler) {
-    const min = new LowerBound(this.minSignal, sink, scheduler)
-    const max = new Bound(Infinity, sink)
-    const disposable = this.source.run(new TimeWindowSink(min, max, sink), scheduler)
+    const min = new LowerBoundSink(this.minSignal, sink, scheduler)
+    const d = this.source.run(new SinceSink(min, sink), scheduler)
 
-    return disposeAll([min, max, disposable])
+    return disposeBoth(min, d)
   }
 }
 
-class Bound extends Pipe {
-  constructor (value, sink) {
-    super(sink)
-    this.value = value
-  }
-
-  event () {}
-  end () {}
-
-  dispose () {}
-}
-
-class TimeWindowSink extends Pipe {
-  constructor (min, max, sink) {
+class SinceSink extends Pipe {
+  constructor (min, sink) {
     super(sink)
     this.min = min
-    this.max = max
   }
 
   event (t, x) {
-    if (t >= this.min.value && t < this.max.value) {
+    if (this.min.allow) {
       this.sink.event(t, x)
     }
   }
 }
 
-class LowerBound extends Pipe {
+class LowerBoundSink extends Pipe {
   constructor (signal, sink, scheduler) {
     super(sink)
-    this.value = Infinity
+    this.allow = false
     this.disposable = signal.run(this, scheduler)
   }
 
-  event (t /*, x */) {
-    if (t < this.value) {
-      this.value = t
-    }
+  event (/* t, x */) {
+    this.allow = true
+    this.dispose()
   }
 
   end () {}
 
   dispose () {
-    return this.disposable.dispose()
+    this.disposable.dispose()
   }
 }
 
-class UpperBound extends Pipe {
-  constructor (signal, sink, scheduler) {
+class UntilSink extends Pipe {
+  constructor (sink, disposable) {
     super(sink)
-    this.value = Infinity
-    this.disposable = signal.run(this, scheduler)
+    this.disposable = disposable
   }
 
   event (t, x) {
-    if (t < this.value) {
-      this.value = t
-      this.sink.end(t)
-    }
+    this.disposable.dispose()
+    this.sink.end(t)
   }
 
   end () {}
-
-  dispose () {
-    return this.disposable.dispose()
-  }
 }

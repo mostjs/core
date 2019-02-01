@@ -7,14 +7,15 @@ import { periodic } from '../src/source/periodic'
 import { now } from '../src/source/now'
 import { never } from '../src/source/never'
 import { delay } from '../src/combinator/delay'
+import { run } from '../src/run'
 
 import { ticks, collectEvents, collectEventsFor, makeEvents } from './helper/testEnv'
 import FakeDisposeStream from './helper/FakeDisposeStream'
 
 import { spy } from 'sinon'
 
-describe('during', function () {
-  it('should contain events at or later than min and earlier than max', function () {
+describe('during', () => {
+  it('should contain events at or later than min and earlier than max', () => {
     const stream = take(10, periodic(1))
     const timespan = delay(1, now(delay(5, now())))
 
@@ -29,7 +30,7 @@ describe('during', function () {
       ]))
   })
 
-  it('should dispose source stream', function () {
+  it('should dispose source stream', () => {
     const dispose = spy()
     const stream = FakeDisposeStream.from(dispose, periodic(1))
     const timespan = delay(1, now(delay(5, now())))
@@ -39,7 +40,7 @@ describe('during', function () {
       .then(() => assert(dispose.calledOnce))
   })
 
-  it('should dispose signals', function () {
+  it('should dispose signals', () => {
     const dispose = spy()
 
     const stream = periodic(1)
@@ -55,8 +56,8 @@ describe('during', function () {
   })
 })
 
-describe('until', function () {
-  it('should only contain events earlier than signal', function () {
+describe('until', () => {
+  it('should only contain events earlier than signal', () => {
     const stream = makeEvents(1, 10)
     const signal = delay(3, now())
 
@@ -70,7 +71,7 @@ describe('until', function () {
       ]))
   })
 
-  it('should dispose source stream', function () {
+  it('should dispose source stream', () => {
     const dispose = spy()
     const stream = FakeDisposeStream.from(dispose, periodic(1))
     const signal = delay(3, now())
@@ -80,7 +81,7 @@ describe('until', function () {
       .then(() => assert(dispose.calledOnce))
   })
 
-  it('should end immediately on signal', function () {
+  it('should end immediately on signal', () => {
     const dispose = spy()
     const stream = FakeDisposeStream.from(dispose, never())
     const signal = now()
@@ -93,7 +94,7 @@ describe('until', function () {
       })
   })
 
-  it('should dispose signal', function () {
+  it('should dispose signal', () => {
     const dispose = spy()
     const stream = periodic(1)
     const signal = FakeDisposeStream.from(dispose, delay(3, now()))
@@ -109,10 +110,23 @@ describe('until', function () {
         assert(dispose.calledOnce)
       })
   })
+
+  it('should dispose with run', (done) => {
+    // See https://github.com/mostjs/core/issues/266#issuecomment-459485449
+    const stream = periodic(1)
+    const signal = FakeDisposeStream.from(done, delay(3, now()))
+
+    const s = until(signal, stream)
+    run({
+      event () {},
+      error () {},
+      end () {}
+    }, ticks(5), s)
+  })
 })
 
-describe('since', function () {
-  it('should only contain events at or later than signal', function () {
+describe('since', () => {
+  it('should only contain events at or later than signal', () => {
     const n = 5
     const stream = take(n, periodic(1))
     const signal = delay(3, now())
@@ -125,7 +139,7 @@ describe('since', function () {
       ]))
   })
 
-  it('should dispose signal', function () {
+  it('should dispose signal', () => {
     const dispose = spy()
     const stream = take(5, periodic(1))
     const signal = FakeDisposeStream.from(dispose, delay(3, now()))
