@@ -23,10 +23,11 @@ export default class Timeline {
     const i = binarySearch(getTime(st), this.tasks)
 
     if (i >= 0 && i < this.tasks.length) {
-      const at = findIndex(st, this.tasks[i].events)
+      const events = this.tasks[i].events
+      const at = findIndex(st, events)
       if (at >= 0) {
-        this.tasks[i].events.splice(at, 1)
-        if (this.tasks[i].events.length === 0) {
+        events.splice(at, 1)
+        if (events.length === 0) {
           this.tasks.splice(i, 1)
         }
         return true
