@@ -19,12 +19,6 @@ export const boundsFrom = (unsafeMin, unsafeMax) => {
   return { min, max }
 }
 
-export const minBounds = min =>
-  boundsFrom(min, Infinity)
-
-export const maxBounds = max =>
-  boundsFrom(0, max)
-
 // Combine 2 bounds by narrowing min and max
 export const mergeBounds = (b1, b2) =>
   boundsFrom(b1.min + b2.min, Math.min(b1.max, b1.min + b2.max))

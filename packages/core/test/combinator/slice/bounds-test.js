@@ -2,14 +2,7 @@
 import { assert, eq } from '@briancavalier/assert'
 import { describe, it } from 'mocha'
 
-import {
-  isInfiniteBounds,
-  isNilBounds,
-  maxBounds,
-  mergeBounds,
-  minBounds,
-  boundsFrom
-} from '../../../src/combinator/slice/bounds'
+import { isInfiniteBounds, isNilBounds, mergeBounds, boundsFrom } from '../../../src/combinator/slice/bounds'
 
 const rInt = (min = 0, max = Number.MAX_SAFE_INTEGER) =>
   Math.floor(min + (Math.random() * (max - min)))
@@ -27,18 +20,6 @@ describe('slice/bounds', () => {
   describe('boundsFrom', () => {
     it('should create valid bounds', () => {
       assertValidBounds(() => boundsFrom(rBound(), rBound()))
-    })
-  })
-
-  describe('minBounds', () => {
-    it('should create valid bounds', () => {
-      assertValidBounds(() => minBounds(rBound()))
-    })
-  })
-
-  describe('maxBounds', () => {
-    it('should create valid bounds', () => {
-      assertValidBounds(() => maxBounds(rBound()))
     })
   })
 

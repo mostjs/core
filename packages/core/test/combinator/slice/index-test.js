@@ -28,12 +28,12 @@ describe('slice', function () {
 
     it('should narrow when second slice is smaller', function () {
       const s = slice(1, 5, slice(1, 10, now('')))
-      eq(boundsFrom(2, 5), s.bounds)
+      eq(boundsFrom(2, 6), s.bounds)
     })
 
     it('should narrow when second slice is larger', function () {
       const s = slice(1, 10, slice(1, 5, now('')))
-      eq(boundsFrom(2, 6), s.bounds)
+      eq(boundsFrom(2, 5), s.bounds)
     })
 
     it('should commute map', function () {
@@ -66,6 +66,16 @@ describe('slice', function () {
     it('given infinite bounds, should be identity', () => {
       const s = makeEvents(1, 3)
       is(s, slice(0, Infinity, s))
+    })
+
+    it('should accumulate take(..., skip(...))', () => {
+      const s = take(1, skip(1, now('')))
+      eq(boundsFrom(1, 2), s.bounds)
+    })
+
+    it('should accumulate skip(..., take(...))', () => {
+      const s = skip(1, take(1, now('')))
+      assert(isCanonicalEmpty(s))
     })
   })
 
