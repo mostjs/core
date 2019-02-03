@@ -46,7 +46,7 @@ const commuteMapSlice = (bounds, mapStream) =>
   Map.create(mapStream.f, sliceBounds(bounds, mapStream.source))
 
 const fuseSlice = (bounds, sliceStream) =>
-  sliceBounds(mergeBounds(bounds, sliceStream.bounds), sliceStream.source)
+  sliceBounds(mergeBounds(sliceStream.bounds, bounds), sliceStream.source)
 
 class Slice {
   constructor (bounds, source) {
