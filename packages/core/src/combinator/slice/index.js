@@ -1,5 +1,5 @@
 import { empty, isCanonicalEmpty } from '../../source/empty'
-import { maxBounds, minBounds, boundsFrom, isNilBounds, isInfiniteBounds, mergeBounds } from './bounds'
+import { boundsFrom, isNilBounds, isInfiniteBounds, mergeBounds } from './bounds'
 import Map from '../../fusion/Map'
 import Pipe from '../../sink/Pipe'
 import SettableDisposable from '../../disposable/SettableDisposable'
@@ -10,7 +10,7 @@ import SettableDisposable from '../../disposable/SettableDisposable'
  * @returns {Stream} new stream containing only up to the first n items from stream
  */
 export const take = (n, stream) =>
-  sliceBounds(maxBounds(n), stream)
+  slice(0, n, stream)
 
 /**
  * @param {number} n
@@ -18,7 +18,7 @@ export const take = (n, stream) =>
  * @returns {Stream} new stream with the first n items removed
  */
 export const skip = (n, stream) =>
-  sliceBounds(minBounds(n), stream)
+  slice(n, Infinity, stream)
 
 /**
  * Slice a stream by index. Negative start/end indexes are not supported
