@@ -9,7 +9,7 @@
     "test": "lerna run test",
     "test:unit": "lerna run test:unit",
     "test:lint": "lerna run test:lint",
-    "build": "lerna run build"
+    "build": "lerna run build --stream"
   },
   "repository": {
     "type": "git",
@@ -30,7 +30,7 @@
     "flow-bin": "^0.57.3",
     "lerna": "^2.11.0",
     "mocha": "^5.2.0",
-    "nyc": "^13.0.0",
+    "nyc": "^13.3.0",
     "rollup": "^0.50.0",
     "rollup-plugin-babel": "^3.0.2",
     "sinon": "^1.17.7",
