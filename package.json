@@ -9,7 +9,7 @@
     "test": "lerna run test",
     "test:unit": "lerna run test:unit",
     "test:lint": "lerna run test:lint",
-    "build": "lerna run build"
+    "build": "lerna run build --stream"
   },
   "repository": {
     "type": "git",
