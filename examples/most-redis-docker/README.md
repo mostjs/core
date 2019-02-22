@@ -111,11 +111,14 @@ env vars are used:
 
 ### Try these scenarios
 
-- Easy: Change the channel name for one or more of the services.
-- Easy: Change the timeout to 0 (there are two ways to do this).  What happens?
-- Master: Handle some messages differently from others.  Hint: try most.js's
+- *Easy*: Change the channel name for one or more of the services.
+- *Easy*: Change the timeout to 0 (there are two ways to do this).  What happens?
+- *Master*: Handle some messages differently from others.  Hint: try most.js's
   `filter`, `skipWhile`, or `takeWhile` in the `consume` service.
-- Guru: Send invalid JSON from the `publish` service and use `recoverWith` in
+- *Master*: Modify and configure the `publish` service to publish to 2 channels,
+  then configure the `consume` services to each listen to one of those channels.
+  Hint: accept a comma-separated list of channels via `REDIS_CHANNEL`?
+- *Guru*: Send invalid JSON from the `publish` service and use `recoverWith` in
   the `consume` service to handle it.
-- Guru: Create a _selective forwarding_ service by re-publishing _some_ of the
+- *Guru*: Create a _selective forwarding_ service by re-publishing _some_ of the
   messages from the `consume` service.  
