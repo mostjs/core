@@ -79,22 +79,29 @@ stop the docker-compose network in the background.
 
 ### Option 2: node.js
 
-1. From the `most-redis-docker` folder:
+1.  Start redis.  See the [redis docs](https://redis.io/topics/quickstart) for
+    troubleshooting and options.
 
 ```sh
-REDIS_MYCHANNEL=most-redis-docker-example npm run consume
+redis-server
 ```
 
-2. Open a new terminal or shell, and from the `most-redis-docker` folder type:
+2. From the `most-redis-docker` folder:
 
 ```sh
-REDIS_MYCHANNEL=most-redis-docker-example npm run consume
+REDIS_MYCHANNEL=most-redis-docker-example node consume
 ```
 
-3. Open a third terminal or shell, and from the `most-redis-docker` folder type:
+3. Open a new terminal or shell, and from the `most-redis-docker` folder type:
 
 ```sh
-REDIS_MYCHANNEL=most-redis-docker-example npm run publish
+REDIS_MYCHANNEL=most-redis-docker-example node consume
+```
+
+4. Open a third terminal or shell, and from the `most-redis-docker` folder type:
+
+```sh
+REDIS_MYCHANNEL=most-redis-docker-example node publish
 ```
 
 ## Experiment!
