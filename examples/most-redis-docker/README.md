@@ -112,9 +112,9 @@ Both the `consume` and `publish` services accept env vars.  If you are using
 Docker, these may be modified in the `docker-compose.yml` file.  The following
 env vars are used:
 
+- `REDIS_CHANNEL`: string, _required_
 - `REDIS_PORT`: integer, default is `6379`
 - `REDIS_HOST`: string, default is `'127.0.0.1'`
-- `REDIS_CHANNEL`: string, required
 - `TIMEOUT`: integer, default is `2500`
 
 ### Try these scenarios
