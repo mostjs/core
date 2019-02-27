@@ -7,11 +7,11 @@ const { newDefaultScheduler } = require("@most/scheduler")
 const { config } = require('./config')
 
 // Create a logging abstraction.  Could also be graylog, logstash, etc.
-const { log, error } = console
+const { log, error, warn } = console
 const crash = err => { error(err); process.exit(1) }
 
 // Read config from env vars.
-const { host, port, timeout, channel } = config(process.env)
+const { host, port, timeout, channel } = config(warn)(process.env)
 
 // Create and initialize a redis client.
 const client
