@@ -28,8 +28,8 @@ if you chose another folder name.
 This project uses environment variables.  If you are using the windows command
 prompt, you may have to change some commands slightly to use env vars. For
 example, rather than type
-`REDIS_MYCHANNEL=most-redis-docker-example npm run consume`, you would type
-`set REDIS_MYCHANNEL=most-redis-docker-example&&npm run consume`.
+`REDIS_CHANNEL=most-redis-docker-example npm run consume`, you would type
+`set REDIS_CHANNEL=most-redis-docker-example&&npm run consume`.
 
 ### Option 1: Docker
 
@@ -89,19 +89,19 @@ redis-server
 2. From the `most-redis-docker` folder:
 
 ```sh
-REDIS_MYCHANNEL=most-redis-docker-example node consume
+REDIS_CHANNEL=most-redis-docker-example node consume
 ```
 
 3. Open a new terminal or shell, and from the `most-redis-docker` folder type:
 
 ```sh
-REDIS_MYCHANNEL=most-redis-docker-example node consume
+REDIS_CHANNEL=most-redis-docker-example node consume
 ```
 
 4. Open a third terminal or shell, and from the `most-redis-docker` folder type:
 
 ```sh
-REDIS_MYCHANNEL=most-redis-docker-example node publish
+REDIS_CHANNEL=most-redis-docker-example node publish
 ```
 
 ## Experiment!
