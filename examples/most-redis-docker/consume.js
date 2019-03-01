@@ -22,18 +22,22 @@ const client
 // Create an adapter to "push" events from redis.
 const [ onMessage, messageStream ] = createAdapter()
 
-// Create a most.js stream
+// Create the operations on a simple most.js stream that:
+// - parses a JSON message and extracts the `value` property,
+// - logs the value as a side effect,
 const fromMessage
   = map(message => JSON.parse(message).value)
 const logValue
   = tap(value => log('received value =', value))
 
+// Compose the stream from the operations.
 const receiveNewValues
   = fromMessage(logValue(messageStream))
 
-// TODO: transform or something?
+// Run the stream.
 runEffects(receiveNewValues, newDefaultScheduler())
 
+// Start the app.
 client
   .then(subscribe(channel, onMessage))
   .then(() => log(`Consumer listening on ${channel}.`))
