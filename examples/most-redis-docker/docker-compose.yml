@@ -1,0 +1,47 @@
+version: '3.2'
+networks:
+  default: null
+services:
+  redis:
+    image: redis:5.0
+    ports:
+      - 6379:6379
+  consumer1:
+    image: most-redis-docker
+    entrypoint:
+      - node
+      - consume
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_CHANNEL: most-redis-docker-example
+    volumes:
+      - $PWD:/app
+    depends_on:
+      - redis
+  consumer2:
+    image: most-redis-docker
+    entrypoint:
+      - node
+      - consume
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_CHANNEL: most-redis-docker-example
+    volumes:
+      - $PWD:/app
+    depends_on:
+      - redis
+  publisher:
+    image: most-redis-docker
+    entrypoint:
+      - node
+      - publish
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_CHANNEL: most-redis-docker-example
+    volumes:
+      - $PWD:/app
+    depends_on:
+      - redis
