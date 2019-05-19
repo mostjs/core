@@ -1,14 +1,17 @@
 import { describe, it } from 'mocha'
 import { assert, eq, fail } from '@briancavalier/assert'
+import { disposeBoth } from '@most/disposable';
 
 import { switchLatest } from '../src/combinator/switch'
 import { take } from '../src/combinator/slice'
 import { constant, map, tap } from '../src/combinator/transform'
 import { periodic } from '../src/source/periodic'
 import { empty, isCanonicalEmpty } from '../src/source/empty'
+import { at } from '../src/source/at'
 import { now } from '../src/source/now'
 import { ticks, collectEventsFor, makeEvents, makeEventsFromArray } from './helper/testEnv'
 import { runEffects } from '../src/runEffects'
+import Pipe from '../src/sink/Pipe'
 
 describe('switch', () => {
   it('given canonical empty string, should return canonical empty', () => {
@@ -86,4 +89,61 @@ describe('switch', () => {
         ]))
     })
   })
+
+  describe('when upper stream fails to dispose', () => {
+    it('should emit an error event with correct time', () => {
+      // This case is a failing test for:
+      // https://github.com/mostjs/core/issues/284
+
+      let errorEventTime = -1;
+
+      class DisposeFailureStream {
+        constructor (source) {
+          this.source = source
+        }
+
+        run (sink, scheduler) {
+          const disposeFailureSink = new DisposeFailureSink(sink)
+          return disposeBoth(
+            disposeFailureSink,
+            this.source.run(disposeFailureSink, scheduler),
+          )
+        }
+      }
+
+      class DisposeFailureSink extends Pipe {
+        dispose () {
+          throw new Error()
+        }
+      }
+
+      const disposeFailure = s => new DisposeFailureStream(s)
+
+      class AssertErrorTimeStream {
+        constructor (source) {
+          this.source = source
+        }
+
+        run (sink, scheduler) {
+          return this.source.run(new AssertErrorTimeSink(sink), scheduler)
+        }
+      }
+
+      class AssertErrorTimeSink extends Pipe {
+        error (t, e) {
+          super.error(t, e)
+          errorEventTime = t
+        }
+      }
+
+      const assertErrorTime = s => new AssertErrorTimeStream(s)
+
+      const s = assertErrorTime(switchLatest(at(1, disposeFailure(now(undefined)))))
+      return runEffects(s, ticks(2)).then(() => {
+        fail()
+      }, () => {
+        eq(1, errorEventTime)
+      })
+    });
+  });
 })
