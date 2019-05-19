@@ -11,7 +11,7 @@ import { ticks, collectEventsFor, makeEvents, makeEventsFromArray } from './help
 import { runEffects } from '../src/runEffects'
 
 describe('switch', () => {
-  it('given c anonical empty string, should return canonical empty', () => {
+  it('given canonical empty string, should return canonical empty', () => {
     const s = switchLatest(empty())
     assert(isCanonicalEmpty(s))
   })
