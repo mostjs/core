@@ -6,12 +6,15 @@ import { take } from '../src/combinator/slice'
 import { constant, map, tap } from '../src/combinator/transform'
 import { periodic } from '../src/source/periodic'
 import { empty, isCanonicalEmpty } from '../src/source/empty'
+import { at } from '../src/source/at'
 import { now } from '../src/source/now'
 import { ticks, collectEventsFor, makeEvents, makeEventsFromArray } from './helper/testEnv'
+import FakeDisposeStream from './helper/FakeDisposeStream'
 import { runEffects } from '../src/runEffects'
+import { run } from '../src/run'
 
 describe('switch', () => {
-  it('given c anonical empty string, should return canonical empty', () => {
+  it('given canonical empty string, should return canonical empty', () => {
     const s = switchLatest(empty())
     assert(isCanonicalEmpty(s))
   })
@@ -84,6 +87,29 @@ describe('switch', () => {
           { time: 8, value: 3 },
           { time: 9, value: 4 }
         ]))
+    })
+  })
+
+  describe('when upper stream fails to dispose', () => {
+    it('should emit an error event with correct time', (done) => {
+      // See https://github.com/mostjs/core/issues/284
+
+      const inner = FakeDisposeStream.from(() => { throw new Error() }, at(1))
+      const s = at(1, inner)
+      const sink = {
+        event () {},
+        end (t) {},
+        error (t, e) {
+          try {
+            eq(2, t)
+            done()
+          } catch (e) {
+            done(e)
+          }
+        }
+      }
+
+      run(sink, ticks(2), switchLatest(s))
     })
   })
 })
