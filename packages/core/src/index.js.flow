@@ -75,7 +75,9 @@ declare export function switchLatest <A> (s: Stream<Stream<A>>): Stream<A>
 
 declare export function merge <A, B> (s1: Stream<A>, s2: Stream<B>): Stream<A | B>
 declare export function merge <A, B> (s1: Stream<A>): (s2: Stream<B>) => Stream<A | B>
-declare export function mergeArray <A> (ss: Array<Stream<A>>): Stream<A>
+
+type MergeArray = <A>($ReadOnlyArray<Stream<A>>) => Stream<A>
+declare export function mergeArray <S> (ss: S): $Call<MergeArray, S>
 
 declare export function sample <A> (values: Stream<A>, sampler: Stream<any>): Stream<A>
 declare export function sample <A> (values: Stream<A>): (sampler: Stream<any>) => Stream<A>

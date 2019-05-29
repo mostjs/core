@@ -660,7 +660,7 @@ mergeArray
 
 .. code-block:: haskell
 
-  mergeArray :: [ (Stream a) ] -> Stream a
+  mergeArray :: [ Stream a, Stream b, ... ] -> Stream (a | b | ...)
 
 Array form of :ref:`merge`. Create a new :ref:`Stream` containing all events from all :ref:`Streams <Stream>` in the array. ::
 
