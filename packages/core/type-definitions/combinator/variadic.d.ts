@@ -1,3 +1,5 @@
+import { Stream } from '@most/types'
+
 // Map arrays to arrays of Streams:
 // Array<A> => Array<Stream<A>>
 // [A, B, C, ...] => [Stream<A>, Stream<B>, Stream<C>, ...]
