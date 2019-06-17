@@ -63,10 +63,12 @@ declare export function concatMap <A, B> (f: (A) => Stream<B>): (s: Stream<A>) =
 declare export function mergeConcurrently <A> (concurrency: number, s: Stream<Stream<A>>): Stream<A>
 declare export function mergeConcurrently <A> (concurrency: number): (s: Stream<Stream<A>>) => Stream<A>
 
-declare export function mergeMapConcurrently <A, B> (concurrency: number, f: (A) => Stream<B>, s: Stream<A>): Stream<B>
-declare export function mergeMapConcurrently <A, B> (concurrency: number): (f: (A) => Stream<B>, s: Stream<A>) => Stream<B>
-declare export function mergeMapConcurrently <A, B> (concurrency: number, f: (A) => Stream<B>): (s: Stream<A>) => Stream<B>
-declare export function mergeMapConcurrently <A, B> (concurrency: number): (f: (A) => Stream<B>) => (s: Stream<A>) => Stream<B>
+declare export function mergeMapConcurrently <A, B> (f: (A) => Stream<B>, concurrency: number, s: Stream<A>): Stream<B>
+declare export function mergeMapConcurrently <A, B> (f: (A) => Stream<B>, concurrency: number): (s: Stream<A>) => Stream<B>
+declare export function mergeMapConcurrently <A, B> (f: (A) => Stream<B>): {
+  (concurrency: number, s: Stream<A>): Stream<B>,
+  (concurrency: number): (s: Stream<A>) => Stream<B>
+}
 
 declare export function continueWith <A> (f: (any) => Stream<A>, s: Stream<A>): Stream<A>
 declare export function continueWith <A> (f: (any) => Stream<A>): (s: Stream<A>) => Stream<A>
