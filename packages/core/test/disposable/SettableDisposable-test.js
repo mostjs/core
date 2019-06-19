@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import { throws, assert } from '@briancavalier/assert'
 
-import { default as SettableDisposable } from '../../src/disposable/SettableDisposable'
+import SettableDisposable from '../../src/disposable/SettableDisposable'
 
 const testDisposable = () => ({
   disposed: false,

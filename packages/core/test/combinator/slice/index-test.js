@@ -6,7 +6,7 @@ import { boundsFrom } from '../../../src/combinator/slice/bounds'
 import { map } from '../../../src/combinator/transform'
 import { now } from '../../../src/source/now'
 import { empty, isCanonicalEmpty } from '../../../src/source/empty'
-import { default as Map } from '../../../src/fusion/Map'
+import Map from '../../../src/fusion/Map'
 
 import { makeEventsFromArray, collectEventsFor, makeEvents } from '../../helper/testEnv'
 import { assertSame } from '../../helper/stream-helper'

@@ -40,15 +40,15 @@ describe('mergeConcurrently', () => {
     const n = 3
 
     const expected = [
-       { time: 0, value: 1 },
-       { time: 1, value: 1 },
-       { time: 1, value: 2 },
-       { time: 2, value: 1 },
-       { time: 2, value: 2 },
-       { time: 2, value: 3 },
-       { time: 3, value: 1 },
-       { time: 3, value: 2 },
-       { time: 3, value: 3 }
+      { time: 0, value: 1 },
+      { time: 1, value: 1 },
+      { time: 1, value: 2 },
+      { time: 2, value: 1 },
+      { time: 2, value: 2 },
+      { time: 2, value: 3 },
+      { time: 3, value: 1 },
+      { time: 3, value: 2 },
+      { time: 3, value: 3 }
     ]
 
     return collectEventsFor(n, take(n * streams.length, s))

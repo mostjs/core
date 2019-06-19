@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import { eq, is } from '@briancavalier/assert'
 
-import { default as SafeSink } from '../../src/sink/SafeSink'
+import SafeSink from '../../src/sink/SafeSink'
 
 function testSink (event, end, error) {
   return {

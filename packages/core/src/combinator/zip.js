@@ -32,7 +32,7 @@ export function zip (f, stream1, stream2) {
 export const zipArray = (f, streams) =>
   streams.length === 0 || containsCanonicalEmpty(streams) ? empty()
     : streams.length === 1 ? map(f, streams[0])
-    : new Zip(f, streams)
+      : new Zip(f, streams)
 
 class Zip {
   constructor (f, sources) {

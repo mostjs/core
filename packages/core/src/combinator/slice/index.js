@@ -33,8 +33,8 @@ export const slice = (start, end, stream) =>
 const sliceBounds = (bounds, stream) =>
   isSliceEmpty(bounds, stream) ? empty()
     : stream instanceof Map ? commuteMapSlice(bounds, stream)
-    : stream instanceof Slice ? fuseSlice(bounds, stream)
-    : createSlice(bounds, stream)
+      : stream instanceof Slice ? fuseSlice(bounds, stream)
+        : createSlice(bounds, stream)
 
 const isSliceEmpty = (bounds, stream) =>
   isCanonicalEmpty(stream) || isNilBounds(bounds)

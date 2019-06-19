@@ -111,7 +111,7 @@ export function replace (x, i, a) { // eslint-disable-line complexity
 
 // remove :: Int -> [a] -> [a]
 // remove element at index
-export function remove (i, a) {  // eslint-disable-line complexity
+export function remove (i, a) { // eslint-disable-line complexity
   if (i < 0) {
     throw new TypeError('i must be >= 0')
   }
