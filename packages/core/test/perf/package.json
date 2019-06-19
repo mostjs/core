@@ -23,11 +23,11 @@
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-register": "^6.26.0",
-    "baconjs": "^2.0.7",
+    "baconjs": "^3.0.3",
     "benchmark": "^2.1.4",
-    "highland": "^2.13.0",
-    "kefir": "^3.8.3",
+    "highland": "^2.13.4",
+    "kefir": "^3.8.6",
     "rx": "^4.1.0",
-    "xstream": "^11.2.0"
+    "xstream": "^11.11.0"
   }
 }

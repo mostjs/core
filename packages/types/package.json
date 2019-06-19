@@ -30,6 +30,11 @@
   "author": "brian@hovercraftstudios.com",
   "license": "MIT",
   "devDependencies": {
-    "flow-bin": "^0.57.3"
+    "cpy-cli": "^2.0.0",
+    "cross-env": "^5.2.0",
+    "flow-bin": "^0.101.0",
+    "nyc": "^14.1.1",
+    "snazzy": "^8.0.0",
+    "standard": "^12.0.1"
   }
 }
