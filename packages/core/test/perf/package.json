@@ -19,7 +19,7 @@
     "start": "npm run filter-map-reduce && npm run chain && npm run concatMap && npm run merge && npm run merge-nested && npm run zip && npm run scan && npm run slice && npm run skipRepeats && npm run switch"
   },
   "dependencies": {
-    "@reactivex/rxjs": "^5.5.10",
+    "@reactivex/rxjs": "^6.5.2",
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-register": "^6.26.0",
@@ -28,6 +28,7 @@
     "highland": "^2.13.4",
     "kefir": "^3.8.6",
     "rx": "^4.1.0",
+    "rxjs": "^6.5.2",
     "xstream": "^11.11.0"
   }
 }
