@@ -37,7 +37,7 @@ export const mergeArray = streams =>
 const mergeStreams = streams =>
   streams.length === 0 ? empty()
     : streams.length === 1 ? streams[0]
-    : new Merge(reduce(appendSources, [], streams))
+      : new Merge(reduce(appendSources, [], streams))
 
 const withoutCanonicalEmpty = streams =>
   streams.filter(isNotCanonicalEmpty)

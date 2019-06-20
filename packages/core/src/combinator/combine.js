@@ -26,7 +26,7 @@ export const combine = (f, stream1, stream2) =>
 export const combineArray = (f, streams) =>
   streams.length === 0 || containsCanonicalEmpty(streams) ? empty()
     : streams.length === 1 ? map(f, streams[0])
-    : new Combine(f, streams)
+      : new Combine(f, streams)
 
 class Combine {
   constructor (f, sources) {

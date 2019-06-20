@@ -2,8 +2,8 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { runEffects } from '../../src/runEffects'
-import { tap } from '../../src/combinator/transform'
+import { run } from '../../src/run'
+// import { tap } from '../../src/combinator/transform'
 import { newDefaultScheduler } from '@most/scheduler'
 
 /**
@@ -16,7 +16,25 @@ import { newDefaultScheduler } from '@most/scheduler'
 * @returns {Promise} promise for the final result of the reduce
 */
 export function reduce (f, initial, stream) {
-  let result = initial
-  const source = tap(x => { result = x }, stream)
-  return runEffects(source, newDefaultScheduler()).then(() => result)
+  return new Promise((resolve, reject) => {
+    run(new ReduceSink(f, initial, resolve, reject), newDefaultScheduler(), stream)
+  })
+}
+
+class ReduceSink {
+  constructor (f, value, resolve, reject) {
+    this.f = f
+    this.value = value
+    this.resolve = resolve
+    this.reject = reject
+  }
+  event (t, x) {
+    this.value = this.f(this.value, x)
+  }
+  error (t, e) {
+    this.reject(e)
+  }
+  end (t) {
+    this.resolve(this.value)
+  }
 }

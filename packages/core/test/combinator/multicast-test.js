@@ -62,10 +62,10 @@ const sentinel = { value: 'sentinel' }
 describe('MulticastSource', () => {
   it('should call producer on first observer', () => {
     const eventSpy = spy()
-    const s = new MulticastSource({run: () => {}})
+    const s = new MulticastSource({ run: () => {} })
     const scheduler = ticks(1)
 
-    s.run({event: eventSpy}, scheduler)
+    s.run({ event: eventSpy }, scheduler)
     s.event(sentinel)
 
     eq(true, eventSpy.calledOnce)
@@ -73,7 +73,7 @@ describe('MulticastSource', () => {
 
   it('should call producer ONLY on the first observer', () => {
     const sourceSpy = spy()
-    const s = new MulticastSource({run: sourceSpy})
+    const s = new MulticastSource({ run: sourceSpy })
     const scheduler = ticks(1)
 
     return Promise.all([
@@ -136,7 +136,7 @@ describe('MulticastSource', () => {
 
     const p1 = runEffects(s, scheduler)
     const p2 = runEffects(map(() => { throw error }, s), scheduler)
-        .catch(e => e)
+      .catch(e => e)
 
     return Promise.all([p1, p2]).then(([a, b]) => {
       eq(undefined, a)

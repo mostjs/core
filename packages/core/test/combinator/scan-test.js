@@ -16,11 +16,11 @@ describe('scan', function () {
     const s = scan((s, x) => s + x, '', makeEventsFromArray(1, a))
 
     const expected = [
-       { time: 0, value: '' },
-       { time: 0, value: 'a' },
-       { time: 1, value: 'ab' },
-       { time: 2, value: 'abc' },
-       { time: 3, value: 'abcd' }
+      { time: 0, value: '' },
+      { time: 0, value: 'a' },
+      { time: 1, value: 'ab' },
+      { time: 2, value: 'abc' },
+      { time: 3, value: 'abcd' }
     ]
 
     return collectEventsFor(a.length, s)

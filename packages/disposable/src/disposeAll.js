@@ -15,7 +15,7 @@ export const disposeBoth = curry2((d1, d2) =>
 const merge = (ds, d) =>
   isDisposeNone(d) ? ds
     : d instanceof DisposeAll ? ds.concat(d.disposables)
-    : append(d, ds)
+      : append(d, ds)
 
 class DisposeAll {
   constructor (disposables) {

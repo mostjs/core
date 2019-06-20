@@ -11,7 +11,7 @@ import { until } from '../src/combinator/timeslice'
 import { empty, isCanonicalEmpty } from '../src/source/empty'
 import { never } from '../src/source/never'
 import { now } from '../src/source/now'
-import { default as Map } from '../src/fusion/Map'
+import Map from '../src/fusion/Map'
 
 import { atTimes, collectEventsFor, makeEventsFromArray, makeEvents } from './helper/testEnv'
 import { assertSame } from './helper/stream-helper'

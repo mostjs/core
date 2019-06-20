@@ -14,8 +14,8 @@ import { delay } from '@most/scheduler'
 export const throttle = (period, stream) =>
   isCanonicalEmpty(stream) ? empty()
     : stream instanceof Map ? commuteMapThrottle(period, stream)
-    : stream instanceof Throttle ? fuseThrottle(period, stream)
-    : new Throttle(period, stream)
+      : stream instanceof Throttle ? fuseThrottle(period, stream)
+        : new Throttle(period, stream)
 
 const commuteMapThrottle = (period, mapStream) =>
   Map.create(mapStream.f, throttle(period, mapStream.source))
