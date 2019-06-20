@@ -1,57 +1,51 @@
 require('babel-register')
-const Benchmark = require('benchmark');
-const {skipRepeats} = require('../../src/index');
-const {reduce} = require('../helper/reduce')
-const rx = require('rx');
-const rxjs = require('@reactivex/rxjs');
-const kefir = require('kefir');
-const bacon = require('baconjs');
-const highland = require('highland');
-const xs = require('xstream').default;
+const Benchmark = require('benchmark')
+const { skipRepeats } = require('../../src/index')
+const { reduce } = require('../helper/reduce')
+const rx = require('rxjs')
+const rxo = require('rxjs/operators')
+const bacon = require('baconjs')
+const xs = require('xstream').default
 
-const runners = require('./runners');
-const kefirFromArray = runners.kefirFromArray;
-const mostFromArray = runners.mostFromArray
-const xstreamDropRepeats = require('xstream/extra/dropRepeats').default;
+const { getIntArg, runSuite, kefirFromArray, mostFromArray, runMost, runRx6, runXstream, runKefir, runBacon } = require('./runners')
+
+const xstreamDropRepeats = require('xstream/extra/dropRepeats').default
 
 // Create a stream from an Array of n integers
 // filter out odds, map remaining evens by adding 1, then reduce by summing
-const n = runners.getIntArg(1000000);
-const a = new Array(n);
-for(let i = 0, j = 0; i< a.length; i+=2, ++j) {
-  a[i] = a[i+1] = j;
+const n = getIntArg(1000000)
+const a = new Array(n)
+for (let i = 0, j = 0; i < a.length; i += 2, ++j) {
+  a[i] = a[i + 1] = j
 }
 
-const suite = Benchmark.Suite('skipRepeats -> reduce 2 x ' + n + ' integers');
+const suite = Benchmark.Suite('skipRepeats -> reduce 2 x ' + n + ' integers')
 const options = {
   defer: true,
-  onError: function(e) {
-    e.currentTarget.failure = e.error;
+  onError: function (e) {
+    e.currentTarget.failure = e.error
   }
-};
+}
 
 suite
-  .add('most', function(deferred) {
-    runners.runMost(deferred, reduce(sum, 0, skipRepeats(mostFromArray(a))));
+  .add('most', function (deferred) {
+    runMost(deferred, reduce(sum, 0, skipRepeats(mostFromArray(a))))
   }, options)
-  .add('rx 4', function(deferred) {
-    runners.runRx(deferred, rx.Observable.fromArray(a).distinctUntilChanged().reduce(sum, 0));
+  .add('rx 6', function (deferred) {
+    runRx6(deferred, rx.from(a).pipe(rxo.distinctUntilChanged()).pipe(rxo.reduce(sum, 0)))
   }, options)
-  .add('rx 5', function(deferred) {
-    runners.runRx5(deferred, rxjs.Observable.from(a).distinctUntilChanged().reduce(sum, 0));
+  .add('xstream', function (deferred) {
+    runXstream(deferred, xs.fromArray(a).compose(xstreamDropRepeats()).fold(sum, 0).last())
   }, options)
-  .add('xstream', function(deferred) {
-    runners.runXstream(deferred, xs.fromArray(a).compose(xstreamDropRepeats()).fold(sum, 0).last());
+  .add('kefir', function (deferred) {
+    runKefir(deferred, kefirFromArray(a).skipDuplicates().scan(sum, 0).last())
   }, options)
-  .add('kefir', function(deferred) {
-    runners.runKefir(deferred, kefirFromArray(a).skipDuplicates().scan(sum, 0).last());
-  }, options)
-  .add('bacon', function(deferred) {
-    runners.runBacon(deferred, bacon.fromArray(a).skipDuplicates().reduce(0, sum));
+  .add('bacon', function (deferred) {
+    runBacon(deferred, bacon.fromArray(a).skipDuplicates().reduce(0, sum))
   }, options)
 
-runners.runSuite(suite);
+runSuite(suite)
 
-function sum(x, y) {
-  return x + y;
+function sum (x, y) {
+  return x + y
 }
