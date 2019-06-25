@@ -1,6 +1,6 @@
 {
   "name": "@most/types",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
   "typings": "index.d.ts",
   "main": "index.js",
