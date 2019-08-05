@@ -1,21 +1,21 @@
 /** @license MIT License (c) copyright 2016 original author or authors */
 
 import { describe, it } from 'mocha'
-import assert from 'assert'
+import * as assert from 'assert'
 
 import { cons, append, drop, tail, copy,
   map, reduce, remove, removeAll, replace, findIndex,
   isArrayLike } from '../src/array'
 
-const rint = n => (Math.floor(Math.random() * n))
-const same = (a, b) => a.length === b.length && _same(a, b, a.length - 1)
-const _same = (a, b, i) => i < 0 ? true : a[i] === b[i] && _same(a, b, i - 1)
+const rint = (n: number) => (Math.floor(Math.random() * n))
+const same = <A>(a: A[], b: A[]): boolean => a.length === b.length && _same(a, b, a.length - 1)
+const _same = <A>(a: A[], b: A[], i: number): boolean => i < 0 ? true : a[i] === b[i] && _same(a, b, i - 1)
 
-const assertSame = (a, b) => assert(same(a, b), `${a} != ${b}`)
+const assertSame = <A>(a: A[], b: A[]): void => assert(same(a, b), `${a} != ${b}`)
 
 describe('cons', () => {
   it('should increase length by 1', () => {
-    const a = []
+    const a: number[] = []
     assert(cons(1, a).length === a.length + 1)
     assert(cons(2, cons(1, a)).length === a.length + 2)
   })
@@ -29,7 +29,7 @@ describe('cons', () => {
 
 describe('append', () => {
   it('should add 1 to the length', () => {
-    const a = []
+    const a: number[ ] = []
     const b = append(1, a)
     const c = append(2, b)
     assert(b.length === a.length + 1)
@@ -113,9 +113,9 @@ describe('map', () => {
 
   it('map(g, map(f, a)) === map(compose(g, f), a)', () => {
     const a = ['a', 'b', 'c']
-    const f = x => x + 'f'
-    const g = x => x + 'g'
-    const h = x => g(f(x))
+    const f = (x: string) => x + 'f'
+    const g = (x: string) => x + 'g'
+    const h = (x: string) => g(f(x))
 
     assertSame(map(g, map(f, a)), map(h, a))
   })
@@ -124,12 +124,12 @@ describe('map', () => {
 describe('reduce', () => {
   it('reduce(f, x, []) === x', () => {
     const x = {}
-    assert.strictEqual(reduce(() => {}, x, []), x)
+    assert.strictEqual(reduce(() => ({}), x, []), x)
   })
 
   it('reduce(append, [], a) === a', () => {
     const a = [1, 2, 3]
-    const b = reduce((b, x) => append(x, b), [], a)
+    const b = reduce<number[], number>((b, x) => append(x, b), [], a)
     assert(a !== b)
     assertSame(a, b)
   })

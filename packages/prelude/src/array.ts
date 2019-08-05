@@ -2,9 +2,10 @@
 
 // Non-mutating array operations
 
-// cons :: a -> [a] -> [a]
-// a with x prepended
-export function cons (x, a) {
+/**
+ * a with x prepended
+ */
+export function cons <A> (x: A, a: A[]): A[] {
   const l = a.length
   const b = new Array(l + 1)
   b[0] = x
@@ -14,9 +15,10 @@ export function cons (x, a) {
   return b
 }
 
-// append :: a -> [a] -> [a]
-// a with x appended
-export function append (x, a) {
+/**
+ * a with x appended
+ */
+export function append <A> (x: A, a: A[]): A[] {
   const l = a.length
   const b = new Array(l + 1)
   for (let i = 0; i < l; ++i) {
@@ -27,9 +29,11 @@ export function append (x, a) {
   return b
 }
 
-// drop :: Int -> [a] -> [a]
-// drop first n elements
-export function drop (n, a) { // eslint-disable-line complexity
+//
+/**
+ * drop first n elements
+ */
+export function drop <A> (n: number, a: A[]): A[] { // eslint-disable-line complexity
   if (n < 0) {
     throw new TypeError('n must be >= 0')
   }
@@ -46,9 +50,10 @@ export function drop (n, a) { // eslint-disable-line complexity
   return unsafeDrop(n, a, l - n)
 }
 
-// unsafeDrop :: Int -> [a] -> Int -> [a]
-// Internal helper for drop
-function unsafeDrop (n, a, l) {
+/**
+ * Internal helper for drop
+ */
+function unsafeDrop <A> (n: number, a: A[], l: number): A[] {
   const b = new Array(l)
   for (let i = 0; i < l; ++i) {
     b[i] = a[n + i]
@@ -56,15 +61,17 @@ function unsafeDrop (n, a, l) {
   return b
 }
 
-// tail :: [a] -> [a]
-// drop head element
-export function tail (a) {
+/**
+ * drop head element
+ */
+export function tail <A> (a: A[]): A[] {
   return drop(1, a)
 }
 
-// copy :: [a] -> [a]
-// duplicate a (shallow duplication)
-export function copy (a) {
+/**
+ * duplicate a (shallow duplication)
+ */
+export function copy <A> (a: A[]): A[] {
   const l = a.length
   const b = new Array(l)
   for (let i = 0; i < l; ++i) {
@@ -73,9 +80,10 @@ export function copy (a) {
   return b
 }
 
-// map :: (a -> b) -> [a] -> [b]
-// transform each element with f
-export function map (f, a) {
+/**
+ * transform each element with f
+ */
+export function map <A, B> (f: (a: A) => B, a: A[]): B[] {
   const l = a.length
   const b = new Array(l)
   for (let i = 0; i < l; ++i) {
@@ -84,9 +92,10 @@ export function map (f, a) {
   return b
 }
 
-// reduce :: (a -> b -> a) -> a -> [b] -> a
-// accumulate via left-fold
-export function reduce (f, z, a) {
+/**
+ * accumulate via left-fold
+ */
+export function reduce <A, B> (f: (a: A, b: B, i: number) => A, z: A, a: B[]): A {
   let r = z
   for (let i = 0, l = a.length; i < l; ++i) {
     r = f(r, a[i], i)
@@ -94,9 +103,10 @@ export function reduce (f, z, a) {
   return r
 }
 
-// replace :: a -> Int -> [a]
-// replace element at index
-export function replace (x, i, a) { // eslint-disable-line complexity
+/**
+ * replace element at index
+ */
+export function replace <A> (x: A, i: number, a: A[]): A[] { // eslint-disable-line complexity
   if (i < 0) {
     throw new TypeError('i must be >= 0')
   }
@@ -109,9 +119,11 @@ export function replace (x, i, a) { // eslint-disable-line complexity
   return b
 }
 
-// remove :: Int -> [a] -> [a]
-// remove element at index
-export function remove (i, a) { // eslint-disable-line complexity
+/**
+ * remove element at index
+ * @throws
+ */
+export function remove <A> (i: number, a: A[]): A[] { // eslint-disable-line complexity
   if (i < 0) {
     throw new TypeError('i must be >= 0')
   }
@@ -128,9 +140,10 @@ export function remove (i, a) { // eslint-disable-line complexity
   return unsafeRemove(i, a, l - 1)
 }
 
-// unsafeRemove :: Int -> [a] -> Int -> [a]
-// Internal helper to remove element at index
-function unsafeRemove (i, a, l) {
+/**
+ * Internal helper to remove element at index
+ */
+function unsafeRemove <A> (i: number, a: A[], l: number): A[] {
   const b = new Array(l)
   let j
   for (j = 0; j < i; ++j) {
@@ -143,10 +156,11 @@ function unsafeRemove (i, a, l) {
   return b
 }
 
-// removeAll :: (a -> boolean) -> [a] -> [a]
-// remove all elements matching a predicate
-// @deprecated
-export function removeAll (f, a) {
+/**
+ * remove all elements matching a predicate
+ * @deprecated
+ */
+export function removeAll <A> (f: (a: A) => boolean, a: A[]): A[] {
   const l = a.length
   const b = new Array(l)
   let j = 0
@@ -162,9 +176,10 @@ export function removeAll (f, a) {
   return b
 }
 
-// findIndex :: a -> [a] -> Int
-// find index of x in a, from the left
-export function findIndex (x, a) {
+/**
+ * find index of x in a, from the left
+ */
+export function findIndex <A> (x: A, a: A[]): number {
   for (let i = 0, l = a.length; i < l; ++i) {
     if (x === a[i]) {
       return i
@@ -173,8 +188,9 @@ export function findIndex (x, a) {
   return -1
 }
 
-// isArrayLike :: * -> boolean
-// Return true iff x is array-like
-export function isArrayLike (x) {
+/**
+ * Return true iff x is array-like
+ */
+export function isArrayLike (x: any) {
   return x != null && typeof x.length === 'number' && typeof x !== 'function'
 }
