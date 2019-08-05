@@ -1,25 +1,28 @@
 import { describe, it } from 'mocha'
 import { eq, assert, throws } from '@briancavalier/assert'
-import { spy } from 'sinon'
+import { spy, SinonSpy } from 'sinon' // eslint-disable-line no-unused-vars
 import { disposeNone, isDisposeNone } from '../src/disposeNone'
 import { disposeAll, disposeBoth, DisposeAllError } from '../src/disposeAll'
 
 const noop = () => {}
 
-const disposableSpy = f => ({
+interface DisposableSpy {
+  dispose: SinonSpy
+}
+const disposableSpy = (f: Function): DisposableSpy => ({
   dispose: spy(f)
 })
 
 const disposableSpies = () =>
   [disposableSpy(noop), disposableSpy(noop), disposableSpy(noop)]
 
-const rethrow = e => () => {
+const rethrow = (e: Error) => (): void => {
   throw e
 }
 
-const assertDisposed = disposable => assert(disposable.dispose.calledOnce)
+const assertDisposed = (disposable: DisposableSpy): boolean => assert(disposable.dispose.calledOnce)
 
-const assertAllDisposed = disposables =>
+const assertAllDisposed = (disposables: DisposableSpy[]): void =>
   disposables.forEach(assertDisposed)
 
 describe('disposeAll', () => {
@@ -40,7 +43,7 @@ describe('disposeAll', () => {
       const d2 = disposableSpies()
 
       const d = disposeAll([disposeAll(d1), disposeAll(d2)])
-      eq(d1.length + d2.length, d.disposables.length)
+      eq(d1.length + d2.length, (d as any)['disposables'].length)
 
       d.dispose()
       assertAllDisposed(d1.concat(d2))
@@ -57,7 +60,7 @@ describe('disposeAll', () => {
       const error = throws(() => disposeAll(disposables).dispose())
 
       assert(error instanceof DisposeAllError)
-      eq(error.errors, errors)
+      eq((error as DisposeAllError).errors, errors)
     })
   })
 
@@ -78,7 +81,7 @@ describe('disposeAll', () => {
       const error = throws(() => d.dispose())
 
       assert(error instanceof DisposeAllError)
-      eq(errors, error.errors)
+      eq(errors, (error as DisposeAllError).errors)
     })
 
     it('should dispose both and aggregate left error', function () {
@@ -88,7 +91,7 @@ describe('disposeAll', () => {
       const error = throws(() => d.dispose())
 
       assert(error instanceof DisposeAllError)
-      eq([e], error.errors)
+      eq([e], (error as DisposeAllError).errors)
     })
 
     it('should dispose both and aggregate right error', function () {
@@ -98,7 +101,7 @@ describe('disposeAll', () => {
       const error = throws(() => d.dispose())
 
       assert(error instanceof DisposeAllError)
-      eq([e], error.errors)
+      eq([e], (error as DisposeAllError).errors)
     })
   })
 })
