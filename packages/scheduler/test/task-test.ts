@@ -1,4 +1,3 @@
-// @flow
 import { describe, it } from 'mocha'
 import { is, throws } from '@briancavalier/assert'
 
@@ -10,7 +9,7 @@ describe('task', () => {
       const expected = {}
       const task = {
         run: () => expected,
-        error: e => { throw e }
+        error: (e: Error) => { throw e }
       }
 
       is(expected, runTask(task))
@@ -20,7 +19,7 @@ describe('task', () => {
       const expected = new Error()
       const task = {
         run: () => { throw expected },
-        error: e => e
+        error: (e: Error) => e
       }
 
       is(expected, runTask(task))
@@ -30,7 +29,7 @@ describe('task', () => {
       const expected = new Error()
       const task = {
         run: () => { throw new Error() },
-        error: e => { throw expected }
+        error: (_e: Error) => { throw expected }
       }
 
       is(expected, throws(() => runTask(task)))

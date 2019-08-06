@@ -12,3 +12,4 @@ docs/_static
 docs/_templates
 lerna-debug.log
 npm-debug.log
+.rpt2_cache/

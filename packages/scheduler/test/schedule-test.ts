@@ -1,10 +1,10 @@
-// @flow
 import { describe, it } from 'mocha'
 import { eq, is, assert } from '@briancavalier/assert'
 import FakeScheduler from './helper/FakeScheduler'
 import { noopTask } from './helper/FakeTask'
 
 import { asap, cancelAllTasks, cancelTask, currentTime, delay, periodic } from '../src/schedule'
+import ScheduledTaskImpl from '../src/ScheduledTask' // eslint-disable-line no-unused-vars
 
 describe('schedule', () => {
   describe('currentTime', () => {
@@ -22,7 +22,7 @@ describe('schedule', () => {
       const scheduler = new FakeScheduler(time)
       const task = noopTask()
 
-      const st = asap(task, scheduler)
+      const st = asap(task, scheduler) as ScheduledTaskImpl
 
       eq(currentTime(scheduler), st.time)
       eq(0, st.localOffset)
@@ -40,7 +40,7 @@ describe('schedule', () => {
       const task = noopTask()
       const dt = Math.random()
 
-      const st = delay(dt, task, scheduler)
+      const st = delay(dt, task, scheduler) as ScheduledTaskImpl
 
       eq(currentTime(scheduler) + dt, st.time)
       eq(0, st.localOffset)
@@ -58,7 +58,7 @@ describe('schedule', () => {
       const task = noopTask()
       const period = Math.random()
 
-      const st = periodic(period, task, scheduler)
+      const st = periodic(period, task, scheduler) as ScheduledTaskImpl
 
       eq(currentTime(scheduler), st.time)
       eq(0, st.localOffset)
@@ -74,7 +74,7 @@ describe('schedule', () => {
       const scheduler = new FakeScheduler(Math.random())
       const task = noopTask()
 
-      const st = asap(task, scheduler)
+      const st = asap(task, scheduler) as ScheduledTaskImpl
 
       cancelTask(st)
 
@@ -90,9 +90,9 @@ describe('schedule', () => {
       const t2 = noopTask()
       const t3 = noopTask()
 
-      const st1 = asap(t1, scheduler)
-      const st2 = asap(t2, scheduler)
-      const st3 = asap(t3, scheduler)
+      const st1 = asap(t1, scheduler) as ScheduledTaskImpl
+      const st2 = asap(t2, scheduler) as ScheduledTaskImpl
+      const st3 = asap(t3, scheduler) as ScheduledTaskImpl
 
       cancelAllTasks(st => st === st1 || st === st3, scheduler)
 

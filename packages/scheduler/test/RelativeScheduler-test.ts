@@ -1,10 +1,10 @@
-// @flow
 import { describe, it } from 'mocha'
 import { eq, is, assert } from '@briancavalier/assert'
 import FakeScheduler from './helper/FakeScheduler'
 import { noopTask } from './helper/FakeTask'
 
 import RelativeScheduler from '../src/RelativeScheduler'
+import ScheduledTaskImpl from '../src/ScheduledTask' // eslint-disable-line no-unused-vars
 
 describe('RelativeScheduler', () => {
   describe('now', () => {
@@ -32,7 +32,7 @@ describe('RelativeScheduler', () => {
       const period = Math.random()
       const task = noopTask()
 
-      const st = rs.scheduleTask(localOffset, delay, period, task)
+      const st = rs.scheduleTask(localOffset, delay, period, task) as ScheduledTaskImpl
 
       eq(time + delay, st.time)
       eq(localOffset + origin, st.localOffset)
@@ -53,7 +53,7 @@ describe('RelativeScheduler', () => {
 
       const origin2 = Math.random()
 
-      const rs2 = rs1.relative(origin2)
+      const rs2 = rs1.relative(origin2) as RelativeScheduler
 
       eq(origin1 + origin2, rs2.origin)
     })
@@ -72,7 +72,7 @@ describe('RelativeScheduler', () => {
       const period = Math.random()
       const task = noopTask()
 
-      const st = rs.scheduleTask(localOffset, delay, period, task)
+      const st = rs.scheduleTask(localOffset, delay, period, task) as ScheduledTaskImpl
 
       assert(st.active)
 
@@ -95,7 +95,7 @@ describe('RelativeScheduler', () => {
       const period = Math.random()
       const task = noopTask()
 
-      const st = rs.scheduleTask(localOffset, delay, period, task)
+      const st = rs.scheduleTask(localOffset, delay, period, task) as ScheduledTaskImpl
 
       assert(st.active)
 

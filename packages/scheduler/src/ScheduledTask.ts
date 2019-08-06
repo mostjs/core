@@ -1,7 +1,21 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
+import { ScheduledTask, Time, Task, Scheduler } from '@most/types' // eslint-disable-line no-unused-vars
 
-export default class ScheduledTask {
-  constructor (time, localOffset, period, task, scheduler) {
+export default class ScheduledTaskImpl implements ScheduledTask {
+  /**
+   * @mutable
+   */
+  time: Time;
+  readonly localOffset: Time;
+  readonly period: Time;
+  readonly task: Task;
+  readonly scheduler: Scheduler;
+  /**
+   * @mutable
+   */
+  active: boolean;
+
+  constructor (time: Time, localOffset: Time, period: Time, task: Task, scheduler: Scheduler) {
     this.time = time
     this.localOffset = localOffset
     this.period = period
@@ -14,7 +28,7 @@ export default class ScheduledTask {
     return this.task.run(this.time - this.localOffset)
   }
 
-  error (e) {
+  error (e: Error) {
     return this.task.error(this.time - this.localOffset, e)
   }
 

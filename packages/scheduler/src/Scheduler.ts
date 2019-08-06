@@ -1,38 +1,42 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 
-import ScheduledTask from './ScheduledTask'
+import ScheduledTaskImpl from './ScheduledTask'
 import RelativeScheduler from './RelativeScheduler'
 import { runTask } from './task'
+import { Scheduler, Time, Timer, Timeline, Task, ScheduledTask } from '@most/types' // eslint-disable-line no-unused-vars
 
-export default class Scheduler {
-  constructor (timer, timeline) {
+export default class SchedulerImpl implements Scheduler {
+  private readonly timer: Timer
+  private readonly timeline: Timeline
+  private _timer: Time | null
+  private _nextArrival: Time;
+
+  constructor (timer: Timer, timeline: Timeline) {
     this.timer = timer
     this.timeline = timeline
 
     this._timer = null
     this._nextArrival = Infinity
-
-    this._runReadyTasksBound = () => this._runReadyTasks(this.currentTime())
   }
 
-  currentTime () {
+  currentTime (): Time {
     return this.timer.now()
   }
 
-  scheduleTask (localOffset, delay, period, task) {
+  scheduleTask (localOffset: Time, delay: Time, period: Time, task: Task): ScheduledTaskImpl {
     const time = this.currentTime() + Math.max(0, delay)
-    const st = new ScheduledTask(time, localOffset, period, task, this)
+    const st = new ScheduledTaskImpl(time, localOffset, period, task, this)
 
     this.timeline.add(st)
     this._scheduleNextRun()
     return st
   }
 
-  relative (offset) {
+  relative (offset: Time): Scheduler {
     return new RelativeScheduler(offset, this)
   }
 
-  cancel (task) {
+  cancel (task: ScheduledTaskImpl): void {
     task.active = false
     if (this.timeline.remove(task)) {
       this._reschedule()
@@ -40,25 +44,25 @@ export default class Scheduler {
   }
 
   // @deprecated
-  cancelAll (f) {
+  cancelAll (f: (task: ScheduledTask) => boolean): void {
     this.timeline.removeAll(f)
     this._reschedule()
   }
 
-  _reschedule () {
+  _reschedule (): void {
     if (this.timeline.isEmpty()) {
       this._unschedule()
     } else {
-      this._scheduleNextRun(this.currentTime())
+      this._scheduleNextRun()
     }
   }
 
-  _unschedule () {
+  _unschedule (): void {
     this.timer.clearTimer(this._timer)
     this._timer = null
   }
 
-  _scheduleNextRun () { // eslint-disable-line complexity
+  _scheduleNextRun (): void { // eslint-disable-line complexity
     if (this.timeline.isEmpty()) {
       return
     }
@@ -73,15 +77,17 @@ export default class Scheduler {
     }
   }
 
-  _scheduleNextArrival (nextArrival) {
+  _scheduleNextArrival (nextArrival: Time): void {
     this._nextArrival = nextArrival
     const delay = Math.max(0, nextArrival - this.currentTime())
     this._timer = this.timer.setTimer(this._runReadyTasksBound, delay)
   }
 
-  _runReadyTasks () {
+  _runReadyTasks (): void {
     this._timer = null
     this.timeline.runTasks(this.currentTime(), runTask)
     this._scheduleNextRun()
   }
+
+  private _runReadyTasksBound = () => this._runReadyTasks()
 }

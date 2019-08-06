@@ -1,8 +1,12 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 
 import { findIndex, removeAll } from '@most/prelude'
+import { Time, Timeline } from '@most/types' // eslint-disable-line no-unused-vars
+import ScheduledTaskImpl from './ScheduledTask' // eslint-disable-line no-unused-vars
 
-export default class Timeline {
+export default class TimelineImpl implements Timeline {
+  private tasks: TimeSlot[];
+
   constructor () {
     this.tasks = []
   }
@@ -15,11 +19,11 @@ export default class Timeline {
     return this.tasks.length === 0
   }
 
-  add (st) {
+  add (st: ScheduledTaskImpl) {
     insertByTime(st, this.tasks)
   }
 
-  remove (st) {
+  remove (st: ScheduledTaskImpl) {
     const i = binarySearch(getTime(st), this.tasks)
 
     if (i >= 0 && i < this.tasks.length) {
@@ -37,14 +41,16 @@ export default class Timeline {
     return false
   }
 
-  // @deprecated
-  removeAll (f) {
+  /**
+   * @deprecated
+   */
+  removeAll (f: (task: ScheduledTaskImpl) => boolean) {
     for (let i = 0; i < this.tasks.length; ++i) {
       removeAllFrom(f, this.tasks[i])
     }
   }
 
-  runTasks (t, runTask) {
+  runTasks (t: Time, runTask: (task: ScheduledTaskImpl) => void) {
     const tasks = this.tasks
     const l = tasks.length
     let i = 0
@@ -62,7 +68,7 @@ export default class Timeline {
   }
 }
 
-function runReadyTasks (runTask, events, tasks) { // eslint-disable-line complexity
+function runReadyTasks (runTask: (task: ScheduledTaskImpl) => void, events: ScheduledTaskImpl[], tasks: TimeSlot[]) { // eslint-disable-line complexity
   for (let i = 0; i < events.length; ++i) {
     const task = events[i]
 
@@ -81,7 +87,7 @@ function runReadyTasks (runTask, events, tasks) { // eslint-disable-line complex
   return tasks
 }
 
-function insertByTime (task, timeslots) {
+function insertByTime (task: ScheduledTaskImpl, timeslots: TimeSlot[]): void {
   const l = timeslots.length
   const time = getTime(task)
 
@@ -99,16 +105,16 @@ function insertByTime (task, timeslots) {
   }
 }
 
-function insertAtTimeslot (task, timeslots, time, i) {
+function insertAtTimeslot (task: ScheduledTaskImpl, timeslots: TimeSlot[], time: Time, i: number) {
   const timeslot = timeslots[i]
   if (time === timeslot.time) {
-    addEvent(task, timeslot.events, time)
+    addEvent(task, timeslot.events)
   } else {
     timeslots.splice(i, 0, newTimeslot(time, [task]))
   }
 }
 
-function addEvent (task, events) {
+function addEvent (task: ScheduledTaskImpl, events: ScheduledTaskImpl[]) {
   if (events.length === 0 || task.time >= events[events.length - 1].time) {
     events.push(task)
   } else {
@@ -116,7 +122,7 @@ function addEvent (task, events) {
   }
 }
 
-function spliceEvent (task, events) {
+function spliceEvent (task: ScheduledTaskImpl, events: ScheduledTaskImpl[]) {
   for (let j = 0; j < events.length; j++) {
     if (task.time < events[j].time) {
       events.splice(j, 0, task)
@@ -125,16 +131,16 @@ function spliceEvent (task, events) {
   }
 }
 
-function getTime (scheduledTask) {
+function getTime (scheduledTask: ScheduledTaskImpl): Time {
   return Math.floor(scheduledTask.time)
 }
 
 // @deprecated
-function removeAllFrom (f, timeslot) {
+function removeAllFrom (f: (task: ScheduledTaskImpl) => boolean, timeslot: TimeSlot) {
   timeslot.events = removeAll(f, timeslot.events)
 }
 
-function binarySearch (t, sortedArray) { // eslint-disable-line complexity
+function binarySearch (t: Time, sortedArray: TimeSlot[]): number { // eslint-disable-line complexity
   let lo = 0
   let hi = sortedArray.length
   let mid, y
@@ -154,4 +160,8 @@ function binarySearch (t, sortedArray) { // eslint-disable-line complexity
   return hi
 }
 
-const newTimeslot = (t, events) => ({ time: t, events: events })
+interface TimeSlot {
+  time: Time;
+  events: ScheduledTaskImpl[]
+}
+const newTimeslot = (t: Time, events: ScheduledTaskImpl[]): TimeSlot => ({ time: t, events: events })

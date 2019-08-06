@@ -32,10 +32,10 @@ describe('clock', () => {
 
   describe('HRTimeClock', () => {
     it('should be relative to origin time and clock', () => {
-      const origin = [10, 100000000]
+      const origin: [number, number] = [10, 100000000]
       const hrt = [12, 137000000]
 
-      const hrtime = ([millis, nanos]) =>
+      const hrtime = ([millis, nanos]: [number, number]): [number, number] =>
         [hrt[0] - millis, hrt[1] - nanos]
 
       const c = new HRTimeClock(hrtime, origin)
