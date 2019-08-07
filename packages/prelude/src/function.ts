@@ -8,8 +8,8 @@ export const apply = <A, B>(f: (a: A) => B, x: A): B => f(x)
 
 export interface Curried2<A, B, C> {
   (): Curried2<A, B, C>
-  (a: A): (b: B) => C
   (a: A, b: B): C
+  (a: A): (b: B) => C
 }
 
 export function curry2 <A, B, C> (f: (a: A, b: B) => C): Curried2<A, B, C> {

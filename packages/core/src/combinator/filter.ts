@@ -1,0 +1,78 @@
+/** @license MIT License (c) copyright 2010-2016 original author or authors */
+/** @author Brian Cavalier */
+/** @author John Hann */
+
+import Pipe from '../sink/Pipe'
+import Filter from '../fusion/Filter'
+import { empty, isCanonicalEmpty } from '../source/empty'
+import { Stream, Sink, Scheduler, Time } from '@most/types' // eslint-disable-line no-unused-vars
+
+/**
+ * Retain only items matching a predicate
+ * @param p filtering predicate called for each item
+ * @param stream stream to filter
+ * @returns stream containing only items for which predicate returns truthy
+ */
+export function filter<A, B extends A>(p: (a: A) => a is B, stream: Stream<A>): Stream<B> // eslint-disable-line import/export
+export function filter<A>(p: (a: A) => boolean, stream: Stream<A>): Stream<A> // eslint-disable-line import/export
+export function filter<A> (p: (a: A) => boolean, stream: Stream<A>): Stream<A> { // eslint-disable-line import/export
+  return Filter.create(p, stream)
+}
+
+/**
+ * Skip repeated events, using === to detect duplicates
+ * @param stream stream from which to omit repeated events
+ * @returns stream without repeated events
+ */
+export const skipRepeats = <A>(stream: Stream<A>): Stream<A> =>
+  skipRepeatsWith(same, stream)
+
+/**
+ * Skip repeated events using the provided equals function to detect duplicates
+ * @param equals optional function to compare items
+ * @param stream stream from which to omit repeated events
+ * @returns stream without repeated events
+ */
+export const skipRepeatsWith = <A>(equals: (a1: A, a2: A) => boolean, stream: Stream<A>): Stream<A> =>
+  isCanonicalEmpty(stream) ? empty()
+    : new SkipRepeats(equals, stream)
+
+class SkipRepeats<A> {
+  private readonly equals: (a1: A, a2: A) => boolean
+  private readonly source: Stream<A>
+  constructor (equals: (a1: A, a2: A) => boolean, source: Stream<A>) {
+    this.equals = equals
+    this.source = source
+  }
+
+  run (sink: Sink<A>, scheduler: Scheduler) {
+    return this.source.run(new SkipRepeatsSink(this.equals, sink), scheduler)
+  }
+}
+
+class SkipRepeatsSink<A> extends Pipe<A> {
+  private readonly equals: (a1: A, a2: A) => boolean
+  private value?: A;
+  private init: boolean;
+  constructor (equals: (a1: A, a2: A) => boolean, sink: Sink<A>) {
+    super(sink)
+    this.equals = equals
+    this.value = void 0
+    this.init = true
+  }
+
+  event (t: Time, x: A) {
+    if (this.init) {
+      this.init = false
+      this.value = x
+      this.sink.event(t, x)
+    } else if (!this.equals(this.value as A, x)) {
+      this.value = x
+      this.sink.event(t, x)
+    }
+  }
+}
+
+function same <A> (a: A, b: A) {
+  return a === b
+}

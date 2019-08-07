@@ -15,11 +15,11 @@ export default class ClockTimer implements Timer {
     return this._clock.now()
   }
 
-  setTimer <A>(f: () => A, dt: Time): NodeJS.Timeout | Asap<A> {
+  setTimer <A> (f: () => A, dt: Time): NodeJS.Timeout | Asap<A> {
     return dt <= 0 ? runAsap(f) : setTimeout(f, dt)
   }
 
-  clearTimer <A>(t: number | Asap<A>): void {
+  clearTimer <A> (t: number | Asap<A>): void {
     return t instanceof Asap ? t.cancel() : clearTimeout(t)
   }
 }
@@ -51,7 +51,7 @@ class Asap<A> implements DeferrableTask<never, A | undefined> {
   }
 }
 
-function runAsap <A>(f: () => A): Asap<A> {
+function runAsap <A> (f: () => A): Asap<A> {
   const task = new Asap(f)
   defer(task)
   return task
