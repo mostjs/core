@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import { Stream, Sink, Scheduler, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types' // eslint-disable-line no-unused-vars
 
 export default class FilterMap<A, B> {
   private readonly p: (a: A) => boolean;
@@ -16,7 +16,7 @@ export default class FilterMap<A, B> {
     this.source = source
   }
 
-  run (sink: Sink<B>, scheduler: Scheduler) {
+  run (sink: Sink<B>, scheduler: Scheduler): Disposable {
     return this.source.run(new FilterMapSink(this.p, this.f, sink), scheduler)
   }
 }

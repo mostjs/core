@@ -7,7 +7,7 @@ import Filter from './Filter'
 import FilterMap from './FilterMap'
 import { compose } from '@most/prelude'
 import { isCanonicalEmpty, empty } from '../source/empty'
-import { Stream, Sink, Scheduler, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types' // eslint-disable-line no-unused-vars
 
 export default class Map<A, B> {
   readonly f: (a: A) => B;
@@ -18,7 +18,7 @@ export default class Map<A, B> {
     this.source = source
   }
 
-  run (sink: Sink<B>, scheduler: Scheduler) { // eslint-disable-line no-extend-native
+  run (sink: Sink<B>, scheduler: Scheduler): Disposable { // eslint-disable-line no-extend-native
     return this.source.run(new MapSink(this.f, sink), scheduler)
   }
 

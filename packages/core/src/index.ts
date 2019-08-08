@@ -1,6 +1,6 @@
 /** @license MIT License (c) copyright 2016 original author or authors */
 /* eslint-disable import/first */
-import { curry2, curry3 } from '@most/prelude'
+import { curry2, curry3, Curried2 } from '@most/prelude'
 
 export { empty } from './source/empty'
 export { never } from './source/never'
@@ -377,5 +377,5 @@ interface PropagateEventTask {
   <T>(value: T): (sink: Sink<T>) => PropagateTaskResult<T>;
 }
 export const propagateEventTask: PropagateEventTask = curry2(_propagateEventTask)
-export const propagateErrorTask = curry2(_propagateErrorTask)
+export const propagateErrorTask: Curried2<Error, Sink<unknown>, PropagateTaskResult<any>> = curry2(_propagateErrorTask)
 export { propagateEndTask }

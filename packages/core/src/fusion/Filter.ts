@@ -4,7 +4,7 @@
 
 import Pipe from '../sink/Pipe'
 import { isCanonicalEmpty } from '../source/empty'
-import { Stream, Sink, Scheduler, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types' // eslint-disable-line no-unused-vars
 
 export default class Filter<A> {
   readonly p: (a: A) => boolean
@@ -15,7 +15,7 @@ export default class Filter<A> {
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler) {
+  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(new FilterSink(this.p, sink), scheduler)
   }
 
