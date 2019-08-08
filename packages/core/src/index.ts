@@ -1,6 +1,6 @@
 /** @license MIT License (c) copyright 2016 original author or authors */
 /* eslint-disable import/first */
-import { curry2, curry3, Curried2 } from '@most/prelude'
+import { curry2, curry3, Curried2 } from '@most/prelude' // eslint-disable-line no-unused-vars
 
 export { empty } from './source/empty'
 export { never } from './source/never'
