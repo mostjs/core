@@ -28,7 +28,7 @@ export const recoverWith = <A, E extends Error>(f: (error: E) => Stream<A>, stre
  * @param e error value, preferably an Error or Error subtype
  * @returns new stream containing only an error
  */
-export const throwError = (e: Error) =>
+export const throwError = (e: Error): Stream<never> =>
   new ErrorStream(e)
 
 class ErrorStream {
@@ -38,7 +38,7 @@ class ErrorStream {
     this.value = e
   }
 
-  run (sink: Sink<unknown>, scheduler: Scheduler) {
+  run (sink: Sink<never>, scheduler: Scheduler) {
     return asap(propagateErrorTask(this.value, sink), scheduler)
   }
 }
