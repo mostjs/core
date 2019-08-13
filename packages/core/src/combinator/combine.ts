@@ -68,10 +68,9 @@ class CombineSink<A, B> extends Pipe<B | IndexedValue<A>> {
     this.disposables = disposables
     this.f = f
 
-    const l = length
-    this.awaiting = l
-    this.values = new Array(l)
-    this.hasValue = new Array(l).fill(false)
+    this.awaiting = length
+    this.values = new Array(length)
+    this.hasValue = new Array(length).fill(false)
     this.activeCount = length
   }
 
