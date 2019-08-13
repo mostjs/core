@@ -109,8 +109,3 @@ export default class Queue<A> {
     return newArray
   }
 }
-
-export interface NonEmptyQueue<A> extends Queue<A> {
-  isEmpty(): false
-  shift(): A
-}
