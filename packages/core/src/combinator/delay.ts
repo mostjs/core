@@ -6,7 +6,7 @@ import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
 import { cancelTask, delay as scheduleDelay } from '@most/scheduler'
 import { propagateEndTask, propagateEventTask } from '../scheduler/PropagateTask'
-import { Stream, Sink, Scheduler, Disposable, ScheduledTask, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Disposable, ScheduledTask, Time } from '@most/types'
 
 /**
  * @param delayTime milliseconds to delay each item
@@ -50,7 +50,7 @@ class DelaySink<A> extends Pipe<A> {
     this.tasks.push(scheduleDelay(this.dt, propagateEventTask(x, this.sink), this.scheduler))
   }
 
-  end (_t: Time): void {
+  end (): void {
     this.tasks.push(scheduleDelay(this.dt, propagateEndTask(this.sink), this.scheduler))
   }
 }

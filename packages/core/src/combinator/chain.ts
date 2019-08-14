@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import { mergeConcurrently, mergeMapConcurrently } from './mergeConcurrently'
-import { Stream } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream } from '@most/types'
 
 /**
  * Map each value in the stream to a new stream, and merge it into the

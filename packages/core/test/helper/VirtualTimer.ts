@@ -4,7 +4,9 @@
 
 /* global setTimeout, clearTimeout */
 
-export default class VirtualTimer {
+import { Timer } from '@most/types'
+
+export default class VirtualTimer implements Timer {
   _now = 0
   _targetNow = 0
   _time = Infinity
@@ -14,11 +16,11 @@ export default class VirtualTimer {
   _running = false
   _key = {}
 
-  now () {
+  now (): number {
     return this._now
   }
 
-  setTimer (f: Function, dt: number) {
+  setTimer (f: Function, dt: number): {} {
     if (this._task !== void 0) {
       throw new Error('VirtualTimer: Only supports one in-flight timer')
     }
@@ -31,7 +33,7 @@ export default class VirtualTimer {
     return this._key
   }
 
-  clearTimer (t: unknown) {
+  clearTimer (t: unknown): void {
     if (t !== this._key) {
       return
     }
@@ -41,7 +43,7 @@ export default class VirtualTimer {
     this._task = void 0
   }
 
-  tick (dt: number) {
+  tick (dt: number): void {
     if (dt <= 0) {
       return
     }
@@ -50,11 +52,11 @@ export default class VirtualTimer {
     this._run()
   }
 
-  _step () {
+  _step (): void {
     this._timer = setTimeout(stepTimer, 0, this)
   }
 
-  _run () {
+  _run (): void {
     if (this._running) {
       return
     }
@@ -64,13 +66,13 @@ export default class VirtualTimer {
     this._step()
   }
 
-  _cancel () {
+  _cancel (): void {
     clearTimeout(this._timer)
     this._timer = undefined
   }
 }
 
-function stepTimer (vt: VirtualTimer) {
+function stepTimer (vt: VirtualTimer): void {
   if (vt._now >= vt._targetNow) {
     vt._now = vt._targetNow
     vt._time = Infinity
@@ -78,7 +80,7 @@ function stepTimer (vt: VirtualTimer) {
     return
   }
 
-  var task = vt._task
+  const task = vt._task
   vt._task = void 0
   vt._now = vt._time
   vt._time = Infinity

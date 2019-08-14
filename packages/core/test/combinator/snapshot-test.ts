@@ -10,7 +10,7 @@ import { snapshot, sample } from '../../src/combinator/snapshot'
 
 import { makeEvents, ticks, collectEvents } from '../helper/testEnv'
 
-const rint = (n: number) => Math.ceil(n * Math.random())
+const rint = (n: number): number => Math.ceil(n * Math.random())
 
 describe('snapshot', () => {
   it('given canonical empty sampler, should return canonical empty', () => {

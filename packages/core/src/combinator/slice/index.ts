@@ -1,9 +1,9 @@
 import { empty, isCanonicalEmpty } from '../../source/empty'
-import { boundsFrom, isNilBounds, isInfiniteBounds, mergeBounds, Bounds } from './bounds' // eslint-disable-line no-unused-vars
+import { boundsFrom, isNilBounds, isInfiniteBounds, mergeBounds, Bounds } from './bounds'
 import Map from '../../fusion/Map'
 import Pipe from '../../sink/Pipe'
 import SettableDisposable from '../../disposable/SettableDisposable'
-import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
 
 /**
  * @param n
@@ -49,7 +49,7 @@ const commuteMapSlice = <A, B>(bounds: Bounds, mapStream: Map<A, B>): Stream<B> 
 const fuseSlice = <A>(bounds: Bounds, sliceStream: Slice<A>): Stream<A> =>
   sliceBounds(mergeBounds(sliceStream.bounds, bounds), sliceStream.source)
 
-export class Slice<A> {
+export class Slice<A> implements Stream<A> {
   readonly bounds: Bounds;
   readonly source: Stream<A>;
 
@@ -58,7 +58,7 @@ export class Slice<A> {
     this.bounds = bounds
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler) {
+  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
     const disposable = new SettableDisposable()
     const sliceSink = new SliceSink(this.bounds.min, this.bounds.max - this.bounds.min, sink, disposable)
 
@@ -79,7 +79,7 @@ class SliceSink<A> extends Pipe<A> {
     this.disposable = disposable
   }
 
-  event (t: Time, x: A) {
+  event (t: Time, x: A): void {
     /* eslint complexity: [1, 4] */
     if (this.skip > 0) {
       this.skip -= 1
@@ -112,7 +112,7 @@ class TakeWhile<A> {
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler) {
+  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
     const disposable = new SettableDisposable()
     const takeWhileSink = new TakeWhileSink(this.p, sink, disposable)
 
@@ -134,7 +134,7 @@ class TakeWhileSink<A> extends Pipe<A> {
     this.disposable = disposable
   }
 
-  event (t: Time, x: A) {
+  event (t: Time, x: A): void {
     if (!this.active) {
       return
     }
@@ -155,7 +155,7 @@ export const skipWhile = <A>(p: (a: A) => boolean, stream: Stream<A>): Stream<A>
   isCanonicalEmpty(stream) ? empty()
     : new SkipWhile(p, stream)
 
-class SkipWhile<A> {
+class SkipWhile<A> implements Stream<A> {
   private readonly p: (a: A) => boolean
   private readonly source: Stream<A>
 
@@ -164,7 +164,7 @@ class SkipWhile<A> {
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler) {
+  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(new SkipWhileSink(this.p, sink), scheduler)
   }
 }
@@ -179,7 +179,7 @@ class SkipWhileSink<A> extends Pipe<A> {
     this.skipping = true
   }
 
-  event (t: Time, x: A) {
+  event (t: Time, x: A): void {
     if (this.skipping) {
       const p = this.p
       this.skipping = p(x)
@@ -196,7 +196,7 @@ export const skipAfter = <A>(p: (a: A) => boolean, stream: Stream<A>): Stream<A>
   isCanonicalEmpty(stream) ? empty()
     : new SkipAfter(p, stream)
 
-class SkipAfter<A> {
+class SkipAfter<A> implements Stream<A> {
   private readonly p: (a: A) => boolean
   private readonly source: Stream<A>
 
@@ -205,7 +205,7 @@ class SkipAfter<A> {
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler) {
+  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(new SkipAfterSink(this.p, sink), scheduler)
   }
 }
@@ -220,7 +220,7 @@ class SkipAfterSink<A> extends Pipe<A> {
     this.skipping = false
   }
 
-  event (t: Time, x: A) {
+  event (t: Time, x: A): void {
     if (this.skipping) {
       return
     }

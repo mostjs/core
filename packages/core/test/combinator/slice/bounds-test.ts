@@ -1,14 +1,14 @@
 import { assert, eq } from '@briancavalier/assert'
 import { describe, it } from 'mocha'
 
-import { isInfiniteBounds, isNilBounds, mergeBounds, boundsFrom, Bounds } from '../../../src/combinator/slice/bounds' // eslint-disable-line no-unused-vars
+import { isInfiniteBounds, isNilBounds, mergeBounds, boundsFrom, Bounds } from '../../../src/combinator/slice/bounds'
 
-const rInt = (min = 0, max = Number.MAX_SAFE_INTEGER) =>
+const rInt = (min = 0, max = Number.MAX_SAFE_INTEGER): number =>
   Math.floor(min + (Math.random() * (max - min)))
 
-const rBound = () => rInt(-Number.MAX_SAFE_INTEGER)
+const rBound = (): number => rInt(-Number.MAX_SAFE_INTEGER)
 
-const assertValidBounds = (gen: () => Bounds) => {
+const assertValidBounds = (gen: () => Bounds): void => {
   for (let i = 0; i < 100; ++i) {
     const b = gen()
     assert(b.min >= 0 && b.max >= b.min)

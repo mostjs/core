@@ -6,7 +6,7 @@ import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
 import { join } from './chain'
 import SettableDisposable from '../disposable/SettableDisposable'
-import { Stream, Scheduler, Sink, Disposable, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Scheduler, Sink, Disposable, Time } from '@most/types'
 
 export const until = <A>(signal: Stream<unknown>, stream: Stream<A>): Stream<A> =>
   new Until(signal, stream)
@@ -26,7 +26,7 @@ class Until<A> {
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler) {
+  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
     const disposable = new SettableDisposable()
 
     const d1 = this.source.run(sink, scheduler)
@@ -104,5 +104,5 @@ class UntilSink<A> extends Pipe<A> {
     this.sink.end(t)
   }
 
-  end () {}
+  end (): void {}
 }

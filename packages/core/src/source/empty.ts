@@ -2,7 +2,7 @@
 
 import { propagateEndTask } from '../scheduler/PropagateTask'
 import { asap } from '@most/scheduler'
-import { Stream, Sink, Scheduler } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Disposable } from '@most/types'
 
 export const empty = (): Stream<never> => EMPTY
 
@@ -12,8 +12,8 @@ export const isCanonicalEmpty = (stream: Stream<unknown>): boolean =>
 export const containsCanonicalEmpty = <A>(streams: Stream<A>[]): boolean =>
   streams.some(isCanonicalEmpty)
 
-class Empty {
-  run (sink: Sink<never>, scheduler: Scheduler) {
+class Empty implements Stream<never> {
+  run (sink: Sink<never>, scheduler: Scheduler): Disposable {
     return asap(propagateEndTask(sink), scheduler)
   }
 }

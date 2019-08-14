@@ -1,4 +1,4 @@
-import { Scheduler, Time, Task, ScheduledTask } from '@most/types' // eslint-disable-line no-unused-vars
+import { Scheduler, Time, Task, ScheduledTask } from '@most/types'
 
 export default class RelativeScheduler implements Scheduler {
   readonly origin: Time;

@@ -4,7 +4,7 @@ import Pipe from '../sink/Pipe'
 import Map from '../fusion/Map'
 import { empty, isCanonicalEmpty } from '../source/empty'
 import { delay } from '@most/scheduler'
-import { Stream, Time, Sink, Scheduler, Disposable, ScheduledTask } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Time, Sink, Scheduler, Disposable, ScheduledTask, Task } from '@most/types'
 
 /**
  * Limit the rate of events by suppressing events that occur too often
@@ -23,7 +23,7 @@ const commuteMapThrottle = <A, B>(period: number, mapStream: Map<A, B>): Stream<
 const fuseThrottle = <A>(period: number, throttleStream: Throttle<A>): Stream<A> =>
   new Throttle(Math.max(period, throttleStream.period), throttleStream.source)
 
-export class Throttle<A> {
+export class Throttle<A> implements Stream<A> {
   readonly period: number;
   readonly source: Stream<A>;
 
@@ -39,7 +39,8 @@ export class Throttle<A> {
 
 class ThrottleSink<A> extends Pipe<A> {
   private time: Time
-  private period: number;
+  private readonly period: number;
+
   constructor (period: number, sink: Sink<A>) {
     super(sink)
     this.time = 0
@@ -63,9 +64,9 @@ export const debounce = <A>(period: number, stream: Stream<A>): Stream<A> =>
   isCanonicalEmpty(stream) ? empty()
     : new Debounce(period, stream)
 
-class Debounce<A> {
-  private dt: number;
-  private source: Stream<A>
+class Debounce<A> implements Stream<A> {
+  private readonly dt: number;
+  private readonly source: Stream<A>
 
   constructor (dt: number, source: Stream<A>) {
     this.dt = dt
@@ -77,7 +78,7 @@ class Debounce<A> {
   }
 }
 
-class DebounceSink<A> {
+class DebounceSink<A> implements Sink<A>, Disposable {
   private readonly dt: number;
   private readonly sink: Sink<A>;
   private readonly scheduler: Scheduler
@@ -108,6 +109,7 @@ class DebounceSink<A> {
 
   end (t: Time): void {
     if (this._clearTimer()) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       this.sink.event(t, this.value!)
       this.value = undefined
     }
@@ -124,7 +126,7 @@ class DebounceSink<A> {
     this.disposable.dispose()
   }
 
-  _clearTimer (): boolean {
+  private _clearTimer (): boolean {
     if (this.timer === null) {
       return false
     }
@@ -134,7 +136,7 @@ class DebounceSink<A> {
   }
 }
 
-class DebounceTask<A> {
+class DebounceTask<A> implements Task {
   private readonly debounce: DebounceSink<A>;
   private readonly value: A;
 

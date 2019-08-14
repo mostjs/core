@@ -4,7 +4,7 @@
 
 import { run } from '../../src/run'
 import { newDefaultScheduler } from '@most/scheduler'
-import { Time, Stream } from '@most/types' // eslint-disable-line no-unused-vars
+import { Time, Stream, Sink } from '@most/types'
 
 /**
 * Reduce a stream to produce a single result.  Note that reducing an infinite
@@ -21,7 +21,7 @@ export function reduce <A, B> (f: (b: B, a: A) => B, initial: B, stream: Stream<
   })
 }
 
-class ReduceSink<A, B> {
+class ReduceSink<A, B> implements Sink<A> {
   private readonly f: (b: B, a: A) => B
   private value: B
   private readonly resolve: (b: B) => void
@@ -33,13 +33,13 @@ class ReduceSink<A, B> {
     this.resolve = resolve
     this.reject = reject
   }
-  event (_t: Time, x: A) {
+  event (_t: Time, x: A): void {
     this.value = this.f(this.value, x)
   }
-  error (_t: Time, e: Error) {
+  error (_t: Time, e: Error): void {
     this.reject(e)
   }
-  end (_t: Time) {
+  end (): void {
     this.resolve(this.value)
   }
 }

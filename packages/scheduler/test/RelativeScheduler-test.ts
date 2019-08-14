@@ -4,7 +4,7 @@ import FakeScheduler from './helper/FakeScheduler'
 import { noopTask } from './helper/FakeTask'
 
 import RelativeScheduler from '../src/RelativeScheduler'
-import ScheduledTaskImpl from '../src/ScheduledTask' // eslint-disable-line no-unused-vars
+import ScheduledTaskImpl from '../src/ScheduledTask'
 
 describe('RelativeScheduler', () => {
   describe('now', () => {

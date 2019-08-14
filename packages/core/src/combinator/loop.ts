@@ -2,9 +2,9 @@
 
 import Pipe from '../sink/Pipe'
 import { empty, isCanonicalEmpty } from '../source/empty'
-import { Stream, Sink, Scheduler, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types'
 
-export type SeedValue<S, V> = { seed: S, value: V };
+export interface SeedValue<S, V> { seed: S, value: V }
 
 /**
  * Generalized feedback loop. Call a stepper function for each event. The stepper
@@ -21,7 +21,7 @@ export const loop = <A, B, S>(stepper: (seed: S, a: A) => SeedValue<S, B>, seed:
   isCanonicalEmpty(stream) ? empty()
     : new Loop(stepper, seed, stream)
 
-class Loop<A, B, S> {
+class Loop<A, B, S> implements Stream<B> {
   private readonly step: (seed: S, a: A) => SeedValue<S, B>
   private readonly seed: S;
   private readonly source: Stream<A>
@@ -32,7 +32,7 @@ class Loop<A, B, S> {
     this.source = source
   }
 
-  run (sink: Sink<B>, scheduler: Scheduler) {
+  run (sink: Sink<B>, scheduler: Scheduler): Disposable {
     return this.source.run(new LoopSink(this.step, this.seed, sink), scheduler)
   }
 }
@@ -46,7 +46,7 @@ class LoopSink<A, B, S> extends Pipe<A | B> {
     this.seed = seed
   }
 
-  event (t: Time, x: A) {
+  event (t: Time, x: A): void {
     const result = this.step(this.seed, x)
     this.seed = result.seed
     this.sink.event(t, result.value)

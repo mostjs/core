@@ -5,7 +5,7 @@ import { periodic } from '../../src/source/periodic'
 import { take } from '../../src/combinator/slice'
 
 import { collectEventsFor } from '../helper/testEnv'
-import { Event } from '../../src/sink/DeferredSink' // eslint-disable-line no-unused-vars
+import { Event } from '../../src/sink/DeferredSink'
 
 describe('periodic', function () {
   it('should emit value at tick periods', function () {

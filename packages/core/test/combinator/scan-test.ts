@@ -12,7 +12,7 @@ const sentinel = { value: 'sentinel' }
 
 describe('scan', function () {
   it('should yield incremental accumulated values', function () {
-    let a = ['a', 'b', 'c', 'd']
+    const a = ['a', 'b', 'c', 'd']
     const s = scan((s, x) => s + x, '', makeEventsFromArray(1, a))
 
     const expected = [

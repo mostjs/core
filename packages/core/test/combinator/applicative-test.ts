@@ -30,14 +30,14 @@ describe('ap', function () {
 
   it('should satisfy homomorphism', function () {
     // P.of(f).ap(P.of(x)) ~= P.of(f(x)) (homomorphism)
-    const f = (x: string) => x + 'f'
+    const f = (x: string): string => x + 'f'
     const x = 'x'
     return assertSame(ap(now(f), now(x)), now(f(x)))
   })
 
   it('should satisfy interchange', function () {
     // u.ap(a.of(y)) ~= a.of(function(f) { return f(y); }).ap(u)
-    const f = (x: string) => x + 'f'
+    const f = (x: string): string => x + 'f'
 
     const u = now(f)
     const y = 'y'

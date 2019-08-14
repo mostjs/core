@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import fatal from '../fatalError'
-import { Sink, Time, Task } from '@most/types' // eslint-disable-line no-unused-vars
+import { Sink, Time, Task } from '@most/types'
 
 export type PropagateTaskRun<A, B = A> =
   (time: number, value: A, sink: Sink<B>) => any

@@ -3,13 +3,13 @@
 import { map } from './transform'
 import { empty, containsCanonicalEmpty } from '../source/empty'
 import Pipe from '../sink/Pipe'
-import IndexSink, { IndexedValue } from '../sink/IndexSink' // eslint-disable-line no-unused-vars
+import IndexSink, { IndexedValue } from '../sink/IndexSink'
 import { disposeAll } from '@most/disposable'
 import { map as mapArray } from '@most/prelude'
 import invoke from '../invoke'
 import Queue from '../Queue'
-import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types' // eslint-disable-line no-unused-vars
-import { ToStreamsArray } from './variadic' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
+import { ToStreamsArray } from './variadic'
 
 interface NonEmptyQueue<A> extends Queue<A> {
   shift(): A
@@ -79,7 +79,7 @@ class ZipSink<A, R> extends Pipe<R | IndexedValue<A>> {
     this.buffers = buffers
   }
 
-  event (t: Time, indexedValue: IndexedValue<A>) {
+  event (t: Time, indexedValue: IndexedValue<A>): void {
     /* eslint complexity: [1, 5] */
     if (!indexedValue.active) {
       this._dispose(t, indexedValue.index)

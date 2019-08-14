@@ -1,5 +1,5 @@
 import { disposeWith, disposeBoth } from '@most/disposable'
-import { Stream, Disposable, Scheduler, Sink } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Disposable, Scheduler, Sink } from '@most/types'
 
 export default class FakeDisposeStream<A> {
   private readonly source: Stream<A>

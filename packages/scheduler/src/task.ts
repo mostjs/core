@@ -1,8 +1,8 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 
 export interface DeferrableTask<E, A> {
-  run(): A;
-  error(e: Error): E;
+  run(): A
+  error(e: Error): E
 }
 
 export const defer = <E, A>(task: DeferrableTask<E, A>): Promise<E | A> =>

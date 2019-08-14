@@ -8,10 +8,15 @@ import VirtualTimer from './VirtualTimer'
 import { runEffects } from '../../src/runEffects'
 import { tap } from '../../src/combinator/transform'
 import { disposeWith, disposeNone } from '@most/disposable'
-import { Stream, Scheduler, Disposable, ScheduledTask, Time, Sink } from '@most/types' // eslint-disable-line no-unused-vars
-import { Event } from '../../src/sink/DeferredSink' // eslint-disable-line no-unused-vars
+import { Stream, Scheduler, Disposable, ScheduledTask, Time, Sink } from '@most/types'
+import { Event } from '../../src/sink/DeferredSink'
 
-export function newEnv () {
+export interface Env {
+  tick(n: number): void
+  scheduler: Scheduler
+}
+
+export function newEnv (): Env {
   const timer = new VirtualTimer()
   return { tick: (n: number) => timer.tick(n), scheduler: newScheduler(timer, newTimeline()) }
 }

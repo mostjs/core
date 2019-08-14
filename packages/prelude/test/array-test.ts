@@ -7,7 +7,7 @@ import { cons, append, drop, tail, copy,
   map, reduce, remove, removeAll, replace, findIndex,
   isArrayLike } from '../src/array'
 
-const rint = (n: number) => (Math.floor(Math.random() * n))
+const rint = (n: number): number => Math.floor(Math.random() * n)
 const same = <A>(a: A[], b: A[]): boolean => a.length === b.length && _same(a, b, a.length - 1)
 const _same = <A>(a: A[], b: A[], i: number): boolean => i < 0 ? true : a[i] === b[i] && _same(a, b, i - 1)
 
@@ -113,9 +113,9 @@ describe('map', () => {
 
   it('map(g, map(f, a)) === map(compose(g, f), a)', () => {
     const a = ['a', 'b', 'c']
-    const f = (x: string) => x + 'f'
-    const g = (x: string) => x + 'g'
-    const h = (x: string) => g(f(x))
+    const f = (x: string): string => x + 'f'
+    const g = (x: string): string => x + 'g'
+    const h = (x: string): string => g(f(x))
 
     assertSame(map(g, map(f, a)), map(h, a))
   })

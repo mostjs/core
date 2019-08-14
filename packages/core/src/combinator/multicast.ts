@@ -2,24 +2,24 @@ import { append, findIndex, remove } from '@most/prelude'
 import { disposeNone, disposeOnce } from '@most/disposable'
 import { tryEnd, tryEvent } from '../source/tryEvent'
 import { isCanonicalEmpty } from '../source/empty'
-import { Stream, Scheduler, Sink, Disposable, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Scheduler, Sink, Disposable, Time } from '@most/types'
 
 export const multicast = <A>(stream: Stream<A>): Stream<A> =>
   stream instanceof Multicast || isCanonicalEmpty(stream)
     ? stream
     : new Multicast(stream)
 
-class Multicast<A> {
+class Multicast<A> implements Stream<A> {
   private readonly source: Stream<A>;
   constructor (source: Stream<A>) {
     this.source = new MulticastSource(source)
   }
-  run (sink: Sink<A>, scheduler: Scheduler) {
+  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(sink, scheduler)
   }
 }
 
-export class MulticastSource<A> {
+export class MulticastSource<A> implements Stream<A> {
   private readonly source: Stream<A>;
   private sinks: Sink<A>[];
   private disposable: Disposable;
@@ -84,7 +84,7 @@ export class MulticastSource<A> {
   }
 }
 
-export class MulticastDisposable<A> {
+export class MulticastDisposable<A> implements Disposable {
   private readonly source: MulticastSource<A>
   private readonly sink: Sink<A>
 
@@ -93,7 +93,7 @@ export class MulticastDisposable<A> {
     this.sink = sink
   }
 
-  dispose () {
+  dispose (): void {
     if (this.source.remove(this.sink) === 0) {
       this.source.dispose()
     }

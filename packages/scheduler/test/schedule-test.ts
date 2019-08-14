@@ -4,7 +4,7 @@ import FakeScheduler from './helper/FakeScheduler'
 import { noopTask } from './helper/FakeTask'
 
 import { asap, cancelAllTasks, cancelTask, currentTime, delay, periodic } from '../src/schedule'
-import ScheduledTaskImpl from '../src/ScheduledTask' // eslint-disable-line no-unused-vars
+import ScheduledTaskImpl from '../src/ScheduledTask'
 
 describe('schedule', () => {
   describe('currentTime', () => {

@@ -1,5 +1,5 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
-import { Sink, Scheduler, Stream, Disposable } from '@most/types' // eslint-disable-line no-unused-vars
+import { Sink, Scheduler, Stream, Disposable } from '@most/types'
 
 /**
  * Run a Stream, sending all its events to the provided Sink.

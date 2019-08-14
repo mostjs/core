@@ -12,7 +12,7 @@ import { ticks, collectEventsFor, makeEvents, makeEventsFromArray } from './help
 import FakeDisposeStream from './helper/FakeDisposeStream'
 import { runEffects } from '../src/runEffects'
 import { run } from '../src/run'
-import { Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Sink, Stream } from '@most/types'
 
 describe('switch', () => {
   it('given canonical empty string, should return canonical empty', () => {
@@ -31,8 +31,8 @@ describe('switch', () => {
     // up seeing the same set of events as if we collect all the events
     // that can be observed (i.e. by observe())
     const events: void[] = []
-    const push = (x: void) => events.push(x)
-    const toInner = (x: number) => x === 0
+    const push = (x: void): number => events.push(x)
+    const toInner = (x: number): Stream<void> => x === 0
       ? switchLatest(map(now, tap(push, take(1, periodic(1)))))
       : empty()
 
@@ -97,10 +97,10 @@ describe('switch', () => {
 
       const inner = FakeDisposeStream.from(() => { throw new Error() }, at(1, undefined))
       const s = at(1, inner)
-      const sink = {
+      const sink: Sink<void> = {
         event () {},
-        end (_t: Time) {},
-        error (t: Time, _e: Error) {
+        end () {},
+        error (t) {
           try {
             eq(2, t)
             done()

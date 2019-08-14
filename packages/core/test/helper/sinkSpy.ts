@@ -1,16 +1,16 @@
 'use strict'
 
-import { Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Sink, Time } from '@most/types'
 
-export const sinkSpy = () => new SinkSpy(noop, noop, noop)
+export const sinkSpy = (): SinkSpy<never> => new SinkSpy(noop, noop, noop)
 
-export const eventErrorSinkSpy = (e: Error) => new SinkSpy(() => { throw e }, noop, noop)
+export const eventErrorSinkSpy = (e: Error): SinkSpy<never> => new SinkSpy(() => { throw e }, noop, noop)
 
-export const endErrorSinkSpy = (e: Error) => new SinkSpy(noop, () => { throw e }, noop)
+export const endErrorSinkSpy = (e: Error): SinkSpy<never> => new SinkSpy(noop, () => { throw e }, noop)
 
-const noop = () => {}
+const noop = (): void => {}
 
-class SinkSpy<A> {
+class SinkSpy<A> implements Sink<A> {
   eventCalled = 0
   eventTime = NaN
   eventValue?: A
@@ -29,20 +29,20 @@ class SinkSpy<A> {
     this._error = error
   }
 
-  event (t: Time, x: A) {
+  event (t: Time, x: A): void {
     this.eventCalled += 1
     this.eventTime = t
     this.eventValue = x
     return this._event(t, x)
   }
 
-  end (t: Time) {
+  end (t: Time): void {
     this.endCalled += 1
     this.endTime = t
     return this._end(t)
   }
 
-  error (t: Time, e: Error) {
+  error (t: Time, e: Error): void {
     this.errorCalled += 1
     this.errorTime = t
     this.errorValue = e

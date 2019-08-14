@@ -1,4 +1,4 @@
-import { Sink, Scheduler, Disposable } from '@most/types' // eslint-disable-line no-unused-vars
+import { Sink, Scheduler, Disposable } from '@most/types'
 
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 

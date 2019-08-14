@@ -1,5 +1,5 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
-import { Disposable } from '@most/types' // eslint-disable-line no-unused-vars
+import { Disposable } from '@most/types'
 
 /**
  * Wrap an existing disposable (which may not already have been once()d)
@@ -16,7 +16,7 @@ class DisposeOnce implements Disposable {
     this.disposable = disposable
   }
 
-  dispose () {
+  dispose (): void {
     if (!this.disposed) {
       this.disposed = true
       if (this.disposable) {

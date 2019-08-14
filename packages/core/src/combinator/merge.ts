@@ -3,11 +3,11 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import IndexSink, { IndexedValue } from '../sink/IndexSink' // eslint-disable-line no-unused-vars
+import IndexSink, { IndexedValue } from '../sink/IndexSink'
 import { empty, isCanonicalEmpty } from '../source/empty'
 import { disposeAll, tryDispose } from '@most/disposable'
 import { reduce } from '@most/prelude'
-import { Stream, Time, Disposable, Sink, Scheduler } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Time, Disposable, Sink, Scheduler } from '@most/types'
 
 /**
  * @returns stream containing events from two streams in time order.
@@ -53,14 +53,14 @@ const isNotCanonicalEmpty = <A>(stream: Stream<A>): boolean =>
 const appendSources = <A>(sources: Stream<A>[], stream: Stream<A>): Stream<A>[] =>
   sources.concat(stream instanceof Merge ? stream.sources : stream)
 
-class Merge<A> {
+class Merge<A> implements Stream<A> {
   readonly sources: Stream<A>[];
 
   constructor (sources: Stream<A>[]) {
     this.sources = sources
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler) {
+  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
     const l = this.sources.length
     const disposables: Disposable[] = new Array(l)
     const sinks: Sink<A>[] = new Array(l)
@@ -86,7 +86,7 @@ class MergeSink<A> extends Pipe<A | IndexedValue<A>> {
     this.activeCount = sinks.length
   }
 
-  event (t: Time, indexValue: IndexedValue<A>) {
+  event (t: Time, indexValue: IndexedValue<A>): void {
     if (!indexValue.active) {
       this._dispose(t, indexValue.index)
       return
@@ -94,7 +94,7 @@ class MergeSink<A> extends Pipe<A | IndexedValue<A>> {
     this.sink.event(t, indexValue.value)
   }
 
-  _dispose (t: Time, index: number) {
+  private _dispose (t: Time, index: number): void {
     tryDispose(t, this.disposables[index], this.sink)
     if (--this.activeCount === 0) {
       this.sink.end(t)

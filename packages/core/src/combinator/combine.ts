@@ -3,15 +3,17 @@
 import { map } from './transform'
 import { empty, containsCanonicalEmpty } from '../source/empty'
 import Pipe from '../sink/Pipe'
-import IndexSink, { IndexedValue } from '../sink/IndexSink' // eslint-disable-line no-unused-vars
+import IndexSink, { IndexedValue } from '../sink/IndexSink'
 import { disposeAll, tryDispose } from '@most/disposable'
 import invoke from '../invoke'
-import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types' // eslint-disable-line no-unused-vars
-import { ToStreamsArray } from './variadic' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
+import { ToStreamsArray } from './variadic'
 
 /**
  * Combine latest events from two streams
  * @param f function to combine most recent events
+ * @param stream1
+ * @param stream2
  * @returns stream containing the result of applying f to the most recent
  *  event of each input stream, whenever a new event arrives on any stream.
  */
@@ -39,7 +41,7 @@ class Combine<A, B> {
     this.sources = sources
   }
 
-  run (sink: Sink<B>, scheduler: Scheduler) {
+  run (sink: Sink<B>, scheduler: Scheduler): Disposable {
     const l = this.sources.length
     const disposables = new Array(l)
     const sinks = new Array(l)
@@ -59,7 +61,7 @@ class CombineSink<A, B> extends Pipe<B | IndexedValue<A>> {
   private readonly disposables: Disposable[]
   private readonly f: (...args: A[]) => B
   private awaiting: number
-  private hasValue: boolean[]
+  private readonly hasValue: boolean[]
   private activeCount: number
   private readonly values: A[]
 
@@ -74,7 +76,7 @@ class CombineSink<A, B> extends Pipe<B | IndexedValue<A>> {
     this.activeCount = length
   }
 
-  event (t: Time, indexedValue: IndexedValue<A>) {
+  event (t: Time, indexedValue: IndexedValue<A>): void {
     if (!indexedValue.active) {
       this._dispose(t, indexedValue.index)
       return
@@ -89,7 +91,7 @@ class CombineSink<A, B> extends Pipe<B | IndexedValue<A>> {
     }
   }
 
-  _updateReady (index: number) {
+  _updateReady (index: number): number {
     if (this.awaiting > 0) {
       if (!this.hasValue[index]) {
         this.hasValue[index] = true
@@ -99,7 +101,7 @@ class CombineSink<A, B> extends Pipe<B | IndexedValue<A>> {
     return this.awaiting
   }
 
-  _dispose (t: Time, index: number) {
+  _dispose (t: Time, index: number): void {
     tryDispose(t, this.disposables[index], this.sink)
     if (--this.activeCount === 0) {
       this.sink.end(t)

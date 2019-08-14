@@ -1,9 +1,9 @@
 /** @license MIT License (c) copyright 2010-2016 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
-import { Sink, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Sink, Time } from '@most/types'
 
-export default class SafeSink<A> {
+export default class SafeSink<A> implements Sink<A> {
   private readonly sink: Sink<A>
   active: boolean;
 
@@ -12,14 +12,14 @@ export default class SafeSink<A> {
     this.active = true
   }
 
-  event (t: Time, x: A) {
+  event (t: Time, x: A): void {
     if (!this.active) {
       return
     }
     this.sink.event(t, x)
   }
 
-  end (t: Time) {
+  end (t: Time): void{
     if (!this.active) {
       return
     }
@@ -27,12 +27,12 @@ export default class SafeSink<A> {
     this.sink.end(t)
   }
 
-  error (t: Time, e: Error) {
+  error (t: Time, e: Error): void{
     this.disable()
     this.sink.error(t, e)
   }
 
-  disable () {
+  disable (): Sink<A> {
     this.active = false
     return this.sink
   }

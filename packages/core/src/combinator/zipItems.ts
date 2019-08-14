@@ -3,7 +3,7 @@
 import Pipe from '../sink/Pipe'
 import { empty, isCanonicalEmpty } from '../source/empty'
 import { take } from './slice'
-import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
 
 export const withItems = <A> (items: Array<A>, stream: Stream<unknown>): Stream<A> =>
   zipItems(keepLeft, items, stream)
@@ -13,7 +13,7 @@ export const zipItems = <A, B, C> (f: (a: A, b: B) => C, items: A[], stream: Str
     ? empty()
     : new ZipItems(f, items, take(items.length, stream))
 
-const keepLeft = <A>(a: A, _: unknown): A => a
+const keepLeft = <A>(a: A): A => a
 
 class ZipItems<A, B, C> {
   private readonly f: (a: A, b: B) => C

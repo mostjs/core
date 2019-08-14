@@ -9,7 +9,7 @@ import { empty } from '../../src/source/empty'
 import { periodic } from '../../src/source/periodic'
 
 import { collectEventsFor, makeEvents } from '../helper/testEnv'
-import { Event } from '../../src/sink/DeferredSink' // eslint-disable-line no-unused-vars
+import { Event } from '../../src/sink/DeferredSink'
 
 describe('zipItems', () => {
   describe('zipItems', () => {
@@ -99,7 +99,7 @@ describe('zipItems', () => {
         const s1 = withItems(a1, periodic(t1))
         const s2 = withItems(a2, periodic(t2))
 
-        const add = (x: number, y: number) => x + y
+        const add = (x: number, y: number): number => x + y
 
         const scanned = switchLatest(map(a => scan(add, a, s2), s1))
 

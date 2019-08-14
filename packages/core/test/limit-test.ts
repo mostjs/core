@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import { eq, is, assert } from '@briancavalier/assert'
 import { spy } from 'sinon'
 
-import { debounce, throttle, Throttle } from '../src/combinator/limit' // eslint-disable-line no-unused-vars
+import { debounce, throttle, Throttle } from '../src/combinator/limit'
 import { zip } from '../src/combinator/zip'
 import { startWith } from '../src/combinator/startWith'
 import { delay } from '../src/combinator/delay'

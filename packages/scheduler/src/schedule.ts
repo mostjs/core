@@ -1,5 +1,5 @@
 import { curry2, curry3 } from '@most/prelude'
-import { Scheduler, Time, Task, ScheduledTask } from '@most/types' // eslint-disable-line no-unused-vars
+import { Scheduler, Time, Task, ScheduledTask } from '@most/types'
 
 /**
  * Read the current time from the provided Scheduler

@@ -11,7 +11,7 @@ import { runEffects } from '../../src/runEffects'
 import { sinkSpy } from '../helper/sinkSpy'
 import { spy } from 'sinon'
 import { disposeNone } from '@most/disposable'
-import { Sink } from '@most/types' // eslint-disable-line no-unused-vars
+import { Sink } from '@most/types'
 
 describe('multicast', () => {
   it('should be identity for already-multicasted stream', () => {
@@ -30,7 +30,7 @@ describe('multicast', () => {
     const observer3Spy = spy()
     const scheduler = ticks(1)
 
-    const f = (x: number) => x + 1
+    const f = (x: number): number => x + 1
     const x = Math.random()
     const s = now(x)
 
@@ -164,12 +164,12 @@ describe('MulticastDisposable', () => {
   it('should dispose when sinks reaches zero', () => {
     const expectedSink = sink
     const source = new class extends MulticastSource<unknown> {
-      remove (sink: Sink<unknown>) {
+      remove (sink: Sink<unknown>): 0 {
         eq(expectedSink, sink)
         return 0
       }
 
-      dispose () {}
+      dispose (): void {}
     }(empty())
 
     const disposed = spy(source, 'dispose')
@@ -186,12 +186,12 @@ describe('MulticastDisposable', () => {
   it('should not dispose when sinks > 0', () => {
     const expectedSink = sink
     const source = new class extends MulticastSource<unknown> {
-      remove (sink: Sink<unknown>) {
+      remove (sink: Sink<unknown>): 1 {
         eq(expectedSink, sink)
         return 1
       }
 
-      dispose () {}
+      dispose (): void {}
     }(empty())
 
     const disposed = spy(source, 'dispose')

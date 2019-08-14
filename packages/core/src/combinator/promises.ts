@@ -6,7 +6,7 @@ import fatal from '../fatalError'
 import { now } from '../source/now'
 import { empty, isCanonicalEmpty } from '../source/empty'
 import { currentTime } from '@most/scheduler'
-import { Stream, Sink, Scheduler, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types'
 
 /**
  * Turn a Stream<Promise<T>> into Stream<T> by awaiting each promise.
@@ -18,25 +18,25 @@ export const awaitPromises = <A>(stream: Stream<Promise<A>>): Stream<A> =>
 /**
  * Create a stream containing only the promise's fulfillment
  * value at the time it fulfills.
- * @param p promise
+ * @param promise
  * @return stream containing promise's fulfillment value.
  *  If the promise rejects, the stream will error
  */
 export const fromPromise = <A>(promise: Promise<A>): Stream<A> => awaitPromises(now(promise))
 
-class Await<A> {
+class Await<A> implements Stream<A> {
   private readonly source: Stream<Promise<A>>
 
   constructor (source: Stream<Promise<A>>) {
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler) {
+  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(new AwaitSink(sink, scheduler), scheduler)
   }
 }
 
-class AwaitSink<A> {
+class AwaitSink<A> implements Sink<Promise<A>> {
   private readonly sink: Sink<A>;
   private readonly scheduler: Scheduler;
   private queue: Promise<unknown>;
@@ -52,7 +52,7 @@ class AwaitSink<A> {
       .catch(this._errorBound)
   }
 
-  end (_t: Time): void {
+  end (): void {
     this.queue = this.queue.then(this._endBound)
       .catch(this._errorBound)
   }

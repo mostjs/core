@@ -61,7 +61,7 @@ describe('skipRepeatsWith', function () {
   })
 
   it('should use provided comparator to remove repeated events', function () {
-    const compare = (a: string, b: string) => a.toLowerCase() === b.toLowerCase()
+    const compare = (a: string, b: string): boolean => a.toLowerCase() === b.toLowerCase()
     const a = ['a', 'b', 'B', 'c', 'D', 'd']
     const s = skipRepeatsWith(compare, makeEventsFromArray(1, a))
 

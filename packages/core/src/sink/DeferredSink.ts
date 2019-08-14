@@ -2,15 +2,15 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { defer, DeferrableTask } from '../task' // eslint-disable-line no-unused-vars
-import { Time, Sink } from '@most/types' // eslint-disable-line no-unused-vars
+import { defer, DeferrableTask } from '../task'
+import { Time, Sink } from '@most/types'
 
 export interface Event<A> {
-  time: Time;
-  value: A;
+  time: Time
+  value: A
 }
 
-export default class DeferredSink<A> {
+export default class DeferredSink<A> implements Sink<A> {
   private readonly events: Event<A>[];
   private readonly sink: Sink<A>
   active: boolean;
@@ -21,7 +21,7 @@ export default class DeferredSink<A> {
     this.active = true
   }
 
-  event (t: Time, x: A) {
+  event (t: Time, x: A): void{
     if (!this.active) {
       return
     }
@@ -33,7 +33,7 @@ export default class DeferredSink<A> {
     this.events.push({ time: t, value: x })
   }
 
-  end (t: Time) {
+  end (t: Time): void {
     if (!this.active) {
       return
     }
@@ -41,11 +41,11 @@ export default class DeferredSink<A> {
     this._end(new EndTask(t, this.sink))
   }
 
-  error (t: Time, e: Error) {
+  error (t: Time, e: Error): void {
     this._end(new ErrorTask(t, e, this.sink))
   }
 
-  _end <E, A> (task: DeferrableTask<E, A>) {
+  _end <E, A> (task: DeferrableTask<E, A>): void {
     this.active = false
     defer(task)
   }
@@ -62,7 +62,7 @@ class PropagateAllTask<A> {
     this.time = time
   }
 
-  run () {
+  run (): void {
     const events = this.events
     const sink = this.sink
     let event
@@ -76,7 +76,7 @@ class PropagateAllTask<A> {
     events.length = 0
   }
 
-  error (e: Error) {
+  error (e: Error): void {
     this.sink.error(this.time, e)
   }
 }
@@ -90,11 +90,11 @@ class EndTask {
     this.sink = sink
   }
 
-  run () {
+  run (): void{
     this.sink.end(this.time)
   }
 
-  error (e: Error) {
+  error (e: Error): void {
     this.sink.error(this.time, e)
   }
 }
@@ -110,11 +110,11 @@ class ErrorTask {
     this.sink = sink
   }
 
-  run () {
+  run (): void {
     this.sink.error(this.time, this.value)
   }
 
-  error (e: Error) {
+  error (e: Error): void {
     throw e
   }
 }

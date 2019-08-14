@@ -6,7 +6,7 @@ import Scheduler from './Scheduler'
 import TimelineImpl from './Timeline'
 import ClockTimer from './ClockTimer'
 import { newPlatformClock } from './clock'
-import { Clock, Timer, Timeline } from '@most/types' // eslint-disable-line no-unused-vars
+import { Clock, Timer, Timeline } from '@most/types'
 
 export * from './clock'
 export * from './schedule'

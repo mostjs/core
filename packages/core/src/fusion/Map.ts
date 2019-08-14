@@ -7,7 +7,7 @@ import Filter from './Filter'
 import FilterMap from './FilterMap'
 import { compose } from '@most/prelude'
 import { isCanonicalEmpty, empty } from '../source/empty'
-import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types'
 
 export default class Map<A, B> {
   readonly f: (a: A) => B;
@@ -18,7 +18,7 @@ export default class Map<A, B> {
     this.source = source
   }
 
-  run (sink: Sink<B>, scheduler: Scheduler): Disposable { // eslint-disable-line no-extend-native
+  run (sink: Sink<B>, scheduler: Scheduler): Disposable {
     return this.source.run(new MapSink(this.f, sink), scheduler)
   }
 
@@ -54,7 +54,7 @@ class MapSink<A, B> extends Pipe<A | B> {
     this.f = f
   }
 
-  event (t: Time, x: A) {
+  event (t: Time, x: A): void {
     const f = this.f
     this.sink.event(t, f(x))
   }

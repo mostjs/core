@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Pipe from './Pipe'
-import { Time, Sink } from '@most/types' // eslint-disable-line no-unused-vars
+import { Time, Sink } from '@most/types'
 
 export interface IndexedValue<A> {
   index: number
@@ -23,7 +23,7 @@ export default class IndexSink<A> extends Pipe<A | Readonly<IndexedValue<A | und
     this.value = undefined
   }
 
-  event (t: Time, x: A) {
+  event (t: Time, x: A): void {
     if (!this.active) {
       return
     }
@@ -31,7 +31,7 @@ export default class IndexSink<A> extends Pipe<A | Readonly<IndexedValue<A | und
     this.sink.event(t, this)
   }
 
-  end (t: Time) {
+  end (t: Time): void {
     if (!this.active) {
       return
     }

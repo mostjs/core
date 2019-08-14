@@ -7,7 +7,7 @@ import { delay } from '../../src/combinator/delay'
 import { merge, mergeArray } from '../../src/combinator/merge'
 
 import { makeEventsFromArray, collectEventsFor } from '../helper/testEnv'
-import { Stream } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream } from '@most/types'
 
 describe('merge', function () {
   it('given one canonical empty, should return other stream', () => {
@@ -71,7 +71,7 @@ describe('mergeArray', function () {
   })
 })
 
-function testMerge (merge: (a: Stream<number>, b: Stream<number>) => Stream<number>) {
+function testMerge (merge: (a: Stream<number>, b: Stream<number>) => Stream<number>): Promise<void> {
   const a = [1, 2, 3]
   const b = [4, 5, 6]
   const count = a.length + b.length

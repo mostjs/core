@@ -3,8 +3,8 @@
 /** @author John Hann */
 
 export interface DeferrableTask<E, A> {
-  run(): A;
-  error(e: Error): E;
+  run(): A
+  error(e: Error): E
 }
 
 export function defer <E, A> (task: DeferrableTask<E, A>): Promise<E | A> {

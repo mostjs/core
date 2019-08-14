@@ -1,5 +1,5 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
-import { ScheduledTask, Time, Task, Scheduler } from '@most/types' // eslint-disable-line no-unused-vars
+import { ScheduledTask, Time, Task, Scheduler } from '@most/types'
 
 export default class ScheduledTaskImpl implements ScheduledTask {
   /**
@@ -24,15 +24,15 @@ export default class ScheduledTaskImpl implements ScheduledTask {
     this.active = true
   }
 
-  run () {
+  run (): void {
     return this.task.run(this.time - this.localOffset)
   }
 
-  error (e: Error) {
+  error (e: Error): void {
     return this.task.error(this.time - this.localOffset, e)
   }
 
-  dispose () {
+  dispose (): void {
     this.active = false
     this.scheduler.cancel(this)
     return this.task.dispose()

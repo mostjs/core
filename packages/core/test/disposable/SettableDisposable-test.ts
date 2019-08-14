@@ -2,18 +2,20 @@ import { describe, it } from 'mocha'
 import { throws, assert } from '@briancavalier/assert'
 
 import SettableDisposable from '../../src/disposable/SettableDisposable'
+import { Disposable } from '@most/types'
 
-const testDisposable = () => ({
-  disposed: false,
-  dispose () {
+class TestDisposable implements Disposable {
+  disposed = false
+
+  dispose (): void {
     this.disposed = true
   }
-})
+}
 
 describe('SettableDisposable', () => {
   it('should allow setDisposable before dispose', () => {
     const sd = new SettableDisposable()
-    const d = testDisposable()
+    const d = new TestDisposable()
 
     sd.setDisposable(d)
     sd.dispose()
@@ -23,7 +25,7 @@ describe('SettableDisposable', () => {
 
   it('should allow setDisposable after dispose', () => {
     const sd = new SettableDisposable()
-    const d = testDisposable()
+    const d = new TestDisposable()
 
     sd.dispose()
 
@@ -35,10 +37,10 @@ describe('SettableDisposable', () => {
   it('should allow setDisposable at most once', () => {
     const d = new SettableDisposable()
 
-    d.setDisposable(testDisposable())
+    d.setDisposable(new TestDisposable())
 
     throws(() => {
-      d.setDisposable(testDisposable())
+      d.setDisposable(new TestDisposable())
     })
   })
 })

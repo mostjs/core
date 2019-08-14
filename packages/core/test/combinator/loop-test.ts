@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import { is, eq, assert } from '@briancavalier/assert'
 import { spy } from 'sinon'
 
-import { loop, SeedValue } from '../../src/combinator/loop' // eslint-disable-line no-unused-vars
+import { loop, SeedValue } from '../../src/combinator/loop'
 import { throwError } from '../../src/combinator/errors'
 import { now } from '../../src/source/now'
 import { empty, isCanonicalEmpty } from '../../src/source/empty'
@@ -25,7 +25,7 @@ describe('loop', function () {
   it('should call stepper with seed, value', function () {
     const a = ['a', 'b', 'c', 'd']
 
-    const s = loop((z, x) => toPair(z + 1, x + z), 0, makeEventsFromArray(1, a))
+    const s = loop((z, x) => toPair(z + 1, x + z.toString()), 0, makeEventsFromArray(1, a))
 
     return collectEventsFor(a.length, s)
       .then(events => {

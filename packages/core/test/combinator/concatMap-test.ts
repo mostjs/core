@@ -14,7 +14,7 @@ import { never } from '../../src/source/never'
 import { atTimes, collectEvents, collectEventsFor, makeEventsFromArray, ticks } from '../helper/testEnv'
 import FakeDisposeSource from '../helper/FakeDisposeStream'
 import { currentTime } from '@most/scheduler'
-import { Stream } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream } from '@most/types'
 
 const sentinel = { value: 'sentinel' }
 

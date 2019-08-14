@@ -13,7 +13,7 @@ import { never } from '../../src/source/never'
 import { assertSame } from '../helper/stream-helper'
 import { collectEventsFor, makeEventsFromArray } from '../helper/testEnv'
 import FakeDisposeStream from '../helper/FakeDisposeStream'
-import { Stream } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream } from '@most/types'
 
 const sentinel = { value: 'sentinel' }
 
@@ -33,7 +33,7 @@ describe('chain', function () {
 
   it('should preserve time order', function () {
     const s = chain(x => delay(x, now(x)), makeEventsFromArray(0, [2, 1]))
-    const expected = [ { time: 1, value: 1 }, { time: 2, value: 2 } ]
+    const expected = [{ time: 1, value: 1 }, { time: 2, value: 2 }]
 
     return collectEventsFor(3, s)
       .then(eq(expected))

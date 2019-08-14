@@ -5,8 +5,8 @@ import { run } from '../src/run'
 import { at } from '../src/source/at'
 
 import { ticks } from './helper/testEnv'
-import { Event } from '../src/sink/DeferredSink' // eslint-disable-line no-unused-vars
-import { Sink } from '@most/types' // eslint-disable-line no-unused-vars
+import { Event } from '../src/sink/DeferredSink'
+import { Sink } from '@most/types'
 
 describe('run', () => {
   it('should run a stream', done => {

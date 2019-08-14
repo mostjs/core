@@ -9,10 +9,11 @@ import { constant } from '../../src/combinator/transform'
 import { now } from '../../src/source/now'
 import { empty, isCanonicalEmpty } from '../../src/source/empty'
 import { collectEventsFor, makeEventsFromArray } from '../helper/testEnv'
+import { Stream } from '@most/types'
 
 const sentinel = { value: 'sentinel' }
 
-const periodicConstant = <A>(ms: number, x: A) => constant(x, periodic(ms))
+const periodicConstant = <A>(ms: number, x: A): Stream<A> => constant(x, periodic(ms))
 
 describe('mergeConcurrently', () => {
   it('given canonical empty stream, should return canonical empty', () => {

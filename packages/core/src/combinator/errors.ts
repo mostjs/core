@@ -10,12 +10,12 @@ import { empty, isCanonicalEmpty } from '../source/empty'
 import { propagateErrorTask } from '../scheduler/PropagateTask'
 import { run } from '../run'
 import { withLocalTime } from './withLocalTime'
-import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
 
 /**
  * If stream encounters an error, recover and continue with items from stream
  * returned by f.
- * @param function which returns a new stream
+ * @param f which returns a new stream
  * @param stream
  * @returns new stream which will recover from an error by calling f
  */
@@ -31,19 +31,19 @@ export const recoverWith = <A, E extends Error>(f: (error: E) => Stream<A>, stre
 export const throwError = (e: Error): Stream<never> =>
   new ErrorStream(e)
 
-class ErrorStream {
+class ErrorStream implements Stream<never> {
   private readonly value: Error;
 
   constructor (e: Error) {
     this.value = e
   }
 
-  run (sink: Sink<never>, scheduler: Scheduler) {
+  run (sink: Sink<never>, scheduler: Scheduler): Disposable {
     return asap(propagateErrorTask(this.value, sink), scheduler)
   }
 }
 
-class RecoverWith<A, E extends Error> {
+class RecoverWith<A, E extends Error> implements Stream<A> {
   private readonly f: (error: E) => Stream<A>;
   private readonly source: Stream<A>;
 
@@ -52,12 +52,12 @@ class RecoverWith<A, E extends Error> {
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler) {
+  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
     return new RecoverWithSink(this.f, this.source, sink, scheduler)
   }
 }
 
-class RecoverWithSink<A, E extends Error> {
+class RecoverWithSink<A, E extends Error> implements Sink<A>, Disposable {
   private readonly f: (error: E) => Stream<A>
   private readonly sink: SafeSink<A>
   private readonly scheduler: Scheduler
@@ -86,7 +86,7 @@ class RecoverWithSink<A, E extends Error> {
     this._startNext(t, e, nextSink)
   }
 
-  _startNext (t: Time, x: E, sink: Sink<A>) {
+  private _startNext (t: Time, x: E, sink: Sink<A>): void {
     try {
       this.disposable = this._continue(this.f, t, x, sink)
     } catch (e) {
@@ -94,11 +94,11 @@ class RecoverWithSink<A, E extends Error> {
     }
   }
 
-  _continue (f: (error: E) => Stream<A>, t: Time, x: E, sink: Sink<A>) {
+  private _continue (f: (error: E) => Stream<A>, t: Time, x: E, sink: Sink<A>): Disposable {
     return run(sink, this.scheduler, withLocalTime(t, f(x)))
   }
 
-  dispose () {
+  dispose (): void {
     return this.disposable.dispose()
   }
 }

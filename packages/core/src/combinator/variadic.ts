@@ -1,4 +1,4 @@
-import { Stream } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream } from '@most/types'
 
 // Map arrays to arrays of Streams:
 // Array<A> => Array<Stream<A>>

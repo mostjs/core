@@ -1,10 +1,10 @@
 import { describe, it } from 'mocha'
 import { eq, assert, throws } from '@briancavalier/assert'
-import { spy, SinonSpy } from 'sinon' // eslint-disable-line no-unused-vars
+import { spy, SinonSpy } from 'sinon'
 import { disposeNone, isDisposeNone } from '../src/disposeNone'
 import { disposeAll, disposeBoth, DisposeAllError } from '../src/disposeAll'
 
-const noop = () => {}
+const noop = (): void => {}
 
 interface DisposableSpy {
   dispose: SinonSpy
@@ -13,7 +13,7 @@ const disposableSpy = (f: Function): DisposableSpy => ({
   dispose: spy(f)
 })
 
-const disposableSpies = () =>
+const disposableSpies = (): DisposableSpy[] =>
   [disposableSpy(noop), disposableSpy(noop), disposableSpy(noop)]
 
 const rethrow = (e: Error) => (): void => {

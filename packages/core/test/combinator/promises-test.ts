@@ -10,7 +10,7 @@ import { atTime, makeEventsFromArray, collectEventsFor } from '../helper/testEnv
 const sentinel = { value: 'sentinel' }
 const other = { value: 'other' }
 
-const rejected = (e: Error) => {
+const rejected = (e: Error): Promise<never> => {
   const p = Promise.reject(e)
   // Squelch node's unhandled rejection reporting
   // It reports them as unhandled and then immediately as handled

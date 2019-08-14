@@ -3,17 +3,17 @@
 import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
 import { empty, isCanonicalEmpty } from '../source/empty'
-import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types'
 
 export const sample = <A, B>(values: Stream<A>, sampler: Stream<B>): Stream<A> =>
-  snapshot((x, _) => x, values, sampler)
+  snapshot(x => x, values, sampler)
 
 export const snapshot = <A, B, C>(f: (a: A, b: B) => C, values: Stream<A>, sampler: Stream<B>): Stream<C> =>
   isCanonicalEmpty(sampler) || isCanonicalEmpty(values)
     ? empty()
     : new Snapshot(f, values, sampler)
 
-export class Snapshot<A, B, C> {
+export class Snapshot<A, B, C> implements Stream<C> {
   private readonly f: (a: A, b: B) => C
   private readonly values: Stream<A>
   private readonly sampler: Stream<B>
@@ -46,6 +46,7 @@ export class SnapshotSink<A, B, C> extends Pipe<A | B | C> {
   event (t: Time, x: B): void {
     if (this.latest.hasValue) {
       const f = this.f
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       this.sink.event(t, f(this.latest.value!, x))
     }
   }
@@ -60,10 +61,10 @@ export class LatestValueSink<A> extends Pipe<A> {
     this.hasValue = false
   }
 
-  event (_t: Time, x: A) {
+  event (_t: Time, x: A): void {
     this.value = x
     this.hasValue = true
   }
 
-  end () {}
+  end (): void {}
 }

@@ -29,7 +29,7 @@ describe('task', () => {
       const expected = new Error()
       const task = {
         run: () => { throw new Error() },
-        error: (_e: Error) => { throw expected }
+        error: () => { throw expected }
       }
 
       is(expected, throws(() => runTask(task)))

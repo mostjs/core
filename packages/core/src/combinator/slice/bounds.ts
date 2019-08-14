@@ -13,8 +13,8 @@
 // as bounds are merged.
 
 export interface Bounds {
-  min: number;
-  max: number;
+  min: number
+  max: number
 }
 
 // Construct a constrained bounds

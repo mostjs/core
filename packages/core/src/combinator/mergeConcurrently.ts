@@ -4,7 +4,7 @@ import { disposeAll, disposeNone, disposeOnce, tryDispose } from '@most/disposab
 import { empty, isCanonicalEmpty } from '../source/empty'
 import { id as identity } from '@most/prelude'
 import { schedulerRelativeTo } from '@most/scheduler'
-import { Time, Disposable, Sink, Scheduler, Stream } from '@most/types' // eslint-disable-line no-unused-vars
+import { Time, Disposable, Sink, Scheduler, Stream } from '@most/types'
 
 export const mergeConcurrently = <A>(concurrency: number, stream: Stream<Stream<A>>): Stream<A> =>
   mergeMapConcurrently(identity, concurrency, stream)
@@ -13,7 +13,7 @@ export const mergeMapConcurrently = <A, B>(f: (a: A) => Stream<B>, concurrency: 
   isCanonicalEmpty(stream) ? empty()
     : new MergeConcurrently(f, concurrency, stream)
 
-class MergeConcurrently<A, B> {
+class MergeConcurrently<A, B> implements Stream<B> {
   private readonly concurrency: number;
   private readonly f: (a: A) => Stream<B>
   private readonly source: Stream<A>
@@ -24,12 +24,12 @@ class MergeConcurrently<A, B> {
     this.source = source
   }
 
-  run (sink: Sink<B>, scheduler: Scheduler) {
+  run (sink: Sink<B>, scheduler: Scheduler): Disposable {
     return new Outer(this.f, this.concurrency, this.source, sink, scheduler)
   }
 }
 
-class Outer<A, B> {
+class Outer<A, B> implements Sink<A>, Disposable {
   private readonly scheduler: Scheduler;
   private readonly disposable: Disposable;
   private active: boolean;
@@ -54,7 +54,7 @@ class Outer<A, B> {
     this._addInner(t, x)
   }
 
-  _addInner (t: Time, x: A): void {
+  private _addInner (t: Time, x: A): void {
     if (this.current.length < this.concurrency) {
       this._startInner(t, x)
     } else {
@@ -62,7 +62,7 @@ class Outer<A, B> {
     }
   }
 
-  _startInner (t: Time, x: A): void {
+  private _startInner (t: Time, x: A): void {
     try {
       this._initInner(t, x)
     } catch (e) {
@@ -70,31 +70,31 @@ class Outer<A, B> {
     }
   }
 
-  _initInner (t: Time, x: A): void {
+  private _initInner (t: Time, x: A): void {
     const innerSink = new Inner(t, this, this.sink)
     innerSink.disposable = mapAndRun(this.f, t, x, innerSink, this.scheduler)
     this.current.push(innerSink)
   }
 
-  end (t: Time) {
+  end (t: Time): void {
     this.active = false
     tryDispose(t, this.disposable, this.sink)
     this._checkEnd(t)
   }
 
-  error (t: Time, e: Error) {
+  error (t: Time, e: Error): void{
     this.active = false
     this.sink.error(t, e)
   }
 
-  dispose () {
+  dispose (): void {
     this.active = false
     this.pending.length = 0
     this.disposable.dispose()
     disposeAll(this.current).dispose()
   }
 
-  _endInner (t: Time, inner: Disposable) {
+  endInner (t: Time, inner: Disposable): void {
     const i = this.current.indexOf(inner)
     if (i >= 0) {
       this.current.splice(i, 1)
@@ -108,7 +108,7 @@ class Outer<A, B> {
     }
   }
 
-  _checkEnd (t: Time) {
+  private _checkEnd (t: Time): void {
     if (!this.active && this.current.length === 0) {
       this.sink.end(t)
     }
@@ -118,7 +118,7 @@ class Outer<A, B> {
 const mapAndRun = <A, B>(f: (a: A) => Stream<B>, t: Time, x: A, sink: Sink<B>, scheduler: Scheduler): Disposable =>
   f(x).run(sink, schedulerRelativeTo(t, scheduler))
 
-class Inner<A, B> {
+class Inner<A, B> implements Sink<B>, Disposable {
   private readonly time: number;
   private readonly outer: Outer<A, B>;
   disposable: Disposable;
@@ -131,19 +131,19 @@ class Inner<A, B> {
     this.disposable = disposeNone()
   }
 
-  event (t: Time, x: B) {
+  event (t: Time, x: B): void {
     this.sink.event(t + this.time, x)
   }
 
-  end (t: Time) {
-    this.outer._endInner(t + this.time, this)
+  end (t: Time): void {
+    this.outer.endInner(t + this.time, this)
   }
 
-  error (t: Time, e: Error) {
+  error (t: Time, e: Error): void {
     this.outer.error(t + this.time, e)
   }
 
-  dispose () {
+  dispose (): void {
     return this.disposable.dispose()
   }
 }

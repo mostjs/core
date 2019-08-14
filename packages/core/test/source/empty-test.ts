@@ -5,7 +5,7 @@ import { empty, isCanonicalEmpty, containsCanonicalEmpty } from '../../src/sourc
 import { now } from '../../src/source/now'
 
 import { collectEventsFor, makeEvents } from '../helper/testEnv'
-import { Event } from '../../src/sink/DeferredSink' // eslint-disable-line no-unused-vars
+import { Event } from '../../src/sink/DeferredSink'
 
 describe('empty', () => {
   describe('isCanonicalEmpty', () => {

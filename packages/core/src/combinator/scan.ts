@@ -6,7 +6,7 @@ import Pipe from '../sink/Pipe'
 import { disposeBoth } from '@most/disposable'
 import { asap } from '@most/scheduler'
 import { propagateEventTask } from '../scheduler/PropagateTask'
-import { Stream, Sink, Scheduler, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types'
 
 /**
  * Create a stream containing successive reduce results of applying f to
@@ -19,10 +19,10 @@ import { Stream, Sink, Scheduler, Time } from '@most/types' // eslint-disable-li
 export const scan = <A, B>(f: (b: B, a: A) => B, initial: B, stream: Stream<A>): Stream<B> =>
   new Scan(f, initial, stream)
 
-class Scan<A, B> {
+class Scan<A, B> implements Stream<B> {
   private readonly source: Stream<A>;
   private readonly f: (b: B, a: A) => B;
-  private value: B;
+  private readonly value: B;
 
   constructor (f: (b: B, a: A) => B, z: B, source: Stream<A>) {
     this.source = source
@@ -30,7 +30,7 @@ class Scan<A, B> {
     this.value = z
   }
 
-  run (sink: Sink<B>, scheduler: Scheduler) {
+  run (sink: Sink<B>, scheduler: Scheduler): Disposable {
     const d1 = asap(propagateEventTask(this.value, sink), scheduler)
     const d2 = this.source.run(new ScanSink(this.f, this.value, sink), scheduler)
     return disposeBoth(d1, d2)

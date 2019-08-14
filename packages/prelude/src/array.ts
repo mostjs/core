@@ -33,7 +33,7 @@ export function append <A> (x: A, a: A[]): A[] {
 /**
  * drop first n elements
  */
-export function drop <A> (n: number, a: A[]): A[] { // eslint-disable-line complexity
+export function drop <A> (n: number, a: A[]): A[] {
   if (n < 0) {
     throw new TypeError('n must be >= 0')
   }
@@ -106,7 +106,7 @@ export function reduce <A, B> (f: (a: A, b: B, i: number) => A, z: A, a: B[]): A
 /**
  * replace element at index
  */
-export function replace <A> (x: A, i: number, a: A[]): A[] { // eslint-disable-line complexity
+export function replace <A> (x: A, i: number, a: A[]): A[] {
   if (i < 0) {
     throw new TypeError('i must be >= 0')
   }
@@ -123,7 +123,7 @@ export function replace <A> (x: A, i: number, a: A[]): A[] { // eslint-disable-l
  * remove element at index
  * @throws
  */
-export function remove <A> (i: number, a: A[]): A[] { // eslint-disable-line complexity
+export function remove <A> (i: number, a: A[]): A[] {
   if (i < 0) {
     throw new TypeError('i must be >= 0')
   }
@@ -191,6 +191,6 @@ export function findIndex <A> (x: A, a: A[]): number {
 /**
  * Return true iff x is array-like
  */
-export function isArrayLike (x: any) {
+export function isArrayLike (x: any): x is ArrayLike<unknown> {
   return x != null && typeof x.length === 'number' && typeof x !== 'function'
 }

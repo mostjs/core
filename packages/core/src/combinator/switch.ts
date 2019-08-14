@@ -5,7 +5,7 @@
 import { disposeBoth, tryDispose } from '@most/disposable'
 import { schedulerRelativeTo, currentTime } from '@most/scheduler'
 import { empty, isCanonicalEmpty } from '../source/empty'
-import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
 
 /**
  * Given a stream of streams, return a new stream that adopts the behavior
@@ -69,25 +69,25 @@ class SwitchSink<A> {
     }
   }
 
-  _disposeInner (t: Time, inner: Segment<A>) {
+  _disposeInner (t: Time, inner: Segment<A>): void {
     inner._dispose(t)
     if (inner === this.current) {
       this.current = null
     }
   }
 
-  _checkEnd (t: Time) {
+  _checkEnd (t: Time): void {
     if (this.ended && this.current === null) {
       this.sink.end(t)
     }
   }
 
-  _endInner (t: Time, inner: Segment<A>) {
+  _endInner (t: Time, inner: Segment<A>): void {
     this._disposeInner(t, inner)
     this._checkEnd(t)
   }
 
-  _errorInner (t: Time, e: Error, inner: Segment<A>) {
+  _errorInner (t: Time, e: Error, inner: Segment<A>): void {
     this._disposeInner(t, inner)
     this.sink.error(t, e)
   }
@@ -98,7 +98,7 @@ class Segment<A> {
   private readonly max: Time
   private readonly outer: SwitchSink<A>
   private readonly sink: Sink<A>
-  private disposable: Disposable
+  private readonly disposable: Disposable
 
   constructor (source: Stream<A>, min: Time, max: Time, outer: SwitchSink<A>, sink: Sink<A>, scheduler: Scheduler) {
     this.min = min

@@ -5,7 +5,7 @@
 import { runEffects } from '../../src/runEffects'
 import { newDefaultScheduler } from '@most/scheduler'
 import { tap } from '../../src/combinator/transform'
-import { Stream } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream } from '@most/types'
 
 /**
  * Observe all the event values in the stream in time order. The

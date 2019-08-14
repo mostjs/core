@@ -2,7 +2,7 @@
 
 import { now } from '../source/now'
 import { continueWith } from './continueWith'
-import { Stream } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream } from '@most/types'
 
 export const startWith = <A>(x: A, stream: Stream<A>): Stream<A> =>
   continueWith(() => stream, now(x))

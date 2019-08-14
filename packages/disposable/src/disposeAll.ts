@@ -1,7 +1,7 @@
 /** @license MIT License (c) copyright 2010 original author or authors */
 import { append, reduce, curry2 } from '@most/prelude'
 import { disposeNone, isDisposeNone } from './disposeNone'
-import { Disposable } from '@most/types' // eslint-disable-line no-unused-vars
+import { Disposable } from '@most/types'
 
 /**
  * Aggregate a list of disposables into a DisposeAll
@@ -17,7 +17,7 @@ export const disposeAll = (ds: Disposable[]): Disposable => {
 export const disposeBoth = curry2((d1: Disposable, d2: Disposable): Disposable =>
   disposeAll([d1, d2]))
 
-const merge = (ds: Disposable[], d: Disposable) =>
+const merge = (ds: Disposable[], d: Disposable): Disposable[] =>
   isDisposeNone(d) ? ds
     : d instanceof DisposeAll ? ds.concat(d.disposables)
       : append(d, ds)
@@ -29,7 +29,7 @@ class DisposeAll implements Disposable {
     this.disposables = disposables
   }
 
-  dispose () {
+  dispose (): void {
     throwIfErrors(disposeCollectErrors(this.disposables))
   }
 }

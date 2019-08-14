@@ -1,6 +1,6 @@
 import RelativeSink from '../sink/RelativeSink'
 import { schedulerRelativeTo } from '@most/scheduler'
-import { Time, Stream, Sink, Scheduler } from '@most/types' // eslint-disable-line no-unused-vars
+import { Time, Stream, Sink, Scheduler, Disposable } from '@most/types'
 
 /**
  * Create a stream with its own local clock
@@ -21,7 +21,7 @@ class WithLocalTime<A> {
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler) {
+  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(relativeSink(this.origin, sink), schedulerRelativeTo(this.origin, scheduler))
   }
 }

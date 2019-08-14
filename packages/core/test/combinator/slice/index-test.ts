@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import { eq, is, assert } from '@briancavalier/assert'
 
-import { slice, take, skip, takeWhile, skipWhile, skipAfter, Slice } from '../../../src/combinator/slice' // eslint-disable-line no-unused-vars
+import { slice, take, skip, takeWhile, skipWhile, skipAfter, Slice } from '../../../src/combinator/slice'
 import { boundsFrom } from '../../../src/combinator/slice/bounds'
 import { map } from '../../../src/combinator/transform'
 import { now } from '../../../src/source/now'
@@ -111,7 +111,7 @@ describe('slice', function () {
 
     it('should take elements until condition becomes false', function () {
       const n = 2
-      const p = (x: number) => x < n
+      const p = (x: number): boolean => x < n
       const s = takeWhile(p, makeEvents(1, 10))
       return collectEventsFor(n, s)
         .then(eq([
@@ -129,7 +129,7 @@ describe('slice', function () {
 
     it('should skip elements until condition becomes false', function () {
       const n = 4
-      const p = (x: number) => x < 2
+      const p = (x: number): boolean => x < 2
       const s = skipWhile(p, makeEvents(1, n))
       return collectEventsFor(n, s)
         .then(eq([
@@ -163,7 +163,7 @@ describe('slice', function () {
 
     it('should contain all elements when condition is false', function () {
       const s = makeEvents(1, 10)
-      return assertSame(s, skipAfter(_ => false, s))
+      return assertSame(s, skipAfter(() => false, s))
     })
   })
 })

@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import { eq, is } from '@briancavalier/assert'
 
 import SafeSink from '../../src/sink/SafeSink'
-import { Time, Sink } from '@most/types' // eslint-disable-line no-unused-vars
+import { Time, Sink } from '@most/types'
 
 function testSink <A> (event: (t: Time, a: A) => void, end: (t: Time) => void, error: (t: Time, error: Error) => void): Sink<A> {
   return {
@@ -12,29 +12,29 @@ function testSink <A> (event: (t: Time, a: A) => void, end: (t: Time) => void, e
   }
 }
 
-function testEvent <A> (event: (t: Time, a: A) => void) {
+function testEvent <A> (event: (t: Time, a: A) => void): Sink<A> {
   return testSink(event, fail, fail)
 }
 
-function testEnd (end: (t: Time) => void) {
+function testEnd (end: (t: Time) => void): Sink<unknown> {
   return testSink(fail, end, fail)
 }
 
-function testError (error: (t: Time, error: Error) => void) {
+function testError (error: (t: Time, error: Error) => void): Sink<unknown> {
   return testSink(fail, fail, error)
 }
 
-function fail () {
+function fail (): never {
   throw new Error('Should not be called')
 }
 
-function noop () {}
+function noop (): void {}
 
 describe('SafeSink', function () {
   it('should propagate event while active', function () {
-    var time = 123
-    var expected = {}
-    var sink = new SafeSink(testEvent(function (t, x) {
+    const time = 123
+    const expected = {}
+    const sink = new SafeSink(testEvent(function (t, x) {
       eq(time, t)
       eq(expected, x)
     }))
@@ -43,8 +43,8 @@ describe('SafeSink', function () {
   })
 
   it('should propagate end while active', function () {
-    var time = 123
-    var sink = new SafeSink(testEnd(t => {
+    const time = 123
+    const sink = new SafeSink(testEnd(t => {
       eq(time, t)
     }))
 
@@ -52,9 +52,9 @@ describe('SafeSink', function () {
   })
 
   it('should propagate error while active', function () {
-    var time = 123
-    var expected = new Error()
-    var sink = new SafeSink(testError((t, x) => {
+    const time = 123
+    const expected = new Error()
+    const sink = new SafeSink(testError((t, x) => {
       eq(time, t)
       eq(expected, x)
     }))
@@ -63,9 +63,9 @@ describe('SafeSink', function () {
   })
 
   it('should not propagate event or end after end', function () {
-    var time = 123
-    var expected = {}
-    var sink = new SafeSink(testEnd(t => {
+    const time = 123
+    const expected = {}
+    const sink = new SafeSink(testEnd(t => {
       eq(time, t)
     }))
 
@@ -75,9 +75,9 @@ describe('SafeSink', function () {
   })
 
   it('should not propagate event or end after error', function () {
-    var time = 123
-    var expected = new Error()
-    var sink = new SafeSink(testError((t, x) => {
+    const time = 123
+    const expected = new Error()
+    const sink = new SafeSink(testError((t, x) => {
       eq(time, t)
       eq(expected, x)
     }))
@@ -88,7 +88,7 @@ describe('SafeSink', function () {
   })
 
   it('should not propagate event or end after disabled', function () {
-    var sink = new SafeSink(testSink(fail, fail, fail))
+    const sink = new SafeSink(testSink(fail, fail, fail))
 
     sink.disable()
     sink.end(1)
@@ -96,8 +96,8 @@ describe('SafeSink', function () {
   })
 
   it('should propagate error after disable', function () {
-    var errorCalled = 0
-    var sink = new SafeSink(testError(function () {
+    let errorCalled = 0
+    const sink = new SafeSink(testError(function () {
       errorCalled += 1
     }))
 
@@ -107,8 +107,8 @@ describe('SafeSink', function () {
   })
 
   it('should propagate error after end', function () {
-    var errorCalled = 0
-    var sink = new SafeSink(testSink(fail, noop, function () {
+    let errorCalled = 0
+    const sink = new SafeSink(testSink(fail, noop, function () {
       errorCalled += 1
     }))
 
@@ -118,8 +118,8 @@ describe('SafeSink', function () {
   })
 
   it('should propagate error after error', function () {
-    var errorCalled = 0
-    var sink = new SafeSink(testSink(fail, noop, function () {
+    let errorCalled = 0
+    const sink = new SafeSink(testSink(fail, noop, function () {
       errorCalled += 1
     }))
 
@@ -129,8 +129,8 @@ describe('SafeSink', function () {
   })
 
   it('disable should return original sink', function () {
-    var original = testSink(fail, fail, fail)
-    var sink = new SafeSink(original)
+    const original = testSink(fail, fail, fail)
+    const sink = new SafeSink(original)
 
     is(original, sink.disable())
   })

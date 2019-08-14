@@ -3,7 +3,7 @@
 import ScheduledTaskImpl from './ScheduledTask'
 import RelativeScheduler from './RelativeScheduler'
 import { runTask } from './task'
-import { Scheduler, Time, Timer, Timeline, Task, ScheduledTask } from '@most/types' // eslint-disable-line no-unused-vars
+import { Scheduler, Time, Timer, Timeline, Task, ScheduledTask } from '@most/types'
 
 export default class SchedulerImpl implements Scheduler {
   private readonly timer: Timer
@@ -62,7 +62,7 @@ export default class SchedulerImpl implements Scheduler {
     this._timer = null
   }
 
-  _scheduleNextRun (): void { // eslint-disable-line complexity
+  _scheduleNextRun (): void {
     if (this.timeline.isEmpty()) {
       return
     }

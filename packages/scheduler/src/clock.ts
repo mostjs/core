@@ -1,5 +1,5 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
-import { Clock, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Clock, Time } from '@most/types'
 
 /* global performance, process */
 
@@ -11,7 +11,7 @@ export class RelativeClock implements Clock {
     this.clock = clock
   }
 
-  now () {
+  now (): Time {
     return this.clock.now() - this.origin
   }
 }
@@ -24,7 +24,7 @@ export class HRTimeClock implements Clock {
     this.hrtime = hrtime
   }
 
-  now () {
+  now (): Time {
     const hrt = this.hrtime(this.origin)
     return (hrt[0] * 1e9 + hrt[1]) / 1e6
   }

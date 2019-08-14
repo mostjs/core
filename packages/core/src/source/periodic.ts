@@ -4,7 +4,7 @@
 
 import { propagateEventTask } from '../scheduler/PropagateTask'
 import { periodic as schedulePeriodic } from '@most/scheduler'
-import { Stream, Sink, Scheduler } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Disposable } from '@most/types'
 
 /**
  * Create a stream of events that occur at a regular period
@@ -14,14 +14,14 @@ import { Stream, Sink, Scheduler } from '@most/types' // eslint-disable-line no-
 export const periodic = (period: number): Stream<void> =>
   new Periodic(period)
 
-class Periodic {
+class Periodic implements Stream<void> {
   private readonly period: number;
 
   constructor (period: number) {
     this.period = period
   }
 
-  run (sink: Sink<void>, scheduler: Scheduler) {
+  run (sink: Sink<void>, scheduler: Scheduler): Disposable {
     return schedulePeriodic(this.period, propagateEventTask(undefined, sink), scheduler)
   }
 }

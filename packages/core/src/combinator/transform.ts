@@ -4,7 +4,7 @@
 
 import Map from '../fusion/Map'
 import Pipe from '../sink/Pipe'
-import { Stream, Sink, Scheduler, Time } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types'
 
 /**
  * Transform each value in the stream by applying f to each
@@ -42,7 +42,7 @@ class Tap<A> {
     this.f = f
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler) {
+  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(new TapSink(this.f, sink), scheduler)
   }
 }
@@ -55,7 +55,7 @@ class TapSink<A> extends Pipe<A> {
     this.f = f
   }
 
-  event (t: Time, x: A) {
+  event (t: Time, x: A): void {
     const f = this.f
     f(x)
     this.sink.event(t, x)

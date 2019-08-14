@@ -13,7 +13,7 @@ import { ticks, collectEvents, collectEventsFor, makeEvents } from './helper/tes
 import FakeDisposeStream from './helper/FakeDisposeStream'
 
 import { spy } from 'sinon'
-import { Event } from '../src/sink/DeferredSink' // eslint-disable-line no-unused-vars
+import { Event } from '../src/sink/DeferredSink'
 
 describe('during', () => {
   it('should contain events at or later than min and earlier than max', () => {

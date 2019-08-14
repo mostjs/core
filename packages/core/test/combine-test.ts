@@ -47,13 +47,13 @@ describe('combine', function () {
 
     return collectEventsFor(2 * a.length, sc)
       .then(eq([
-        { time: 1, value: [ 0, 'a' ] },
-        { time: 2, value: [ 1, 'a' ] },
-        { time: 3, value: [ 1, 'b' ] },
-        { time: 4, value: [ 2, 'b' ] },
-        { time: 5, value: [ 2, 'c' ] },
-        { time: 6, value: [ 3, 'c' ] },
-        { time: 7, value: [ 3, 'd' ] }]))
+        { time: 1, value: [0, 'a'] },
+        { time: 2, value: [1, 'a'] },
+        { time: 3, value: [1, 'b'] },
+        { time: 4, value: [2, 'b'] },
+        { time: 5, value: [2, 'c'] },
+        { time: 6, value: [3, 'c'] },
+        { time: 7, value: [3, 'd'] }]))
   })
 })
 
@@ -87,12 +87,12 @@ describe('combineArray', function () {
 
     return collectEventsFor(2 * a.length, sc)
       .then(eq([
-        { time: 1, value: [ 0, 'a' ] },
-        { time: 2, value: [ 1, 'a' ] },
-        { time: 3, value: [ 1, 'b' ] },
-        { time: 4, value: [ 2, 'b' ] },
-        { time: 5, value: [ 2, 'c' ] },
-        { time: 6, value: [ 3, 'c' ] },
-        { time: 7, value: [ 3, 'd' ] }]))
+        { time: 1, value: [0, 'a'] },
+        { time: 2, value: [1, 'a'] },
+        { time: 3, value: [1, 'b'] },
+        { time: 4, value: [2, 'b'] },
+        { time: 5, value: [2, 'c'] },
+        { time: 6, value: [3, 'c'] },
+        { time: 7, value: [3, 'd'] }]))
   })
 })

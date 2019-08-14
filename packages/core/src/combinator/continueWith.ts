@@ -4,9 +4,9 @@
 
 import Pipe from '../sink/Pipe'
 import { run } from '../run'
-import { withLocalTime } from '../combinator/withLocalTime'
+import { withLocalTime } from './withLocalTime'
 import { disposeOnce, tryDispose } from '@most/disposable'
-import { Stream, Scheduler, Time, Disposable, Sink } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Scheduler, Time, Disposable, Sink } from '@most/types'
 
 export const continueWith = <A>(f: () => Stream<A>, stream: Stream<A>): Stream<A> =>
   new ContinueWith(f, stream)
@@ -20,7 +20,7 @@ class ContinueWith<A> {
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler) {
+  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
     return new ContinueWithSink(this.f, this.source, sink, scheduler)
   }
 }

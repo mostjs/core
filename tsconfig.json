@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "es5",
+    "declaration": true,
+    "pretty": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "allowJs": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}

@@ -4,9 +4,9 @@
 
 import Pipe from '../sink/Pipe'
 import { isCanonicalEmpty } from '../source/empty'
-import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types'
 
-export default class Filter<A> {
+export default class Filter<A> implements Stream<A> {
   readonly p: (a: A) => boolean
   readonly source: Stream<A>
 
@@ -25,7 +25,7 @@ export default class Filter<A> {
    * @param {{run:function}} source source to filter
    * @returns {Filter} filtered source
    */
-  static create <A> (p: (a: A) => boolean, source: Stream<A>) {
+  static create <A> (p: (a: A) => boolean, source: Stream<A>): Stream<A> {
     if (isCanonicalEmpty(source)) {
       return source
     }
@@ -46,7 +46,7 @@ class FilterSink<A> extends Pipe<A> {
     this.p = p
   }
 
-  event (t: Time, x: A) {
+  event (t: Time, x: A): void {
     const p = this.p
     p(x) && this.sink.event(t, x)
   }

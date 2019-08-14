@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types'
 
 export default class FilterMap<A, B> {
   private readonly p: (a: A) => boolean;
@@ -31,7 +31,7 @@ class FilterMapSink<A, B> extends Pipe<A | B> {
     this.f = f
   }
 
-  event (t: Time, x: A) {
+  event (t: Time, x: A): void {
     const f = this.f
     const p = this.p
     p(x) && this.sink.event(t, f(x))

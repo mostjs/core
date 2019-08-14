@@ -2,7 +2,7 @@
 
 import { curry2 } from '@most/prelude'
 import SettableDisposable from './disposable/SettableDisposable'
-import { Stream, Scheduler, Time, Disposable } from '@most/types' // eslint-disable-line no-unused-vars
+import { Stream, Scheduler, Time, Disposable, Sink } from '@most/types'
 
 export interface RunEffects {
   <A>(stream: Stream<A>, scheduler: Scheduler): Promise<void>
@@ -13,14 +13,14 @@ export const runEffects: RunEffects = curry2((stream: Stream<unknown>, scheduler
   new Promise((resolve, reject) =>
     runStream(stream, scheduler, resolve, reject)))
 
-function runStream <A> (stream: Stream<A>, scheduler: Scheduler, resolve: (a: A | undefined) => void, reject: (e: Error) => void) {
+function runStream <A> (stream: Stream<A>, scheduler: Scheduler, resolve: (a: A | undefined) => void, reject: (e: Error) => void): void {
   const disposable = new SettableDisposable()
   const observer = new RunEffectsSink(resolve, reject, disposable)
 
   disposable.setDisposable(stream.run(observer, scheduler))
 }
 
-class RunEffectsSink<A> {
+class RunEffectsSink<A> implements Sink<A> {
   private readonly _disposable: Disposable
   private active: boolean;
   private _error: (e: Error) => void
@@ -33,20 +33,20 @@ class RunEffectsSink<A> {
     this.active = true
   }
 
-  event (_t: Time, _x: A): void {}
+  event (): void {}
 
-  end (_t: Time) {
+  end (): void {
     if (!this.active) {
       return
     }
     this._dispose(this._error, this._end, undefined)
   }
 
-  error (_t: Time, e: Error) {
+  error (_t: Time, e: Error): void {
     this._dispose(this._error, this._error, e)
   }
 
-  _dispose <X> (error: (e: Error) => void, end: (x: X) => void, x: X) {
+  _dispose <X> (error: (e: Error) => void, end: (x: X) => void, x: X): void {
     this.active = false
     tryDispose(error, end, x, this._disposable)
   }

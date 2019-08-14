@@ -1,12 +1,12 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 
 import { disposeNone } from '@most/disposable'
-import { Stream } from '@most/types' // eslint-disable-line no-unused-vars
+import { Disposable, Stream } from '@most/types'
 
 export const never = (): Stream<never> => NEVER
 
-class Never {
-  run () {
+class Never implements Stream<never> {
+  run (): Disposable {
     return disposeNone()
   }
 }

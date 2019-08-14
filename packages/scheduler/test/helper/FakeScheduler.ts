@@ -1,5 +1,5 @@
-import { Scheduler, Time, Task, ScheduledTask } from '@most/types' // eslint-disable-line no-unused-vars
-import ScheduledTaskImpl from '../../src/ScheduledTask' // eslint-disable-line no-unused-vars
+import { Scheduler, Time, Task, ScheduledTask } from '@most/types'
+import ScheduledTaskImpl from '../../src/ScheduledTask'
 
 export default class FakeScheduler implements Scheduler {
   private readonly time: Time;
@@ -20,7 +20,7 @@ export default class FakeScheduler implements Scheduler {
     return st
   }
 
-  relative (_offset: Time): Scheduler {
+  relative (): Scheduler {
     return this
   }
 

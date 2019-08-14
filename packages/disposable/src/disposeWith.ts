@@ -1,7 +1,7 @@
 /** @license MIT License (c) copyright 2010-2017 original author or authors */
 import { disposeOnce } from './disposeOnce'
 import { curry2 } from '@most/prelude'
-import { Disposable } from '@most/types' // eslint-disable-line no-unused-vars
+import { Disposable } from '@most/types'
 
 export interface DisposeWith {
   (): DisposeWith
@@ -31,7 +31,7 @@ class DisposeWithImpl<R> implements Disposable {
     this._resource = resource
   }
 
-  dispose () {
+  dispose (): void {
     this._dispose(this._resource)
   }
 }

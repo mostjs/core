@@ -18,8 +18,8 @@ describe('map', function () {
 
   it('should satisfy composition', function () {
     // u.map(function(x) { return f(g(x)); }) ~= u.map(g).map(f)
-    const f = (x: string) => x + 'f'
-    const g = (x: string) => x + 'g'
+    const f = (x: string): string => x + 'f'
+    const g = (x: string): string => x + 'g'
 
     const u = now('e')
 
@@ -46,7 +46,7 @@ describe('constant', function () {
     // u.constant(x) ~= u.map(function(){return x;})
     const u = now('e')
     const x = 1
-    const f = () => x
+    const f = (): number => x
     return assertSame(
       constant(x, u),
       map(f, u)

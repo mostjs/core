@@ -2,9 +2,9 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { Time, Sink } from '@most/types' // eslint-disable-line no-unused-vars
+import { Time, Sink } from '@most/types'
 
-export function tryEvent <A> (t: Time, x: A, sink: Sink<A>) {
+export function tryEvent <A> (t: Time, x: A, sink: Sink<A>): void {
   try {
     sink.event(t, x)
   } catch (e) {
@@ -12,7 +12,7 @@ export function tryEvent <A> (t: Time, x: A, sink: Sink<A>) {
   }
 }
 
-export function tryEnd (t: Time, sink: Sink<unknown>) {
+export function tryEnd (t: Time, sink: Sink<unknown>): void {
   try {
     sink.end(t)
   } catch (e) {
