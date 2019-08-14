@@ -30,13 +30,13 @@ export const combine = <A, B, C>(f: (a: A, b: B) => C, stream1: Stream<A>, strea
 export const combineArray = <Args extends any[], R>(f: (...args: Args) => R, streams: ToStreamsArray<Args>): Stream<R> =>
   streams.length === 0 || containsCanonicalEmpty(streams) ? empty()
     : streams.length === 1 ? map(f as any, streams[0])
-      : new Combine(f as any, streams)
+      : new Combine(f, streams)
 
-class Combine<A, B> {
-  private readonly f: (...args: A[]) => B
-  private readonly sources: Stream<A>[];
+class Combine<Args extends any[], B> {
+  private readonly f: (...args: Args) => B
+  private readonly sources: ToStreamsArray<Args>;
 
-  constructor (f: (...args: A[]) => B, sources: Stream<A>[]) {
+  constructor (f: (...args: Args) => B, sources: ToStreamsArray<Args>) {
     this.f = f
     this.sources = sources
   }
@@ -57,21 +57,21 @@ class Combine<A, B> {
   }
 }
 
-class CombineSink<A, B> extends Pipe<B | IndexedValue<A>> {
+class CombineSink<A, Args extends A[], B> extends Pipe<B | IndexedValue<A>> {
   private readonly disposables: Disposable[]
-  private readonly f: (...args: A[]) => B
+  private readonly f: (...args: Args) => B
   private awaiting: number
   private readonly hasValue: boolean[]
   private activeCount: number
-  private readonly values: A[]
+  private readonly values: Args
 
-  constructor (disposables: Disposable[], length: number, sink: Sink<B>, f: (...args: A[]) => B) {
+  constructor (disposables: Disposable[], length: number, sink: Sink<B>, f: (...args: Args) => B) {
     super(sink)
     this.disposables = disposables
     this.f = f
 
     this.awaiting = length
-    this.values = new Array(length)
+    this.values = new Array(length) as Args
     this.hasValue = new Array(length).fill(false)
     this.activeCount = length
   }
