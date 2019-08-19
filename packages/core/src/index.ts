@@ -11,20 +11,6 @@ export { periodic } from './source/periodic'
 
 export { newStream } from './source/newStream'
 
-import { zipItems as _zipItems, withItems as _withItems } from './combinator/zipItems'
-interface ZipItems {
-  <A, B, C> (f: (a: A, b: B) => C, a: Array<A>, s: Stream<B>): Stream<C>
-  <A, B, C> (f: (a: A, b: B) => C): (a: Array<A>, s: Stream<B>) => Stream<C>
-  <A, B, C> (f: (a: A, b: B) => C, a: Array<A>): (s: Stream<B>) => Stream<C>
-  <A, B, C> (f: (a: A, b: B) => C): (a: Array<A>) => (s: Stream<B>) => Stream<C>
-}
-export const zipItems: ZipItems = curry3(_zipItems)
-interface WithItems {
-  <A>(a: Array<A>, s: Stream<unknown>): Stream<A>
-  <A>(a: Array<A>): (s: Stream<unknown>) => Stream<A>
-}
-export const withItems: WithItems = curry2(_withItems)
-
 // -----------------------------------------------------------------------
 // Observing
 
@@ -33,9 +19,8 @@ import { run as _run } from './run'
 
 interface Run {
   <A> (sink: Sink<A>, scheduler: Scheduler, s: Stream<A>): Disposable
-  <A> (sink: Sink<A>): (scheduler: Scheduler, s: Stream<A>) => Disposable
   <A> (sink: Sink<A>, scheduler: Scheduler): (s: Stream<A>) => Disposable
-  <A> (sink: Sink<A>): (scheduler: Scheduler) => (s: Stream<A>) => Disposable
+  <A> (sink: Sink<A>): Curried2<Scheduler, Stream<A>, Disposable>
 }
 export const run: Run = curry3(_run)
 
@@ -55,9 +40,8 @@ import { loop as _loop, SeedValue } from './combinator/loop'
 
 interface Loop {
   <A, B, S>(f: (seed: S, a: A) => SeedValue<S, B>, seed: S, s: Stream<A>): Stream<B>
-  <A, B, S>(f: (seed: S, a: A) => SeedValue<S, B>): (seed: S, s: Stream<A>) => Stream<B>
   <A, B, S>(f: (seed: S, a: A) => SeedValue<S, B>, seed: S): (s: Stream<A>) => Stream<B>
-  <A, B, S>(f: (seed: S, a: A) => SeedValue<S, B>): (seed: S) => (s: Stream<A>) => Stream<B>
+  <A, B, S>(f: (seed: S, a: A) => SeedValue<S, B>): Curried2<S, Stream<A>, Stream<B>>
 }
 export const loop: Loop = curry3(_loop)
 
@@ -67,9 +51,8 @@ import { scan as _scan } from './combinator/scan'
 
 interface Scan {
   <A, B>(f: (b: B, a: A) => B, b: B, s: Stream<A>): Stream<B>
-  <A, B>(f: (b: B, a: A) => B): (b: B, s: Stream<A>) => Stream<B>
   <A, B>(f: (b: B, a: A) => B, b: B): (s: Stream<A>) => Stream<B>
-  <A, B>(f: (b: B, a: A) => B): (b: B) => (s: Stream<A>) => Stream<B>
+  <A, B>(f: (b: B, a: A) => B): Curried2<B, Stream<A>, Stream<B>>
 }
 export const scan: Scan = curry3(_scan)
 
@@ -142,17 +125,14 @@ export const concatMap: ConcatMap = curry2(_concatMap)
 import { mergeConcurrently as _mergeConcurrently, mergeMapConcurrently as _mergeMapConcurrently } from './combinator/mergeConcurrently'
 
 interface MergeConcurrently {
-  (): MergeConcurrently
   <A>(concurrency: number, s: Stream<Stream<A>>): Stream<A>
   <A>(concurrency: number): (s: Stream<Stream<A>>) => Stream<A>
 }
 export const mergeConcurrently: MergeConcurrently = curry2<number, Stream<Stream<unknown>>, Stream<unknown>>(_mergeConcurrently)
 interface MergeMapConcurrently {
-  (): MergeMapConcurrently
   <A, B>(f: (a: A) => Stream<B>, concurrency: number, s: Stream<A>): Stream<B>
-  <A, B>(f: (a: A) => Stream<B>): (concurrency: number, s: Stream<A>) => Stream<B>
   <A, B>(f: (a: A) => Stream<B>, concurrency: number): (s: Stream<A>) => Stream<B>
-  <A, B>(f: (a: A) => Stream<B>): (concurrency: number) => (s: Stream<A>) => Stream<B>
+  <A, B>(f: (a: A) => Stream<B>): Curried2<number, Stream<A>, Stream<B>>
 }
 export const mergeMapConcurrently: MergeMapConcurrently = curry3(_mergeMapConcurrently)
 
@@ -175,9 +155,8 @@ import { combine as _combine, combineArray as _combineArray } from './combinator
 
 interface Combine {
   <A, B, R>(fn: (a: A, b: B) => R, a: Stream<A>, b: Stream<B>): Stream<R>
-  <A, B, R>(fn: (a: A, b: B) => R): (a: Stream<A>, b: Stream<B>) => Stream<R>
   <A, B, R>(fn: (a: A, b: B) => R, a: Stream<A>): (b: Stream<B>) => Stream<R>
-  <A, B, R>(fn: (a: A, b: B) => R): (a: Stream<A>) => (b: Stream<B>) => Stream<R>
+  <A, B, R>(fn: (a: A, b: B) => R): Curried2<Stream<A>, Stream<B>, Stream<R>>
 }
 export const combine: Combine = curry3(_combine)
 interface CombineArray {
@@ -198,21 +177,32 @@ interface Sample {
 export const sample: Sample = curry2(_sample)
 interface Snapshot {
   <A, B, C>(f: (a: A, b: B) => C, values: Stream<A>, sampler: Stream<B>): Stream<C>
-  <A, B, C>(f: (a: A, b: B) => C): (values: Stream<A>, sampler: Stream<B>) => Stream<C>
   <A, B, C>(f: (a: A, b: B) => C, values: Stream<A>): (sampler: Stream<B>) => Stream<C>
-  <A, B, C>(f: (a: A, b: B) => C): (values: Stream<A>) => (sampler: Stream<B>) => Stream<C>
+  <A, B, C>(f: (a: A, b: B) => C): Curried2<Stream<A>, Stream<B>, Stream<C>>
 }
 export const snapshot: Snapshot = curry3(_snapshot)
 
 // -----------------------------------------------------------------------
 // Zipping
 
+import { zipItems as _zipItems, withItems as _withItems } from './combinator/zipItems'
+interface ZipItems {
+  <A, B, C> (f: (a: A, b: B) => C, a: Array<A>, s: Stream<B>): Stream<C>
+  <A, B, C> (f: (a: A, b: B) => C, a: Array<A>): (s: Stream<B>) => Stream<C>
+  <A, B, C> (f: (a: A, b: B) => C): Curried2<Array<A>, Stream<B>, Stream<C>>
+}
+export const zipItems: ZipItems = curry3(_zipItems)
+interface WithItems {
+  <A>(a: Array<A>, s: Stream<unknown>): Stream<A>
+  <A>(a: Array<A>): (s: Stream<unknown>) => Stream<A>
+}
+export const withItems: WithItems = curry2(_withItems)
+
 import { zip as _zip, zipArray as _zipArray } from './combinator/zip'
 interface Zip {
   <A, B, R>(fn: (a: A, b: B) => R, a: Stream<A>, b: Stream<B>): Stream<R>
-  <A, B, R>(fn: (a: A, b: B) => R): (a: Stream<A>, b: Stream<B>) => Stream<R>
   <A, B, R>(fn: (a: A, b: B) => R, a: Stream<A>): (b: Stream<B>) => Stream<R>
-  <A, B, R>(fn: (a: A, b: B) => R): (a: Stream<A>) => (b: Stream<B>) => Stream<R>
+  <A, B, R>(fn: (a: A, b: B) => R): Curried2<Stream<A>, Stream<B>, Stream<R>>
 }
 export const zip: Zip = curry3(_zip)
 interface ZipArray {
@@ -262,9 +252,8 @@ interface Skip {
 export const skip: Skip = curry2(_skip)
 interface Slice {
   <A>(start: number, end: number, s: Stream<A>): Stream<A>
-  <A>(start: number): (end: number, s: Stream<A>) => Stream<A>
   <A>(start: number, end: number): (s: Stream<A>) => Stream<A>
-  <A>(start: number): (end: number) => (s: Stream<A>) => Stream<A>
+  <A>(start: number): Curried2<number, Stream<A>, Stream<A>>
 }
 export const slice: Slice = curry3(_slice)
 interface TakeWhile {
@@ -367,9 +356,8 @@ import { ToStreamsArray } from './combinator/variadic'
 
 interface PropagateTask {
   <A, B = A>(run: PropagateTaskRun<A, B>, value: A, sink: Sink<B>): PropagateTaskResult<A, B>
-  <A, B = A>(run: PropagateTaskRun<A, B>): (value: A, sink: Sink<B>) => PropagateTaskResult<A, B>
   <A, B = A>(run: PropagateTaskRun<A, B>, value: A): (sink: Sink<B>) => PropagateTaskResult<A, B>
-  <A, B = A>(run: PropagateTaskRun<A, B>): (value: A) => (sink: Sink<B>) => PropagateTaskResult<A, B>
+  <A, B = A>(run: PropagateTaskRun<A, B>): Curried2<A, Sink<B>, PropagateTaskResult<A, B>>
 }
 export const propagateTask: PropagateTask = curry3(_propagateTask)
 interface PropagateEventTask {
