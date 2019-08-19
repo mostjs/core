@@ -5,6 +5,8 @@ import Pipe from '../../sink/Pipe'
 import SettableDisposable from '../../disposable/SettableDisposable'
 import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
 
+// TODO: split into smaller files
+
 /**
  * @param n
  * @param stream
