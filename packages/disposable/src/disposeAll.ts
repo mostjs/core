@@ -1,12 +1,12 @@
 /** @license MIT License (c) copyright 2010 original author or authors */
-import { append, reduce, curry2 } from '@most/prelude'
+import { append, reduce, curry2, concat } from '@most/prelude'
 import { disposeNone, isDisposeNone } from './disposeNone'
 import { Disposable } from '@most/types'
 
 /**
  * Aggregate a list of disposables into a DisposeAll
  */
-export const disposeAll = (ds: Disposable[]): Disposable => {
+export const disposeAll = (ds: ArrayLike<Disposable>): Disposable => {
   const merged = reduce(merge, [], ds)
   return merged.length === 0 ? disposeNone() : new DisposeAll(merged)
 }
@@ -19,13 +19,13 @@ export const disposeBoth = curry2((d1: Disposable, d2: Disposable): Disposable =
 
 const merge = (ds: Disposable[], d: Disposable): Disposable[] =>
   isDisposeNone(d) ? ds
-    : d instanceof DisposeAll ? ds.concat(d.disposables)
+    : d instanceof DisposeAll ? concat(ds, d.disposables)
       : append(d, ds)
 
 class DisposeAll implements Disposable {
-  readonly disposables: Disposable[]
+  readonly disposables: ArrayLike<Disposable>
 
-  constructor(disposables: Disposable[]) {
+  constructor(disposables: ArrayLike<Disposable>) {
     this.disposables = disposables
   }
 
@@ -37,7 +37,7 @@ class DisposeAll implements Disposable {
 /**
  * Dispose all, safely collecting errors into an array
  */
-const disposeCollectErrors = (disposables: Disposable[]): Error[] =>
+const disposeCollectErrors = (disposables: ArrayLike<Disposable>): Error[] =>
   reduce(appendIfError, [], disposables)
 
 /**
@@ -56,7 +56,7 @@ const appendIfError = (errors: Error[], d: Disposable): Error[] => {
  * Throw DisposeAllError if errors is non-empty
  * @throws
  */
-const throwIfErrors = (errors: Error[]): void => {
+const throwIfErrors = (errors: ArrayLike<Error>): void => {
   if (errors.length > 0) {
     throw new DisposeAllError(`${errors.length} errors`, errors)
   }

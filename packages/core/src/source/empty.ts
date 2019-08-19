@@ -9,7 +9,7 @@ export const empty = (): Stream<never> => EMPTY
 export const isCanonicalEmpty = (stream: Stream<unknown>): boolean =>
   stream === EMPTY
 
-export const containsCanonicalEmpty = <A>(streams: Stream<A>[]): boolean =>
+export const containsCanonicalEmpty = <A>(streams: ReadonlyArray<Stream<A>>): boolean =>
   streams.some(isCanonicalEmpty)
 
 class Empty implements Stream<never> {

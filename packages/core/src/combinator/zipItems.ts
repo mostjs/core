@@ -8,7 +8,7 @@ import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
 export const withItems = <A> (items: Array<A>, stream: Stream<unknown>): Stream<A> =>
   zipItems(keepLeft, items, stream)
 
-export const zipItems = <A, B, C> (f: (a: A, b: B) => C, items: A[], stream: Stream<B>): Stream<C> =>
+export const zipItems = <A, B, C> (f: (a: A, b: B) => C, items: ArrayLike<A>, stream: Stream<B>): Stream<C> =>
   isCanonicalEmpty(stream) || items.length === 0
     ? empty()
     : new ZipItems(f, items, take(items.length, stream))
@@ -17,10 +17,10 @@ const keepLeft = <A>(a: A): A => a
 
 class ZipItems<A, B, C> implements Stream<C> {
   private readonly f: (a: A, b: B) => C
-  private readonly items: A[]
+  private readonly items: ArrayLike<A>
   private readonly source: Stream<B>
 
-  constructor(f: (a: A, b: B) => C, items: A[], source: Stream<B>) {
+  constructor(f: (a: A, b: B) => C, items: ArrayLike<A>, source: Stream<B>) {
     this.f = f
     this.items = items
     this.source = source
@@ -33,10 +33,10 @@ class ZipItems<A, B, C> implements Stream<C> {
 
 class ZipItemsSink<A, B, C> extends Pipe<B, C> implements Sink<B> {
   private readonly f: (a: A, b: B) => C
-  private readonly items: A[]
+  private readonly items: ArrayLike<A>
   private index: number;
 
-  constructor(f: (a: A, b: B) => C, items: A[], sink: Sink<C>) {
+  constructor(f: (a: A, b: B) => C, items: ArrayLike<A>, sink: Sink<C>) {
     super(sink)
     this.f = f
     this.items = items

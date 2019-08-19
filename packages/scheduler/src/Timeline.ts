@@ -68,7 +68,7 @@ export default class TimelineImpl implements Timeline {
   }
 }
 
-function runReadyTasks(runTask: (task: ScheduledTaskImpl) => void, events: ScheduledTaskImpl[], tasks: TimeSlot[]): TimeSlot[] {
+function runReadyTasks(runTask: (task: ScheduledTaskImpl) => void, events: ArrayLike<ScheduledTaskImpl>, tasks: TimeSlot[]): TimeSlot[] {
   for (let i = 0; i < events.length; ++i) {
     const task = events[i]
 
@@ -142,7 +142,7 @@ function removeAllFrom(f: (task: ScheduledTaskImpl) => boolean, timeslot: TimeSl
   timeslot.events = removeAll(f, timeslot.events)
 }
 
-function binarySearch(t: Time, sortedArray: TimeSlot[]): number {
+function binarySearch(t: Time, sortedArray: ArrayLike<TimeSlot>): number {
   let lo = 0
   let hi = sortedArray.length
   let mid, y

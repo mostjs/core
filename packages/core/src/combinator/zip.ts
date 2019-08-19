@@ -41,10 +41,10 @@ export const zipArray = <Args extends unknown[], R>(f: (...args: Args) => R, str
       : new Zip(f as any, streams)
 
 class Zip<A, R> implements Stream<R> {
-  private readonly f: (...args: A[]) => R
-  private readonly sources: Stream<A>[]
+  private readonly f: (...args: ReadonlyArray<A>) => R
+  private readonly sources: ArrayLike<Stream<A>>
 
-  constructor(f: (...args: A[]) => R, sources: Stream<A>[]) {
+  constructor(f: (...args: ReadonlyArray<A>) => R, sources: ArrayLike<Stream<A>>) {
     this.f = f
     this.sources = sources
   }
@@ -68,11 +68,11 @@ class Zip<A, R> implements Stream<R> {
 }
 
 class ZipSink<A, R> extends Pipe<IndexedValue<A>, R> implements Sink<IndexedValue<A>> {
-  private readonly f: (...args: A[]) => R
-  private readonly buffers: Queue<A>[]
-  private readonly sinks: IndexSink<A>[]
+  private readonly f: (...args: ReadonlyArray<A>) => R
+  private readonly buffers: ArrayLike<Queue<A>>
+  private readonly sinks: ArrayLike<IndexSink<A>>
 
-  constructor(f: (...args: A[]) => R, buffers: Queue<A>[], sinks: IndexSink<A>[], sink: Sink<R>) {
+  constructor(f: (...args: ReadonlyArray<A>) => R, buffers: ArrayLike<Queue<A>>, sinks: ArrayLike<IndexSink<A>>, sink: Sink<R>) {
     super(sink)
     this.f = f
     this.sinks = sinks
@@ -112,12 +112,12 @@ class ZipSink<A, R> extends Pipe<IndexedValue<A>, R> implements Sink<IndexedValu
   }
 }
 
-const emitZipped = <A, R>(f: (...args: A[]) => R, t: Time, buffers: NonEmptyQueue<A>[], sink: Sink<R>): void =>
+const emitZipped = <A, R>(f: (...args: A[]) => R, t: Time, buffers: ArrayLike<NonEmptyQueue<A>>, sink: Sink<R>): void =>
   sink.event(t, invoke(f, mapArray(head, buffers)))
 
 const head = <A>(buffer: NonEmptyQueue<A>): A => buffer.shift()
 
-function ended <A>(buffers: Queue<unknown>[], sinks: IndexSink<A>[]): boolean {
+function ended <A>(buffers: ArrayLike<Queue<unknown>>, sinks: ArrayLike<IndexSink<A>>): boolean {
   for (let i = 0, l = buffers.length; i < l; ++i) {
     if (buffers[i].isEmpty() && !sinks[i].active) {
       return true
@@ -126,7 +126,7 @@ function ended <A>(buffers: Queue<unknown>[], sinks: IndexSink<A>[]): boolean {
   return false
 }
 
-function ready <A>(buffers: Queue<A>[]): buffers is NonEmptyQueue<A>[] {
+function ready <A>(buffers: ArrayLike<Queue<A>>): buffers is ArrayLike<NonEmptyQueue<A>> {
   for (let i = 0, l = buffers.length; i < l; ++i) {
     if (buffers[i].isEmpty()) {
       return false

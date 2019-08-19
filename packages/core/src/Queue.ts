@@ -94,7 +94,7 @@ export default class Queue<A> {
   }
 
   private copyArray(): Array<A | undefined> {
-    const newArray = []
+    const newArray: Array<A | undefined> = []
     const list = this.list
     const len = list.length
 

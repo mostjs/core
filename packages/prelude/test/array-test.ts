@@ -5,7 +5,7 @@ import * as assert from 'assert'
 
 import { cons, append, drop, tail, copy,
   map, reduce, remove, removeAll, replace, findIndex,
-  isArrayLike } from '../src/array'
+  isArrayLike, concat } from '../src/array'
 
 const rint = (n: number): number => Math.floor(Math.random() * n)
 const same = <A>(a: A[], b: A[]): boolean => a.length === b.length && _same(a, b, a.length - 1)
@@ -15,7 +15,7 @@ const assertSame = <A>(a: A[], b: A[]): void => assert(same(a, b), `${a} != ${b}
 
 describe('cons', () => {
   it('should increase length by 1', () => {
-    const a: number[] = []
+    const a: ArrayLike<number> = []
     assert(cons(1, a).length === a.length + 1)
     assert(cons(2, cons(1, a)).length === a.length + 2)
   })
@@ -29,7 +29,7 @@ describe('cons', () => {
 
 describe('append', () => {
   it('should add 1 to the length', () => {
-    const a: number[] = []
+    const a: ArrayLike<number> = []
     const b = append(1, a)
     const c = append(2, b)
     assert(b.length === a.length + 1)
@@ -40,6 +40,15 @@ describe('append', () => {
     const x = {}
     assert(append(x, [])[0] === x)
     assert(append(x, append({}, []))[1] === x)
+  })
+})
+
+describe('concat', () => {
+  it('should concat', () => {
+    assertSame(concat([1, 2], [3, 4]), [1, 2, 3, 4])
+    assertSame(concat([1, 2], []), [1, 2])
+    assertSame(concat([], [3, 4]), [3, 4])
+    assertSame(concat([], []), [])
   })
 })
 

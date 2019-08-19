@@ -5,7 +5,7 @@
 /**
  * a with x prepended
  */
-export function cons <A>(x: A, a: A[]): A[] {
+export function cons <A>(x: A, a: ArrayLike<A>): A[] {
   const l = a.length
   const b = new Array(l + 1)
   b[0] = x
@@ -18,7 +18,7 @@ export function cons <A>(x: A, a: A[]): A[] {
 /**
  * a with x appended
  */
-export function append <A>(x: A, a: A[]): A[] {
+export function append <A>(x: A, a: ArrayLike<A>): A[] {
   const l = a.length
   const b = new Array(l + 1)
   for (let i = 0; i < l; ++i) {
@@ -27,6 +27,23 @@ export function append <A>(x: A, a: A[]): A[] {
 
   b[l] = x
   return b
+}
+
+/**
+ * Concats two `ArrayLike`s
+ */
+export function concat <A>(a: ArrayLike<A>, b: ArrayLike<A>): A[] {
+  const al = a.length
+  const bl = b.length
+  const r = new Array(al + bl)
+  let i = 0
+  for (i = 0; i < al; i++) {
+    r[i] = a[i]
+  }
+  for (let j = 0; j < bl; j++) {
+    r[i++] = b[j]
+  }
+  return r
 }
 
 //
@@ -53,7 +70,7 @@ export function drop <A>(n: number, a: A[]): A[] {
 /**
  * Internal helper for drop
  */
-function unsafeDrop <A>(n: number, a: A[], l: number): A[] {
+function unsafeDrop <A>(n: number, a: ArrayLike<A>, l: number): A[] {
   const b = new Array(l)
   for (let i = 0; i < l; ++i) {
     b[i] = a[n + i]
@@ -71,7 +88,7 @@ export function tail <A>(a: A[]): A[] {
 /**
  * duplicate a (shallow duplication)
  */
-export function copy <A>(a: A[]): A[] {
+export function copy <A>(a: ArrayLike<A>): A[] {
   const l = a.length
   const b = new Array(l)
   for (let i = 0; i < l; ++i) {
@@ -83,7 +100,7 @@ export function copy <A>(a: A[]): A[] {
 /**
  * transform each element with f
  */
-export function map <A, B>(f: (a: A) => B, a: A[]): B[] {
+export function map <A, B>(f: (a: A) => B, a: ArrayLike<A>): B[] {
   const l = a.length
   const b = new Array(l)
   for (let i = 0; i < l; ++i) {
@@ -106,7 +123,7 @@ export function reduce <A, B>(f: (a: A, b: B, i: number) => A, z: A, a: ArrayLik
 /**
  * replace element at index
  */
-export function replace <A>(x: A, i: number, a: A[]): A[] {
+export function replace <A>(x: A, i: number, a: ArrayLike<A>): A[] {
   if (i < 0) {
     throw new TypeError('i must be >= 0')
   }
@@ -143,7 +160,7 @@ export function remove <A>(i: number, a: A[]): A[] {
 /**
  * Internal helper to remove element at index
  */
-function unsafeRemove <A>(i: number, a: A[], l: number): A[] {
+function unsafeRemove <A>(i: number, a: ArrayLike<A>, l: number): A[] {
   const b = new Array(l)
   let j
   for (j = 0; j < i; ++j) {
@@ -160,7 +177,7 @@ function unsafeRemove <A>(i: number, a: A[], l: number): A[] {
  * remove all elements matching a predicate
  * @deprecated
  */
-export function removeAll <A>(f: (a: A) => boolean, a: A[]): A[] {
+export function removeAll <A>(f: (a: A) => boolean, a: ArrayLike<A>): A[] {
   const l = a.length
   const b = new Array(l)
   let j = 0
@@ -179,7 +196,7 @@ export function removeAll <A>(f: (a: A) => boolean, a: A[]): A[] {
 /**
  * find index of x in a, from the left
  */
-export function findIndex <A>(x: A, a: A[]): number {
+export function findIndex <A>(x: A, a: ArrayLike<A>): number {
   for (let i = 0, l = a.length; i < l; ++i) {
     if (x === a[i]) {
       return i
