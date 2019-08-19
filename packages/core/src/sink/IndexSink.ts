@@ -6,12 +6,12 @@ import Pipe from './Pipe'
 import { Time, Sink } from '@most/types'
 
 export interface IndexedValue<A> {
-  index: number
-  value: A
-  active: boolean
+  readonly index: number
+  readonly value: A
+  readonly active: boolean
 }
 
-export default class IndexSink<A> extends Pipe<A | Readonly<IndexedValue<A | undefined>>> {
+export default class IndexSink<A> extends Pipe<A | Readonly<IndexedValue<A | undefined>>> implements Sink<A | Readonly<IndexedValue<A | undefined>>> {
   readonly index: number
   active: boolean
   value: A | undefined

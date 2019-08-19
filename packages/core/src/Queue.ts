@@ -15,94 +15,94 @@ const HEAD_MAX_SHRINK = 2
 const TAIL_MIN_SHRINK = 10000
 
 export default class Queue<A> {
-  private _head: number;
-  private _tail: number;
-  private _capacityMask: number;
-  private _list: Array<A | undefined>;
+  private head: number;
+  private tail: number;
+  private capacityMask: number;
+  private list: Array<A | undefined>;
 
   constructor () {
-    this._head = 0
-    this._tail = 0
-    this._capacityMask = 0x3
-    this._list = new Array(4)
+    this.head = 0
+    this.tail = 0
+    this.capacityMask = 0x3
+    this.list = new Array(4)
   }
 
   push (x: A): number {
-    const tail = this._tail
-    this._list[tail] = x
-    this._tail = (tail + 1) & this._capacityMask
-    if (this._tail === this._head) {
-      this._growArray()
+    const tail = this.tail
+    this.list[tail] = x
+    this.tail = (tail + 1) & this.capacityMask
+    if (this.tail === this.head) {
+      this.growArray()
     }
 
-    if (this._head < this._tail) {
-      return this._tail - this._head
+    if (this.head < this.tail) {
+      return this.tail - this.head
     } else {
-      return this._capacityMask + 1 - (this._head - this._tail)
+      return this.capacityMask + 1 - (this.head - this.tail)
     }
   }
 
   shift (): A | undefined {
-    const head = this._head
-    if (head === this._tail) {
+    const head = this.head
+    if (head === this.tail) {
       return undefined
     }
 
-    const x = this._list[head]
-    this._list[head] = undefined
-    this._head = (head + 1) & this._capacityMask
+    const x = this.list[head]
+    this.list[head] = undefined
+    this.head = (head + 1) & this.capacityMask
     if (head < HEAD_MAX_SHRINK &&
-      this._tail > TAIL_MIN_SHRINK &&
-      this._tail <= this._list.length >>> 2) {
-      this._shrinkArray()
+      this.tail > TAIL_MIN_SHRINK &&
+      this.tail <= this.list.length >>> 2) {
+      this.shrinkArray()
     }
 
     return x
   }
 
   isEmpty (): boolean {
-    return this._head === this._tail
+    return this.head === this.tail
   }
 
   length (): number {
-    if (this._head === this._tail) {
+    if (this.head === this.tail) {
       return 0
-    } else if (this._head < this._tail) {
-      return this._tail - this._head
+    } else if (this.head < this.tail) {
+      return this.tail - this.head
     } else {
-      return this._capacityMask + 1 - (this._head - this._tail)
+      return this.capacityMask + 1 - (this.head - this.tail)
     }
   }
 
-  _growArray (): void {
-    if (this._head) {
+  private growArray (): void {
+    if (this.head) {
       // copy existing data, head to end, then beginning to tail.
-      this._list = this._copyArray()
-      this._head = 0
+      this.list = this.copyArray()
+      this.head = 0
     }
 
     // head is at 0 and array is now full, safe to extend
-    this._tail = this._list.length
+    this.tail = this.list.length
 
-    this._list.length *= 2
-    this._capacityMask = (this._capacityMask << 1) | 1
+    this.list.length *= 2
+    this.capacityMask = (this.capacityMask << 1) | 1
   }
 
-  _shrinkArray (): void {
-    this._list.length >>>= 1
-    this._capacityMask >>>= 1
+  private shrinkArray (): void {
+    this.list.length >>>= 1
+    this.capacityMask >>>= 1
   }
 
-  _copyArray (): Array<A | undefined> {
+  private copyArray (): Array<A | undefined> {
     const newArray = []
-    const list = this._list
+    const list = this.list
     const len = list.length
 
     let i
-    for (i = this._head; i < len; i++) {
+    for (i = this.head; i < len; i++) {
       newArray.push(list[i])
     }
-    for (i = 0; i < this._tail; i++) {
+    for (i = 0; i < this.tail; i++) {
       newArray.push(list[i])
     }
 

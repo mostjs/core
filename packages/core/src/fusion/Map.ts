@@ -9,7 +9,7 @@ import { compose } from '@most/prelude'
 import { isCanonicalEmpty, empty } from '../source/empty'
 import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types'
 
-export default class Map<A, B> {
+export default class Map<A, B> implements Stream<B> {
   readonly f: (a: A) => B;
   readonly source: Stream<A>;
 
@@ -46,7 +46,7 @@ export default class Map<A, B> {
   }
 }
 
-class MapSink<A, B> extends Pipe<A | B> {
+class MapSink<A, B> extends Pipe<A | B> implements Sink<A | B> {
   private readonly f: (a: A) => B;
 
   constructor (f: (a: A) => B, sink: Sink<B>) {

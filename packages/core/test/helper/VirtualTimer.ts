@@ -10,7 +10,7 @@ export default class VirtualTimer implements Timer {
   _now = 0
   _targetNow = 0
   _time = Infinity
-  _task?: Function = void 0
+  _task?: Function = undefined
   _timer?: number = undefined
   _active = false
   _running = false
@@ -21,7 +21,7 @@ export default class VirtualTimer implements Timer {
   }
 
   setTimer (f: Function, dt: number): {} {
-    if (this._task !== void 0) {
+    if (this._task !== undefined) {
       throw new Error('VirtualTimer: Only supports one in-flight timer')
     }
 
@@ -40,7 +40,7 @@ export default class VirtualTimer implements Timer {
 
     this._cancel()
     this._time = Infinity
-    this._task = void 0
+    this._task = undefined
   }
 
   tick (dt: number): void {
@@ -52,21 +52,21 @@ export default class VirtualTimer implements Timer {
     this._run()
   }
 
-  _step (): void {
+  step (): void {
     this._timer = setTimeout(stepTimer, 0, this)
   }
 
-  _run (): void {
+  private _run (): void {
     if (this._running) {
       return
     }
 
     this._active = true
     this._running = true
-    this._step()
+    this.step()
   }
 
-  _cancel (): void {
+  private _cancel (): void {
     clearTimeout(this._timer)
     this._timer = undefined
   }
@@ -81,7 +81,7 @@ function stepTimer (vt: VirtualTimer): void {
   }
 
   const task = vt._task
-  vt._task = void 0
+  vt._task = undefined
   vt._now = vt._time
   vt._time = Infinity
 
@@ -89,5 +89,5 @@ function stepTimer (vt: VirtualTimer): void {
     task()
   }
 
-  vt._step()
+  vt.step()
 }

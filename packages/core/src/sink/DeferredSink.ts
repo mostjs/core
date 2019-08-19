@@ -6,8 +6,8 @@ import { defer, DeferrableTask } from '../task'
 import { Time, Sink } from '@most/types'
 
 export interface Event<A> {
-  time: Time
-  value: A
+  readonly time: Time
+  readonly value: A
 }
 
 export default class DeferredSink<A> implements Sink<A> {
@@ -38,14 +38,14 @@ export default class DeferredSink<A> implements Sink<A> {
       return
     }
 
-    this._end(new EndTask(t, this.sink))
+    this.handleTask(new EndTask(t, this.sink))
   }
 
   error (t: Time, e: Error): void {
-    this._end(new ErrorTask(t, e, this.sink))
+    this.handleTask(new ErrorTask(t, e, this.sink))
   }
 
-  _end <E, A> (task: DeferrableTask<E, A>): void {
+  private handleTask <E, A> (task: DeferrableTask<E, A>): void {
     this.active = false
     defer(task)
   }

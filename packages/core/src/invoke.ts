@@ -12,6 +12,6 @@ export default function invoke <F extends (...args: any[]) => any>(f: F, args: P
     case 4: return f(args[0], args[1], args[2], args[3])
     case 5: return f(args[0], args[1], args[2], args[3], args[4])
     default:
-      return f.apply(void 0, args)
+      return f.apply(undefined, args)
   }
 }

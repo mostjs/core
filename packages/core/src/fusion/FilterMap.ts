@@ -5,7 +5,7 @@
 import Pipe from '../sink/Pipe'
 import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types'
 
-export default class FilterMap<A, B> {
+export default class FilterMap<A, B> implements Stream<B> {
   private readonly p: (a: A) => boolean;
   private readonly f: (a: A) => B;
   private readonly source: Stream<A>;
@@ -21,7 +21,7 @@ export default class FilterMap<A, B> {
   }
 }
 
-class FilterMapSink<A, B> extends Pipe<A | B> {
+class FilterMapSink<A, B> extends Pipe<A | B> implements Sink<A | B> {
   private readonly p: (a: A) => boolean;
   private readonly f: (a: A) => B;
 

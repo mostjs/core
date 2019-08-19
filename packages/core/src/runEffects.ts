@@ -39,14 +39,14 @@ class RunEffectsSink<A> implements Sink<A> {
     if (!this.active) {
       return
     }
-    this._dispose(this._error, this._end, undefined)
+    this.dispose(this._error, this._end, undefined)
   }
 
   error (_t: Time, e: Error): void {
-    this._dispose(this._error, this._error, e)
+    this.dispose(this._error, this._error, e)
   }
 
-  _dispose <X> (error: (e: Error) => void, end: (x: X) => void, x: X): void {
+  private dispose <X> (error: (e: Error) => void, end: (x: X) => void, x: X): void {
     this.active = false
     tryDispose(error, end, x, this._disposable)
   }

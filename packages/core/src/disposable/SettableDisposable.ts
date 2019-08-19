@@ -11,7 +11,7 @@ export default class SettableDisposable implements Disposable {
   }
 
   setDisposable (disposable: Disposable): void {
-    if (this.disposable !== void 0) {
+    if (this.disposable !== undefined) {
       throw new Error('setDisposable called more than once')
     }
 
@@ -29,7 +29,7 @@ export default class SettableDisposable implements Disposable {
 
     this.disposed = true
 
-    if (this.disposable !== void 0) {
+    if (this.disposable !== undefined) {
       this.disposable.dispose()
     }
   }
