@@ -19,7 +19,7 @@ class Multicast<A> implements Stream<A> {
   }
 }
 
-export class MulticastSource<A> implements Stream<A> {
+export class MulticastSource<A> implements Stream<A>, Disposable {
   private readonly source: Stream<A>;
   private sinks: Sink<A>[];
   private disposable: Disposable;
