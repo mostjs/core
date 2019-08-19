@@ -48,27 +48,27 @@ class AwaitSink<A> implements Sink<Promise<A>> {
   }
 
   event (_t: Time, promise: Promise<A>): void {
-    this.queue = this.queue.then(() => this._event(promise))
-      .catch(this._errorBound)
+    this.queue = this.queue.then(() => this.handlePromise(promise))
+      .catch(this.errorBound)
   }
 
   end (): void {
-    this.queue = this.queue.then(this._endBound)
-      .catch(this._errorBound)
+    this.queue = this.queue.then(this.endBound)
+      .catch(this.errorBound)
   }
 
   error (_t: Time, e: Error): void {
     // Don't resolve error values, propagate directly
-    this.queue = this.queue.then(() => this._errorBound(e))
+    this.queue = this.queue.then(() => this.errorBound(e))
       .catch(fatal)
   }
 
-  _event (promise: Promise<A>): Promise<void> {
-    return promise.then(this._eventBound)
+  private handlePromise (promise: Promise<A>): Promise<void> {
+    return promise.then(this.eventBound)
   }
 
   // Pre-create closures, to avoid creating them per event
-  private _eventBound = (x: A): void => this.sink.event(currentTime(this.scheduler), x)
-  private _endBound = (): void => this.sink.end(currentTime(this.scheduler))
-  private _errorBound = (e: Error): void => this.sink.error(currentTime(this.scheduler), e)
+  private eventBound = (x: A): void => this.sink.event(currentTime(this.scheduler), x)
+  private endBound = (): void => this.sink.end(currentTime(this.scheduler))
+  private errorBound = (e: Error): void => this.sink.error(currentTime(this.scheduler), e)
 }

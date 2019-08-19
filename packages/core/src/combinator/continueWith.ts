@@ -11,7 +11,7 @@ import { Stream, Scheduler, Time, Disposable, Sink } from '@most/types'
 export const continueWith = <A>(f: () => Stream<A>, stream: Stream<A>): Stream<A> =>
   new ContinueWith(f, stream)
 
-class ContinueWith<A> {
+class ContinueWith<A> implements Stream<A> {
   private readonly f: () => Stream<A>
   private readonly source: Stream<A>
 
@@ -25,7 +25,7 @@ class ContinueWith<A> {
   }
 }
 
-class ContinueWithSink<A> extends Pipe<A> {
+class ContinueWithSink<A> extends Pipe<A> implements Sink<A>, Disposable {
   private readonly f: () => Stream<A>;
   private readonly scheduler: Scheduler;
   private active: boolean;
@@ -53,18 +53,18 @@ class ContinueWithSink<A> extends Pipe<A> {
 
     tryDispose(t, this.disposable, this.sink)
 
-    this._startNext(t, this.sink)
+    this.startNext(t, this.sink)
   }
 
-  _startNext (t: Time, sink: Sink<A>): void {
+  private startNext (t: Time, sink: Sink<A>): void {
     try {
-      this.disposable = this._continue(this.f, t, sink)
+      this.disposable = this.continue(this.f, t, sink)
     } catch (e) {
       sink.error(t, e)
     }
   }
 
-  _continue (f: () => Stream<A>, t: Time, sink: Sink<A>): Disposable {
+  private continue (f: () => Stream<A>, t: Time, sink: Sink<A>): Disposable {
     return run(sink, this.scheduler, withLocalTime(t, f()))
   }
 

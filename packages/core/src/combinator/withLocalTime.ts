@@ -12,7 +12,7 @@ import { Time, Stream, Sink, Scheduler, Disposable } from '@most/types'
 export const withLocalTime = <A>(origin: Time, stream: Stream<A>): Stream<A> =>
   new WithLocalTime(origin, stream)
 
-class WithLocalTime<A> {
+class WithLocalTime<A> implements Stream<A> {
   private readonly origin: Time;
   private readonly source: Stream<A>;
 

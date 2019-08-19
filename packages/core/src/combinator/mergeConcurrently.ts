@@ -51,26 +51,26 @@ class Outer<A, B> implements Sink<A>, Disposable {
   }
 
   event (t: Time, x: A): void {
-    this._addInner(t, x)
+    this.addInner(t, x)
   }
 
-  private _addInner (t: Time, x: A): void {
+  private addInner (t: Time, x: A): void {
     if (this.current.length < this.concurrency) {
-      this._startInner(t, x)
+      this.startInner(t, x)
     } else {
       this.pending.push(x)
     }
   }
 
-  private _startInner (t: Time, x: A): void {
+  private startInner (t: Time, x: A): void {
     try {
-      this._initInner(t, x)
+      this.initInner(t, x)
     } catch (e) {
       this.error(t, e)
     }
   }
 
-  private _initInner (t: Time, x: A): void {
+  private initInner (t: Time, x: A): void {
     const innerSink = new Inner(t, this, this.sink)
     innerSink.disposable = mapAndRun(this.f, t, x, innerSink, this.scheduler)
     this.current.push(innerSink)
@@ -79,7 +79,7 @@ class Outer<A, B> implements Sink<A>, Disposable {
   end (t: Time): void {
     this.active = false
     tryDispose(t, this.disposable, this.sink)
-    this._checkEnd(t)
+    this.checkEnd(t)
   }
 
   error (t: Time, e: Error): void{
@@ -102,13 +102,13 @@ class Outer<A, B> implements Sink<A>, Disposable {
     tryDispose(t, inner, this)
 
     if (this.pending.length === 0) {
-      this._checkEnd(t)
+      this.checkEnd(t)
     } else {
-      this._startInner(t, this.pending.shift() as A)
+      this.startInner(t, this.pending.shift() as A)
     }
   }
 
-  private _checkEnd (t: Time): void {
+  private checkEnd (t: Time): void {
     if (!this.active && this.current.length === 0) {
       this.sink.end(t)
     }

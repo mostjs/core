@@ -68,7 +68,7 @@ export class Slice<A> implements Stream<A> {
   }
 }
 
-class SliceSink<A> extends Pipe<A> {
+class SliceSink<A> extends Pipe<A> implements Sink<A> {
   private skip: number
   private take: number
   private readonly disposable: Disposable
@@ -103,7 +103,7 @@ export const takeWhile = <A>(p: (a: A) => boolean, stream: Stream<A>): Stream<A>
   isCanonicalEmpty(stream) ? empty()
     : new TakeWhile(p, stream)
 
-class TakeWhile<A> {
+class TakeWhile<A> implements Stream<A> {
   private readonly p: (a: A) => boolean;
   private readonly source: Stream<A>;
 
@@ -122,7 +122,7 @@ class TakeWhile<A> {
   }
 }
 
-class TakeWhileSink<A> extends Pipe<A> {
+class TakeWhileSink<A> extends Pipe<A> implements Sink<A> {
   private readonly p: (a: A) => boolean
   private readonly disposable: Disposable
   private active: boolean;
@@ -169,7 +169,7 @@ class SkipWhile<A> implements Stream<A> {
   }
 }
 
-class SkipWhileSink<A> extends Pipe<A> {
+class SkipWhileSink<A> extends Pipe<A> implements Sink<A> {
   private readonly p: (a: A) => boolean;
   private skipping: boolean;
 
@@ -210,7 +210,7 @@ class SkipAfter<A> implements Stream<A> {
   }
 }
 
-class SkipAfterSink<A> extends Pipe<A> {
+class SkipAfterSink<A> extends Pipe<A> implements Sink<A> {
   private readonly p: (a: A) => boolean;
   private skipping: boolean;
 

@@ -33,7 +33,7 @@ export class Snapshot<A, B, C> implements Stream<C> {
   }
 }
 
-export class SnapshotSink<A, B, C> extends Pipe<A | B | C> {
+export class SnapshotSink<A, B, C> extends Pipe<A | B | C> implements Sink<A | B | C> {
   private readonly f: (a: A, b: B) => C
   readonly latest: LatestValueSink<A>;
 
@@ -52,7 +52,7 @@ export class SnapshotSink<A, B, C> extends Pipe<A | B | C> {
   }
 }
 
-export class LatestValueSink<A> extends Pipe<A> {
+export class LatestValueSink<A> extends Pipe<A> implements Sink<A> {
   hasValue: boolean;
   value?: A;
 

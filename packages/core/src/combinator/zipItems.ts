@@ -15,7 +15,7 @@ export const zipItems = <A, B, C> (f: (a: A, b: B) => C, items: A[], stream: Str
 
 const keepLeft = <A>(a: A): A => a
 
-class ZipItems<A, B, C> {
+class ZipItems<A, B, C> implements Stream<C> {
   private readonly f: (a: A, b: B) => C
   private readonly items: A[]
   private readonly source: Stream<B>
@@ -31,7 +31,7 @@ class ZipItems<A, B, C> {
   }
 }
 
-class ZipItemsSink<A, B, C> extends Pipe<B | C> {
+class ZipItemsSink<A, B, C> extends Pipe<B | C> implements Sink<B | C> {
   private readonly f: (a: A, b: B) => C
   private readonly items: A[]
   private index: number;

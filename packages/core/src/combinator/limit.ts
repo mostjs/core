@@ -37,7 +37,7 @@ export class Throttle<A> implements Stream<A> {
   }
 }
 
-class ThrottleSink<A> extends Pipe<A> {
+class ThrottleSink<A> extends Pipe<A> implements Sink<A> {
   private time: Time
   private readonly period: number;
 
@@ -90,25 +90,24 @@ class DebounceSink<A> implements Sink<A>, Disposable {
     this.dt = dt
     this.sink = sink
     this.scheduler = scheduler
-    this.value = void 0
     this.timer = null
 
     this.disposable = source.run(this, scheduler)
   }
 
   event (_t: Time, x: A): void {
-    this._clearTimer()
+    this.clearTimer()
     this.value = x
     this.timer = delay(this.dt, new DebounceTask(this, x), this.scheduler)
   }
 
-  _event (t: Time, x: A): void {
-    this._clearTimer()
+  handleEventFromTask (t: Time, x: A): void {
+    this.clearTimer()
     this.sink.event(t, x)
   }
 
   end (t: Time): void {
-    if (this._clearTimer()) {
+    if (this.clearTimer()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       this.sink.event(t, this.value!)
       this.value = undefined
@@ -117,16 +116,16 @@ class DebounceSink<A> implements Sink<A>, Disposable {
   }
 
   error (t: Time, x: Error): void {
-    this._clearTimer()
+    this.clearTimer()
     this.sink.error(t, x)
   }
 
   dispose (): void {
-    this._clearTimer()
+    this.clearTimer()
     this.disposable.dispose()
   }
 
-  private _clearTimer (): boolean {
+  private clearTimer (): boolean {
     if (this.timer === null) {
       return false
     }
@@ -137,20 +136,20 @@ class DebounceSink<A> implements Sink<A>, Disposable {
 }
 
 class DebounceTask<A> implements Task {
-  private readonly debounce: DebounceSink<A>;
+  private readonly sink: DebounceSink<A>;
   private readonly value: A;
 
-  constructor (debounce: DebounceSink<A>, value: A) {
-    this.debounce = debounce
+  constructor (sink: DebounceSink<A>, value: A) {
+    this.sink = sink
     this.value = value
   }
 
   run (t: Time): void {
-    this.debounce._event(t, this.value)
+    this.sink.handleEventFromTask(t, this.value)
   }
 
   error (t: Time, e: Error): void {
-    this.debounce.error(t, e)
+    this.sink.error(t, e)
   }
 
   dispose (): void {}

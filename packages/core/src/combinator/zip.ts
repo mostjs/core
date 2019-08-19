@@ -40,7 +40,7 @@ export const zipArray = <Args extends any[], R>(f: (...args: Args) => R, streams
     : streams.length === 1 ? map(f as any, streams[0])
       : new Zip(f as any, streams)
 
-class Zip<A, R> {
+class Zip<A, R> implements Stream<R> {
   private readonly f: (...args: A[]) => R
   private readonly sources: Stream<A>[]
 
@@ -67,7 +67,7 @@ class Zip<A, R> {
   }
 }
 
-class ZipSink<A, R> extends Pipe<R | IndexedValue<A>> {
+class ZipSink<A, R> extends Pipe<R | IndexedValue<A>> implements Sink<R | IndexedValue<A>> {
   private readonly f: (...args: A[]) => R
   private readonly buffers: Queue<A>[]
   private readonly sinks: IndexSink<A>[]
@@ -82,7 +82,7 @@ class ZipSink<A, R> extends Pipe<R | IndexedValue<A>> {
   event (t: Time, indexedValue: IndexedValue<A>): void {
     /* eslint complexity: [1, 5] */
     if (!indexedValue.active) {
-      this._dispose(t, indexedValue.index)
+      this.dispose(t, indexedValue.index)
       return
     }
 
@@ -104,7 +104,7 @@ class ZipSink<A, R> extends Pipe<R | IndexedValue<A>> {
     }
   }
 
-  _dispose (t: Time, index: number): void {
+  private dispose (t: Time, index: number): void {
     const buffer = this.buffers[index]
     if (buffer.isEmpty()) {
       this.sink.end(t)

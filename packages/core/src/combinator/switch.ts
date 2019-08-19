@@ -18,7 +18,7 @@ export const switchLatest = <A>(stream: Stream<Stream<A>>): Stream<A> =>
     ? empty()
     : new Switch(stream)
 
-class Switch<A> {
+class Switch<A> implements Stream<A> {
   private readonly source: Stream<Stream<A>>
 
   constructor (source: Stream<Stream<A>>) {
@@ -31,7 +31,7 @@ class Switch<A> {
   }
 }
 
-class SwitchSink<A> {
+class SwitchSink<A> implements Sink<Stream<A>>, Disposable {
   private readonly sink: Sink<A>
   private readonly scheduler: Scheduler
   private ended: boolean
@@ -45,13 +45,13 @@ class SwitchSink<A> {
   }
 
   event (t: Time, stream: Stream<A>): void {
-    this._disposeCurrent(t)
+    this.disposeCurrent(t)
     this.current = new Segment(stream, t, Infinity, this, this.sink, this.scheduler)
   }
 
   end (t: Time): void {
     this.ended = true
-    this._checkEnd(t)
+    this.checkEnd(t)
   }
 
   error (t: Time, e: Error): void {
@@ -60,40 +60,40 @@ class SwitchSink<A> {
   }
 
   dispose (): void {
-    return this._disposeCurrent(currentTime(this.scheduler))
+    return this.disposeCurrent(currentTime(this.scheduler))
   }
 
-  _disposeCurrent (t: Time): void {
+  private disposeCurrent (t: Time): void {
     if (this.current !== null) {
-      return this.current._dispose(t)
+      return this.current.dispose(t)
     }
   }
 
-  _disposeInner (t: Time, inner: Segment<A>): void {
-    inner._dispose(t)
+  private disposeInner (t: Time, inner: Segment<A>): void {
+    inner.dispose(t)
     if (inner === this.current) {
       this.current = null
     }
   }
 
-  _checkEnd (t: Time): void {
+  private checkEnd (t: Time): void {
     if (this.ended && this.current === null) {
       this.sink.end(t)
     }
   }
 
-  _endInner (t: Time, inner: Segment<A>): void {
-    this._disposeInner(t, inner)
-    this._checkEnd(t)
+  endInner (t: Time, inner: Segment<A>): void {
+    this.disposeInner(t, inner)
+    this.checkEnd(t)
   }
 
-  _errorInner (t: Time, e: Error, inner: Segment<A>): void {
-    this._disposeInner(t, inner)
+  errorInner (t: Time, e: Error, inner: Segment<A>): void {
+    this.disposeInner(t, inner)
     this.sink.error(t, e)
   }
 }
 
-class Segment<A> {
+class Segment<A> implements Sink<A> {
   private readonly min: Time
   private readonly max: Time
   private readonly outer: SwitchSink<A>
@@ -116,14 +116,14 @@ class Segment<A> {
   }
 
   end (t: Time): void {
-    this.outer._endInner(t + this.min, this)
+    this.outer.endInner(t + this.min, this)
   }
 
   error (t: Time, e: Error): void {
-    this.outer._errorInner(t + this.min, e, this)
+    this.outer.errorInner(t + this.min, e, this)
   }
 
-  _dispose (t: Time): void {
+  dispose (t: Time): void {
     tryDispose(t, this.disposable, this.sink)
   }
 }

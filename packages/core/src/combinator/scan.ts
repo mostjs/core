@@ -37,7 +37,7 @@ class Scan<A, B> implements Stream<B> {
   }
 }
 
-class ScanSink<A, B> extends Pipe<A | B> {
+class ScanSink<A, B> extends Pipe<A | B> implements Sink<A | B> {
   private readonly f: (b: B, a: A) => B
   private value: B;
 

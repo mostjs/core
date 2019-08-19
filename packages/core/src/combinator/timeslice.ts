@@ -17,7 +17,7 @@ export const since = <A>(signal: Stream<unknown>, stream: Stream<A>): Stream<A> 
 export const during = <A>(timeWindow: Stream<Stream<unknown>>, stream: Stream<A>): Stream<A> =>
   until(join(timeWindow), since(timeWindow, stream))
 
-class Until<A> {
+class Until<A> implements Stream<A> {
   private readonly maxSignal: Stream<unknown>
   private readonly source: Stream<A>
 
@@ -37,7 +37,7 @@ class Until<A> {
   }
 }
 
-class Since<A> {
+class Since<A> implements Stream<A> {
   private readonly minSignal: Stream<Stream<unknown>>
   private readonly source: Stream<A>
 
@@ -54,7 +54,7 @@ class Since<A> {
   }
 }
 
-class SinceSink<A> extends Pipe<A> {
+class SinceSink<A> extends Pipe<A> implements Sink<A> {
   private readonly min: LowerBoundSink<A>
 
   constructor (min: LowerBoundSink<A>, sink: Sink<A>) {
@@ -69,7 +69,7 @@ class SinceSink<A> extends Pipe<A> {
   }
 }
 
-class LowerBoundSink<A> extends Pipe<A> {
+class LowerBoundSink<A> extends Pipe<A> implements Sink<A>, Disposable {
   allow: boolean
   private disposable: Disposable
 
@@ -91,7 +91,7 @@ class LowerBoundSink<A> extends Pipe<A> {
   }
 }
 
-class UntilSink<A> extends Pipe<A> {
+class UntilSink<A> extends Pipe<A> implements Sink<A> {
   private readonly disposable: Disposable
 
   constructor (sink: Sink<A>, disposable: Disposable) {

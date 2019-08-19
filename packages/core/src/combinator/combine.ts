@@ -32,7 +32,7 @@ export const combineArray = <Args extends any[], R>(f: (...args: Args) => R, str
     : streams.length === 1 ? map(f as any, streams[0])
       : new Combine(f, streams)
 
-class Combine<Args extends any[], B> {
+class Combine<Args extends any[], B> implements Stream<B> {
   private readonly f: (...args: Args) => B
   private readonly sources: ToStreamsArray<Args>;
 
@@ -57,7 +57,7 @@ class Combine<Args extends any[], B> {
   }
 }
 
-class CombineSink<A, Args extends A[], B> extends Pipe<B | IndexedValue<A>> {
+class CombineSink<A, Args extends A[], B> extends Pipe<B | IndexedValue<A>> implements Sink<B | IndexedValue<A>> {
   private readonly disposables: Disposable[]
   private readonly f: (...args: Args) => B
   private awaiting: number
@@ -78,12 +78,12 @@ class CombineSink<A, Args extends A[], B> extends Pipe<B | IndexedValue<A>> {
 
   event (t: Time, indexedValue: IndexedValue<A>): void {
     if (!indexedValue.active) {
-      this._dispose(t, indexedValue.index)
+      this.dispose(t, indexedValue.index)
       return
     }
 
     const i = indexedValue.index
-    const awaiting = this._updateReady(i)
+    const awaiting = this.updateReady(i)
 
     this.values[i] = indexedValue.value
     if (awaiting === 0) {
@@ -91,7 +91,7 @@ class CombineSink<A, Args extends A[], B> extends Pipe<B | IndexedValue<A>> {
     }
   }
 
-  _updateReady (index: number): number {
+  private updateReady (index: number): number {
     if (this.awaiting > 0) {
       if (!this.hasValue[index]) {
         this.hasValue[index] = true
@@ -101,7 +101,7 @@ class CombineSink<A, Args extends A[], B> extends Pipe<B | IndexedValue<A>> {
     return this.awaiting
   }
 
-  _dispose (t: Time, index: number): void {
+  private dispose (t: Time, index: number): void {
     tryDispose(t, this.disposables[index], this.sink)
     if (--this.activeCount === 0) {
       this.sink.end(t)

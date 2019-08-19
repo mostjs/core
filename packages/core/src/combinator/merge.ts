@@ -38,6 +38,7 @@ export const mergeArray = <S extends ReadonlyArray<Stream<any>>>(streams: S): St
  * It does this by concatenating the sources arrays of
  * any nested Merge sources, in effect "flattening" nested
  * merge operations into a single merge.
+ * TODO: use {@link MergeArray}
  */
 const mergeStreams = <A>(streams: Stream<A>[]): Stream<A> =>
   streams.length === 0 ? empty()
@@ -76,7 +77,7 @@ class Merge<A> implements Stream<A> {
   }
 }
 
-class MergeSink<A> extends Pipe<A | IndexedValue<A>> {
+class MergeSink<A> extends Pipe<A | IndexedValue<A>> implements Sink<A | IndexedValue<A>> {
   private readonly disposables: Disposable[];
   private activeCount: number;
 
@@ -88,13 +89,13 @@ class MergeSink<A> extends Pipe<A | IndexedValue<A>> {
 
   event (t: Time, indexValue: IndexedValue<A>): void {
     if (!indexValue.active) {
-      this._dispose(t, indexValue.index)
+      this.dispose(t, indexValue.index)
       return
     }
     this.sink.event(t, indexValue.value)
   }
 
-  private _dispose (t: Time, index: number): void {
+  private dispose (t: Time, index: number): void {
     tryDispose(t, this.disposables[index], this.sink)
     if (--this.activeCount === 0) {
       this.sink.end(t)

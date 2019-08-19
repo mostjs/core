@@ -33,7 +33,7 @@ export const constant = <A, B>(x: B, stream: Stream<A>): Stream<B> =>
 export const tap = <A>(f: (a: A) => unknown, stream: Stream<A>): Stream<A> =>
   new Tap(f, stream)
 
-class Tap<A> {
+class Tap<A> implements Stream<A> {
   private readonly f: (a: A) => unknown;
   private readonly source: Stream<A>;
 
@@ -47,7 +47,7 @@ class Tap<A> {
   }
 }
 
-class TapSink<A> extends Pipe<A> {
+class TapSink<A> extends Pipe<A> implements Sink<A> {
   private readonly f: (a: A) => unknown;
 
   constructor (f: (a: A) => unknown, sink: Sink<A>) {

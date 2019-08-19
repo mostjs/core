@@ -16,7 +16,7 @@ import { Stream, Sink, Scheduler, Disposable, ScheduledTask, Time } from '@most/
 export const delay = <A>(delayTime: number, stream: Stream<A>): Stream<A> =>
   delayTime <= 0 ? stream : new Delay(delayTime, stream)
 
-class Delay<A> {
+class Delay<A> implements Stream<A> {
   private readonly dt: number
   private readonly source: Stream<A>
 
@@ -31,7 +31,7 @@ class Delay<A> {
   }
 }
 
-class DelaySink<A> extends Pipe<A> {
+class DelaySink<A> extends Pipe<A> implements Sink<A>, Disposable {
   private readonly dt: number;
   private readonly scheduler: Scheduler;
   private readonly tasks: ScheduledTask[];
