@@ -27,12 +27,12 @@ export const combine = <A, B, C>(f: (a: A, b: B) => C, stream1: Stream<A>, strea
 * @returns stream containing the result of applying f to the most recent
 *  event of each input stream, whenever a new event arrives on any stream.
 */
-export const combineArray = <Args extends any[], R>(f: (...args: Args) => R, streams: ToStreamsArray<Args>): Stream<R> =>
+export const combineArray = <Args extends unknown[], R>(f: (...args: Args) => R, streams: ToStreamsArray<Args>): Stream<R> =>
   streams.length === 0 || containsCanonicalEmpty(streams) ? empty()
     : streams.length === 1 ? map(f as any, streams[0])
       : new Combine(f, streams)
 
-class Combine<Args extends any[], B> implements Stream<B> {
+class Combine<Args extends unknown[], B> implements Stream<B> {
   private readonly f: (...args: Args) => B
   private readonly sources: ToStreamsArray<Args>;
 
