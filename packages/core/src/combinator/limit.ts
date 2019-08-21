@@ -108,8 +108,9 @@ class DebounceSink<A> implements Sink<A>, Disposable {
 
   end (t: Time): void {
     if (this.clearTimer()) {
-      // TODO: value should be boxed to avoid casting
-      this.sink.event(t, this.value as A)
+      // TODO: value should be boxed to avoid ! bang
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.sink.event(t, this.value!)
       this.value = undefined
     }
     this.sink.end(t)
