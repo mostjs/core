@@ -46,8 +46,8 @@ export class SnapshotSink<A, B, C> extends Pipe<A | B | C> implements Sink<A | B
   event (t: Time, x: B): void {
     if (this.latest.hasValue) {
       const f = this.f
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.sink.event(t, f(this.latest.value!, x))
+      // TODO: value should be boxed to avoid casting
+      this.sink.event(t, f(this.latest.value as A, x))
     }
   }
 }

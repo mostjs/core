@@ -29,6 +29,12 @@ class MergeConcurrently<A, B> implements Stream<B> {
   }
 }
 
+interface NonEmptyArray<A> extends Array<A> {
+  readonly [0]: A
+  shift(): A
+}
+const isNonEmpty = <A>(array: A[]): array is NonEmptyArray<A> => array.length > 0
+
 class Outer<A, B> implements Sink<A>, Disposable {
   private readonly scheduler: Scheduler;
   private readonly disposable: Disposable;
@@ -101,10 +107,11 @@ class Outer<A, B> implements Sink<A>, Disposable {
     }
     tryDispose(t, inner, this)
 
-    if (this.pending.length === 0) {
-      this.checkEnd(t)
+    const pending = this.pending
+    if (isNonEmpty(pending)) {
+      this.startInner(t, pending.shift())
     } else {
-      this.startInner(t, this.pending.shift() as A)
+      this.checkEnd(t)
     }
   }
 

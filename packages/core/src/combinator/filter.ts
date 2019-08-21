@@ -66,6 +66,7 @@ class SkipRepeatsSink<A> extends Pipe<A> implements Sink<A> {
       this.init = false
       this.value = x
       this.sink.event(t, x)
+      // TODO: value should be boxed to avoid casting
     } else if (!this.equals(this.value as A, x)) {
       this.value = x
       this.sink.event(t, x)
