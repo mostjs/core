@@ -6,7 +6,7 @@ import fatal from '../fatalError'
 import { Sink, Time, Task } from '@most/types'
 
 export type PropagateTaskRun<A, B = A> =
-  (time: number, value: A, sink: Sink<B>) => any
+  (time: number, value: A, sink: Sink<B>) => void
 
 export const propagateTask = <A, B = A>(run: PropagateTaskRun<A, B>, value: A, sink: Sink<B>): PropagateTask<A, B> => new PropagateTask(run, value, sink)
 
@@ -14,7 +14,7 @@ export const propagateEventTask = <A>(value: A, sink: Sink<A>): PropagateTask<A>
 
 export const propagateEndTask = (sink: Sink<unknown>): PropagateTask<undefined> => propagateTask(runEnd, undefined, sink)
 
-export const propagateErrorTask = (value: Error, sink: Sink<unknown>): PropagateTask<any> => propagateTask(runError, value, sink)
+export const propagateErrorTask = (value: Error, sink: Sink<Error>): PropagateTask<Error> => propagateTask(runError, value, sink)
 
 export class PropagateTask<A, B = A> implements Task {
   active: boolean;
@@ -52,6 +52,6 @@ export class PropagateTask<A, B = A> implements Task {
 
 const runEvent = <A>(t: Time, x: A, sink: Sink<A>): void => sink.event(t, x)
 
-const runEnd = (t: Time, _: unknown, sink: Sink<unknown>): void => sink.end(t)
+const runEnd = (t: Time, _: void, sink: Sink<void>): void => sink.end(t)
 
-const runError = (t: Time, e: Error, sink: Sink<unknown>): void => sink.error(t, e)
+const runError = (t: Time, e: Error, sink: Sink<Error>): void => sink.error(t, e)
