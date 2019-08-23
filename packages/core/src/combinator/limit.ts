@@ -37,7 +37,7 @@ export class Throttle<A> implements Stream<A> {
   }
 }
 
-class ThrottleSink<A> extends Pipe<A> implements Sink<A> {
+class ThrottleSink<A> extends Pipe<A, A> implements Sink<A> {
   private time: Time
   private readonly period: number;
 

@@ -31,7 +31,7 @@ class Delay<A> implements Stream<A> {
   }
 }
 
-class DelaySink<A> extends Pipe<A> implements Sink<A>, Disposable {
+class DelaySink<A> extends Pipe<A, A> implements Sink<A>, Disposable {
   private readonly dt: number;
   private readonly scheduler: Scheduler;
   private readonly tasks: ScheduledTask[];

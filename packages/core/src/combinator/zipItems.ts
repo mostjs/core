@@ -31,7 +31,7 @@ class ZipItems<A, B, C> implements Stream<C> {
   }
 }
 
-class ZipItemsSink<A, B, C> extends Pipe<B | C> implements Sink<B | C> {
+class ZipItemsSink<A, B, C> extends Pipe<B, C> implements Sink<B> {
   private readonly f: (a: A, b: B) => C
   private readonly items: A[]
   private index: number;

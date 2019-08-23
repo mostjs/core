@@ -17,7 +17,7 @@ class Timestamp<A> implements Stream<Event<A>> {
   }
 }
 
-class TimestampSink<A> extends Pipe<A | Event<A>> {
+class TimestampSink<A> extends Pipe<A, Event<A>> implements Sink<A> {
   event (time: Time, value: A): void {
     this.sink.event(time, { time, value })
   }

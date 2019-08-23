@@ -38,7 +38,7 @@ export default class Filter<A> implements Stream<A> {
   }
 }
 
-class FilterSink<A> extends Pipe<A> implements Sink<A> {
+class FilterSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly p: (a: A) => boolean
 
   constructor (p: (a: A) => boolean, sink: Sink<A>) {

@@ -67,7 +67,7 @@ class Zip<A, R> implements Stream<R> {
   }
 }
 
-class ZipSink<A, R> extends Pipe<R | IndexedValue<A>> implements Sink<R | IndexedValue<A>> {
+class ZipSink<A, R> extends Pipe<IndexedValue<A>, R> implements Sink<IndexedValue<A>> {
   private readonly f: (...args: A[]) => R
   private readonly buffers: Queue<A>[]
   private readonly sinks: IndexSink<A>[]

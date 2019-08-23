@@ -70,7 +70,7 @@ export class Slice<A> implements Stream<A> {
   }
 }
 
-class SliceSink<A> extends Pipe<A> implements Sink<A> {
+class SliceSink<A> extends Pipe<A, A> implements Sink<A> {
   private skip: number
   private take: number
   private readonly disposable: Disposable
@@ -124,7 +124,7 @@ class TakeWhile<A> implements Stream<A> {
   }
 }
 
-class TakeWhileSink<A> extends Pipe<A> implements Sink<A> {
+class TakeWhileSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly p: (a: A) => boolean
   private readonly disposable: Disposable
   private active: boolean;
@@ -171,7 +171,7 @@ class SkipWhile<A> implements Stream<A> {
   }
 }
 
-class SkipWhileSink<A> extends Pipe<A> implements Sink<A> {
+class SkipWhileSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly p: (a: A) => boolean;
   private skipping: boolean;
 
@@ -212,7 +212,7 @@ class SkipAfter<A> implements Stream<A> {
   }
 }
 
-class SkipAfterSink<A> extends Pipe<A> implements Sink<A> {
+class SkipAfterSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly p: (a: A) => boolean;
   private skipping: boolean;
 

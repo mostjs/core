@@ -25,7 +25,7 @@ class ContinueWith<A> implements Stream<A> {
   }
 }
 
-class ContinueWithSink<A> extends Pipe<A> implements Sink<A>, Disposable {
+class ContinueWithSink<A> extends Pipe<A, A> implements Sink<A>, Disposable {
   private readonly f: () => Stream<A>;
   private readonly scheduler: Scheduler;
   private active: boolean;

@@ -46,7 +46,7 @@ export default class Map<A, B> implements Stream<B> {
   }
 }
 
-class MapSink<A, B> extends Pipe<A | B> implements Sink<A | B> {
+class MapSink<A, B> extends Pipe<A, B> implements Sink<A> {
   private readonly f: (a: A) => B;
 
   constructor (f: (a: A) => B, sink: Sink<B>) {

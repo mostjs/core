@@ -37,7 +37,7 @@ class Loop<A, B, S> implements Stream<B> {
   }
 }
 
-class LoopSink<A, B, S> extends Pipe<A | B> implements Sink<A | B> {
+class LoopSink<A, B, S> extends Pipe<A, B> implements Sink<A> {
   private readonly step: (seed: S, a: A) => SeedValue<S, B>;
   private seed: S;
   constructor (stepper: (seed: S, a: A) => SeedValue<S, B>, seed: S, sink: Sink<B>) {

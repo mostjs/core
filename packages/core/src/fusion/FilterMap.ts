@@ -21,7 +21,7 @@ export default class FilterMap<A, B> implements Stream<B> {
   }
 }
 
-class FilterMapSink<A, B> extends Pipe<A | B> implements Sink<A | B> {
+class FilterMapSink<A, B> extends Pipe<A, B> implements Sink<A> {
   private readonly p: (a: A) => boolean;
   private readonly f: (a: A) => B;
 

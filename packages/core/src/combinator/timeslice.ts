@@ -54,7 +54,7 @@ class Since<A> implements Stream<A> {
   }
 }
 
-class SinceSink<A> extends Pipe<A> implements Sink<A> {
+class SinceSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly min: LowerBoundSink<A>
 
   constructor (min: LowerBoundSink<A>, sink: Sink<A>) {
@@ -69,7 +69,7 @@ class SinceSink<A> extends Pipe<A> implements Sink<A> {
   }
 }
 
-class LowerBoundSink<A> extends Pipe<A> implements Sink<A>, Disposable {
+class LowerBoundSink<A> extends Pipe<A, A> implements Sink<A>, Disposable {
   allow: boolean
   private disposable: Disposable
 
@@ -91,7 +91,7 @@ class LowerBoundSink<A> extends Pipe<A> implements Sink<A>, Disposable {
   }
 }
 
-class UntilSink<A> extends Pipe<A> implements Sink<A> {
+class UntilSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly disposable: Disposable
 
   constructor (sink: Sink<A>, disposable: Disposable) {

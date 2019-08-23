@@ -47,7 +47,7 @@ class Tap<A> implements Stream<A> {
   }
 }
 
-class TapSink<A> extends Pipe<A> implements Sink<A> {
+class TapSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly f: (a: A) => unknown;
 
   constructor (f: (a: A) => unknown, sink: Sink<A>) {

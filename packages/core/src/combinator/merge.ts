@@ -77,7 +77,7 @@ class Merge<A> implements Stream<A> {
   }
 }
 
-class MergeSink<A> extends Pipe<A | IndexedValue<A>> implements Sink<A | IndexedValue<A>> {
+class MergeSink<A> extends Pipe<IndexedValue<A>, A> implements Sink<IndexedValue<A>> {
   private readonly disposables: Disposable[];
   private activeCount: number;
 

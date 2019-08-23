@@ -50,7 +50,7 @@ class SkipRepeats<A> implements Stream<A> {
   }
 }
 
-class SkipRepeatsSink<A> extends Pipe<A> implements Sink<A> {
+class SkipRepeatsSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly equals: (a1: A, a2: A) => boolean
   private value?: A;
   private init: boolean;

@@ -57,7 +57,7 @@ class Combine<Args extends unknown[], B> implements Stream<B> {
   }
 }
 
-class CombineSink<A, Args extends A[], B> extends Pipe<B | IndexedValue<A>> implements Sink<B | IndexedValue<A>> {
+class CombineSink<A, Args extends A[], B> extends Pipe<IndexedValue<A>, B> implements Sink<IndexedValue<A>> {
   private readonly disposables: Disposable[]
   private readonly f: (...args: Args) => B
   private awaiting: number

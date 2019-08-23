@@ -2,16 +2,14 @@
 /** @author Brian Cavalier */
 import { Sink, Time } from '@most/types'
 
-export default class Pipe<A> implements Sink<A> {
-  protected readonly sink: Sink<A>
+export default abstract class Pipe<A, B> implements Sink<A> {
+  protected readonly sink: Sink<B>
 
-  constructor (sink: Sink<A>) {
+  constructor (sink: Sink<B>) {
     this.sink = sink
   }
 
-  event (t: Time, x: A): void {
-    return this.sink.event(t, x)
-  }
+  abstract event (t: Time, x: A): void
 
   end (t: Time): void {
     return this.sink.end(t)
