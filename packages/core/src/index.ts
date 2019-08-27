@@ -1,6 +1,75 @@
 /** @license MIT License (c) copyright 2016 original author or authors */
 /* eslint-disable import/first */
-import { curry2, curry3, Curried2 } from '@most/prelude'
+import { Curried2, curry2, curry3 } from '@most/prelude'
+import { Disposable, Scheduler, Sink, Stream, Time } from '@most/types'
+
+import { ap as _ap } from './combinator/applicative'
+// -----------------------------------------------------------------------
+// FlatMapping
+import { chain as _chain, join } from './combinator/chain'
+// -----------------------------------------------------------------------
+// Combining
+import { combine as _combine, combineArray as _combineArray } from './combinator/combine'
+import { concatMap as _concatMap } from './combinator/concatMap'
+import { continueWith as _continueWith } from './combinator/continueWith'
+// -----------------------------------------------------------------------
+// Delaying
+import { delay as _delay } from './combinator/delay'
+// -----------------------------------------------------------------------
+// Error handling
+import { recoverWith as _recoverWith, throwError } from './combinator/errors'
+// -----------------------------------------------------------------------
+// Filtering
+import {
+  filter as _filter, skipRepeats, skipRepeatsWith as _skipRepeatsWith
+} from './combinator/filter'
+// -----------------------------------------------------------------------
+// Rate limiting
+import { debounce as _debounce, throttle as _throttle } from './combinator/limit'
+// -------------------------------------------------------
+import { loop as _loop, SeedValue } from './combinator/loop'
+// -----------------------------------------------------------------------
+// Merging
+import { merge as _merge, mergeArray } from './combinator/merge'
+// -----------------------------------------------------------------------
+// Concurrent merging
+import {
+  mergeConcurrently as _mergeConcurrently, mergeMapConcurrently as _mergeMapConcurrently
+} from './combinator/mergeConcurrently'
+// -------------------------------------------------------
+import { scan as _scan } from './combinator/scan'
+// -----------------------------------------------------------------------
+// Slicing
+import {
+  skip as _skip, skipAfter as _skipAfter, skipWhile as _skipWhile, slice as _slice, take as _take,
+  takeWhile as _takeWhile
+} from './combinator/slice'
+// -----------------------------------------------------------------------
+// Sampling
+import { sample as _sample, snapshot as _snapshot } from './combinator/snapshot'
+// -----------------------------------------------------------------------
+// Extending
+import { startWith as _startWith } from './combinator/startWith'
+// -----------------------------------------------------------------------
+// Time slicing
+import { during as _during, since as _since, until as _until } from './combinator/timeslice'
+// -----------------------------------------------------------------------
+// Transforming
+import { constant as _constant, map as _map, tap as _tap } from './combinator/transform'
+import { ToStreamsArray } from './combinator/variadic'
+// -------------------------------------------------------
+import { withLocalTime as _withLocalTime } from './combinator/withLocalTime'
+import { zip as _zip, zipArray as _zipArray } from './combinator/zip'
+// -----------------------------------------------------------------------
+// Zipping
+import { withItems as _withItems, zipItems as _zipItems } from './combinator/zipItems'
+import { run as _run } from './run'
+// ----------------------------------------------------------------------
+import {
+  propagateEndTask, propagateErrorTask as _propagateErrorTask,
+  propagateEventTask as _propagateEventTask, propagateTask as _propagateTask,
+  PropagateTask as PropagateTaskResult, PropagateTaskRun
+} from './scheduler/PropagateTask'
 
 export { empty } from './source/empty'
 export { never } from './source/never'
@@ -15,28 +84,18 @@ export { newStream } from './source/newStream'
 // Observing
 
 export { runEffects } from './runEffects'
-import { run as _run } from './run'
-
 interface Run {
-  <A> (sink: Sink<A>, scheduler: Scheduler, s: Stream<A>): Disposable
-  <A> (sink: Sink<A>, scheduler: Scheduler): (s: Stream<A>) => Disposable
-  <A> (sink: Sink<A>): Curried2<Scheduler, Stream<A>, Disposable>
+  <A>(sink: Sink<A>, scheduler: Scheduler, s: Stream<A>): Disposable
+  <A>(sink: Sink<A>, scheduler: Scheduler): (s: Stream<A>) => Disposable
+  <A>(sink: Sink<A>): Curried2<Scheduler, Stream<A>, Disposable>
 }
 export const run: Run = curry3(_run)
-
-// -------------------------------------------------------
-
-import { withLocalTime as _withLocalTime } from './combinator/withLocalTime'
 
 interface WithLocalTime {
   <A>(origin: Time, s: Stream<A>): Stream<A>
   <A>(origin: Time): (s: Stream<A>) => Stream<A>
 }
 export const withLocalTime: WithLocalTime = curry2(_withLocalTime)
-
-// -------------------------------------------------------
-
-import { loop as _loop, SeedValue } from './combinator/loop'
 
 interface Loop {
   <A, B, S>(f: (seed: S, a: A) => SeedValue<S, B>, seed: S, s: Stream<A>): Stream<B>
@@ -45,10 +104,6 @@ interface Loop {
 }
 export const loop: Loop = curry3(_loop)
 
-// -------------------------------------------------------
-
-import { scan as _scan } from './combinator/scan'
-
 interface Scan {
   <A, B>(f: (b: B, a: A) => B, b: B, s: Stream<A>): Stream<B>
   <A, B>(f: (b: B, a: A) => B, b: B): (s: Stream<A>) => Stream<B>
@@ -56,22 +111,11 @@ interface Scan {
 }
 export const scan: Scan = curry3(_scan)
 
-// -----------------------------------------------------------------------
-// Extending
-
-import { startWith as _startWith } from './combinator/startWith'
-
 interface StartWith {
   <A>(value: A, stream: Stream<A>): Stream<A>
   <A>(value: A): (stream: Stream<A>) => Stream<A>
 }
 export const startWith: StartWith = curry2(_startWith)
-
-// -----------------------------------------------------------------------
-// Transforming
-
-import { map as _map, constant as _constant, tap as _tap } from './combinator/transform'
-import { ap as _ap } from './combinator/applicative'
 
 interface Map {
   <A, B>(f: (a: A) => B, s: Stream<A>): Stream<B>
@@ -94,10 +138,6 @@ interface Ap {
 }
 export const ap: Ap = curry2(_ap)
 
-// -----------------------------------------------------------------------
-// FlatMapping
-
-import { chain as _chain, join } from './combinator/chain'
 interface Chain {
   <A, B>(f: (value: A) => Stream<B>, stream: Stream<A>): Stream<B>
   <A, B>(f: (value: A) => Stream<B>): (stream: Stream<A>) => Stream<B>
@@ -105,24 +145,17 @@ interface Chain {
 export const chain: Chain = curry2(_chain)
 export { join }
 
-import { continueWith as _continueWith } from './combinator/continueWith'
 interface ContinueWith {
   <A>(f: () => Stream<A>, s: Stream<A>): Stream<A>
   <A>(f: () => Stream<A>): (s: Stream<A>) => Stream<A>
 }
 export const continueWith: ContinueWith = curry2(_continueWith)
 
-import { concatMap as _concatMap } from './combinator/concatMap'
 interface ConcatMap {
   <A, B>(f: (a: A) => Stream<B>, stream: Stream<A>): Stream<B>
   <A, B>(f: (a: A) => Stream<B>): (stream: Stream<A>) => Stream<B>
 }
 export const concatMap: ConcatMap = curry2(_concatMap)
-
-// -----------------------------------------------------------------------
-// Concurrent merging
-
-import { mergeConcurrently as _mergeConcurrently, mergeMapConcurrently as _mergeMapConcurrently } from './combinator/mergeConcurrently'
 
 interface MergeConcurrently {
   <A>(concurrency: number, s: Stream<Stream<A>>): Stream<A>
@@ -136,22 +169,12 @@ interface MergeMapConcurrently {
 }
 export const mergeMapConcurrently: MergeMapConcurrently = curry3(_mergeMapConcurrently)
 
-// -----------------------------------------------------------------------
-// Merging
-
-import { merge as _merge, mergeArray } from './combinator/merge'
-
 interface Merge {
   <A, B>(s1: Stream<A>, s2: Stream<B>): Stream<A | B>
   <A, B>(s1: Stream<A>): (s2: Stream<B>) => Stream<A | B>
 }
 export const merge: Merge = curry2(_merge)
 export { mergeArray }
-
-// -----------------------------------------------------------------------
-// Combining
-
-import { combine as _combine, combineArray as _combineArray } from './combinator/combine'
 
 interface Combine {
   <A, B, R>(fn: (a: A, b: B) => R, a: Stream<A>, b: Stream<B>): Stream<R>
@@ -165,11 +188,6 @@ interface CombineArray {
 }
 export const combineArray: CombineArray = curry2(_combineArray as any) as any
 
-// -----------------------------------------------------------------------
-// Sampling
-
-import { sample as _sample, snapshot as _snapshot } from './combinator/snapshot'
-
 interface Sample {
   <A, B>(values: Stream<A>, sampler: Stream<B>): Stream<A>
   <A, B>(values: Stream<A>): (sampler: Stream<B>) => Stream<A>
@@ -182,14 +200,10 @@ interface Snapshot {
 }
 export const snapshot: Snapshot = curry3(_snapshot)
 
-// -----------------------------------------------------------------------
-// Zipping
-
-import { zipItems as _zipItems, withItems as _withItems } from './combinator/zipItems'
 interface ZipItems {
-  <A, B, C> (f: (a: A, b: B) => C, a: Array<A>, s: Stream<B>): Stream<C>
-  <A, B, C> (f: (a: A, b: B) => C, a: Array<A>): (s: Stream<B>) => Stream<C>
-  <A, B, C> (f: (a: A, b: B) => C): Curried2<Array<A>, Stream<B>, Stream<C>>
+  <A, B, C>(f: (a: A, b: B) => C, a: Array<A>, s: Stream<B>): Stream<C>
+  <A, B, C>(f: (a: A, b: B) => C, a: Array<A>): (s: Stream<B>) => Stream<C>
+  <A, B, C>(f: (a: A, b: B) => C): Curried2<Array<A>, Stream<B>, Stream<C>>
 }
 export const zipItems: ZipItems = curry3(_zipItems)
 interface WithItems {
@@ -198,7 +212,6 @@ interface WithItems {
 }
 export const withItems: WithItems = curry2(_withItems)
 
-import { zip as _zip, zipArray as _zipArray } from './combinator/zip'
 interface Zip {
   <A, B, R>(fn: (a: A, b: B) => R, a: Stream<A>, b: Stream<B>): Stream<R>
   <A, B, R>(fn: (a: A, b: B) => R, a: Stream<A>): (b: Stream<B>) => Stream<R>
@@ -216,11 +229,6 @@ export const zipArray: ZipArray = curry2(_zipArray as any) as any
 
 export { switchLatest } from './combinator/switch'
 
-// -----------------------------------------------------------------------
-// Filtering
-
-import { filter as _filter, skipRepeats, skipRepeatsWith as _skipRepeatsWith } from './combinator/filter'
-
 interface Filter {
   <A, B extends A>(p: (a: A) => a is B, s: Stream<A>): Stream<B>
   <A>(p: (a: A) => boolean, s: Stream<A>): Stream<A>
@@ -234,11 +242,6 @@ interface ShipRepeatsWith {
   <A>(eq: (a1: A, a2: A) => boolean): (s: Stream<A>) => Stream<A>
 }
 export const skipRepeatsWith: ShipRepeatsWith = curry2(_skipRepeatsWith)
-
-// -----------------------------------------------------------------------
-// Slicing
-
-import { take as _take, skip as _skip, slice as _slice, takeWhile as _takeWhile, skipWhile as _skipWhile, skipAfter as _skipAfter } from './combinator/slice'
 
 interface Take {
   <A>(n: number, s: Stream<A>): Stream<A>
@@ -272,11 +275,6 @@ interface SkipAfter {
 }
 export const skipAfter: SkipAfter = curry2(_skipAfter)
 
-// -----------------------------------------------------------------------
-// Time slicing
-
-import { until as _until, since as _since, during as _during } from './combinator/timeslice'
-
 interface Until {
   <A>(signal: Stream<any>, s: Stream<A>): Stream<A>
   <A>(signal: Stream<any>): (s: Stream<A>) => Stream<A>
@@ -293,21 +291,11 @@ interface During {
 }
 export const during: During = curry2(_during)
 
-// -----------------------------------------------------------------------
-// Delaying
-
-import { delay as _delay } from './combinator/delay'
-
 interface Delay {
   <A>(dt: number, s: Stream<A>): Stream<A>
   <A>(dt: number): (s: Stream<A>) => Stream<A>
 }
 export const delay: Delay = curry2(_delay)
-
-// -----------------------------------------------------------------------
-// Rate limiting
-
-import { throttle as _throttle, debounce as _debounce } from './combinator/limit'
 
 interface Throttle {
   <A>(period: number, s: Stream<A>): Stream<A>
@@ -325,11 +313,6 @@ export const debounce: Debounce = curry2(_debounce)
 
 export { fromPromise, awaitPromises } from './combinator/promises'
 
-// -----------------------------------------------------------------------
-// Error handling
-
-import { recoverWith as _recoverWith, throwError } from './combinator/errors'
-
 interface RecoverWith {
   <A, E extends Error>(p: (error: E) => Stream<A>, s: Stream<A>): Stream<A>
   <A, E extends Error>(p: (error: E) => Stream<A>): (s: Stream<A>) => Stream<A>
@@ -342,22 +325,10 @@ export { throwError }
 
 export { multicast, MulticastSource } from './combinator/multicast'
 
-// ----------------------------------------------------------------------
-import {
-  propagateTask as _propagateTask,
-  propagateEventTask as _propagateEventTask,
-  propagateErrorTask as _propagateErrorTask,
-  propagateEndTask,
-  PropagateTaskRun,
-  PropagateTask as PropagateTaskResult
-} from './scheduler/PropagateTask'
-import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
-import { ToStreamsArray } from './combinator/variadic'
-
 interface PropagateTask {
-  <A, B = A>(run: PropagateTaskRun<A, B>, value: A, sink: Sink<B>): PropagateTaskResult<A, B>
-  <A, B = A>(run: PropagateTaskRun<A, B>, value: A): (sink: Sink<B>) => PropagateTaskResult<A, B>
-  <A, B = A>(run: PropagateTaskRun<A, B>): Curried2<A, Sink<B>, PropagateTaskResult<A, B>>
+  <A, B = A>(run: PropagateTaskRun<A>, value: A, sink: Sink<B>): PropagateTaskResult<A>
+  <A, B = A>(run: PropagateTaskRun<A>, value: A): (sink: Sink<B>) => PropagateTaskResult<A>
+  <A, B = A>(run: PropagateTaskRun<A>): Curried2<A, Sink<B>, PropagateTaskResult<A>>
 }
 export const propagateTask: PropagateTask = curry3(_propagateTask)
 interface PropagateEventTask {

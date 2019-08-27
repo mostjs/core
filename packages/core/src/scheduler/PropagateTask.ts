@@ -2,46 +2,40 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
+import { Disposable, Sink, Task, Time } from '@most/types'
+
 import fatal from '../fatalError'
-import { Sink, Time, Task } from '@most/types'
 
-export type PropagateTaskRun<A, B = A> =
-  (time: number, value: A, sink: Sink<B>) => void
+export type PropagateTaskRun<A> =
+  (time: number, value: A, sink: Sink<A>) => void
 
-export const propagateTask = <A, B = A>(run: PropagateTaskRun<A, B>, value: A, sink: Sink<B>): PropagateTask<A, B> => new PropagateTask(run, value, sink)
+export const propagateTask = <A>(run: PropagateTaskRun<A>, value: A, sink: Sink<A>): PropagateTask<A> => new PropagateRunEventTask(run, value, sink)
 
-export const propagateEventTask = <A>(value: A, sink: Sink<A>): PropagateTask<A> => propagateTask(runEvent, value, sink)
+export const propagateEventTask = <A>(value: A, sink: Sink<A>): PropagateTask<A> => new PropagateEventTask(value, sink)
 
-export const propagateEndTask = (sink: Sink<unknown>): PropagateTask<undefined> => propagateTask(runEnd, undefined, sink)
+export const propagateEndTask = (sink: Sink<unknown>): PropagateTask<never> => new PropagateEndTask(sink)
 
-export const propagateErrorTask = (value: Error, sink: Sink<Error>): PropagateTask<Error> => propagateTask(runError, value, sink)
+export const propagateErrorTask = <E extends Error, A>(value: E, sink: Sink<A>): PropagateErrorTask<E, A> => new PropagateErrorTask(value, sink)
 
-export class PropagateTask<A, B = A> implements Task {
-  active: boolean;
-  readonly sink: Sink<B>;
-  readonly value: A;
-  private readonly _run: (t: Time, a: A, sink: Sink<B>) => void
+export abstract class PropagateTask<A> implements Task, Disposable {
+  public active: boolean = true;
 
-  constructor (run: (t: Time, a: A, sink: Sink<B>) => void, value: A, sink: Sink<B>) {
-    this._run = run
-    this.value = value
-    this.sink = sink
-    this.active = true
-  }
+  constructor(protected readonly sink: Sink<A>) { }
 
-  dispose (): void {
+  dispose(): void {
     this.active = false
   }
 
-  run (t: Time): void {
+  run(t: Time): void {
     if (!this.active) {
       return
     }
-    const run = this._run
-    run(t, this.value, this.sink)
+    return this.runIfActive(t)
   }
 
-  error (t: Time, e: Error): void {
+  abstract runIfActive(t: Time): void
+
+  error(t: Time, e: Error): void {
     // TODO: Remove this check and just do this.sink.error(t, e)?
     if (!this.active) {
       return fatal(e)
@@ -50,8 +44,45 @@ export class PropagateTask<A, B = A> implements Task {
   }
 }
 
-const runEvent = <A>(t: Time, x: A, sink: Sink<A>): void => sink.event(t, x)
+export class PropagateRunEventTask<A> extends PropagateTask<A> {
+  constructor(private readonly _run: PropagateTaskRun<A>, private readonly value: A, sink: Sink<A>) {
+    super(sink)
+  }
 
-const runEnd = (t: Time, _: void, sink: Sink<void>): void => sink.end(t)
+  runIfActive(t: Time): void {
+    const run = this._run
+    run(t, this.value, this.sink)
+  }
+}
 
-const runError = (t: Time, e: Error, sink: Sink<Error>): void => sink.error(t, e)
+export class PropagateEventTask<A> extends PropagateTask<A> {
+  constructor(private readonly value: A, sink: Sink<A>) {
+    super(sink)
+  }
+
+  runIfActive(t: Time): void {
+    this.sink.event(t, this.value)
+  }
+}
+
+export class PropagateEndTask<A> extends PropagateTask<A> {
+  runIfActive(t: Time): void {
+    this.sink.end(t)
+  }
+}
+
+export class PropagateErrorTask<E extends Error, A> extends PropagateTask<A> {
+  constructor(private readonly value: E, sink: Sink<A>) {
+    super(sink)
+  }
+
+  runIfActive(t: Time): void {
+    this.sink.error(t, this.value)
+  }
+}
+
+// const runEvent = <A>(t: Time, x: A, sink: Sink<A>): void => sink.event(t, x)
+
+// const runEnd = (t: Time, _: void, sink: Sink<void>): void => sink.end(t)
+
+// const runError = (t: Time, e: Error, sink: Sink<Error>): void => sink.error(t, e)
