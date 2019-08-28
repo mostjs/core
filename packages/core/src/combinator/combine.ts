@@ -3,7 +3,7 @@
 import { map } from './transform'
 import { empty, containsCanonicalEmpty } from '../source/empty'
 import Pipe from '../sink/Pipe'
-import IndexSink, { IndexedValue } from '../sink/IndexSink'
+import { IndexSink, IndexedValue } from '../sink/IndexSink'
 import { disposeAll, tryDispose } from '@most/disposable'
 import invoke from '../invoke'
 import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'

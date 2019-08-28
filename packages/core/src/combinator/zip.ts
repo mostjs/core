@@ -3,7 +3,7 @@
 import { map } from './transform'
 import { empty, containsCanonicalEmpty } from '../source/empty'
 import Pipe from '../sink/Pipe'
-import IndexSink, { IndexedValue } from '../sink/IndexSink'
+import { IndexSink, IndexedValue } from '../sink/IndexSink'
 import { disposeAll } from '@most/disposable'
 import { map as mapArray } from '@most/prelude'
 import invoke from '../invoke'

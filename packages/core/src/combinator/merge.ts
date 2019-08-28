@@ -3,7 +3,7 @@
 /** @author John Hann */
 
 import Pipe from '../sink/Pipe'
-import IndexSink, { IndexedValue } from '../sink/IndexSink'
+import { IndexSink, IndexedValue } from '../sink/IndexSink'
 import { empty, isCanonicalEmpty } from '../source/empty'
 import { disposeAll, tryDispose } from '@most/disposable'
 import { reduce } from '@most/prelude'

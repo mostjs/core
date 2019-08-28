@@ -11,7 +11,7 @@ export interface IndexedValue<A> {
   readonly active: boolean
 }
 
-export default class IndexSink<A> extends Pipe<A, Readonly<IndexedValue<A | undefined>>> implements Sink<A> {
+export class IndexSink<A> extends Pipe<A, Readonly<IndexedValue<A | undefined>>> implements Sink<A> {
   readonly index: number
   active: boolean
   value: A | undefined
