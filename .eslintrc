@@ -15,6 +15,7 @@
     "@typescript-eslint/promise-function-async": "off",
     "lines-between-class-members": "off",
     "no-var": "error",
-    "no-void": "error"
+    "no-void": "error",
+    "handle-callback-err": "off"
   }
 }

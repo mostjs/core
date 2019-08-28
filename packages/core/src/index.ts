@@ -355,15 +355,15 @@ import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
 import { ToStreamsArray } from './combinator/variadic'
 
 interface PropagateTask {
-  <A, B = A>(run: PropagateTaskRun<A, B>, value: A, sink: Sink<B>): PropagateTaskResult<A, B>
-  <A, B = A>(run: PropagateTaskRun<A, B>, value: A): (sink: Sink<B>) => PropagateTaskResult<A, B>
-  <A, B = A>(run: PropagateTaskRun<A, B>): Curried2<A, Sink<B>, PropagateTaskResult<A, B>>
+  <A>(run: PropagateTaskRun<A>, value: A, sink: Sink<A>): PropagateTaskResult
+  <A>(run: PropagateTaskRun<A>, value: A): (sink: Sink<A>) => PropagateTaskResult
+  <A>(run: PropagateTaskRun<A>): Curried2<A, Sink<A>, PropagateTaskResult>
 }
 export const propagateTask: PropagateTask = curry3(_propagateTask)
 interface PropagateEventTask {
-  <T>(value: T, sink: Sink<T>): PropagateTaskResult<T>
-  <T>(value: T): (sink: Sink<T>) => PropagateTaskResult<T>
+  <T>(value: T, sink: Sink<T>): PropagateTaskResult
+  <T>(value: T): (sink: Sink<T>) => PropagateTaskResult
 }
 export const propagateEventTask: PropagateEventTask = curry2(_propagateEventTask)
-export const propagateErrorTask: Curried2<Error, Sink<unknown>, PropagateTaskResult<any>> = curry2(_propagateErrorTask)
+export const propagateErrorTask: Curried2<Error, Sink<unknown>, PropagateTaskResult> = curry2(_propagateErrorTask)
 export { propagateEndTask }
