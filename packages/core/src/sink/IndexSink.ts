@@ -11,12 +11,12 @@ export interface IndexedValue<A> {
   readonly active: boolean
 }
 
-export class IndexSink<A> extends Pipe<A, Readonly<IndexedValue<A | undefined>>> implements Sink<A> {
+export class IndexSink<A> extends Pipe<A, IndexedValue<A | undefined>> implements Sink<A> {
   readonly index: number
   active: boolean
   value: A | undefined
 
-  constructor (i: number, sink: Sink<Readonly<IndexedValue<A | undefined>>>) {
+  constructor (i: number, sink: Sink<IndexedValue<A | undefined>>) {
     super(sink)
     this.index = i
     this.active = true
