@@ -4,8 +4,7 @@ import { eq } from '@briancavalier/assert'
 import { periodic } from '../../src/source/periodic'
 import { take } from '../../src/combinator/slice'
 
-import { collectEventsFor } from '../helper/testEnv'
-import { Event } from '../../src/sink/DeferredSink'
+import { collectEventsFor, Event } from '../helper/testEnv'
 
 describe('periodic', function () {
   it('should emit value at tick periods', function () {

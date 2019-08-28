@@ -4,8 +4,7 @@ import { eq, fail } from '@briancavalier/assert'
 import { run } from '../src/run'
 import { at } from '../src/source/at'
 
-import { ticks } from './helper/testEnv'
-import { Event } from '../src/sink/DeferredSink'
+import { Event, ticks } from './helper/testEnv'
 import { Sink } from '@most/types'
 
 describe('run', () => {

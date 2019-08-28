@@ -8,8 +8,7 @@ import { switchLatest } from '../../src/combinator/switch'
 import { empty } from '../../src/source/empty'
 import { periodic } from '../../src/source/periodic'
 
-import { collectEventsFor, makeEvents } from '../helper/testEnv'
-import { Event } from '../../src/sink/DeferredSink'
+import { collectEventsFor, Event, makeEvents } from '../helper/testEnv'
 
 describe('zipItems', () => {
   describe('zipItems', () => {

@@ -2,14 +2,13 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-import { newScheduler, newTimeline, currentTime, delay } from '@most/scheduler'
-import { propagateEventTask, propagateEndTask } from '../../src/scheduler/PropagateTask'
+import { currentTime, delay, newScheduler, newTimeline } from '@most/scheduler'
+import { propagateEndTask, propagateEventTask } from '../../src/scheduler/PropagateTask'
 import VirtualTimer from './VirtualTimer'
 import { runEffects } from '../../src/runEffects'
 import { tap } from '../../src/combinator/transform'
-import { disposeWith, disposeNone } from '@most/disposable'
-import { Stream, Scheduler, Disposable, ScheduledTask, Time, Sink } from '@most/types'
-import { Event } from '../../src/sink/DeferredSink'
+import { disposeNone, disposeWith } from '@most/disposable'
+import { Disposable, ScheduledTask, Scheduler, Sink, Stream, Time } from '@most/types'
 
 export interface Env {
   tick(n: number): void
@@ -25,6 +24,11 @@ export function ticks (dt: number): Scheduler {
   const { tick, scheduler } = newEnv()
   tick(dt)
   return scheduler
+}
+
+export interface Event<A> {
+  readonly time: Time
+  readonly value: A
 }
 
 export function collectEvents <A> (stream: Stream<A>, scheduler: Scheduler): Promise<Event<A>[]> {

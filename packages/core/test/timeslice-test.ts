@@ -9,11 +9,10 @@ import { never } from '../src/source/never'
 import { delay } from '../src/combinator/delay'
 import { run } from '../src/run'
 
-import { ticks, collectEvents, collectEventsFor, makeEvents } from './helper/testEnv'
+import { ticks, collectEvents, collectEventsFor, makeEvents, Event } from './helper/testEnv'
 import FakeDisposeStream from './helper/FakeDisposeStream'
 
 import { spy } from 'sinon'
-import { Event } from '../src/sink/DeferredSink'
 
 describe('during', () => {
   it('should contain events at or later than min and earlier than max', () => {

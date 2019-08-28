@@ -1,6 +1,6 @@
 import Pipe from '../../src/sink/Pipe'
 import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types'
-import { Event } from '../../src/sink/DeferredSink'
+import { Event } from './testEnv'
 
 export const timestamp = <A>(stream: Stream<A>): Stream<Event<A>> =>
   new Timestamp(stream)

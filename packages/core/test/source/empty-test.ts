@@ -4,8 +4,7 @@ import { eq, assert } from '@briancavalier/assert'
 import { empty, isCanonicalEmpty, containsCanonicalEmpty } from '../../src/source/empty'
 import { now } from '../../src/source/now'
 
-import { collectEventsFor, makeEvents } from '../helper/testEnv'
-import { Event } from '../../src/sink/DeferredSink'
+import { collectEventsFor, Event, makeEvents } from '../helper/testEnv'
 
 describe('empty', () => {
   describe('isCanonicalEmpty', () => {
