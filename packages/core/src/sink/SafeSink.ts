@@ -5,7 +5,7 @@ import { Sink, Time } from '@most/types'
 
 export default class SafeSink<A> implements Sink<A> {
   private readonly sink: Sink<A>
-  active: boolean;
+  private active: boolean;
 
   constructor (sink: Sink<A>) {
     this.sink = sink
