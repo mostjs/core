@@ -15,12 +15,12 @@ class ContinueWith<A> implements Stream<A> {
   private readonly f: () => Stream<A>
   private readonly source: Stream<A>
 
-  constructor (f: () => Stream<A>, source: Stream<A>) {
+  constructor(f: () => Stream<A>, source: Stream<A>) {
     this.f = f
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     return new ContinueWithSink(this.f, this.source, sink, scheduler)
   }
 }
@@ -31,7 +31,7 @@ class ContinueWithSink<A> extends Pipe<A, A> implements Sink<A>, Disposable {
   private active: boolean;
   private disposable: Disposable
 
-  constructor (f: () => Stream<A>, source: Stream<A>, sink: Sink<A>, scheduler: Scheduler) {
+  constructor(f: () => Stream<A>, source: Stream<A>, sink: Sink<A>, scheduler: Scheduler) {
     super(sink)
     this.f = f
     this.scheduler = scheduler
@@ -39,14 +39,14 @@ class ContinueWithSink<A> extends Pipe<A, A> implements Sink<A>, Disposable {
     this.disposable = disposeOnce(source.run(this, scheduler))
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     if (!this.active) {
       return
     }
     this.sink.event(t, x)
   }
 
-  end (t: Time): void {
+  end(t: Time): void {
     if (!this.active) {
       return
     }
@@ -56,7 +56,7 @@ class ContinueWithSink<A> extends Pipe<A, A> implements Sink<A>, Disposable {
     this.startNext(t, this.sink)
   }
 
-  private startNext (t: Time, sink: Sink<A>): void {
+  private startNext(t: Time, sink: Sink<A>): void {
     try {
       this.disposable = this.continue(this.f, t, sink)
     } catch (e) {
@@ -64,11 +64,11 @@ class ContinueWithSink<A> extends Pipe<A, A> implements Sink<A>, Disposable {
     }
   }
 
-  private continue (f: () => Stream<A>, t: Time, sink: Sink<A>): Disposable {
+  private continue(f: () => Stream<A>, t: Time, sink: Sink<A>): Disposable {
     return run(sink, this.scheduler, withLocalTime(t, f()))
   }
 
-  dispose (): void {
+  dispose(): void {
     this.active = false
     return this.disposable.dispose()
   }

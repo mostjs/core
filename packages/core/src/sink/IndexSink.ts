@@ -16,14 +16,14 @@ export class IndexSink<A> extends Pipe<A, IndexedValue<A | undefined>> implement
   active: boolean
   value: A | undefined
 
-  constructor (i: number, sink: Sink<IndexedValue<A | undefined>>) {
+  constructor(i: number, sink: Sink<IndexedValue<A | undefined>>) {
     super(sink)
     this.index = i
     this.active = true
     this.value = undefined
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     if (!this.active) {
       return
     }
@@ -31,7 +31,7 @@ export class IndexSink<A> extends Pipe<A, IndexedValue<A | undefined>> implement
     this.sink.event(t, this)
   }
 
-  end (t: Time): void {
+  end(t: Time): void {
     if (!this.active) {
       return
     }

@@ -15,7 +15,7 @@ import { Stream, Sink, Scheduler, Time, Disposable } from '@most/types'
  */
 export function filter<A, B extends A>(p: (a: A) => a is B, stream: Stream<A>): Stream<B>
 export function filter<A>(p: (a: A) => boolean, stream: Stream<A>): Stream<A>
-export function filter<A> (p: (a: A) => boolean, stream: Stream<A>): Stream<A> {
+export function filter<A>(p: (a: A) => boolean, stream: Stream<A>): Stream<A> {
   return Filter.create(p, stream)
 }
 
@@ -40,12 +40,12 @@ export const skipRepeatsWith = <A>(equals: (a1: A, a2: A) => boolean, stream: St
 class SkipRepeats<A> implements Stream<A> {
   private readonly equals: (a1: A, a2: A) => boolean
   private readonly source: Stream<A>
-  constructor (equals: (a1: A, a2: A) => boolean, source: Stream<A>) {
+  constructor(equals: (a1: A, a2: A) => boolean, source: Stream<A>) {
     this.equals = equals
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(new SkipRepeatsSink(this.equals, sink), scheduler)
   }
 }
@@ -54,14 +54,14 @@ class SkipRepeatsSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly equals: (a1: A, a2: A) => boolean
   private value?: A;
   private init: boolean;
-  constructor (equals: (a1: A, a2: A) => boolean, sink: Sink<A>) {
+  constructor(equals: (a1: A, a2: A) => boolean, sink: Sink<A>) {
     super(sink)
     this.equals = equals
     this.value = undefined
     this.init = true
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     if (this.init) {
       this.init = false
       this.value = x
@@ -75,6 +75,6 @@ class SkipRepeatsSink<A> extends Pipe<A, A> implements Sink<A> {
   }
 }
 
-function same <A> (a: A, b: A): boolean {
+function same <A>(a: A, b: A): boolean {
   return a === b
 }

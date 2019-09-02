@@ -55,12 +55,12 @@ export class Slice<A> implements Stream<A> {
   readonly bounds: Bounds;
   readonly source: Stream<A>;
 
-  constructor (bounds: Bounds, source: Stream<A>) {
+  constructor(bounds: Bounds, source: Stream<A>) {
     this.source = source
     this.bounds = bounds
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     const disposable = new SettableDisposable()
     const sliceSink = new SliceSink(this.bounds.min, this.bounds.max - this.bounds.min, sink, disposable)
 
@@ -74,14 +74,14 @@ class SliceSink<A> extends Pipe<A, A> implements Sink<A> {
   private skip: number
   private take: number
   private readonly disposable: Disposable
-  constructor (skip: number, take: number, sink: Sink<A>, disposable: Disposable) {
+  constructor(skip: number, take: number, sink: Sink<A>, disposable: Disposable) {
     super(sink)
     this.skip = skip
     this.take = take
     this.disposable = disposable
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     /* eslint complexity: [1, 4] */
     if (this.skip > 0) {
       this.skip -= 1
@@ -109,12 +109,12 @@ class TakeWhile<A> implements Stream<A> {
   private readonly p: (a: A) => boolean;
   private readonly source: Stream<A>;
 
-  constructor (p: (a: A) => boolean, source: Stream<A>) {
+  constructor(p: (a: A) => boolean, source: Stream<A>) {
     this.p = p
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     const disposable = new SettableDisposable()
     const takeWhileSink = new TakeWhileSink(this.p, sink, disposable)
 
@@ -129,14 +129,14 @@ class TakeWhileSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly disposable: Disposable
   private active: boolean;
 
-  constructor (p: (a: A) => boolean, sink: Sink<A>, disposable: Disposable) {
+  constructor(p: (a: A) => boolean, sink: Sink<A>, disposable: Disposable) {
     super(sink)
     this.p = p
     this.active = true
     this.disposable = disposable
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     if (!this.active) {
       return
     }
@@ -161,12 +161,12 @@ class SkipWhile<A> implements Stream<A> {
   private readonly p: (a: A) => boolean
   private readonly source: Stream<A>
 
-  constructor (p: (a: A) => boolean, source: Stream<A>) {
+  constructor(p: (a: A) => boolean, source: Stream<A>) {
     this.p = p
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(new SkipWhileSink(this.p, sink), scheduler)
   }
 }
@@ -175,13 +175,13 @@ class SkipWhileSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly p: (a: A) => boolean;
   private skipping: boolean;
 
-  constructor (p: (a: A) => boolean, sink: Sink<A>) {
+  constructor(p: (a: A) => boolean, sink: Sink<A>) {
     super(sink)
     this.p = p
     this.skipping = true
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     if (this.skipping) {
       const p = this.p
       this.skipping = p(x)
@@ -202,12 +202,12 @@ class SkipAfter<A> implements Stream<A> {
   private readonly p: (a: A) => boolean
   private readonly source: Stream<A>
 
-  constructor (p: (a: A) => boolean, source: Stream<A>) {
+  constructor(p: (a: A) => boolean, source: Stream<A>) {
     this.p = p
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(new SkipAfterSink(this.p, sink), scheduler)
   }
 }
@@ -216,13 +216,13 @@ class SkipAfterSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly p: (a: A) => boolean;
   private skipping: boolean;
 
-  constructor (p: (a: A) => boolean, sink: Sink<A>) {
+  constructor(p: (a: A) => boolean, sink: Sink<A>) {
     super(sink)
     this.p = p
     this.skipping = false
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     if (this.skipping) {
       return
     }

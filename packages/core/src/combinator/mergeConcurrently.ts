@@ -18,13 +18,13 @@ class MergeConcurrently<A, B> implements Stream<B> {
   private readonly f: (a: A) => Stream<B>
   private readonly source: Stream<A>
 
-  constructor (f: (a: A) => Stream<B>, concurrency: number, source: Stream<A>) {
+  constructor(f: (a: A) => Stream<B>, concurrency: number, source: Stream<A>) {
     this.f = f
     this.concurrency = concurrency
     this.source = source
   }
 
-  run (sink: Sink<B>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<B>, scheduler: Scheduler): Disposable {
     return new Outer(this.f, this.concurrency, this.source, sink, scheduler)
   }
 }
@@ -45,7 +45,7 @@ class Outer<A, B> implements Sink<A>, Disposable {
   private readonly current: Disposable[];
   private readonly pending: A[];
 
-  constructor (f: (a: A) => Stream<B>, concurrency: number, source: Stream<A>, sink: Sink<B>, scheduler: Scheduler) {
+  constructor(f: (a: A) => Stream<B>, concurrency: number, source: Stream<A>, sink: Sink<B>, scheduler: Scheduler) {
     this.f = f
     this.concurrency = concurrency
     this.sink = sink
@@ -56,11 +56,11 @@ class Outer<A, B> implements Sink<A>, Disposable {
     this.active = true
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     this.addInner(t, x)
   }
 
-  private addInner (t: Time, x: A): void {
+  private addInner(t: Time, x: A): void {
     if (this.current.length < this.concurrency) {
       this.startInner(t, x)
     } else {
@@ -68,7 +68,7 @@ class Outer<A, B> implements Sink<A>, Disposable {
     }
   }
 
-  private startInner (t: Time, x: A): void {
+  private startInner(t: Time, x: A): void {
     try {
       this.initInner(t, x)
     } catch (e) {
@@ -76,31 +76,31 @@ class Outer<A, B> implements Sink<A>, Disposable {
     }
   }
 
-  private initInner (t: Time, x: A): void {
+  private initInner(t: Time, x: A): void {
     const innerSink = new Inner(t, this, this.sink)
     innerSink.disposable = mapAndRun(this.f, t, x, innerSink, this.scheduler)
     this.current.push(innerSink)
   }
 
-  end (t: Time): void {
+  end(t: Time): void {
     this.active = false
     tryDispose(t, this.disposable, this.sink)
     this.checkEnd(t)
   }
 
-  error (t: Time, e: Error): void{
+  error(t: Time, e: Error): void{
     this.active = false
     this.sink.error(t, e)
   }
 
-  dispose (): void {
+  dispose(): void {
     this.active = false
     this.pending.length = 0
     this.disposable.dispose()
     disposeAll(this.current).dispose()
   }
 
-  endInner (t: Time, inner: Disposable): void {
+  endInner(t: Time, inner: Disposable): void {
     const i = this.current.indexOf(inner)
     if (i >= 0) {
       this.current.splice(i, 1)
@@ -115,7 +115,7 @@ class Outer<A, B> implements Sink<A>, Disposable {
     }
   }
 
-  private checkEnd (t: Time): void {
+  private checkEnd(t: Time): void {
     if (!this.active && this.current.length === 0) {
       this.sink.end(t)
     }
@@ -131,26 +131,26 @@ class Inner<A, B> implements Sink<B>, Disposable {
   disposable: Disposable;
   private readonly sink: Sink<B>;
 
-  constructor (time: Time, outer: Outer<A, B>, sink: Sink<B>) {
+  constructor(time: Time, outer: Outer<A, B>, sink: Sink<B>) {
     this.time = time
     this.outer = outer
     this.sink = sink
     this.disposable = disposeNone()
   }
 
-  event (t: Time, x: B): void {
+  event(t: Time, x: B): void {
     this.sink.event(t + this.time, x)
   }
 
-  end (t: Time): void {
+  end(t: Time): void {
     this.outer.endInner(t + this.time, this)
   }
 
-  error (t: Time, e: Error): void {
+  error(t: Time, e: Error): void {
     this.outer.error(t + this.time, e)
   }
 
-  dispose (): void {
+  dispose(): void {
     return this.disposable.dispose()
   }
 }

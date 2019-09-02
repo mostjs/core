@@ -36,12 +36,12 @@ class Combine<Args extends unknown[], B> implements Stream<B> {
   private readonly f: (...args: Args) => B
   private readonly sources: ToStreamsArray<Args>;
 
-  constructor (f: (...args: Args) => B, sources: ToStreamsArray<Args>) {
+  constructor(f: (...args: Args) => B, sources: ToStreamsArray<Args>) {
     this.f = f
     this.sources = sources
   }
 
-  run (sink: Sink<B>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<B>, scheduler: Scheduler): Disposable {
     const l = this.sources.length
     const disposables = new Array(l)
     const sinks = new Array(l)
@@ -65,7 +65,7 @@ class CombineSink<A, Args extends A[], B> extends Pipe<IndexedValue<A>, B> imple
   private activeCount: number
   private readonly values: Args
 
-  constructor (disposables: Disposable[], length: number, sink: Sink<B>, f: (...args: Args) => B) {
+  constructor(disposables: Disposable[], length: number, sink: Sink<B>, f: (...args: Args) => B) {
     super(sink)
     this.disposables = disposables
     this.f = f
@@ -76,7 +76,7 @@ class CombineSink<A, Args extends A[], B> extends Pipe<IndexedValue<A>, B> imple
     this.activeCount = length
   }
 
-  event (t: Time, indexedValue: IndexedValue<A>): void {
+  event(t: Time, indexedValue: IndexedValue<A>): void {
     if (!indexedValue.active) {
       this.dispose(t, indexedValue.index)
       return
@@ -91,7 +91,7 @@ class CombineSink<A, Args extends A[], B> extends Pipe<IndexedValue<A>, B> imple
     }
   }
 
-  private updateReady (index: number): number {
+  private updateReady(index: number): number {
     if (this.awaiting > 0) {
       if (!this.hasValue[index]) {
         this.hasValue[index] = true
@@ -101,7 +101,7 @@ class CombineSink<A, Args extends A[], B> extends Pipe<IndexedValue<A>, B> imple
     return this.awaiting
   }
 
-  private dispose (t: Time, index: number): void {
+  private dispose(t: Time, index: number): void {
     tryDispose(t, this.disposables[index], this.sink)
     if (--this.activeCount === 0) {
       this.sink.end(t)

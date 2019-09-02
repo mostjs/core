@@ -3,7 +3,7 @@ import { Disposable } from '@most/types'
 
 export const disposeNone = (): Disposable => NONE
 const NONE = new (class DisposeNone implements Disposable {
-  dispose (): void{}
+  dispose(): void{}
 })()
 
 export const isDisposeNone = (d: Disposable): boolean =>

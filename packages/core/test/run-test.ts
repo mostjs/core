@@ -24,15 +24,15 @@ describe('run', () => {
       { time: expectedTime, value: expectedValue }
     ]
     const sink: Sink<number> = {
-      event (time, value) {
+      event(time, value) {
         events.push({ time, value })
       },
-      end (time) {
+      end(time) {
         eq(expectedTime, time)
         eq(expected, events)
         done()
       },
-      error (t, e) {
+      error(t, e) {
         fail(`Stream failed: ${t} ${e}`)
       }
     }

@@ -71,7 +71,7 @@ describe('mergeArray', function () {
   })
 })
 
-function testMerge (merge: (a: Stream<number>, b: Stream<number>) => Stream<number>): Promise<void> {
+function testMerge(merge: (a: Stream<number>, b: Stream<number>) => Stream<number>): Promise<void> {
   const a = [1, 2, 3]
   const b = [4, 5, 6]
   const count = a.length + b.length

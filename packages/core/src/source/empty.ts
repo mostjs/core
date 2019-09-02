@@ -13,7 +13,7 @@ export const containsCanonicalEmpty = <A>(streams: Stream<A>[]): boolean =>
   streams.some(isCanonicalEmpty)
 
 class Empty implements Stream<never> {
-  run (sink: Sink<never>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<never>, scheduler: Scheduler): Disposable {
     return asap(propagateEndTask(sink), scheduler)
   }
 }

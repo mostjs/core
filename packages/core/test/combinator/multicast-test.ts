@@ -60,7 +60,7 @@ describe('multicast', () => {
 })
 
 const sentinel = { value: 'sentinel' }
-const sink = { event: () => {}, end () {}, error () {} }
+const sink = { event: () => {}, end() {}, error() {} }
 
 describe('MulticastSource', () => {
   it('should call producer on first observer', () => {
@@ -104,7 +104,7 @@ describe('MulticastSource', () => {
 
   it('should propagate errors', () => {
     const fakeSource = {
-      run () {
+      run() {
         return disposeNone()
       }
     }
@@ -164,12 +164,12 @@ describe('MulticastDisposable', () => {
   it('should dispose when sinks reaches zero', () => {
     const expectedSink = sink
     const source = new class extends MulticastSource<unknown> {
-      remove (sink: Sink<unknown>): 0 {
+      remove(sink: Sink<unknown>): 0 {
         eq(expectedSink, sink)
         return 0
       }
 
-      dispose (): void {}
+      dispose(): void {}
     }(empty())
 
     const disposed = spy(source, 'dispose')
@@ -186,12 +186,12 @@ describe('MulticastDisposable', () => {
   it('should not dispose when sinks > 0', () => {
     const expectedSink = sink
     const source = new class extends MulticastSource<unknown> {
-      remove (sink: Sink<unknown>): 1 {
+      remove(sink: Sink<unknown>): 1 {
         eq(expectedSink, sink)
         return 1
       }
 
-      dispose (): void {}
+      dispose(): void {}
     }(empty())
 
     const disposed = spy(source, 'dispose')

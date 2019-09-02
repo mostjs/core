@@ -6,7 +6,7 @@ import { tryDispose } from '../src/tryDispose'
 describe('tryDispose', () => {
   it('should not propagate error if disposable returns', () => {
     const disposable = { dispose: spy() }
-    const sink = { event () {}, end () {}, error: spy() }
+    const sink = { event() {}, end() {}, error: spy() }
 
     tryDispose(1, disposable, sink)
 
@@ -21,7 +21,7 @@ describe('tryDispose', () => {
       dispose: spy(() => { throw error })
     }
 
-    const sink = { event () {}, end () {}, error: spy() }
+    const sink = { event() {}, end() {}, error: spy() }
 
     tryDispose(t, disposable, sink)
 

@@ -7,7 +7,7 @@ describe('dispose', () => {
   it('should dispose disposable', () => {
     let disposed = 0
     const disposable = {
-      dispose () {
+      dispose() {
         disposed += 1
       }
     }

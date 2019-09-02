@@ -7,7 +7,7 @@ import { Disposable } from '@most/types'
 class TestDisposable implements Disposable {
   disposed = false
 
-  dispose (): void {
+  dispose(): void {
     this.disposed = true
   }
 }

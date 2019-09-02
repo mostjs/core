@@ -5,7 +5,7 @@
 /**
  * a with x prepended
  */
-export function cons <A> (x: A, a: A[]): A[] {
+export function cons <A>(x: A, a: A[]): A[] {
   const l = a.length
   const b = new Array(l + 1)
   b[0] = x
@@ -18,7 +18,7 @@ export function cons <A> (x: A, a: A[]): A[] {
 /**
  * a with x appended
  */
-export function append <A> (x: A, a: A[]): A[] {
+export function append <A>(x: A, a: A[]): A[] {
   const l = a.length
   const b = new Array(l + 1)
   for (let i = 0; i < l; ++i) {
@@ -33,7 +33,7 @@ export function append <A> (x: A, a: A[]): A[] {
 /**
  * drop first n elements
  */
-export function drop <A> (n: number, a: A[]): A[] {
+export function drop <A>(n: number, a: A[]): A[] {
   if (n < 0) {
     throw new TypeError('n must be >= 0')
   }
@@ -53,7 +53,7 @@ export function drop <A> (n: number, a: A[]): A[] {
 /**
  * Internal helper for drop
  */
-function unsafeDrop <A> (n: number, a: A[], l: number): A[] {
+function unsafeDrop <A>(n: number, a: A[], l: number): A[] {
   const b = new Array(l)
   for (let i = 0; i < l; ++i) {
     b[i] = a[n + i]
@@ -64,14 +64,14 @@ function unsafeDrop <A> (n: number, a: A[], l: number): A[] {
 /**
  * drop head element
  */
-export function tail <A> (a: A[]): A[] {
+export function tail <A>(a: A[]): A[] {
   return drop(1, a)
 }
 
 /**
  * duplicate a (shallow duplication)
  */
-export function copy <A> (a: A[]): A[] {
+export function copy <A>(a: A[]): A[] {
   const l = a.length
   const b = new Array(l)
   for (let i = 0; i < l; ++i) {
@@ -83,7 +83,7 @@ export function copy <A> (a: A[]): A[] {
 /**
  * transform each element with f
  */
-export function map <A, B> (f: (a: A) => B, a: A[]): B[] {
+export function map <A, B>(f: (a: A) => B, a: A[]): B[] {
   const l = a.length
   const b = new Array(l)
   for (let i = 0; i < l; ++i) {
@@ -95,7 +95,7 @@ export function map <A, B> (f: (a: A) => B, a: A[]): B[] {
 /**
  * accumulate via left-fold
  */
-export function reduce <A, B> (f: (a: A, b: B, i: number) => A, z: A, a: B[]): A {
+export function reduce <A, B>(f: (a: A, b: B, i: number) => A, z: A, a: B[]): A {
   let r = z
   for (let i = 0, l = a.length; i < l; ++i) {
     r = f(r, a[i], i)
@@ -106,7 +106,7 @@ export function reduce <A, B> (f: (a: A, b: B, i: number) => A, z: A, a: B[]): A
 /**
  * replace element at index
  */
-export function replace <A> (x: A, i: number, a: A[]): A[] {
+export function replace <A>(x: A, i: number, a: A[]): A[] {
   if (i < 0) {
     throw new TypeError('i must be >= 0')
   }
@@ -123,7 +123,7 @@ export function replace <A> (x: A, i: number, a: A[]): A[] {
  * remove element at index
  * @throws
  */
-export function remove <A> (i: number, a: A[]): A[] {
+export function remove <A>(i: number, a: A[]): A[] {
   if (i < 0) {
     throw new TypeError('i must be >= 0')
   }
@@ -143,7 +143,7 @@ export function remove <A> (i: number, a: A[]): A[] {
 /**
  * Internal helper to remove element at index
  */
-function unsafeRemove <A> (i: number, a: A[], l: number): A[] {
+function unsafeRemove <A>(i: number, a: A[], l: number): A[] {
   const b = new Array(l)
   let j
   for (j = 0; j < i; ++j) {
@@ -160,7 +160,7 @@ function unsafeRemove <A> (i: number, a: A[], l: number): A[] {
  * remove all elements matching a predicate
  * @deprecated
  */
-export function removeAll <A> (f: (a: A) => boolean, a: A[]): A[] {
+export function removeAll <A>(f: (a: A) => boolean, a: A[]): A[] {
   const l = a.length
   const b = new Array(l)
   let j = 0
@@ -179,7 +179,7 @@ export function removeAll <A> (f: (a: A) => boolean, a: A[]): A[] {
 /**
  * find index of x in a, from the left
  */
-export function findIndex <A> (x: A, a: A[]): number {
+export function findIndex <A>(x: A, a: A[]): number {
   for (let i = 0, l = a.length; i < l; ++i) {
     if (x === a[i]) {
       return i
@@ -191,6 +191,6 @@ export function findIndex <A> (x: A, a: A[]): number {
 /**
  * Return true iff x is array-like
  */
-export function isArrayLike (x: any): x is ArrayLike<unknown> {
+export function isArrayLike(x: any): x is ArrayLike<unknown> {
   return x != null && typeof x.length === 'number' && typeof x !== 'function'
 }

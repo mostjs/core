@@ -15,7 +15,7 @@ describe('disposeNone', () => {
     })
 
     it('should be false for non-disposeNone', () => {
-      assert(!isDisposeNone({ dispose () {} }))
+      assert(!isDisposeNone({ dispose() {} }))
     })
   })
 })

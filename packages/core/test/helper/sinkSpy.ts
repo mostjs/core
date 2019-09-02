@@ -23,26 +23,26 @@ class SinkSpy<A> implements Sink<A> {
   errorValue?: Error
   _error: (t: Time, error: Error) => void
 
-  constructor (event: (t: Time, a: A) => void, end: (t: Time) => void, error: (t: Time, error: Error) => void) {
+  constructor(event: (t: Time, a: A) => void, end: (t: Time) => void, error: (t: Time, error: Error) => void) {
     this._event = event
     this._end = end
     this._error = error
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     this.eventCalled += 1
     this.eventTime = t
     this.eventValue = x
     return this._event(t, x)
   }
 
-  end (t: Time): void {
+  end(t: Time): void {
     this.endCalled += 1
     this.endTime = t
     return this._end(t)
   }
 
-  error (t: Time, e: Error): void {
+  error(t: Time, e: Error): void {
     this.errorCalled += 1
     this.errorTime = t
     this.errorValue = e

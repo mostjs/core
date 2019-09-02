@@ -13,7 +13,7 @@ import { Stream, Time, Disposable, Sink, Scheduler } from '@most/types'
  * @returns stream containing events from two streams in time order.
  * If two events are simultaneous they will be merged in arbitrary order.
  */
-export function merge <A, B> (stream1: Stream<A>, stream2: Stream<B>): Stream<A | B> {
+export function merge <A, B>(stream1: Stream<A>, stream2: Stream<B>): Stream<A | B> {
   return mergeArray([stream1, stream2])
 }
 
@@ -57,11 +57,11 @@ const appendSources = <A>(sources: Stream<A>[], stream: Stream<A>): Stream<A>[] 
 class Merge<A> implements Stream<A> {
   readonly sources: Stream<A>[];
 
-  constructor (sources: Stream<A>[]) {
+  constructor(sources: Stream<A>[]) {
     this.sources = sources
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     const l = this.sources.length
     const disposables: Disposable[] = new Array(l)
     const sinks: Sink<A>[] = new Array(l)
@@ -81,13 +81,13 @@ class MergeSink<A> extends Pipe<IndexedValue<A>, A> implements Sink<IndexedValue
   private readonly disposables: Disposable[];
   private activeCount: number;
 
-  constructor (disposables: Disposable[], sinks: Sink<unknown>[], sink: Sink<A>) {
+  constructor(disposables: Disposable[], sinks: Sink<unknown>[], sink: Sink<A>) {
     super(sink)
     this.disposables = disposables
     this.activeCount = sinks.length
   }
 
-  event (t: Time, indexValue: IndexedValue<A>): void {
+  event(t: Time, indexValue: IndexedValue<A>): void {
     if (!indexValue.active) {
       this.dispose(t, indexValue.index)
       return
@@ -95,7 +95,7 @@ class MergeSink<A> extends Pipe<IndexedValue<A>, A> implements Sink<IndexedValue
     this.sink.event(t, indexValue.value)
   }
 
-  private dispose (t: Time, index: number): void {
+  private dispose(t: Time, index: number): void {
     tryDispose(t, this.disposables[index], this.sink)
     if (--this.activeCount === 0) {
       this.sink.end(t)

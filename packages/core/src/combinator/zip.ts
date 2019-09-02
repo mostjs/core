@@ -22,7 +22,7 @@ interface NonEmptyQueue<A> extends Queue<A> {
  * @returns {Stream} new stream with items at corresponding indices combined
  *  using f
  */
-export function zip <A, B, R> (f: (a: A, b: B) => R, stream1: Stream<A>, stream2: Stream<B>): Stream<R> {
+export function zip <A, B, R>(f: (a: A, b: B) => R, stream1: Stream<A>, stream2: Stream<B>): Stream<R> {
   return zipArray(f, [stream1, stream2])
 }
 
@@ -44,12 +44,12 @@ class Zip<A, R> implements Stream<R> {
   private readonly f: (...args: A[]) => R
   private readonly sources: Stream<A>[]
 
-  constructor (f: (...args: A[]) => R, sources: Stream<A>[]) {
+  constructor(f: (...args: A[]) => R, sources: Stream<A>[]) {
     this.f = f
     this.sources = sources
   }
 
-  run (sink: Sink<R>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<R>, scheduler: Scheduler): Disposable {
     const l = this.sources.length
     const disposables = new Array(l)
     const sinks = new Array(l)
@@ -72,14 +72,14 @@ class ZipSink<A, R> extends Pipe<IndexedValue<A>, R> implements Sink<IndexedValu
   private readonly buffers: Queue<A>[]
   private readonly sinks: IndexSink<A>[]
 
-  constructor (f: (...args: A[]) => R, buffers: Queue<A>[], sinks: IndexSink<A>[], sink: Sink<R>) {
+  constructor(f: (...args: A[]) => R, buffers: Queue<A>[], sinks: IndexSink<A>[], sink: Sink<R>) {
     super(sink)
     this.f = f
     this.sinks = sinks
     this.buffers = buffers
   }
 
-  event (t: Time, indexedValue: IndexedValue<A>): void {
+  event(t: Time, indexedValue: IndexedValue<A>): void {
     /* eslint complexity: [1, 5] */
     if (!indexedValue.active) {
       this.dispose(t, indexedValue.index)
@@ -104,7 +104,7 @@ class ZipSink<A, R> extends Pipe<IndexedValue<A>, R> implements Sink<IndexedValu
     }
   }
 
-  private dispose (t: Time, index: number): void {
+  private dispose(t: Time, index: number): void {
     const buffer = this.buffers[index]
     if (buffer.isEmpty()) {
       this.sink.end(t)
@@ -117,7 +117,7 @@ const emitZipped = <A, R>(f: (...args: A[]) => R, t: Time, buffers: NonEmptyQueu
 
 const head = <A>(buffer: NonEmptyQueue<A>): A => buffer.shift()
 
-function ended <A> (buffers: Queue<unknown>[], sinks: IndexSink<A>[]): boolean {
+function ended <A>(buffers: Queue<unknown>[], sinks: IndexSink<A>[]): boolean {
   for (let i = 0, l = buffers.length; i < l; ++i) {
     if (buffers[i].isEmpty() && !sinks[i].active) {
       return true
@@ -126,7 +126,7 @@ function ended <A> (buffers: Queue<unknown>[], sinks: IndexSink<A>[]): boolean {
   return false
 }
 
-function ready <A> (buffers: Queue<A>[]): buffers is NonEmptyQueue<A>[] {
+function ready <A>(buffers: Queue<A>[]): buffers is NonEmptyQueue<A>[] {
   for (let i = 0, l = buffers.length; i < l; ++i) {
     if (buffers[i].isEmpty()) {
       return false

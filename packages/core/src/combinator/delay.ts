@@ -20,12 +20,12 @@ class Delay<A> implements Stream<A> {
   private readonly dt: number
   private readonly source: Stream<A>
 
-  constructor (dt: number, source: Stream<A>) {
+  constructor(dt: number, source: Stream<A>) {
     this.dt = dt
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     const delaySink = new DelaySink(this.dt, sink, scheduler)
     return disposeBoth(delaySink, this.source.run(delaySink, scheduler))
   }
@@ -35,22 +35,22 @@ class DelaySink<A> extends Pipe<A, A> implements Sink<A>, Disposable {
   private readonly dt: number;
   private readonly scheduler: Scheduler;
   private readonly tasks: ScheduledTask[];
-  constructor (dt: number, sink: Sink<A>, scheduler: Scheduler) {
+  constructor(dt: number, sink: Sink<A>, scheduler: Scheduler) {
     super(sink)
     this.dt = dt
     this.scheduler = scheduler
     this.tasks = []
   }
 
-  dispose (): void {
+  dispose(): void {
     this.tasks.forEach(cancelTask)
   }
 
-  event (_t: Time, x: A): void {
+  event(_t: Time, x: A): void {
     this.tasks.push(scheduleDelay(this.dt, propagateEventTask(x, this.sink), this.scheduler))
   }
 
-  end (): void {
+  end(): void {
     this.tasks.push(scheduleDelay(this.dt, propagateEndTask(this.sink), this.scheduler))
   }
 }

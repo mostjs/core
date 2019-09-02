@@ -13,12 +13,12 @@ export default class Map<A, B> implements Stream<B> {
   readonly f: (a: A) => B;
   readonly source: Stream<A>;
 
-  constructor (f: (a: A) => B, source: Stream<A>) {
+  constructor(f: (a: A) => B, source: Stream<A>) {
     this.f = f
     this.source = source
   }
 
-  run (sink: Sink<B>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<B>, scheduler: Scheduler): Disposable {
     return this.source.run(new MapSink(this.f, sink), scheduler)
   }
 
@@ -29,7 +29,7 @@ export default class Map<A, B> implements Stream<B> {
    * @param {{run:function}} source source to map
    * @returns {Map|FilterMap} mapped source, possibly fused
    */
-  static create <A, B> (f: (a: A) => B, source: Stream<A>): Stream<B> {
+  static create <A, B>(f: (a: A) => B, source: Stream<A>): Stream<B> {
     if (isCanonicalEmpty(source)) {
       return empty()
     }
@@ -49,12 +49,12 @@ export default class Map<A, B> implements Stream<B> {
 class MapSink<A, B> extends Pipe<A, B> implements Sink<A> {
   private readonly f: (a: A) => B;
 
-  constructor (f: (a: A) => B, sink: Sink<B>) {
+  constructor(f: (a: A) => B, sink: Sink<B>) {
     super(sink)
     this.f = f
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     const f = this.f
     this.sink.event(t, f(x))
   }

@@ -5,7 +5,7 @@
 /**
  * TODO: find a better way (without `any`)
  */
-export default function invoke <F extends (...args: any[]) => any>(f: F, args: Parameters<F>): ReturnType<F> {
+export default function invoke <F extends(...args: any[]) => any>(f: F, args: Parameters<F>): ReturnType<F> {
   /* eslint complexity: [2,7] */
   switch (args.length) {
     case 0: return f()

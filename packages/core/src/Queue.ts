@@ -20,14 +20,14 @@ export default class Queue<A> {
   private capacityMask: number;
   private list: Array<A | undefined>;
 
-  constructor () {
+  constructor() {
     this.head = 0
     this.tail = 0
     this.capacityMask = 0x3
     this.list = new Array(4)
   }
 
-  push (x: A): number {
+  push(x: A): number {
     const tail = this.tail
     this.list[tail] = x
     this.tail = (tail + 1) & this.capacityMask
@@ -42,7 +42,7 @@ export default class Queue<A> {
     }
   }
 
-  shift (): A | undefined {
+  shift(): A | undefined {
     const head = this.head
     if (head === this.tail) {
       return undefined
@@ -60,11 +60,11 @@ export default class Queue<A> {
     return x
   }
 
-  isEmpty (): boolean {
+  isEmpty(): boolean {
     return this.head === this.tail
   }
 
-  length (): number {
+  length(): number {
     if (this.head === this.tail) {
       return 0
     } else if (this.head < this.tail) {
@@ -74,7 +74,7 @@ export default class Queue<A> {
     }
   }
 
-  private growArray (): void {
+  private growArray(): void {
     if (this.head) {
       // copy existing data, head to end, then beginning to tail.
       this.list = this.copyArray()
@@ -88,12 +88,12 @@ export default class Queue<A> {
     this.capacityMask = (this.capacityMask << 1) | 1
   }
 
-  private shrinkArray (): void {
+  private shrinkArray(): void {
     this.list.length >>>= 1
     this.capacityMask >>>= 1
   }
 
-  private copyArray (): Array<A | undefined> {
+  private copyArray(): Array<A | undefined> {
     const newArray = []
     const list = this.list
     const len = list.length

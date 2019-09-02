@@ -17,11 +17,11 @@ export const periodic = (period: number): Stream<void> =>
 class Periodic implements Stream<void> {
   private readonly period: number;
 
-  constructor (period: number) {
+  constructor(period: number) {
     this.period = period
   }
 
-  run (sink: Sink<void>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<void>, scheduler: Scheduler): Disposable {
     return schedulePeriodic(this.period, propagateEventTask(undefined, sink), scheduler)
   }
 }

@@ -118,9 +118,9 @@ describe('until', () => {
 
     const s = until(signal, stream)
     run({
-      event () {},
-      error () {},
-      end () {}
+      event() {},
+      error() {},
+      end() {}
     }, ticks(5), s)
   })
 })

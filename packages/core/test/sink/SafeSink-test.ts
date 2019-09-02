@@ -4,7 +4,7 @@ import { eq, is } from '@briancavalier/assert'
 import SafeSink from '../../src/sink/SafeSink'
 import { Time, Sink } from '@most/types'
 
-function testSink <A> (event: (t: Time, a: A) => void, end: (t: Time) => void, error: (t: Time, error: Error) => void): Sink<A> {
+function testSink <A>(event: (t: Time, a: A) => void, end: (t: Time) => void, error: (t: Time, error: Error) => void): Sink<A> {
   return {
     event: event,
     end: end,
@@ -12,23 +12,23 @@ function testSink <A> (event: (t: Time, a: A) => void, end: (t: Time) => void, e
   }
 }
 
-function testEvent <A> (event: (t: Time, a: A) => void): Sink<A> {
+function testEvent <A>(event: (t: Time, a: A) => void): Sink<A> {
   return testSink(event, fail, fail)
 }
 
-function testEnd (end: (t: Time) => void): Sink<unknown> {
+function testEnd(end: (t: Time) => void): Sink<unknown> {
   return testSink(fail, end, fail)
 }
 
-function testError (error: (t: Time, error: Error) => void): Sink<unknown> {
+function testError(error: (t: Time, error: Error) => void): Sink<unknown> {
   return testSink(fail, fail, error)
 }
 
-function fail (): never {
+function fail(): never {
   throw new Error('Should not be called')
 }
 
-function noop (): void {}
+function noop(): void {}
 
 describe('SafeSink', function () {
   it('should propagate event while active', function () {

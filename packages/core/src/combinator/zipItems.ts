@@ -20,13 +20,13 @@ class ZipItems<A, B, C> implements Stream<C> {
   private readonly items: A[]
   private readonly source: Stream<B>
 
-  constructor (f: (a: A, b: B) => C, items: A[], source: Stream<B>) {
+  constructor(f: (a: A, b: B) => C, items: A[], source: Stream<B>) {
     this.f = f
     this.items = items
     this.source = source
   }
 
-  run (sink: Sink<C>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<C>, scheduler: Scheduler): Disposable {
     return this.source.run(new ZipItemsSink(this.f, this.items, sink), scheduler)
   }
 }
@@ -36,14 +36,14 @@ class ZipItemsSink<A, B, C> extends Pipe<B, C> implements Sink<B> {
   private readonly items: A[]
   private index: number;
 
-  constructor (f: (a: A, b: B) => C, items: A[], sink: Sink<C>) {
+  constructor(f: (a: A, b: B) => C, items: A[], sink: Sink<C>) {
     super(sink)
     this.f = f
     this.items = items
     this.index = 0
   }
 
-  event (t: Time, b: B): void {
+  event(t: Time, b: B): void {
     const f = this.f
     this.sink.event(t, f(this.items[this.index], b))
     this.index += 1

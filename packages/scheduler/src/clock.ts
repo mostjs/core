@@ -6,12 +6,12 @@ import { Clock, Time } from '@most/types'
 export class RelativeClock implements Clock {
   private readonly clock: Clock;
   private readonly origin: Time;
-  constructor (clock: Clock, origin: Time) {
+  constructor(clock: Clock, origin: Time) {
     this.origin = origin
     this.clock = clock
   }
 
-  now (): Time {
+  now(): Time {
     return this.clock.now() - this.origin
   }
 }
@@ -19,12 +19,12 @@ export class RelativeClock implements Clock {
 export class HRTimeClock implements Clock {
   private readonly hrtime: (time: [number, number]) => [number, number];
   private readonly origin: [Time, Time];
-  constructor (hrtime: (time: [number, number]) => [number, number], origin: [Time, Time]) {
+  constructor(hrtime: (time: [number, number]) => [number, number], origin: [Time, Time]) {
     this.origin = origin
     this.hrtime = hrtime
   }
 
-  now (): Time {
+  now(): Time {
     const hrt = this.hrtime(this.origin)
     return (hrt[0] * 1e9 + hrt[1]) / 1e6
   }

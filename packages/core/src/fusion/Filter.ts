@@ -10,12 +10,12 @@ export default class Filter<A> implements Stream<A> {
   readonly p: (a: A) => boolean
   readonly source: Stream<A>
 
-  constructor (p: (a: A) => boolean, source: Stream<A>) {
+  constructor(p: (a: A) => boolean, source: Stream<A>) {
     this.p = p
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(new FilterSink(this.p, sink), scheduler)
   }
 
@@ -25,7 +25,7 @@ export default class Filter<A> implements Stream<A> {
    * @param {{run:function}} source source to filter
    * @returns {Filter} filtered source
    */
-  static create <A> (p: (a: A) => boolean, source: Stream<A>): Stream<A> {
+  static create <A>(p: (a: A) => boolean, source: Stream<A>): Stream<A> {
     if (isCanonicalEmpty(source)) {
       return source
     }
@@ -41,12 +41,12 @@ export default class Filter<A> implements Stream<A> {
 class FilterSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly p: (a: A) => boolean
 
-  constructor (p: (a: A) => boolean, sink: Sink<A>) {
+  constructor(p: (a: A) => boolean, sink: Sink<A>) {
     super(sink)
     this.p = p
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     const p = this.p
     p(x) && this.sink.event(t, x)
   }

@@ -37,12 +37,12 @@ class Tap<A> implements Stream<A> {
   private readonly f: (a: A) => unknown;
   private readonly source: Stream<A>;
 
-  constructor (f: (a: A) => unknown, source: Stream<A>) {
+  constructor(f: (a: A) => unknown, source: Stream<A>) {
     this.source = source
     this.f = f
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(new TapSink(this.f, sink), scheduler)
   }
 }
@@ -50,12 +50,12 @@ class Tap<A> implements Stream<A> {
 class TapSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly f: (a: A) => unknown;
 
-  constructor (f: (a: A) => unknown, sink: Sink<A>) {
+  constructor(f: (a: A) => unknown, sink: Sink<A>) {
     super(sink)
     this.f = f
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     const f = this.f
     f(x)
     this.sink.event(t, x)

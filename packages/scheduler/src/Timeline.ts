@@ -7,23 +7,23 @@ import ScheduledTaskImpl from './ScheduledTask'
 export default class TimelineImpl implements Timeline {
   private tasks: TimeSlot[];
 
-  constructor () {
+  constructor() {
     this.tasks = []
   }
 
-  nextArrival (): number {
+  nextArrival(): number {
     return this.isEmpty() ? Infinity : this.tasks[0].time
   }
 
-  isEmpty (): boolean {
+  isEmpty(): boolean {
     return this.tasks.length === 0
   }
 
-  add (st: ScheduledTaskImpl): void {
+  add(st: ScheduledTaskImpl): void {
     insertByTime(st, this.tasks)
   }
 
-  remove (st: ScheduledTaskImpl): boolean {
+  remove(st: ScheduledTaskImpl): boolean {
     const i = binarySearch(getTime(st), this.tasks)
 
     if (i >= 0 && i < this.tasks.length) {
@@ -44,13 +44,13 @@ export default class TimelineImpl implements Timeline {
   /**
    * @deprecated
    */
-  removeAll (f: (task: ScheduledTaskImpl) => boolean): void {
+  removeAll(f: (task: ScheduledTaskImpl) => boolean): void {
     for (let i = 0; i < this.tasks.length; ++i) {
       removeAllFrom(f, this.tasks[i])
     }
   }
 
-  runTasks (t: Time, runTask: (task: ScheduledTaskImpl) => void): void {
+  runTasks(t: Time, runTask: (task: ScheduledTaskImpl) => void): void {
     const tasks = this.tasks
     const l = tasks.length
     let i = 0
@@ -68,7 +68,7 @@ export default class TimelineImpl implements Timeline {
   }
 }
 
-function runReadyTasks (runTask: (task: ScheduledTaskImpl) => void, events: ScheduledTaskImpl[], tasks: TimeSlot[]): TimeSlot[] {
+function runReadyTasks(runTask: (task: ScheduledTaskImpl) => void, events: ScheduledTaskImpl[], tasks: TimeSlot[]): TimeSlot[] {
   for (let i = 0; i < events.length; ++i) {
     const task = events[i]
 
@@ -87,7 +87,7 @@ function runReadyTasks (runTask: (task: ScheduledTaskImpl) => void, events: Sche
   return tasks
 }
 
-function insertByTime (task: ScheduledTaskImpl, timeslots: TimeSlot[]): void {
+function insertByTime(task: ScheduledTaskImpl, timeslots: TimeSlot[]): void {
   const l = timeslots.length
   const time = getTime(task)
 
@@ -105,7 +105,7 @@ function insertByTime (task: ScheduledTaskImpl, timeslots: TimeSlot[]): void {
   }
 }
 
-function insertAtTimeslot (task: ScheduledTaskImpl, timeslots: TimeSlot[], time: Time, i: number): void {
+function insertAtTimeslot(task: ScheduledTaskImpl, timeslots: TimeSlot[], time: Time, i: number): void {
   const timeslot = timeslots[i]
   if (time === timeslot.time) {
     addEvent(task, timeslot.events)
@@ -114,7 +114,7 @@ function insertAtTimeslot (task: ScheduledTaskImpl, timeslots: TimeSlot[], time:
   }
 }
 
-function addEvent (task: ScheduledTaskImpl, events: ScheduledTaskImpl[]): void {
+function addEvent(task: ScheduledTaskImpl, events: ScheduledTaskImpl[]): void {
   if (events.length === 0 || task.time >= events[events.length - 1].time) {
     events.push(task)
   } else {
@@ -122,7 +122,7 @@ function addEvent (task: ScheduledTaskImpl, events: ScheduledTaskImpl[]): void {
   }
 }
 
-function spliceEvent (task: ScheduledTaskImpl, events: ScheduledTaskImpl[]): void {
+function spliceEvent(task: ScheduledTaskImpl, events: ScheduledTaskImpl[]): void {
   for (let j = 0; j < events.length; j++) {
     if (task.time < events[j].time) {
       events.splice(j, 0, task)
@@ -131,18 +131,18 @@ function spliceEvent (task: ScheduledTaskImpl, events: ScheduledTaskImpl[]): voi
   }
 }
 
-function getTime (scheduledTask: ScheduledTaskImpl): Time {
+function getTime(scheduledTask: ScheduledTaskImpl): Time {
   return Math.floor(scheduledTask.time)
 }
 
 /**
  * @deprecated
  */
-function removeAllFrom (f: (task: ScheduledTaskImpl) => boolean, timeslot: TimeSlot): void {
+function removeAllFrom(f: (task: ScheduledTaskImpl) => boolean, timeslot: TimeSlot): void {
   timeslot.events = removeAll(f, timeslot.events)
 }
 
-function binarySearch (t: Time, sortedArray: TimeSlot[]): number {
+function binarySearch(t: Time, sortedArray: TimeSlot[]): number {
   let lo = 0
   let hi = sortedArray.length
   let mid, y

@@ -13,9 +13,9 @@ const addSeed = (acc: number, n: number): SeedValue<number, number> => {
   }
 }
 const sink: Sink<void> = {
-  event () {},
-  end () {},
-  error () {}
+  event() {},
+  end() {},
+  error() {}
 }
 const scheduler = newDefaultScheduler()
 

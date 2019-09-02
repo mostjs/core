@@ -27,12 +27,12 @@ export class Throttle<A> implements Stream<A> {
   readonly period: number;
   readonly source: Stream<A>;
 
-  constructor (period: number, source: Stream<A>) {
+  constructor(period: number, source: Stream<A>) {
     this.period = period
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(new ThrottleSink(this.period, sink), scheduler)
   }
 }
@@ -41,13 +41,13 @@ class ThrottleSink<A> extends Pipe<A, A> implements Sink<A> {
   private time: Time
   private readonly period: number;
 
-  constructor (period: number, sink: Sink<A>) {
+  constructor(period: number, sink: Sink<A>) {
     super(sink)
     this.time = 0
     this.period = period
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     if (t >= this.time) {
       this.time = t + this.period
       this.sink.event(t, x)
@@ -68,12 +68,12 @@ class Debounce<A> implements Stream<A> {
   private readonly dt: number;
   private readonly source: Stream<A>
 
-  constructor (dt: number, source: Stream<A>) {
+  constructor(dt: number, source: Stream<A>) {
     this.dt = dt
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     return new DebounceSink(this.dt, this.source, sink, scheduler)
   }
 }
@@ -86,7 +86,7 @@ class DebounceSink<A> implements Sink<A>, Disposable {
   private timer: ScheduledTask | null
   private disposable: Disposable
 
-  constructor (dt: number, source: Stream<A>, sink: Sink<A>, scheduler: Scheduler) {
+  constructor(dt: number, source: Stream<A>, sink: Sink<A>, scheduler: Scheduler) {
     this.dt = dt
     this.sink = sink
     this.scheduler = scheduler
@@ -95,18 +95,18 @@ class DebounceSink<A> implements Sink<A>, Disposable {
     this.disposable = source.run(this, scheduler)
   }
 
-  event (_t: Time, x: A): void {
+  event(_t: Time, x: A): void {
     this.clearTimer()
     this.value = x
     this.timer = delay(this.dt, new DebounceTask(this, x), this.scheduler)
   }
 
-  handleEventFromTask (t: Time, x: A): void {
+  handleEventFromTask(t: Time, x: A): void {
     this.clearTimer()
     this.sink.event(t, x)
   }
 
-  end (t: Time): void {
+  end(t: Time): void {
     if (this.clearTimer()) {
       // TODO: value should be boxed to avoid ! bang
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -116,17 +116,17 @@ class DebounceSink<A> implements Sink<A>, Disposable {
     this.sink.end(t)
   }
 
-  error (t: Time, x: Error): void {
+  error(t: Time, x: Error): void {
     this.clearTimer()
     this.sink.error(t, x)
   }
 
-  dispose (): void {
+  dispose(): void {
     this.clearTimer()
     this.disposable.dispose()
   }
 
-  private clearTimer (): boolean {
+  private clearTimer(): boolean {
     if (this.timer === null) {
       return false
     }
@@ -140,18 +140,18 @@ class DebounceTask<A> implements Task {
   private readonly sink: DebounceSink<A>;
   private readonly value: A;
 
-  constructor (sink: DebounceSink<A>, value: A) {
+  constructor(sink: DebounceSink<A>, value: A) {
     this.sink = sink
     this.value = value
   }
 
-  run (t: Time): void {
+  run(t: Time): void {
     this.sink.handleEventFromTask(t, this.value)
   }
 
-  error (t: Time, e: Error): void {
+  error(t: Time, e: Error): void {
     this.sink.error(t, e)
   }
 
-  dispose (): void {}
+  dispose(): void {}
 }

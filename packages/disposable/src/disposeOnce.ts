@@ -12,11 +12,11 @@ class DisposeOnce implements Disposable {
   private disposed = false;
   private disposable?: Disposable
 
-  constructor (disposable: Disposable) {
+  constructor(disposable: Disposable) {
     this.disposable = disposable
   }
 
-  dispose (): void {
+  dispose(): void {
     if (!this.disposed) {
       this.disposed = true
       if (this.disposable) {

@@ -24,13 +24,13 @@ class Scan<A, B> implements Stream<B> {
   private readonly f: (b: B, a: A) => B;
   private readonly value: B;
 
-  constructor (f: (b: B, a: A) => B, z: B, source: Stream<A>) {
+  constructor(f: (b: B, a: A) => B, z: B, source: Stream<A>) {
     this.source = source
     this.f = f
     this.value = z
   }
 
-  run (sink: Sink<B>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<B>, scheduler: Scheduler): Disposable {
     const d1 = asap(propagateEventTask(this.value, sink), scheduler)
     const d2 = this.source.run(new ScanSink(this.f, this.value, sink), scheduler)
     return disposeBoth(d1, d2)
@@ -41,13 +41,13 @@ class ScanSink<A, B> extends Pipe<A, B> implements Sink<A> {
   private readonly f: (b: B, a: A) => B
   private value: B;
 
-  constructor (f: (b: B, a: A) => B, z: B, sink: Sink<B>) {
+  constructor(f: (b: B, a: A) => B, z: B, sink: Sink<B>) {
     super(sink)
     this.f = f
     this.value = z
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     const f = this.f
     this.value = f(this.value, x)
     this.sink.event(t, this.value)

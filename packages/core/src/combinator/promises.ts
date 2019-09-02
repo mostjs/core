@@ -27,11 +27,11 @@ export const fromPromise = <A>(promise: Promise<A>): Stream<A> => awaitPromises(
 class Await<A> implements Stream<A> {
   private readonly source: Stream<Promise<A>>
 
-  constructor (source: Stream<Promise<A>>) {
+  constructor(source: Stream<Promise<A>>) {
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(new AwaitSink(sink, scheduler), scheduler)
   }
 }
@@ -41,29 +41,29 @@ class AwaitSink<A> implements Sink<Promise<A>> {
   private readonly scheduler: Scheduler;
   private queue: Promise<unknown>;
 
-  constructor (sink: Sink<A>, scheduler: Scheduler) {
+  constructor(sink: Sink<A>, scheduler: Scheduler) {
     this.sink = sink
     this.scheduler = scheduler
     this.queue = Promise.resolve()
   }
 
-  event (_t: Time, promise: Promise<A>): void {
+  event(_t: Time, promise: Promise<A>): void {
     this.queue = this.queue.then(() => this.handlePromise(promise))
       .catch(this.errorBound)
   }
 
-  end (): void {
+  end(): void {
     this.queue = this.queue.then(this.endBound)
       .catch(this.errorBound)
   }
 
-  error (_t: Time, e: Error): void {
+  error(_t: Time, e: Error): void {
     // Don't resolve error values, propagate directly
     this.queue = this.queue.then(() => this.errorBound(e))
       .catch(fatal)
   }
 
-  private handlePromise (promise: Promise<A>): Promise<void> {
+  private handlePromise(promise: Promise<A>): Promise<void> {
     return promise.then(this.eventBound)
   }
 

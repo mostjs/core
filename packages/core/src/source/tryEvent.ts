@@ -4,7 +4,7 @@
 
 import { Time, Sink } from '@most/types'
 
-export function tryEvent <A> (t: Time, x: A, sink: Sink<A>): void {
+export function tryEvent <A>(t: Time, x: A, sink: Sink<A>): void {
   try {
     sink.event(t, x)
   } catch (e) {
@@ -12,7 +12,7 @@ export function tryEvent <A> (t: Time, x: A, sink: Sink<A>): void {
   }
 }
 
-export function tryEnd (t: Time, sink: Sink<unknown>): void {
+export function tryEnd(t: Time, sink: Sink<unknown>): void {
   try {
     sink.end(t)
   } catch (e) {

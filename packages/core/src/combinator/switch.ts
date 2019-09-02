@@ -21,11 +21,11 @@ export const switchLatest = <A>(stream: Stream<Stream<A>>): Stream<A> =>
 class Switch<A> implements Stream<A> {
   private readonly source: Stream<Stream<A>>
 
-  constructor (source: Stream<Stream<A>>) {
+  constructor(source: Stream<Stream<A>>) {
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     const switchSink = new SwitchSink(sink, scheduler)
     return disposeBoth(switchSink, this.source.run(switchSink, scheduler))
   }
@@ -37,57 +37,57 @@ class SwitchSink<A> implements Sink<Stream<A>>, Disposable {
   private ended: boolean
   private current: Segment<A> | null
 
-  constructor (sink: Sink<A>, scheduler: Scheduler) {
+  constructor(sink: Sink<A>, scheduler: Scheduler) {
     this.sink = sink
     this.scheduler = scheduler
     this.current = null
     this.ended = false
   }
 
-  event (t: Time, stream: Stream<A>): void {
+  event(t: Time, stream: Stream<A>): void {
     this.disposeCurrent(t)
     this.current = new Segment(stream, t, Infinity, this, this.sink, this.scheduler)
   }
 
-  end (t: Time): void {
+  end(t: Time): void {
     this.ended = true
     this.checkEnd(t)
   }
 
-  error (t: Time, e: Error): void {
+  error(t: Time, e: Error): void {
     this.ended = true
     this.sink.error(t, e)
   }
 
-  dispose (): void {
+  dispose(): void {
     return this.disposeCurrent(currentTime(this.scheduler))
   }
 
-  private disposeCurrent (t: Time): void {
+  private disposeCurrent(t: Time): void {
     if (this.current !== null) {
       return this.current.dispose(t)
     }
   }
 
-  private disposeInner (t: Time, inner: Segment<A>): void {
+  private disposeInner(t: Time, inner: Segment<A>): void {
     inner.dispose(t)
     if (inner === this.current) {
       this.current = null
     }
   }
 
-  private checkEnd (t: Time): void {
+  private checkEnd(t: Time): void {
     if (this.ended && this.current === null) {
       this.sink.end(t)
     }
   }
 
-  endInner (t: Time, inner: Segment<A>): void {
+  endInner(t: Time, inner: Segment<A>): void {
     this.disposeInner(t, inner)
     this.checkEnd(t)
   }
 
-  errorInner (t: Time, e: Error, inner: Segment<A>): void {
+  errorInner(t: Time, e: Error, inner: Segment<A>): void {
     this.disposeInner(t, inner)
     this.sink.error(t, e)
   }
@@ -100,7 +100,7 @@ class Segment<A> implements Sink<A> {
   private readonly sink: Sink<A>
   private readonly disposable: Disposable
 
-  constructor (source: Stream<A>, min: Time, max: Time, outer: SwitchSink<A>, sink: Sink<A>, scheduler: Scheduler) {
+  constructor(source: Stream<A>, min: Time, max: Time, outer: SwitchSink<A>, sink: Sink<A>, scheduler: Scheduler) {
     this.min = min
     this.max = max
     this.outer = outer
@@ -108,22 +108,22 @@ class Segment<A> implements Sink<A> {
     this.disposable = source.run(this, schedulerRelativeTo(min, scheduler))
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     const time = Math.max(0, t + this.min)
     if (time < this.max) {
       this.sink.event(time, x)
     }
   }
 
-  end (t: Time): void {
+  end(t: Time): void {
     this.outer.endInner(t + this.min, this)
   }
 
-  error (t: Time, e: Error): void {
+  error(t: Time, e: Error): void {
     this.outer.errorInner(t + this.min, e, this)
   }
 
-  dispose (t: Time): void {
+  dispose(t: Time): void {
     tryDispose(t, this.disposable, this.sink)
   }
 }

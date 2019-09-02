@@ -98,9 +98,9 @@ describe('switch', () => {
       const inner = FakeDisposeStream.from(() => { throw new Error() }, at(1, undefined))
       const s = at(1, inner)
       const sink: Sink<void> = {
-        event () {},
-        end () {},
-        error (t) {
+        event() {},
+        end() {},
+        error(t) {
           try {
             eq(2, t)
             done()

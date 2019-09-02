@@ -26,12 +26,12 @@ class DisposeWithImpl<R> implements Disposable {
   private _dispose: (resource: R) => void;
   private _resource: R;
 
-  constructor (dispose: (resource: R) => void, resource: R) {
+  constructor(dispose: (resource: R) => void, resource: R) {
     this._dispose = dispose
     this._resource = resource
   }
 
-  dispose (): void {
+  dispose(): void {
     this._dispose(this._resource)
   }
 }

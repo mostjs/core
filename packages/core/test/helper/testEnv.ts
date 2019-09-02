@@ -15,12 +15,12 @@ export interface Env {
   scheduler: Scheduler
 }
 
-export function newEnv (): Env {
+export function newEnv(): Env {
   const timer = new VirtualTimer()
   return { tick: (n: number) => timer.tick(n), scheduler: newScheduler(timer, newTimeline()) }
 }
 
-export function ticks (dt: number): Scheduler {
+export function ticks(dt: number): Scheduler {
   const { tick, scheduler } = newEnv()
   tick(dt)
   return scheduler
@@ -31,7 +31,7 @@ export interface Event<A> {
   readonly value: A
 }
 
-export function collectEvents <A> (stream: Stream<A>, scheduler: Scheduler): Promise<Event<A>[]> {
+export function collectEvents <A>(stream: Stream<A>, scheduler: Scheduler): Promise<Event<A>[]> {
   const into: Event<A>[] = []
   const s = tap(x => into.push({ time: currentTime(scheduler), value: x }), stream)
   return runEffects(s, scheduler).then(() => into)
@@ -52,11 +52,11 @@ export const atTimes = <A>(array: Event<A>[]): AtTimes<A> => new AtTimes(array)
 
 class AtTimes<A> {
   private readonly events: Event<A>[]
-  constructor (array: Event<A>[]) {
+  constructor(array: Event<A>[]) {
     this.events = array
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.events.length === 0
       ? disposeNone()
       : runEvents(this.events, sink, scheduler)

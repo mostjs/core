@@ -26,13 +26,13 @@ class Loop<A, B, S> implements Stream<B> {
   private readonly seed: S;
   private readonly source: Stream<A>
 
-  constructor (stepper: (seed: S, a: A) => SeedValue<S, B>, seed: S, source: Stream<A>) {
+  constructor(stepper: (seed: S, a: A) => SeedValue<S, B>, seed: S, source: Stream<A>) {
     this.step = stepper
     this.seed = seed
     this.source = source
   }
 
-  run (sink: Sink<B>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<B>, scheduler: Scheduler): Disposable {
     return this.source.run(new LoopSink(this.step, this.seed, sink), scheduler)
   }
 }
@@ -40,13 +40,13 @@ class Loop<A, B, S> implements Stream<B> {
 class LoopSink<A, B, S> extends Pipe<A, B> implements Sink<A> {
   private readonly step: (seed: S, a: A) => SeedValue<S, B>;
   private seed: S;
-  constructor (stepper: (seed: S, a: A) => SeedValue<S, B>, seed: S, sink: Sink<B>) {
+  constructor(stepper: (seed: S, a: A) => SeedValue<S, B>, seed: S, sink: Sink<B>) {
     super(sink)
     this.step = stepper
     this.seed = seed
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     const result = this.step(this.seed, x)
     this.seed = result.seed
     this.sink.event(t, result.value)

@@ -16,12 +16,12 @@ class WithLocalTime<A> implements Stream<A> {
   private readonly origin: Time;
   private readonly source: Stream<A>;
 
-  constructor (origin: Time, source: Stream<A>) {
+  constructor(origin: Time, source: Stream<A>) {
     this.origin = origin
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     return this.source.run(relativeSink(this.origin, sink), schedulerRelativeTo(this.origin, scheduler))
   }
 }

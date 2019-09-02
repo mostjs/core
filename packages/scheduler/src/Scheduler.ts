@@ -11,7 +11,7 @@ export default class SchedulerImpl implements Scheduler {
   private _timer: Time | null
   private _nextArrival: Time;
 
-  constructor (timer: Timer, timeline: Timeline) {
+  constructor(timer: Timer, timeline: Timeline) {
     this.timer = timer
     this.timeline = timeline
 
@@ -19,11 +19,11 @@ export default class SchedulerImpl implements Scheduler {
     this._nextArrival = Infinity
   }
 
-  currentTime (): Time {
+  currentTime(): Time {
     return this.timer.now()
   }
 
-  scheduleTask (localOffset: Time, delay: Time, period: Time, task: Task): ScheduledTaskImpl {
+  scheduleTask(localOffset: Time, delay: Time, period: Time, task: Task): ScheduledTaskImpl {
     const time = this.currentTime() + Math.max(0, delay)
     const st = new ScheduledTaskImpl(time, localOffset, period, task, this)
 
@@ -32,11 +32,11 @@ export default class SchedulerImpl implements Scheduler {
     return st
   }
 
-  relative (offset: Time): Scheduler {
+  relative(offset: Time): Scheduler {
     return new RelativeScheduler(offset, this)
   }
 
-  cancel (task: ScheduledTaskImpl): void {
+  cancel(task: ScheduledTaskImpl): void {
     task.active = false
     if (this.timeline.remove(task)) {
       this._reschedule()
@@ -44,12 +44,12 @@ export default class SchedulerImpl implements Scheduler {
   }
 
   // @deprecated
-  cancelAll (f: (task: ScheduledTask) => boolean): void {
+  cancelAll(f: (task: ScheduledTask) => boolean): void {
     this.timeline.removeAll(f)
     this._reschedule()
   }
 
-  _reschedule (): void {
+  _reschedule(): void {
     if (this.timeline.isEmpty()) {
       this._unschedule()
     } else {
@@ -57,12 +57,12 @@ export default class SchedulerImpl implements Scheduler {
     }
   }
 
-  _unschedule (): void {
+  _unschedule(): void {
     this.timer.clearTimer(this._timer)
     this._timer = null
   }
 
-  _scheduleNextRun (): void {
+  _scheduleNextRun(): void {
     if (this.timeline.isEmpty()) {
       return
     }
@@ -77,13 +77,13 @@ export default class SchedulerImpl implements Scheduler {
     }
   }
 
-  _scheduleNextArrival (nextArrival: Time): void {
+  _scheduleNextArrival(nextArrival: Time): void {
     this._nextArrival = nextArrival
     const delay = Math.max(0, nextArrival - this.currentTime())
     this._timer = this.timer.setTimer(this._runReadyTasksBound, delay)
   }
 
-  _runReadyTasks (): void {
+  _runReadyTasks(): void {
     this._timer = null
     this.timeline.runTasks(this.currentTime(), runTask)
     this._scheduleNextRun()

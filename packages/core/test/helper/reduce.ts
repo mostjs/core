@@ -15,7 +15,7 @@ import { Time, Stream, Sink } from '@most/types'
 * @param stream to reduce
 * @returns promise for the final result of the reduce
 */
-export function reduce <A, B> (f: (b: B, a: A) => B, initial: B, stream: Stream<A>): Promise<B> {
+export function reduce <A, B>(f: (b: B, a: A) => B, initial: B, stream: Stream<A>): Promise<B> {
   return new Promise((resolve, reject) => {
     run(new ReduceSink(f, initial, resolve, reject), newDefaultScheduler(), stream)
   })
@@ -27,19 +27,19 @@ class ReduceSink<A, B> implements Sink<A> {
   private readonly resolve: (b: B) => void
   private readonly reject: (e: Error) => void
 
-  constructor (f: (b: B, a: A) => B, value: B, resolve: (b: B) => void, reject: (e: Error) => void) {
+  constructor(f: (b: B, a: A) => B, value: B, resolve: (b: B) => void, reject: (e: Error) => void) {
     this.f = f
     this.value = value
     this.resolve = resolve
     this.reject = reject
   }
-  event (_t: Time, x: A): void {
+  event(_t: Time, x: A): void {
     this.value = this.f(this.value, x)
   }
-  error (_t: Time, e: Error): void {
+  error(_t: Time, e: Error): void {
     this.reject(e)
   }
-  end (): void {
+  end(): void {
     this.resolve(this.value)
   }
 }

@@ -8,17 +8,17 @@ export const timestamp = <A>(stream: Stream<A>): Stream<Event<A>> =>
 class Timestamp<A> implements Stream<Event<A>> {
   private readonly stream: Stream<A>
 
-  constructor (stream: Stream<A>) {
+  constructor(stream: Stream<A>) {
     this.stream = stream
   }
 
-  run (sink: Sink<Event<A>>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<Event<A>>, scheduler: Scheduler): Disposable {
     return this.stream.run(new TimestampSink(sink), scheduler)
   }
 }
 
 class TimestampSink<A> extends Pipe<A, Event<A>> implements Sink<A> {
-  event (time: Time, value: A): void {
+  event(time: Time, value: A): void {
     this.sink.event(time, { time, value })
   }
 }

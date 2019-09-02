@@ -12,8 +12,8 @@ export interface Curried2<A, B, C> {
   (a: A): (b: B) => C
 }
 
-export function curry2 <A, B, C> (f: (a: A, b: B) => C): Curried2<A, B, C> {
-  function curried (a: A, b: B): any {
+export function curry2 <A, B, C>(f: (a: A, b: B) => C): Curried2<A, B, C> {
+  function curried(a: A, b: B): any {
     switch (arguments.length) {
       case 0: return curried
       case 1: return (b: B) => f(a, b)
@@ -30,8 +30,8 @@ export interface Curried3<A, B, C, D> {
   (a: A, b: B, c: C): D
 }
 
-export function curry3 <A, B, C, D> (f: (a: A, b: B, c: C) => D): Curried3<A, B, C, D> {
-  function curried (a: A, b: B, c: C): any {
+export function curry3 <A, B, C, D>(f: (a: A, b: B, c: C) => D): Curried3<A, B, C, D> {
+  function curried(a: A, b: B, c: C): any {
     switch (arguments.length) {
       case 0: return curried
       case 1: return curry2((b: B, c: C) => f(a, b, c))
@@ -50,8 +50,8 @@ export interface Curried4<A, B, C, D, E> {
   (a: A, b: B, c: C, d: D): E
 }
 
-export function curry4 <A, B, C, D, E> (f: (a: A, b: B, c: C, d: D) => E): Curried4<A, B, C, D, E> {
-  function curried (a: A, b: B, c: C, d: D): any {
+export function curry4 <A, B, C, D, E>(f: (a: A, b: B, c: C, d: D) => E): Curried4<A, B, C, D, E> {
+  function curried(a: A, b: B, c: C, d: D): any {
     switch (arguments.length) {
       case 0: return curried
       case 1: return curry3((b: B, c: C, d: D) => f(a, b, c, d))

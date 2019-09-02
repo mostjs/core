@@ -16,6 +16,6 @@ import { Stream } from '@most/types'
  * @param {Stream} xs stream of values to which to apply all the latest f
  * @returns {Stream} stream containing all the applications of fs to xs
  */
-export function ap<A, B> (fs: Stream<(a: A) => B>, xs: Stream<A>): Stream<B> {
+export function ap<A, B>(fs: Stream<(a: A) => B>, xs: Stream<A>): Stream<B> {
   return combine(apply, fs, xs)
 }

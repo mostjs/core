@@ -15,7 +15,7 @@ export default class ScheduledTaskImpl implements ScheduledTask {
    */
   active: boolean;
 
-  constructor (time: Time, localOffset: Time, period: Time, task: Task, scheduler: Scheduler) {
+  constructor(time: Time, localOffset: Time, period: Time, task: Task, scheduler: Scheduler) {
     this.time = time
     this.localOffset = localOffset
     this.period = period
@@ -24,15 +24,15 @@ export default class ScheduledTaskImpl implements ScheduledTask {
     this.active = true
   }
 
-  run (): void {
+  run(): void {
     return this.task.run(this.time - this.localOffset)
   }
 
-  error (e: Error): void {
+  error(e: Error): void {
     return this.task.error(this.time - this.localOffset, e)
   }
 
-  dispose (): void {
+  dispose(): void {
     this.active = false
     this.scheduler.cancel(this)
     return this.task.dispose()

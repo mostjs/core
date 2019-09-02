@@ -7,11 +7,11 @@ export interface DeferrableTask<E, A> {
   error(e: Error): E
 }
 
-export function defer <E, A> (task: DeferrableTask<E, A>): Promise<E | A> {
+export function defer <E, A>(task: DeferrableTask<E, A>): Promise<E | A> {
   return Promise.resolve(task).then(runTask)
 }
 
-export function runTask <E, A> (task: DeferrableTask<E, A>): E | A {
+export function runTask <E, A>(task: DeferrableTask<E, A>): E | A {
   try {
     return task.run()
   } catch (e) {

@@ -10,13 +10,13 @@ export default class FilterMap<A, B> implements Stream<B> {
   private readonly f: (a: A) => B;
   private readonly source: Stream<A>;
 
-  constructor (p: (a: A) => boolean, f: (a: A) => B, source: Stream<A>) {
+  constructor(p: (a: A) => boolean, f: (a: A) => B, source: Stream<A>) {
     this.p = p
     this.f = f
     this.source = source
   }
 
-  run (sink: Sink<B>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<B>, scheduler: Scheduler): Disposable {
     return this.source.run(new FilterMapSink(this.p, this.f, sink), scheduler)
   }
 }
@@ -25,13 +25,13 @@ class FilterMapSink<A, B> extends Pipe<A, B> implements Sink<A> {
   private readonly p: (a: A) => boolean;
   private readonly f: (a: A) => B;
 
-  constructor (p: (a: A) => boolean, f: (a: A) => B, sink: Sink<B>) {
+  constructor(p: (a: A) => boolean, f: (a: A) => B, sink: Sink<B>) {
     super(sink)
     this.p = p
     this.f = f
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     const f = this.f
     const p = this.p
     p(x) && this.sink.event(t, f(x))

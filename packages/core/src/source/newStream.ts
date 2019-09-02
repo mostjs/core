@@ -8,7 +8,7 @@ export const newStream = <A>(run: RunStream<A>): Stream<A> => new StreamImpl(run
 
 class StreamImpl<A> {
   readonly run: RunStream<A>;
-  constructor (run: RunStream<A>) {
+  constructor(run: RunStream<A>) {
     this.run = run
   }
 }

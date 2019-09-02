@@ -21,12 +21,12 @@ class Until<A> implements Stream<A> {
   private readonly maxSignal: Stream<unknown>
   private readonly source: Stream<A>
 
-  constructor (maxSignal: Stream<unknown>, source: Stream<A>) {
+  constructor(maxSignal: Stream<unknown>, source: Stream<A>) {
     this.maxSignal = maxSignal
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     const disposable = new SettableDisposable()
 
     const d1 = this.source.run(sink, scheduler)
@@ -41,12 +41,12 @@ class Since<A> implements Stream<A> {
   private readonly minSignal: Stream<Stream<unknown>>
   private readonly source: Stream<A>
 
-  constructor (minSignal: Stream<Stream<unknown>>, source: Stream<A>) {
+  constructor(minSignal: Stream<Stream<unknown>>, source: Stream<A>) {
     this.minSignal = minSignal
     this.source = source
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     const min = new LowerBoundSink(this.minSignal, sink, scheduler)
     const d = this.source.run(new SinceSink(min, sink), scheduler)
 
@@ -57,12 +57,12 @@ class Since<A> implements Stream<A> {
 class SinceSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly min: LowerBoundSink<A>
 
-  constructor (min: LowerBoundSink<A>, sink: Sink<A>) {
+  constructor(min: LowerBoundSink<A>, sink: Sink<A>) {
     super(sink)
     this.min = min
   }
 
-  event (t: Time, x: A): void {
+  event(t: Time, x: A): void {
     if (this.min.allow) {
       this.sink.event(t, x)
     }
@@ -73,20 +73,20 @@ class LowerBoundSink<A> extends Pipe<A, A> implements Sink<A>, Disposable {
   allow: boolean
   private disposable: Disposable
 
-  constructor (signal: Stream<unknown>, sink: Sink<A>, scheduler: Scheduler) {
+  constructor(signal: Stream<unknown>, sink: Sink<A>, scheduler: Scheduler) {
     super(sink)
     this.allow = false
     this.disposable = signal.run(this, scheduler)
   }
 
-  event (): void {
+  event(): void {
     this.allow = true
     this.dispose()
   }
 
-  end (): void {}
+  end(): void {}
 
-  dispose (): void {
+  dispose(): void {
     this.disposable.dispose()
   }
 }
@@ -94,15 +94,15 @@ class LowerBoundSink<A> extends Pipe<A, A> implements Sink<A>, Disposable {
 class UntilSink<A> extends Pipe<A, A> implements Sink<A> {
   private readonly disposable: Disposable
 
-  constructor (sink: Sink<A>, disposable: Disposable) {
+  constructor(sink: Sink<A>, disposable: Disposable) {
     super(sink)
     this.disposable = disposable
   }
 
-  event (t: Time): void {
+  event(t: Time): void {
     this.disposable.dispose()
     this.sink.end(t)
   }
 
-  end (): void {}
+  end(): void {}
 }

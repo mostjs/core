@@ -10,17 +10,17 @@ class At<A> implements Stream<A> {
   private readonly time: Time;
   private readonly value: A;
 
-  constructor (t: Time, x: A) {
+  constructor(t: Time, x: A) {
     this.time = t
     this.value = x
   }
 
-  run (sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
     return delay(this.time, propagateTask(runAt, this.value, sink), scheduler)
   }
 }
 
-function runAt <A> (t: Time, x: A, sink: Sink<A>): void {
+function runAt<A>(t: Time, x: A, sink: Sink<A>): void {
   sink.event(t, x)
   sink.end(t)
 }

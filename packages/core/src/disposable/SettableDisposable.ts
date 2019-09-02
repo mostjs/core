@@ -5,12 +5,12 @@ export default class SettableDisposable implements Disposable {
   private disposable?: Disposable;
   private disposed: boolean;
 
-  constructor () {
+  constructor() {
     this.disposable = undefined
     this.disposed = false
   }
 
-  setDisposable (disposable: Disposable): void {
+  setDisposable(disposable: Disposable): void {
     if (this.disposable !== undefined) {
       throw new Error('setDisposable called more than once')
     }
@@ -22,7 +22,7 @@ export default class SettableDisposable implements Disposable {
     }
   }
 
-  dispose (): void {
+  dispose(): void {
     if (this.disposed) {
       return
     }

@@ -25,11 +25,11 @@ const merge = (ds: Disposable[], d: Disposable): Disposable[] =>
 class DisposeAll implements Disposable {
   readonly disposables: Disposable[]
 
-  constructor (disposables: Disposable[]) {
+  constructor(disposables: Disposable[]) {
     this.disposables = disposables
   }
 
-  dispose (): void {
+  dispose(): void {
     throwIfErrors(disposeCollectErrors(this.disposables))
   }
 }
@@ -66,7 +66,7 @@ export class DisposeAllError implements Error {
   readonly name: string = 'DisposeAllError'
   readonly stack?: string;
 
-  constructor (readonly message: string, readonly errors: Error[]) {
+  constructor(readonly message: string, readonly errors: Error[]) {
     Error.call(this, message)
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, DisposeAllError)
