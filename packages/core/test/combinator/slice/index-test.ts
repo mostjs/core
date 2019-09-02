@@ -27,12 +27,13 @@ describe('slice', function () {
     })
 
     it('should narrow when second slice is smaller', function () {
-      const s = slice(1, 5, slice(1, 10, now(''))) as Slice<string>
+      const s = slice(1, 5, slice(1, 10, now(''))) as Slice<string> // cast is needed to access `bounds` field
       eq(boundsFrom(2, 6), s.bounds)
     })
 
     it('should narrow when second slice is larger', function () {
-      const s = slice(1, 10, slice(1, 5, now(''))) as Slice<string>
+      // cast is needed to access `Slice.bounds`
+      const s = slice(1, 10, slice(1, 5, now(''))) as Slice<string> // cast is needed to access `bounds` field
       eq(boundsFrom(2, 5), s.bounds)
     })
 
@@ -69,7 +70,7 @@ describe('slice', function () {
     })
 
     it('should accumulate take(..., skip(...))', () => {
-      const s = take(1, skip(1, now(''))) as Slice<string>
+      const s = take(1, skip(1, now(''))) as Slice<string> // cast is needed to access `bounds` field
       eq(boundsFrom(1, 2), s.bounds)
     })
 
