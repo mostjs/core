@@ -7,13 +7,16 @@ import { now } from '../../src/source/now'
 import { empty, isCanonicalEmpty } from '../../src/source/empty'
 import { id } from '@most/prelude'
 
-const sentinel = { value: 'sentinel' }
+interface Sentinel {
+  value: string
+}
+const sentinel: Sentinel = { value: 'sentinel' }
 
 describe('ap', function () {
   it('should satisfy identity', function () {
     // P.of(function(a) { return a; }).ap(v) ~= v
     const v = now(sentinel)
-    return assertSame(ap(now((x: unknown) => x), v), v)
+    return assertSame(ap(now((x: Sentinel) => x), v), v)
   })
 
   it('should satisfy composition', function () {
