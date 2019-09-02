@@ -184,15 +184,21 @@ describe('MulticastDisposable', () => {
   })
 
   it('should not dispose when sinks > 0', () => {
-    const expectedSink = sink
-    const source = new class extends MulticastSource<unknown> {
+    class TestMulticastSource extends MulticastSource<unknown> {
+      constructor() {
+        super(empty())
+      }
+
       remove(sink: Sink<unknown>): 1 {
         eq(expectedSink, sink)
         return 1
       }
 
       dispose(): void {}
-    }(empty())
+    }
+
+    const expectedSink = sink
+    const source = new TestMulticastSource()
 
     const disposed = spy(source, 'dispose')
     const removed = spy(source, 'remove')
