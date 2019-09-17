@@ -29,7 +29,7 @@ describe('cons', () => {
 
 describe('append', () => {
   it('should add 1 to the length', () => {
-    const a: number[ ] = []
+    const a: number[] = []
     const b = append(1, a)
     const c = append(2, b)
     assert(b.length === a.length + 1)
