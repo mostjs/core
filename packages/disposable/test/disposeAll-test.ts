@@ -16,7 +16,7 @@ const disposableSpy = (f: Function): DisposableSpy => ({
 const disposableSpies = (): DisposableSpy[] =>
   [disposableSpy(noop), disposableSpy(noop), disposableSpy(noop)]
 
-const rethrow = (e: Error) => (): void => {
+const rethrow = (e: Error) => (): never => {
   throw e
 }
 

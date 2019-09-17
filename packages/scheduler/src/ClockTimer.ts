@@ -25,13 +25,13 @@ export default class ClockTimer implements Timer {
 }
 
 class Asap<A> implements DeferrableTask<never, A | undefined> {
-  private f: () => A | undefined;
+  private readonly f: () => A;
   /**
    * @mutable
    */
   public active: boolean;
 
-  constructor(f: () => A | undefined) {
+  constructor(f: () => A) {
     this.f = f
     this.active = true
   }

@@ -95,7 +95,7 @@ export function map <A, B>(f: (a: A) => B, a: A[]): B[] {
 /**
  * accumulate via left-fold
  */
-export function reduce <A, B>(f: (a: A, b: B, i: number) => A, z: A, a: B[]): A {
+export function reduce <A, B>(f: (a: A, b: B, i: number) => A, z: A, a: ArrayLike<B>): A {
   let r = z
   for (let i = 0, l = a.length; i < l; ++i) {
     r = f(r, a[i], i)

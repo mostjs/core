@@ -65,8 +65,12 @@ const throwIfErrors = (errors: Error[]): void => {
 export class DisposeAllError implements Error {
   readonly name: string = 'DisposeAllError'
   readonly stack?: string;
+  readonly message: string;
+  readonly errors: ArrayLike<Error>;
 
-  constructor(readonly message: string, readonly errors: Error[]) {
+  constructor(message: string, errors: ArrayLike<Error>) {
+    this.message = message
+    this.errors = errors
     Error.call(this, message)
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, DisposeAllError)
@@ -76,7 +80,7 @@ export class DisposeAllError implements Error {
 }
 DisposeAllError.prototype = Object.create(Error.prototype)
 
-const formatErrorStacks = (errors: Error[]): string =>
+const formatErrorStacks = (errors: ArrayLike<Error>): string =>
   reduce(formatErrorStack, '', errors)
 
 const formatErrorStack = (s: string, e: Error, i: number): string =>

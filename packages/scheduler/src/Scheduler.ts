@@ -10,6 +10,7 @@ export default class SchedulerImpl implements Scheduler {
   private readonly timeline: Timeline
   private _timer: Time | null
   private _nextArrival: Time;
+  private _runReadyTasksBound = () => this._runReadyTasks()
 
   constructor(timer: Timer, timeline: Timeline) {
     this.timer = timer
@@ -88,6 +89,4 @@ export default class SchedulerImpl implements Scheduler {
     this.timeline.runTasks(this.currentTime(), runTask)
     this._scheduleNextRun()
   }
-
-  private _runReadyTasksBound = () => this._runReadyTasks()
 }
