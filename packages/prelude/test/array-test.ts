@@ -49,6 +49,7 @@ describe('concat', () => {
     assertSame(concat([1, 2], []), [1, 2])
     assertSame(concat([], [3, 4]), [3, 4])
     assertSame(concat([], []), [])
+    assertSame(concat([1], concat([2], [3])), concat(concat([1], [2]), [3]))
   })
 })
 
