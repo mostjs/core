@@ -47,3 +47,9 @@ export function curry4 (f) {
   }
   return curried
 }
+
+// noop :: () -> undefined
+export const noop = () => undefined
+
+// bind :: (a -> b) -> c -> (d -> e)
+export const bind = (fn, object) => fn.bind(object)
