@@ -6,6 +6,7 @@ import Scheduler from './Scheduler'
 import Timeline from './Timeline'
 import ClockTimer from './ClockTimer'
 import { newPlatformClock } from './clock'
+import newVirtualTimer from './VirtualTimer'
 
 export * from './clock'
 export * from './schedule'
@@ -17,5 +18,6 @@ export const newDefaultScheduler = () => new Scheduler(newDefaultTimer(), new Ti
 
 export const newDefaultTimer = () => new ClockTimer(newPlatformClock())
 export const newClockTimer = clock => new ClockTimer(clock)
+export { newVirtualTimer }
 
 export const newTimeline = () => new Timeline()

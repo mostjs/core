@@ -1,4 +1,4 @@
-import { Scheduler, Task, ScheduledTask, Timeline, Timer, Time, Clock, Delay, Period, Offset } from '@most/types';
+import { Scheduler, Task, ScheduledTask, Timeline, Timer, Time, Clock, Delay, Period, Offset, VirtualTimer } from '@most/types';
 
 export function newScheduler (timer: Timer, timeline: Timeline): Scheduler;
 export function newScheduler (timer: Timer): (timeline: Timeline) => Scheduler;
@@ -9,6 +9,7 @@ export function schedulerRelativeTo (offset: Offset, scheduler: Scheduler): Sche
 export function schedulerRelativeTo (offset: Offset): (scheduler: Scheduler) => Scheduler
 
 export function newClockTimer (clock: Clock): Timer;
+export function newVirtualTimer (): VirtualTimer;
 export function newTimeline (): Timeline;
 
 export function newPlatformClock (): Clock;
