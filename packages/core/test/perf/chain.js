@@ -1,4 +1,4 @@
-require('babel-register')
+require('ts-node/register')
 const Benchmark = require('benchmark')
 const { chain } = require('../../src/index')
 const { reduce } = require('../helper/reduce')

@@ -1,12 +1,12 @@
-import babel from 'rollup-plugin-babel'
+import typescript from 'rollup-plugin-typescript2'
 import pkg from './package.json'
 
 export default {
-  input: 'src/index.js',
+  input: 'src/index.ts',
   plugins: [
-    babel({
-      exclude: 'node_modules/**',
-      plugins: ['external-helpers']
+    typescript({
+      tsconfig: './src/tsconfig.json',
+      typescript: require('typescript'),
     })
   ],
   external: [
