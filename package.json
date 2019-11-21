@@ -35,7 +35,7 @@
     "rollup-plugin-babel": "^3.0.2",
     "sinon": "^7.5.0",
     "snazzy": "^8.0.0",
-    "standard": "^12.0.1",
+    "standard": "^14.3.1",
     "uglify-js": "^2.7.5"
   }
 }
