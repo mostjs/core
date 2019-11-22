@@ -9,7 +9,7 @@ const noop = (): void => {}
 interface DisposableSpy {
   dispose: SinonSpy
 }
-const disposableSpy = (f: Function): DisposableSpy => ({
+const disposableSpy = (f: () => any): DisposableSpy => ({
   dispose: spy(f)
 })
 
