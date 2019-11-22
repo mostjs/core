@@ -31,7 +31,7 @@
     "lerna": "^2.11.0",
     "mocha": "^6.2.2",
     "nyc": "^14.1.1",
-    "rollup": "^0.50.0",
+    "rollup": "^1.27.4",
     "rollup-plugin-babel": "^3.0.2",
     "sinon": "^7.5.0",
     "snazzy": "^8.0.0",
