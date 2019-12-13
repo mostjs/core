@@ -27,7 +27,7 @@
     "babel-register": "^6.26.0",
     "cpy-cli": "^2.0.0",
     "cross-env": "^6.0.3",
-    "flow-bin": "^0.112.0",
+    "flow-bin": "^0.113.0",
     "lerna": "^3.19.0",
     "mocha": "^6.2.2",
     "nyc": "^14.1.1",
