@@ -4,11 +4,12 @@ import { spy, SinonSpy } from 'sinon'
 import { disposeNone, isDisposeNone } from '../src/disposeNone'
 import { disposeAll, disposeBoth, DisposeAllError } from '../src/disposeAll'
 
-const noop = (): void => {}
+const noop = (): void => { }
 
 interface DisposableSpy {
-  dispose: SinonSpy
+  dispose: SinonSpy<[], void>
 }
+
 const disposableSpy = (f: () => any): DisposableSpy => ({
   dispose: spy(f)
 })
