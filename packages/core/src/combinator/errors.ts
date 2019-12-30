@@ -19,7 +19,7 @@ import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
  * @param stream
  * @returns new stream which will recover from an error by calling f
  */
-export const recoverWith = <A, B, E extends Error>(f: (error: E) => Stream<B>, stream: Stream<A>): Stream<A | B> =>
+export const recoverWith = <A, E extends Error, B = A>(f: (error: E) => Stream<B>, stream: Stream<A>): Stream<A | B> =>
   isCanonicalEmpty(stream) ? empty()
     : new RecoverWith(f, stream)
 

@@ -8,7 +8,7 @@ import { withLocalTime } from './withLocalTime'
 import { disposeOnce, tryDispose } from '@most/disposable'
 import { Stream, Scheduler, Time, Disposable, Sink } from '@most/types'
 
-export const continueWith = <A, B>(f: () => Stream<B>, stream: Stream<A>): Stream<A | B> =>
+export const continueWith = <A, B = A>(f: () => Stream<B>, stream: Stream<A>): Stream<A | B> =>
   new ContinueWith(f, stream)
 
 class ContinueWith<A, B> implements Stream<A | B> {

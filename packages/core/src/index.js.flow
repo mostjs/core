@@ -187,8 +187,8 @@ declare export function debounce <A> (period: Period): (s: Stream<A>) => Stream<
 declare export function fromPromise <A> (pa: Promise<A>): Stream<A>
 declare export function awaitPromises <A> (spa: Stream<Promise<A>>): Stream<A>
 
-declare export function recoverWith <A, B, E:Error> (f: (E) => Stream<B>, s: Stream<A>): Stream<A | B>
-declare export function recoverWith <A, B, E:Error> (f: (E) => Stream<B>): (s: Stream<A>) => Stream<A | B>
+declare export function recoverWith <A, E:Error, B = A> (f: (E) => Stream<B>, s: Stream<A>): Stream<A | B>
+declare export function recoverWith <A, E:Error, B = A> (f: (E) => Stream<B>): (s: Stream<A>) => Stream<A | B>
 
 declare export function throwError <E:Error> (e: Error): Stream<any>
 
