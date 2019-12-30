@@ -19,7 +19,7 @@ import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
  * @param stream
  * @returns new stream which will recover from an error by calling f
  */
-export const recoverWith = <A, E extends Error>(f: (error: E) => Stream<A>, stream: Stream<A>): Stream<A> =>
+export const recoverWith = <A, B, E extends Error>(f: (error: E) => Stream<B>, stream: Stream<A>): Stream<A | B> =>
   isCanonicalEmpty(stream) ? empty()
     : new RecoverWith(f, stream)
 
@@ -43,11 +43,11 @@ class ErrorStream implements Stream<never> {
   }
 }
 
-class RecoverWith<A, E extends Error> implements Stream<A> {
-  private readonly f: (error: E) => Stream<A>;
+class RecoverWith<A, B, E extends Error> implements Stream<A | B> {
+  private readonly f: (error: E) => Stream<B>;
   private readonly source: Stream<A>;
 
-  constructor(f: (error: E) => Stream<A>, source: Stream<A>) {
+  constructor(f: (error: E) => Stream<B>, source: Stream<A>) {
     this.f = f
     this.source = source
   }
@@ -57,13 +57,13 @@ class RecoverWith<A, E extends Error> implements Stream<A> {
   }
 }
 
-class RecoverWithSink<A, E extends Error> implements Sink<A>, Disposable {
-  private readonly f: (error: E) => Stream<A>
+class RecoverWithSink<A, B, E extends Error> implements Sink<A>, Disposable {
+  private readonly f: (error: E) => Stream<B>
   private readonly sink: SafeSink<A>
   private readonly scheduler: Scheduler
   private disposable: Disposable
 
-  constructor(f: (error: E) => Stream<A>, source: Stream<A>, sink: Sink<A>, scheduler: Scheduler) {
+  constructor(f: (error: E) => Stream<B>, source: Stream<A>, sink: Sink<A | B>, scheduler: Scheduler) {
     this.f = f
     this.sink = new SafeSink(sink)
     this.scheduler = scheduler
@@ -94,7 +94,7 @@ class RecoverWithSink<A, E extends Error> implements Sink<A>, Disposable {
     }
   }
 
-  private _continue(f: (error: E) => Stream<A>, t: Time, x: E, sink: Sink<A>): Disposable {
+  private _continue(f: (error: E) => Stream<B>, t: Time, x: E, sink: Sink<A | B>): Disposable {
     return run(sink, this.scheduler, withLocalTime(t, f(x)))
   }
 

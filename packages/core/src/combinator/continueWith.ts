@@ -8,30 +8,30 @@ import { withLocalTime } from './withLocalTime'
 import { disposeOnce, tryDispose } from '@most/disposable'
 import { Stream, Scheduler, Time, Disposable, Sink } from '@most/types'
 
-export const continueWith = <A>(f: () => Stream<A>, stream: Stream<A>): Stream<A> =>
+export const continueWith = <A, B>(f: () => Stream<B>, stream: Stream<A>): Stream<A | B> =>
   new ContinueWith(f, stream)
 
-class ContinueWith<A> implements Stream<A> {
-  private readonly f: () => Stream<A>
+class ContinueWith<A, B> implements Stream<A | B> {
+  private readonly f: () => Stream<B>
   private readonly source: Stream<A>
 
-  constructor(f: () => Stream<A>, source: Stream<A>) {
+  constructor(f: () => Stream<B>, source: Stream<A>) {
     this.f = f
     this.source = source
   }
 
-  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink: Sink<A | B>, scheduler: Scheduler): Disposable {
     return new ContinueWithSink(this.f, this.source, sink, scheduler)
   }
 }
 
-class ContinueWithSink<A> extends Pipe<A, A> implements Sink<A>, Disposable {
-  private readonly f: () => Stream<A>;
+class ContinueWithSink<A, B> extends Pipe<A, A | B> implements Sink<A>, Disposable {
+  private readonly f: () => Stream<B>;
   private readonly scheduler: Scheduler;
   private active: boolean;
   private disposable: Disposable
 
-  constructor(f: () => Stream<A>, source: Stream<A>, sink: Sink<A>, scheduler: Scheduler) {
+  constructor(f: () => Stream<B>, source: Stream<A>, sink: Sink<A | B>, scheduler: Scheduler) {
     super(sink)
     this.f = f
     this.scheduler = scheduler
@@ -56,7 +56,7 @@ class ContinueWithSink<A> extends Pipe<A, A> implements Sink<A>, Disposable {
     this.startNext(t, this.sink)
   }
 
-  private startNext(t: Time, sink: Sink<A>): void {
+  private startNext(t: Time, sink: Sink<A | B>): void {
     try {
       this.disposable = this.continue(this.f, t, sink)
     } catch (e) {
@@ -64,7 +64,7 @@ class ContinueWithSink<A> extends Pipe<A, A> implements Sink<A>, Disposable {
     }
   }
 
-  private continue(f: () => Stream<A>, t: Time, sink: Sink<A>): Disposable {
+  private continue(f: () => Stream<B>, t: Time, sink: Sink<A | B>): Disposable {
     return run(sink, this.scheduler, withLocalTime(t, f()))
   }
 
