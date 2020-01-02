@@ -107,8 +107,8 @@ export { join }
 
 import { continueWith as _continueWith } from './combinator/continueWith'
 interface ContinueWith {
-  <A>(f: () => Stream<A>, s: Stream<A>): Stream<A>
-  <A>(f: () => Stream<A>): (s: Stream<A>) => Stream<A>
+  <A, B = A>(f: () => Stream<B>, s: Stream<A>): Stream<A | B>
+  <A, B = A>(f: () => Stream<B>): (s: Stream<A>) => Stream<A | B>
 }
 export const continueWith: ContinueWith = curry2(_continueWith)
 
@@ -331,8 +331,8 @@ export { fromPromise, awaitPromises } from './combinator/promises'
 import { recoverWith as _recoverWith, throwError } from './combinator/errors'
 
 interface RecoverWith {
-  <A, E extends Error>(p: (error: E) => Stream<A>, s: Stream<A>): Stream<A>
-  <A, E extends Error>(p: (error: E) => Stream<A>): (s: Stream<A>) => Stream<A>
+  <A, E extends Error, B = A>(p: (error: E) => Stream<B>, s: Stream<A>): Stream<A | B>
+  <A, E extends Error, B = A>(p: (error: E) => Stream<B>): (s: Stream<A>) => Stream<A | B>
 }
 export const recoverWith: RecoverWith = curry2(_recoverWith)
 export { throwError }

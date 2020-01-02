@@ -70,8 +70,8 @@ declare export function mergeMapConcurrently <A, B> (f: (A) => Stream<B>): {
   (concurrency: number): (s: Stream<A>) => Stream<B>
 }
 
-declare export function continueWith <A> (f: (any) => Stream<A>, s: Stream<A>): Stream<A>
-declare export function continueWith <A> (f: (any) => Stream<A>): (s: Stream<A>) => Stream<A>
+declare export function continueWith <A, B> (f: (any) => Stream<B>, s: Stream<A>): Stream<A | B>
+declare export function continueWith <A, B> (f: (any) => Stream<B>): (s: Stream<A>) => Stream<A | B>
 
 declare export function switchLatest <A> (s: Stream<Stream<A>>): Stream<A>
 
@@ -187,8 +187,8 @@ declare export function debounce <A> (period: Period): (s: Stream<A>) => Stream<
 declare export function fromPromise <A> (pa: Promise<A>): Stream<A>
 declare export function awaitPromises <A> (spa: Stream<Promise<A>>): Stream<A>
 
-declare export function recoverWith <A, E:Error> (f: (E) => Stream<A>, s: Stream<A>): Stream<A>
-declare export function recoverWith <A, E:Error> (f: (E) => Stream<A>): (s: Stream<A>) => Stream<A>
+declare export function recoverWith <A, E:Error, B = A> (f: (E) => Stream<B>, s: Stream<A>): Stream<A | B>
+declare export function recoverWith <A, E:Error, B = A> (f: (E) => Stream<B>): (s: Stream<A>) => Stream<A | B>
 
 declare export function throwError <E:Error> (e: Error): Stream<any>
 
