@@ -32,6 +32,11 @@ describe('recoverWith', () => {
     return observe(eq(sentinel), s)
   })
 
+  it('should allow union type', () => {
+    const s = recoverWith(() => now('456'), now(123))
+    return observe(eq(123), s)
+  })
+
   it('should recover from errors before recoverWith', () => {
     const s = map(() => {
       throw new Error()
