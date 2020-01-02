@@ -349,7 +349,7 @@ continueWith
 
 .. code-block:: haskell
 
-  continueWith :: (() -> Stream a) -> Stream a -> Stream a
+  continueWith :: (() -> Stream b) -> Stream a -> Stream (a | b)
 
 Replace the end of a :ref:`Stream` with another :ref:`Stream`. ::
 
@@ -1165,7 +1165,7 @@ recoverWith
 
 .. code-block:: haskell
 
-  recoverWith :: (Error -> Stream a) -> Stream a -> Stream a
+  recoverWith :: (Error -> Stream b) -> Stream a -> Stream (a | b)
 
 Recover from a stream failure by calling a function to create a new :ref:`Stream`. ::
 
