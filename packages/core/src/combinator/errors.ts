@@ -43,7 +43,7 @@ class ErrorStream implements Stream<never> {
   }
 }
 
-class RecoverWith<A, B, E extends Error> implements Stream<A | B> {
+class RecoverWith<A, E extends Error, B> implements Stream<A | B> {
   private readonly f: (error: E) => Stream<B>;
   private readonly source: Stream<A>;
 
@@ -57,7 +57,7 @@ class RecoverWith<A, B, E extends Error> implements Stream<A | B> {
   }
 }
 
-class RecoverWithSink<A, B, E extends Error> implements Sink<A>, Disposable {
+class RecoverWithSink<A, E extends Error, B> implements Sink<A>, Disposable {
   private readonly f: (error: E) => Stream<B>
   private readonly sink: SafeSink<A>
   private readonly scheduler: Scheduler
