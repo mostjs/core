@@ -31,7 +31,7 @@
   "homepage": "https://github.com/mostjs/prelude#readme",
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.0",
-    "@types/assert": "1.4.4",
+    "@types/assert": "1.4.5",
     "@types/mocha": "^5.2.7",
     "@typescript-eslint/eslint-plugin": "^1.11.0",
     "@typescript-eslint/parser": "^1.11.0",
