@@ -1,0 +1,144 @@
+# JavaScript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2.1
+executors:
+  production:
+    # Docker executor options.
+    docker:
+      - image: circleci/node:lts-buster
+
+    # Directory in which to run the steps.
+    working_directory: ~/mostjs
+
+    # Set environment variables.
+    # These will override any environment variables set in the CircleCI application.
+    environment:
+      BASH_ENV: ~/.nvm/nvm.sh
+
+jobs:
+  # Test on LTS
+  Test-LTS:
+    executor: production
+
+    # Perform these steps.
+    steps:
+      # Install Node Version Manager.
+      - run:
+          name: Install Node Version Manager
+          command: |
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
+
+      # Check NVM version.
+      - run:
+          name: Check Current NVM Version
+          command: |
+            nvm --version
+
+      # Install latest node version.
+      - run:
+          name: Install LTS Node Version
+          command: |
+            nvm install --lts
+
+      # Checkout source code.
+      - checkout
+
+      # Restore previously stored cache.
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      # Install local JavaScript dependencies.
+      - run:
+          name: Install Local JavaScript Dependencies
+          command: |
+            nvm use default
+            npm install
+
+      # Store a cache of local JavaScript modules.
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      # Run tests!
+      - run:
+          name: Run Tests
+          command: |
+            nvm use default
+            npm test
+
+  # Test on latest.
+  Test-Latest:
+    executor: production
+
+    # Perform these steps.
+    steps:
+      # Install Node Version Manager.
+      - run:
+          name: Install Node Version Manager
+          command: |
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
+
+      # Check NVM version.
+      - run:
+          name: Check Current NVM Version
+          command: |
+            nvm --version
+
+      # Install latest node version.
+      - run:
+          name: Install Latest Node Version
+          command: |
+            nvm install node
+
+      # Checkout source code.
+      - checkout
+
+      # Restore previously stored cache.
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      # Install local JavaScript dependencies.
+      - run:
+          name: Install Local JavaScript Dependencies
+          command: |
+            nvm use node
+            npm install
+
+      # Store a cache of local JavaScript modules.
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      # Run tests!
+      - run:
+          name: Run Tests
+          command: |
+            nvm use node
+            npm test
+
+workflows:
+  version: 2
+  Test:
+    jobs:
+      - Test-LTS
+      # filters:
+      #   # Define rules to allow/block exeution of specific branches.
+      #   branches:
+      #     only:
+      #       - master
+      - Test-Latest
+        # filters:
+        #   # Define rules to allow/block exeution of specific branches.
+        #   branches:
+        #     only:
+        #       - master
