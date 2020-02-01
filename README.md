@@ -8,7 +8,7 @@ _  /  / / / /_/ /____/ /_  /
 
 # Monadic Event Stream
 
-[![Build Status](https://travis-ci.org/mostjs/core.svg?branch=master)](https://travis-ci.org/mostjs/core)
+[![MostJS](https://circleci.com/gh/mostjs/core.svg?style=svg)](https://circleci.com/gh/mostjs/core)
 [![Join the chat at https://gitter.im/cujojs/most](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cujojs/most?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 High-performance reactive event stream programming that powers [Most](https://github.com/cujojs/most).
