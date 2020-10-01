@@ -2,7 +2,7 @@
   "name": "@most/core",
   "version": "1.6.0",
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
-  "typings": "dist/most.d.ts",
+  "typings": "dist/index.d.ts",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "files": [
