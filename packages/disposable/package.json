@@ -41,7 +41,7 @@
     "@briancavalier/assert": "^3.2.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.0",
     "@types/mocha": "^5.2.7",
-    "@types/sinon": "^7.5.1",
+    "@types/sinon": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^1.11.0",
     "@typescript-eslint/parser": "^1.11.0",
     "cpy-cli": "^3.0.0",
