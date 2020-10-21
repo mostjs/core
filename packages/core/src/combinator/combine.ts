@@ -7,7 +7,7 @@ import { IndexSink, IndexedValue } from '../sink/IndexSink'
 import { disposeAll, tryDispose } from '@most/disposable'
 import invoke from '../invoke'
 import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
-import { ToStreamsArray } from './variadic'
+import { InputStreamArray } from './variadic'
 
 /**
  * Combine latest events from two streams
@@ -27,16 +27,16 @@ export const combine = <A, B, C>(f: (a: A, b: B) => C, stream1: Stream<A>, strea
 * @returns stream containing the result of applying f to the most recent
 *  event of each input stream, whenever a new event arrives on any stream.
 */
-export const combineArray = <Args extends unknown[], R>(f: (...args: Args) => R, streams: ToStreamsArray<Args>): Stream<R> =>
+export const combineArray = <Args extends unknown[], R>(f: (...args: Args) => R, streams: InputStreamArray<Args>): Stream<R> =>
   streams.length === 0 || containsCanonicalEmpty(streams) ? empty()
     : streams.length === 1 ? map(f as any, streams[0])
-      : new Combine(f, streams)
+      : new Combine(f, streams as Stream<Args>[])
 
 class Combine<Args extends unknown[], B> implements Stream<B> {
   private readonly f: (...args: Args) => B
-  private readonly sources: ToStreamsArray<Args>;
+  private readonly sources: Stream<Args>[];
 
-  constructor(f: (...args: Args) => B, sources: ToStreamsArray<Args>) {
+  constructor(f: (...args: Args) => B, sources: Stream<Args>[]) {
     this.f = f
     this.sources = sources
   }

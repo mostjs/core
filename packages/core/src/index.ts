@@ -160,8 +160,8 @@ interface Combine {
 }
 export const combine: Combine = curry3(_combine)
 interface CombineArray {
-  <Args extends unknown[], R>(fn: (...args: Args) => R, streams: ToStreamsArray<Args>): Stream<R>
-  <Args extends unknown[], R>(fn: (...args: Args) => R): (streams: ToStreamsArray<Args>) => Stream<R>
+  <Args extends readonly unknown[], R>(fn: (...args: Args) => R, streams: InputStreamArray<Args>): Stream<R>
+  <Args extends readonly unknown[], R>(fn: (...args: Args) => R): (streams: InputStreamArray<Args>) => Stream<R>
 }
 export const combineArray: CombineArray = curry2(_combineArray as any) as any
 
@@ -206,8 +206,8 @@ interface Zip {
 }
 export const zip: Zip = curry3(_zip)
 interface ZipArray {
-  <Args extends unknown[], R>(fn: (...args: Args) => R, streams: ToStreamsArray<Args>): Stream<R>
-  <Args extends unknown[], R>(fn: (...args: Args) => R): (streams: ToStreamsArray<Args>) => Stream<R>
+  <Args extends readonly unknown[], R>(fn: (...args: Args) => R, streams: InputStreamArray<Args>): Stream<R>
+  <Args extends readonly unknown[], R>(fn: (...args: Args) => R): (streams: InputStreamArray<Args>) => Stream<R>
 }
 export const zipArray: ZipArray = curry2(_zipArray as any) as any
 
@@ -352,7 +352,7 @@ import {
   PropagateTask as PropagateTaskResult
 } from './scheduler/PropagateTask'
 import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
-import { ToStreamsArray } from './combinator/variadic'
+import { InputStreamArray } from './combinator/variadic'
 
 interface PropagateTask {
   <A>(run: PropagateTaskRun<A>, value: A, sink: Sink<A>): PropagateTaskResult
