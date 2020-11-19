@@ -1,6 +1,6 @@
 {
   "name": "@most/types",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
   "typings": "index.d.ts",
   "main": "index.js",
@@ -31,7 +31,7 @@
   "license": "MIT",
   "devDependencies": {
     "cpy-cli": "^3.0.0",
-    "cross-env": "^6.0.3",
+    "cross-env": "^7.0.2",
     "flow-bin": "^0.114.0",
     "nyc": "^15.0.0",
     "snazzy": "^8.0.0",

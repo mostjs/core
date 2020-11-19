@@ -1,8 +1,8 @@
 {
   "name": "@most/core",
-  "version": "1.5.0",
+  "version": "1.6.1",
   "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
-  "typings": "dist/most.d.ts",
+  "typings": "dist/index.d.ts",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "files": [
@@ -44,7 +44,7 @@
     "@typescript-eslint/eslint-plugin": "^1.11.0",
     "@typescript-eslint/parser": "^1.11.0",
     "cpy-cli": "^3.0.0",
-    "cross-env": "^6.0.3",
+    "cross-env": "^7.0.2",
     "eslint": "^6.1.0",
     "eslint-config-standard-with-typescript": "^8.0.0",
     "eslint-plugin-import": "^2.18.2",
@@ -62,10 +62,10 @@
     "typescript": "^3.5.2"
   },
   "dependencies": {
-    "@most/disposable": "^1.2.2",
-    "@most/prelude": "^1.7.3",
-    "@most/scheduler": "^1.2.3",
-    "@most/types": "^1.0.2"
+    "@most/disposable": "^1.3.0",
+    "@most/prelude": "^1.8.0",
+    "@most/scheduler": "^1.3.0",
+    "@most/types": "^1.1.0"
   },
   "standard": {
     "ignore": [
