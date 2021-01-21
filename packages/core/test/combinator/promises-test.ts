@@ -4,6 +4,8 @@ import { assert, is, eq } from '@briancavalier/assert'
 import { awaitPromises, fromPromise } from '../../src/combinator/promises'
 import { recoverWith } from '../../src/combinator/errors'
 import { empty, isCanonicalEmpty } from '../../src/source/empty'
+import { switchLatest } from '../../src/combinator/switch'
+import { map } from '../../src/combinator/transform'
 
 import { atTime, makeEventsFromArray, collectEventsFor } from '../helper/testEnv'
 
@@ -82,6 +84,18 @@ describe('promises', () => {
 
       return collectEventsFor(1, s)
         .then(eq([{ time: 1, value: sentinel }]))
+    })
+
+    it('should stop emitting after disposed', function () {
+      const s = switchLatest(map(
+        v => fromPromise(new Promise(resolve => setTimeout(() => resolve(v), 10))),
+        makeEventsFromArray(1, [1, 2])
+      ))
+      return collectEventsFor(10, s)
+        .then(events => {
+          eq(2, events[0].value)
+          eq(1, events.length)
+        })
     })
   })
 })
