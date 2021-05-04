@@ -9,7 +9,7 @@ export interface RunEffects {
   <A>(stream: Stream<A>): (scheduler: Scheduler) => Promise<void>
 }
 
-export const runEffects: RunEffects = curry2((stream: Stream<unknown>, scheduler: Scheduler): Promise<void> =>
+export const runEffects: RunEffects = curry2((stream: Stream<void | PromiseLike<void>>, scheduler: Scheduler): Promise<void> =>
   new Promise((resolve, reject) =>
     runStream(stream, scheduler, resolve, reject)))
 

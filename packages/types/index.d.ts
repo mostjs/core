@@ -11,6 +11,7 @@ export interface Clock {
 }
 
 export interface Stream<A> {
+  _T?: A
   run (sink: Sink<A>, scheduler: Scheduler): Disposable
 }
 
