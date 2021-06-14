@@ -38,10 +38,10 @@ class Until<A> implements Stream<A> {
 }
 
 class Since<A> implements Stream<A> {
-  private readonly minSignal: Stream<Stream<unknown>>
+  private readonly minSignal: Stream<unknown>
   private readonly source: Stream<A>
 
-  constructor(minSignal: Stream<Stream<unknown>>, source: Stream<A>) {
+  constructor(minSignal: Stream<unknown>, source: Stream<A>) {
     this.minSignal = minSignal
     this.source = source
   }

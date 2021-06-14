@@ -34,7 +34,7 @@ describe('recoverWith', () => {
 
   it('should allow union type', () => {
     const s = recoverWith(() => now('456'), now(123))
-    return observe(eq(123), s)
+    return observe(v => typeof v === 'number' && eq(123)(v), s)
   })
 
   it('should recover from errors before recoverWith', () => {

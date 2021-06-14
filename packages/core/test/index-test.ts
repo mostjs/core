@@ -40,8 +40,8 @@ export const t12: Stream<number> = scan(add)(0)(now(1))
 // mergeMapConcurrently
 export const t13: Stream<number> = mergeMapConcurrently(now, 1, now(123))
 export const t14: Stream<number> = mergeMapConcurrently(now, 1)(now(123))
-export const t15: Stream<number> = mergeMapConcurrently(now)(1, now(123))
-export const t16: Stream<number> = mergeMapConcurrently(now)(1)(now(123))
+export const t15: Stream<number> = mergeMapConcurrently<number, number>(now)(1, now(123))
+export const t16: Stream<number> = mergeMapConcurrently<number, number>(now)(1)(now(123))
 
 // combine
 export const t17: Stream<number> = combine(add, now(1), now(2))
@@ -69,9 +69,9 @@ export const t32: Stream<number> = zip(add)(now(0))(now(1))
 
 // slice
 export const t33: Stream<number> = slice(0, 1, now(1))
-export const t34: Stream<number> = slice(0, 1)(now(1))
-export const t35: Stream<number> = slice(0)(1, now(1))
-export const t36: Stream<number> = slice(0)(1)(now(1))
+export const t34: Stream<number> = slice<number>(0, 1)(now(1))
+export const t35: Stream<number> = slice<number>(0)(1, now(1))
+export const t36: Stream<number> = slice<number>(0)(1)(now(1))
 
 // propagateTask
 export const t37 = propagateTask(() => {}, undefined, sink)
