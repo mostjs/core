@@ -2,6 +2,7 @@
 /** @author Brian Cavalier */
 /** @author John Hann */
 
+import { disposeBoth } from '@most/disposable'
 import fatal from '../fatalError'
 import { now } from '../source/now'
 import { empty, isCanonicalEmpty } from '../source/empty'
@@ -32,19 +33,25 @@ class Await<A> implements Stream<A> {
   }
 
   run(sink: Sink<A>, scheduler: Scheduler): Disposable {
-    return this.source.run(new AwaitSink(sink, scheduler), scheduler)
+    const awaitSink = new AwaitSink(sink, scheduler)
+    return disposeBoth(
+      awaitSink,
+      this.source.run(awaitSink, scheduler)
+    )
   }
 }
 
-class AwaitSink<A> implements Sink<Promise<A>> {
+class AwaitSink<A> implements Sink<Promise<A>>, Disposable {
   private readonly sink: Sink<A>;
   private readonly scheduler: Scheduler;
   private queue: Promise<unknown>;
+  private disposed: boolean;
 
   constructor(sink: Sink<A>, scheduler: Scheduler) {
     this.sink = sink
     this.scheduler = scheduler
     this.queue = Promise.resolve()
+    this.disposed = false
   }
 
   event(_t: Time, promise: Promise<A>): void {
@@ -63,12 +70,22 @@ class AwaitSink<A> implements Sink<Promise<A>> {
       .catch(fatal)
   }
 
+  dispose(): void {
+    this.disposed = true
+  }
+
   private handlePromise(promise: Promise<A>): Promise<void> {
     return promise.then(this.eventBound)
   }
 
   // Pre-create closures, to avoid creating them per event
-  private eventBound = (x: A): void => this.sink.event(currentTime(this.scheduler), x)
-  private endBound = (): void => this.sink.end(currentTime(this.scheduler))
-  private errorBound = (e: Error): void => this.sink.error(currentTime(this.scheduler), e)
+  private eventBound = (x: A): void => {
+    if (!this.disposed) this.sink.event(currentTime(this.scheduler), x)
+  }
+  private endBound = (): void => {
+    if (!this.disposed) this.sink.end(currentTime(this.scheduler))
+  }
+  private errorBound = (e: Error): void => {
+    if (!this.disposed) this.sink.error(currentTime(this.scheduler), e)
+  }
 }
