@@ -10,7 +10,7 @@ import { collectEventsFor, makeEvents, makeEventsFromArray } from './helper/test
 
 const sentinel = { value: 'sentinel' }
 
-const args = <Args extends unknown[]>(...args: Args): Args => args
+const args = <Args extends readonly unknown[]>(...args: Args): Args => args
 
 describe('combine', function () {
   it('given one canonical empty stream, should return canonical empty', () => {

@@ -9,7 +9,7 @@ import { map as mapArray } from '@most/prelude'
 import invoke from '../invoke'
 import Queue from '../Queue'
 import { Stream, Sink, Scheduler, Disposable, Time } from '@most/types'
-import { ToStreamsArray } from './variadic'
+import { InputStreamArray } from './variadic'
 
 interface NonEmptyQueue<A> extends Queue<A> {
   shift(): A
@@ -35,7 +35,7 @@ export function zip <A, B, R>(f: (a: A, b: B) => R, stream1: Stream<A>, stream2:
 * @returns {Stream} new stream with items at corresponding indices combined
 *  using f
 */
-export const zipArray = <Args extends unknown[], R>(f: (...args: Args) => R, streams: ToStreamsArray<Args>): Stream<R> =>
+export const zipArray = <Args extends readonly unknown[], R>(f: (...args: Args) => R, streams: InputStreamArray<Args>): Stream<R> =>
   streams.length === 0 || containsCanonicalEmpty(streams) ? empty()
     : streams.length === 1 ? map(f as any, streams[0])
       : new Zip(f as any, streams)
