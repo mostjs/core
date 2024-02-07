@@ -240,6 +240,8 @@ export const skipRepeatsWith: ShipRepeatsWith = curry2(_skipRepeatsWith)
 
 import { take as _take, skip as _skip, slice as _slice, takeWhile as _takeWhile, skipWhile as _skipWhile, skipAfter as _skipAfter } from './combinator/slice'
 
+export { last } from './combinator/slice/last'
+
 interface Take {
   <A>(n: number, s: Stream<A>): Stream<A>
   <A>(n: number): (s: Stream<A>) => Stream<A>

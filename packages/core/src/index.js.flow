@@ -143,6 +143,7 @@ declare export function skipRepeats <A> (s: Stream<A>): Stream<A>
 declare export function skipRepeatsWith <A> (equals: (a1: A, a2: A) => boolean, s: Stream<A>): Stream<A>
 declare export function skipRepeatsWith <A> (equals: (a1: A, a2: A) => boolean): (s: Stream<A>) => Stream<A>
 
+declare export function last <A> (s: Stream<A>): Stream<A>
 
 declare export function take <A> (n: number, s: Stream<A>): Stream<A>
 declare export function take <A> (n: number): (s: Stream<A>) => Stream<A>
