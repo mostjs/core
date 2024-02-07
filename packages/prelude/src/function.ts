@@ -4,6 +4,9 @@ export const id = <A>(x: A): A => x
 
 export const compose = <A, B, C>(f: (b: B) => C, g: (a: A) => B) => (x: A): C => f(g(x))
 
+export const flow = (input: any, ...fns: [(x: any) => any]): any =>
+  fns.reduce((val, fn) => fn(val), input)
+
 export const apply = <A, B>(f: (a: A) => B, x: A): B => f(x)
 
 export interface Curried2<A, B, C> {

@@ -887,6 +887,28 @@ Discard the first *n* events from ``stream``. ::
 
 If ``stream`` contains fewer than *n* events, the returned :ref:`Stream` will be empty.
 
+.. _last:
+
+last
+````
+
+.. code-block:: haskell
+
+  last :: Stream a -> Stream a
+
+Emits the last event from ``stream`` and then ends. ::
+
+  stream:       -a-b-c|
+  last(stream): -----c|
+
+``fold`` (aka ``reduce``) a ``stream``:
+
+.. code-block:: javascript
+
+  import { compose } from '@most/prelude'
+  // Like reduce for Array
+  fold = (reducer, seed) => compose(last, scan(reducer, seed))
+
 .. _takeWhile:
 
 takeWhile
