@@ -18,6 +18,7 @@ Specifically, `@most/core` features Most's battle-tested, high-performance archi
 * [API docs](https://mostcore.readthedocs.io)
 * [Get it](#get-it)
 * [Examples](examples)
+* [Contribute](#contribute)
 
 ## Get it
 
@@ -25,4 +26,18 @@ Specifically, `@most/core` features Most's battle-tested, high-performance archi
 npm install --save @most/core @most/scheduler
 
 yarn add @most/core @most/scheduler
+```
+
+## Contribute
+
+After cloning the repository
+
+```
+npm install --legacy-peer-deps
+```
+
+### Running the Tests
+
+```
+npm test
 ```
