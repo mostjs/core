@@ -90,7 +90,7 @@ class RecoverWithSink<A, E extends Error, B> implements Sink<A>, Disposable {
     try {
       this.disposable = this._continue(this.f, t, x, sink)
     } catch (e) {
-      sink.error(t, e)
+      sink.error(t, e as Error)
     }
   }
 

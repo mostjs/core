@@ -56,7 +56,7 @@ function tryDispose <X>(error: (e: Error) => void, end: (x: X) => void, x: X, di
   try {
     disposable.dispose()
   } catch (e) {
-    error(e)
+    error(e as Error)
     return
   }
 

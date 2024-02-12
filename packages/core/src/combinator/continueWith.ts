@@ -60,7 +60,7 @@ class ContinueWithSink<A, B> extends Pipe<A, A | B> implements Sink<A>, Disposab
     try {
       this.disposable = this.continue(this.f, t, sink)
     } catch (e) {
-      sink.error(t, e)
+      sink.error(t, e as Error)
     }
   }
 
