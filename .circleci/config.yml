@@ -57,7 +57,7 @@ jobs:
           name: Install Local JavaScript Dependencies
           command: |
             nvm use default
-            npm install
+            npm install --legacy-peer-deps
 
       # Store a cache of local JavaScript modules.
       - save_cache:
@@ -111,7 +111,7 @@ jobs:
           name: Install Local JavaScript Dependencies
           command: |
             nvm use node
-            npm install
+            npm install --legacy-peer-deps
 
       # Store a cache of local JavaScript modules.
       - save_cache:
