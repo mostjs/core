@@ -17,7 +17,7 @@
   "name": "@most/core-fl",
   "scripts": {
     "build:dist": "rollup -c",
-    "test": "mocha --require ts-node/register"
+    "test": "mocha --require ts-node/register ./test/*test**"
   },
   "type": "module",
   "version": "1.0.0",
