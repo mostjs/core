@@ -2,14 +2,24 @@
 /* eslint-disable import/first */
 import { curry2, curry3, Curried2 } from '@most/prelude'
 
+// -----------------------------------------------------------------------
+// Construction
+
 export { empty } from './source/empty'
 export { never } from './source/never'
 export { now } from './source/now'
-export { at } from './source/at'
-
 export { periodic } from './source/periodic'
-
 export { newStream } from './source/newStream'
+
+// -------------------------------------------------------
+
+import { at as _at } from './source/at'
+
+interface At {
+  <A>(time: Time, value: A): Stream<A>
+  <A>(time: Time): (value: A) => Stream<A>
+}
+export const at: At = curry2(_at)
 
 // -----------------------------------------------------------------------
 // Observing
