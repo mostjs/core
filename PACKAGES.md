@@ -6,6 +6,7 @@
 | [hold](https://github.com/mostjs/hold) | Deliver the most recently seen event to new observers
 | [create](https://github.com/mostjs/create) | Imperatively push events into a Stream
 | [dom-event](https://github.com/mostjs/dom-event) | Streamlined DOM Events
+| [adapter](https://github.com/mostjs/adapter) | Imperatively put events into mostjs streams
 | [examples](https://github.com/mostjs/examples) | Most.js examples
 
 ### Most Tools for  Contributors
