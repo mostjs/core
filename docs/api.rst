@@ -318,6 +318,34 @@ Create a :ref:`Stream` that fails with the provided ``Error`` at time 0.  This c
 
   throwError(X): X
 
+.. _newStream:
+
+newStream
+`````````
+
+.. code-block:: haskell
+
+  newStream :: ((Sink a, Scheduler) -> Disposable) -> Stream a
+
+Create a :ref:`Stream` from a custom event producer (i.e. :ref:`run` method).
+
+.. code-block:: javascript
+
+  import { currentTime as ct } from '@most/scheduler'
+
+  // Promise a -> Stream a
+  const fromPromise = p => newStream(
+    (sink, scheduler) => {
+      p.then(
+        x => sink.event(ct(scheduler), x),
+        e => sink.error(ct(scheduler), e)
+      )
+      .finally(() => sink.end(ct(scheduler));
+
+      return { dispose: () => undefined };
+    }
+  )
+
 Extending
 ^^^^^^^^^
 
