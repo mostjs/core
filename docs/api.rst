@@ -286,7 +286,8 @@ at
 
 .. code-block:: haskell
 
-  at :: Time -> a -> Stream a
+  at :: (Time, a) -> Stream a
+  at :: Time -> Stream void
 
 Create a :ref:`Stream` containing a single event at a specific time. ::
 
