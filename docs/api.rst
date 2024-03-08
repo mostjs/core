@@ -333,18 +333,19 @@ Create a :ref:`Stream` from a custom event producer (i.e. :ref:`run` method).
 
   import { currentTime as ct } from '@most/scheduler'
 
-  // Promise a -> Stream a
-  const fromPromise = p => newStream(
+  // Number -> a -> Stream a
+  const valueAt = delay => value => newStream(
     (sink, scheduler) => {
-      p.then(
-        x => sink.event(ct(scheduler), x),
-        e => sink.error(ct(scheduler), e)
-      )
-      .finally(() => sink.end(ct(scheduler));
-
-      return { dispose: () => undefined };
+      const publishVal = val => {
+        sink.event(ct(scheduler), val);
+        sink.end(ct(scheduler));
+      };
+      const timer = setTimeout(publishVal, delay, value);
+      return { dispose: () => { clearTimeout(timer); } };
     }
-  )
+  );
+
+  valueAt(1000)(7): ---7|
 
 Extending
 ^^^^^^^^^
