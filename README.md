@@ -18,6 +18,7 @@ Specifically, `@most/core` features Most's battle-tested, high-performance archi
 * [API docs](https://mostcore.readthedocs.io)
 * [Get it](#get-it)
 * [Examples](examples)
+* [Packages](PACKAGES.md)
 * [Contribute](#contribute)
 
 ## Get it

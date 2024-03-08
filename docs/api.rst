@@ -286,7 +286,8 @@ at
 
 .. code-block:: haskell
 
-  at :: Time -> a -> Stream a
+  at :: (Time, a) -> Stream a
+  at :: Time -> Stream void
 
 Create a :ref:`Stream` containing a single event at a specific time. ::
 
@@ -317,6 +318,35 @@ throwError
 Create a :ref:`Stream` that fails with the provided ``Error`` at time 0.  This can be useful for functions that need to return a :ref:`Stream` and also need to propagate an error. ::
 
   throwError(X): X
+
+.. _newStream:
+
+newStream
+`````````
+
+.. code-block:: haskell
+
+  newStream :: ((Sink a, Scheduler) -> Disposable) -> Stream a
+
+Create a :ref:`Stream` from a custom event producer (i.e. :ref:`run` method).
+
+.. code-block:: javascript
+
+  import { currentTime as ct } from '@most/scheduler'
+
+  // Number -> a -> Stream a
+  const valueAt = delay => value => newStream(
+    (sink, scheduler) => {
+      const publishVal = val => {
+        sink.event(ct(scheduler), val);
+        sink.end(ct(scheduler));
+      };
+      const timer = setTimeout(publishVal, delay, value);
+      return { dispose: () => { clearTimeout(timer); } };
+    }
+  );
+
+  valueAt(1000)(7): ---7|
 
 Extending
 ^^^^^^^^^
