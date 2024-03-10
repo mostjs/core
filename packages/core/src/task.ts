@@ -15,6 +15,6 @@ export function runTask <E, A>(task: DeferrableTask<E, A>): E | A {
   try {
     return task.run()
   } catch (e) {
-    return task.error(e)
+    return task.error(e as Error)
   }
 }

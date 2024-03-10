@@ -8,7 +8,7 @@ export function tryEvent <A>(t: Time, x: A, sink: Sink<A>): void {
   try {
     sink.event(t, x)
   } catch (e) {
-    sink.error(t, e)
+    sink.error(t, e as Error)
   }
 }
 
@@ -16,6 +16,6 @@ export function tryEnd(t: Time, sink: Sink<unknown>): void {
   try {
     sink.end(t)
   } catch (e) {
-    sink.error(t, e)
+    sink.error(t, e as Error)
   }
 }

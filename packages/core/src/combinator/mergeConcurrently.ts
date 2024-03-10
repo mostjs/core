@@ -72,7 +72,7 @@ class Outer<A, B> implements Sink<A>, Disposable {
     try {
       this.initInner(t, x)
     } catch (e) {
-      this.error(t, e)
+      this.error(t, e as Error)
     }
   }
 

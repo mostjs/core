@@ -1,0 +1,41 @@
+{
+  "author": "seemann@visisoft.de",
+  "description": "Fantasy-Land Api for @most/core",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "type-definitions",
+    "dist"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "name": "@most/core-fl",
+  "scripts": {
+    "build:dist": "rollup -c",
+    "test": "mocha --require ts-node/register ./test/*test**"
+  },
+  "type": "module",
+  "version": "1.0.0",
+  "dependencies": {
+    "@most/disposable": "^1.3.0",
+    "@most/prelude": "^1.8.0",
+    "@most/scheduler": "^1.3.0",
+    "@most/types": "^1.1.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/ramda": "^0.29.10",
+    "fp-ts": "^2.16.2",
+    "mocha": "^10.3.0",
+    "ramda": "^0.29.1",
+    "rollup": "^4.10.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "typescript": "^5.3.3"
+  }
+}
