@@ -29,7 +29,7 @@
     "cross-env": "^7.0.2",
     "flow-bin": "^0.114.0",
     "lerna": "^3.19.0",
-    "mocha": "^6.2.2",
+    "mocha": "^9.0.3",
     "nyc": "^15.0.0",
     "rollup": "^1.27.4",
     "rollup-plugin-babel": "^4.3.3",
