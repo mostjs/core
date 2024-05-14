@@ -4,8 +4,10 @@
 
 /**
  * TODO: find a better way (without `any`)
+ * might be possible using typescript's 4.0 "Variadic Tuple Types"
+ * https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-0.html
  */
-export default function invoke <F extends(...args: any[]) => any>(f: F, args: Parameters<F>): ReturnType<F> {
+export default function invoke<Args extends any[], R>(f: (...args: any) => R, args: Args): R {
   /* eslint complexity: [2,7] */
   switch (args.length) {
     case 0: return f()
