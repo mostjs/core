@@ -1,0 +1,16 @@
+[ignore]
+.*/node_modules/conventional-changelog-core/.*
+
+[include]
+../../node_modules
+test/
+test/flow/**/*.js
+src/
+
+[libs]
+
+[options]
+include_warnings=true
+
+[lints]
+all=warn
