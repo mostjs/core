@@ -1,0 +1,30 @@
+{
+  "name": "most",
+  "version": "2.0.0",
+  "description": "Reactive programming with lean, functions-only, curried, tree-shakeable API",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mostjs/core"
+  },
+  "files": [],
+  "keywords": [
+    "reactive",
+    "reactive programming",
+    "events",
+    "event stream",
+    "promise",
+    "promises",
+    "monad",
+    "monadic",
+    "functional",
+    "async"
+  ],
+  "author": "brian@hovercraftstudios.com",
+  "license": "MIT",
+  "dependencies": {
+    "@most/core": "^1.3.2",
+    "@most/disposable": "^1.2.1",
+    "@most/scheduler": "^1.2.1",
+    "@most/types": "^1.0.1"
+  }
+}
